@@ -12,7 +12,9 @@ class ShortlinkController extends Controller
 {
     private function ownedShortlink(Request $request, Shortlink $shortlink): Shortlink
     {
-        abort_unless($request->user() && $request->user()->id === $shortlink->user_id, 404);
+        $user = $request->user();
+
+        abort_unless($user && (int) $user->getKey() === (int) $shortlink->user_id, 404);
 
         return $shortlink;
     }
