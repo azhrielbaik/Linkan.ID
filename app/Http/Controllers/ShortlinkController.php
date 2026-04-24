@@ -14,34 +14,45 @@ class ShortlinkController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        abort_unless($user, 403);
+
         $request->validate([
             'slug' => 'required|alpha_dash|unique:shortlinks,slug',
             'destination' => 'required|url',
         ]);
 
         Shortlink::create([
+            'user_id' => $user->getKey(),
             'slug' => $request->slug,
             'destination' => $request->destination,
         ]);
 
-       // return back()->with('success', 'Shortlink berhasil dibuat: https://Linkan.id/' . $request->slug);
-       
-      //untuk lokal host
+        // return back()->with('success', 'Shortlink berhasil dibuat: https://Linkan.id/' . $request->slug);
+
+        // untuk lokal host
         return back()
-        ->with('success', 'Shortlink berhasil dibuat: ' . url('/' . $request->slug))
-        ->withInput();
-    
+            ->with('success', 'Shortlink berhasil dibuat: '.url('/'.$request->slug))
+            ->withInput();
+
     }
 
     public function redirect($slug)
     {
         $shortlink = Shortlink::where('slug', $slug)->firstOrFail();
+
         return redirect($shortlink->destination);
     }
 
     public function index()
     {
-        $shortlinks = Shortlink::orderBy('created_at', 'desc')->paginate(5);
+        $user = request()->user();
+        abort_unless($user, 403);
+
+        $shortlinks = Shortlink::where('user_id', $user->getKey())
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
         return view('shortlink.create', compact('shortlinks'));
     }
 }
