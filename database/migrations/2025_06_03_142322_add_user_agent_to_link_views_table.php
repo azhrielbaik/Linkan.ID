@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('link_views', function (Blueprint $table) {
-            $table->text('user_agent')->nullable()->after('ip_address');
-        });
+        if (! Schema::hasColumn('link_views', 'user_agent')) {
+            Schema::table('link_views', function (Blueprint $table) {
+                $table->text('user_agent')->nullable()->after('ip_address');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('link_views', function (Blueprint $table) {
-            $table->dropColumn('user_agent');
-        });
+        if (Schema::hasColumn('link_views', 'user_agent')) {
+            Schema::table('link_views', function (Blueprint $table) {
+                $table->dropColumn('user_agent');
+            });
+        }
     }
 };

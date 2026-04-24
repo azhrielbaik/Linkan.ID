@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Shortlink::class);
     }
+
+    public function shortlinkClicks(): HasMany
+    {
+        return $this->hasMany(ShortlinkClick::class);
+    }
 }
