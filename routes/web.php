@@ -125,11 +125,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/midtrans-callback', [DigitalProductController::class, 'midtransCallback'])->name('digital-product.midtrans-callback');
     });
 
+    Route::get('/shortlink', [ShortlinkController::class, 'index'])->name('shortlink.index');
+    Route::post('/shorten', [ShortlinkController::class, 'store']);
 });
 
 // Route lain yang tidak perlu auth
-Route::get('/shortlink', [ShortlinkController::class, 'index'])->name('shortlink.index');
-Route::post('/shorten', [ShortlinkController::class, 'store']);
+
 
 // Contact Form
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.form');
