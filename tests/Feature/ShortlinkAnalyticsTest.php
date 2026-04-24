@@ -124,6 +124,7 @@ class ShortlinkAnalyticsTest extends TestCase
         $page->assertSee('Analytics Shortlink');
         $page->assertSee('analytics-link');
         $page->assertSee('2');
+        $page->assertSee('Grafik Source Traffic');
         $page->assertSee('instagram');
         $page->assertSee('google.com');
         $page->assertDontSee('hidden-analytics-link');
@@ -134,5 +135,7 @@ class ShortlinkAnalyticsTest extends TestCase
         $chart->assertJsonPath('total_clicks', 2);
         $chart->assertJsonCount(7, 'labels');
         $chart->assertJsonCount(7, 'clicks');
+        $chart->assertJsonPath('sources.0.label', 'instagram');
+        $chart->assertJsonPath('sources.0.total', 1);
     }
 }

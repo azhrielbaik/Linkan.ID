@@ -25,6 +25,7 @@
         .date-input { padding: 7px 12px; border: 1px solid #eee; border-radius: 6px; background: white; font-size: 13px; color: #666; }
         .apply-date { padding: 7px 12px; background: #FF9040; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
         .chart-wrap { height: 320px; }
+        .stack { display: grid; gap: 24px; }
         .muted { color: #666; font-size: 14px; }
         @media (max-width: 900px) { .main-content { margin-left: 0; } .grid { grid-template-columns: 1fr; } .header, .chart-header { flex-direction: column; align-items: flex-start; } }
     </style>
@@ -57,21 +58,35 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="chart-header">
-                    <div>
-                        <div class="label">Grafik Click Harian</div>
-                        <div class="muted">Destination: {{ $shortlink->destination }}</div>
+            <div class="stack">
+                <div class="card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="label">Grafik Click Harian</div>
+                            <div class="muted">Destination: {{ $shortlink->destination }}</div>
+                        </div>
+                        <div class="date-range-selector">
+                            <input type="date" id="startDate" class="date-input" value="{{ $startDate }}">
+                            <span>to</span>
+                            <input type="date" id="endDate" class="date-input" value="{{ $endDate }}">
+                            <button class="apply-date" onclick="applyDateFilter()">Apply</button>
+                        </div>
                     </div>
-                    <div class="date-range-selector">
-                        <input type="date" id="startDate" class="date-input" value="{{ $startDate }}">
-                        <span>to</span>
-                        <input type="date" id="endDate" class="date-input" value="{{ $endDate }}">
-                        <button class="apply-date" onclick="applyDateFilter()">Apply</button>
+                    <div class="chart-wrap">
+                        <canvas id="shortlinkAnalyticsChart"></canvas>
                     </div>
                 </div>
-                <div class="chart-wrap">
-                    <canvas id="shortlinkAnalyticsChart"></canvas>
+
+                <div class="card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="label">Grafik Source Traffic</div>
+                            <div class="muted">Distribusi sumber trafik untuk shortlink ini</div>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="shortlinkSourceChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,6 +95,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let chart;
+        let sourceChart;
 
         function updateChart() {
             const startDate = document.getElementById('startDate').value;
@@ -95,6 +111,10 @@
 
                     if (chart) {
                         chart.destroy();
+                    }
+
+                    if (sourceChart) {
+                        sourceChart.destroy();
                     }
 
                     chart = new Chart(document.getElementById('shortlinkAnalyticsChart').getContext('2d'), {
@@ -120,6 +140,29 @@
                                 legend: {
                                     position: 'top',
                                     align: 'start',
+                                    labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle' },
+                                },
+                            },
+                        },
+                    });
+
+                    sourceChart = new Chart(document.getElementById('shortlinkSourceChart').getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.sources.map((item) => item.label),
+                            datasets: [{
+                                label: 'Sources',
+                                data: data.sources.map((item) => item.total),
+                                backgroundColor: ['#FF9040', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30'],
+                                borderWidth: 0,
+                            }],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
                                     labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle' },
                                 },
                             },

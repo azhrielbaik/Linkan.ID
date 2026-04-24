@@ -16,3 +16,4 @@
 - Saved implementation plan to `docs/plans/2026-04-24-shortlink-analytics-page.md`.
 - Restored inline shortlink source summaries in the shortlink index.
 - Switched shortlink feature tests to database transactions instead of migrate-fresh style resets.
+- Added a source traffic chart below the daily clicks chart on the shortlink analytics page.

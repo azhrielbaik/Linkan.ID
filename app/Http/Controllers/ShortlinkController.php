@@ -175,6 +175,14 @@ class ShortlinkController extends Controller
         return response()->json([
             'labels' => $labels,
             'clicks' => $clicks,
+            'sources' => $shortlink->clicks()
+                ->select('source', DB::raw('count(*) as total'))
+                ->groupBy('source')
+                ->orderByDesc('total')
+                ->get()
+                ->map(fn ($row) => ['label' => $row->source, 'total' => (int) $row->total])
+                ->values()
+                ->all(),
             'total_clicks' => $shortlink->clicks()->count(),
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
