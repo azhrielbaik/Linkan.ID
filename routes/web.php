@@ -1,32 +1,26 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AppearanceController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController as GoogleLoginController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DigitalProductController;
 use App\Http\Controllers\login\LoginController;
 use App\Http\Controllers\login\RegisterController;
-use App\Http\Controllers\Auth\LoginController as GoogleLoginController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DigitalProductController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ShortlinkController;
-use App\Http\Controllers\AppearanceController;
-use App\Http\Controllers\SettingController;
-use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\AccountController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\StatisticController;
-use App\Http\Controllers\OrdersController;
-use App\Http\Controllers\PlatformAdminController;
-use App\Http\Controllers\PlatformAdmin\VerifikasiController;
-use Illuminate\Support\Facades\Auth;
-use App\Models\DigitalProduct;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendDigitalProductMail;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\PayoutController;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PlatformAdmin\VerifikasiController;
+use App\Http\Controllers\PlatformAdminController;
+use App\Http\Controllers\PublicPageController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ShortlinkController;
+use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\VerificationController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Halaman Utama
 Route::get('/', function () {
@@ -126,11 +120,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/shortlink', [ShortlinkController::class, 'index'])->name('shortlink.index');
+    Route::get('/shortlink/{shortlink}/analytics', [ShortlinkController::class, 'analytics'])->name('shortlink.analytics');
+    Route::get('/shortlink/{shortlink}/analytics/chart', [ShortlinkController::class, 'analyticsChart'])->name('shortlink.analytics.chart');
     Route::post('/shorten', [ShortlinkController::class, 'store']);
 });
 
 // Route lain yang tidak perlu auth
-
 
 // Contact Form
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.form');

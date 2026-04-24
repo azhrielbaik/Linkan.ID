@@ -585,6 +585,7 @@
                         <tr>
                             <th>No</th>
                             <th>Destination</th>
+                            <th>Clicks</th>
                             <th>Created At</th>
                             <th>Action</th>
                         </tr>
@@ -594,11 +595,17 @@
                         <tr>
                             <td>{{ $shortlinks->firstItem() + $i }}</td>
                             <td class="destination-col" data-full="{{ $shortlink->destination }}">{{ $shortlink->destination }}</td>
+                            <td>{{ $shortlink->clicks_count ?? 0 }}</td>
                             <td>{{ $shortlink->created_at ? $shortlink->created_at->format('d-m-Y H:i') : '-' }}</td>
                             <td>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                                 <a href="/{{ $shortlink->slug }}" target="_blank" class="shortlink-badge" title="Buka shortlink">
                                     <i class="fas fa-link" style="margin-right:4px;"></i>{{ $shortlink->slug }}
                                 </a>
+                                <a href="{{ route('shortlink.analytics', $shortlink) }}" class="shortlink-badge" title="Lihat analitik" style="background:#181818;">
+                                    <i class="fas fa-chart-bar" style="margin-right:4px;"></i>Lihat Analitik
+                                </a>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
