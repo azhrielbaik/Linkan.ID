@@ -10,6 +10,10 @@ class Shortlink extends Model
 {
     protected $fillable = ['user_id', 'slug', 'destination'];
 
+    protected $casts = [
+        'user_id' => 'integer',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
