@@ -634,6 +634,11 @@
                     @endif
                 </div>
             </div>
+            @elseif(isset($shortlinks))
+            <div class="modern-card shortlink-history-container">
+                <div class="shortlink-history-title">History Shortlink</div>
+                <p style="margin: 0; color: #666; font-size: 15px; line-height: 1.6;">Belum ada shortlink untuk akun ini.</p>
+            </div>
             @endif
         </div>
     </div>
