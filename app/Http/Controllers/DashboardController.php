@@ -221,6 +221,7 @@ class DashboardController extends Controller
 
         // Catat click ke database
         DB::table('link_clicks')->insert([
+            'user_id' => $user->id,
             'link_id' => $linkId,
             'ip_address' => $request->ip(),
             'user_agent' => $request->header('User-Agent'),

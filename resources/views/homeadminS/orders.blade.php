@@ -1,35 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f8f9fc;
-        }
+@section("page_title", "Orders")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-        }
-
-        .order-header {
+@push("styles")
+<style>
+.order-header {
             font-size: 36px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -303,15 +278,10 @@
                 margin-left: 0;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
-        <div class="main-content">
-            <div class="header">
-                <h2 class="order-header">Order History</h2>
-            </div>
+</style>
+@endpush
+
+@section("content")
 
             <div class="link-share">
                 <div class="linkan-url">
@@ -359,12 +329,15 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+@endsection
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function loadOrderDetail(id) {
+@push("scripts")
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@endpush
+
+@push("scripts")
+<script>
+function loadOrderDetail(id) {
             // Ambil status filter saat ini
             const currentStatus = $('#statusFilter').val();
             const currentDate = $('#dateFilter').val();
@@ -585,6 +558,5 @@
         $(document).ready(function() {
             loadOrders(1);
         });
-    </script>
-</body>
-</html>
+</script>
+@endpush

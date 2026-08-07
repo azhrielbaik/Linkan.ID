@@ -1,39 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payout Setting</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * { 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-        }
+@section("page_title", "Payout")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-        }
-
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
+@push("styles")
+<style>
+.header h1 {
             font-size: 24px;
             color: #333;
         }
@@ -159,17 +130,11 @@
             color: black !important;
             text-decoration: none; /* kalau mau hilangkan garis bawah juga */
         }
+</style>
+@endpush
 
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
+@section("content")
 
-        <div class="main-content">
-            <div class="header">
-                <h1><a href="{{ route('settings') }}">Settings</a> &gt; <span>Payout Settings</h1>
-            </div>
 
             @if(session('success'))
                 <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
@@ -246,11 +211,11 @@
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
-</body>
+@endsection
+
+@push("scripts")
 <script>
-    // Auto refresh data setiap 30 detik
+// Auto refresh data setiap 30 detik
     function refreshData() {
         fetch(window.location.href)
             .then(response => response.text())
@@ -288,4 +253,4 @@
     // Refresh data saat halaman dimuat
     document.addEventListener('DOMContentLoaded', refreshData);
 </script>
-</html>
+@endpush

@@ -169,14 +169,14 @@
 </head>
 <body>
     <div class="content-wrapper">
-        @if($appearance->banner)
+        @if($appearance && $appearance->banner)
             <div class="preview-banner">
                 <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner">
             </div>
         @endif
 
         <div class="preview-profile">
-            @if($appearance->profile_image)
+            @if($appearance && $appearance->profile_image)
                 <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image">
             @else
                 <i class="fas fa-user"></i>
@@ -184,7 +184,7 @@
         </div>
 
         <div class="preview-name">{{ $appearance->name ?? $user->name }}</div>
-        <div class="preview-bio">{!! $appearance->bio !!}</div>
+        <div class="preview-bio">{!! $appearance->bio ?? '' !!}</div>
 
              <div class="preview-social-links" id="livePreviewSocialLinks">
                                      @if($appearance && $appearance->instagram)

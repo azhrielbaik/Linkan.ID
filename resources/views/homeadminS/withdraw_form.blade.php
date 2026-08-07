@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Withdraw Funds</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .withdraw-card {
+@extends("layouts.admin")
+
+@section("page_title", "Form")
+
+@push("styles")
+<style>
+.withdraw-card {
             background-color: #fff;
             padding: 30px;
             border-radius: 10px;
@@ -64,8 +52,7 @@
             align-items: center;
         }
         .form-group .input-wrapper input {
-            padding-left: 40px; /* Make space for 'IDR' */
-        }
+            padding-left: 40px; /
         .form-actions button {
             background-color: #FF9040;
             color: white;
@@ -97,10 +84,11 @@
             border-radius: 5px;
             text-align: left;
         }
-    </style>
-</head>
-<body>
-    <div class="withdraw-card">
+</style>
+@endpush
+
+@section("content")
+<div class="withdraw-card">
         <h2>Withdraw Funds</h2>
         <p>Current balance: Rp {{ number_format($currentEarnings ?? 0, 0, ',', '.') }}</p>
 
@@ -126,8 +114,56 @@
                     <input type="hidden" id="amount_raw" name="amount_raw" value="{{ old('amount_raw') }}">
                 </div>
             </div>
-            <script>
-                // Format currency Rupiah
+            
+
+         <div class="form-group">
+    <label for="method">Withdrawal Method</label>
+    <input
+        type="text"
+        id="method"
+        name="method"
+        class="form-control"
+        value="{{ old('method', $payoutDetail->method_type ?? '-') }}"
+        readonly
+        style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;"
+    >
+</div>
+
+
+           <div class="form-group" id="account-detail-group">
+    <label for="account_detail">Account Number / Phone Number</label>
+    <input
+        type="text"
+        id="account_detail"
+        name="account_detail"
+        class="form-control"
+        placeholder="Enter account number or phone number"
+        style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;"
+        value="{{ old('account_detail', $payoutDetail->account_number ?? '') }}"
+        readonly
+        required
+    >
+</div>
+
+
+            <input type="hidden" id="account_name_hidden" name="account_name" value="{{ old('account_name', $payoutDetail->account_name ?? '') }}">
+
+            <div class="form-group" id="bank_name_group" style="display: none;">
+                <label for="bank_name">Bank Name</label>
+                <input type="text" id="bank_name" name="bank_name" class="form-control" value="{{ old('bank_name', $payoutDetail->bank_name ?? '') }}" placeholder="e.g., Bank BJB">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Withdraw Now</button>
+                <button type="button" onclick="window.history.back()" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+@endsection
+
+@push("scripts")
+<script>
+// Format currency Rupiah
                 function formatRupiah(angka) {
                     var number_string = angka.replace(/[^,\d]/g, '').toString(),
                         split = number_string.split(','),
@@ -173,54 +209,8 @@
                         amountRaw.value = '';
                     }
                 });
-            </script>
 
-         <div class="form-group">
-    <label for="method">Withdrawal Method</label>
-    <input
-        type="text"
-        id="method"
-        name="method"
-        class="form-control"
-        value="{{ old('method', $payoutDetail->method_type ?? '-') }}"
-        readonly
-        style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;"
-    >
-</div>
-
-
-           <div class="form-group" id="account-detail-group">
-    <label for="account_detail">Account Number / Phone Number</label>
-    <input
-        type="text"
-        id="account_detail"
-        name="account_detail"
-        class="form-control"
-        placeholder="Enter account number or phone number"
-        style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;"
-        value="{{ old('account_detail', $payoutDetail->account_number ?? '') }}"
-        readonly
-        required
-    >
-</div>
-
-
-            <input type="hidden" id="account_name_hidden" name="account_name" value="{{ old('account_name', $payoutDetail->account_name ?? '') }}">
-
-            <div class="form-group" id="bank_name_group" style="display: none;">
-                <label for="bank_name">Bank Name</label>
-                <input type="text" id="bank_name" name="bank_name" class="form-control" value="{{ old('bank_name', $payoutDetail->bank_name ?? '') }}" placeholder="e.g., Bank BJB">
-            </div>
-
-            <div class="form-actions">
-                <button type="submit">Withdraw Now</button>
-                <button type="button" onclick="window.history.back()" class="btn-cancel">Cancel</button>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
             const methodSelect = document.getElementById('method');
             const bankNameGroup = document.getElementById('bank_name_group');
             const bankNameInput = document.getElementById('bank_name');
@@ -241,6 +231,5 @@
             // Add event listener for changes
             methodSelect.addEventListener('change', toggleBankNameField);
         });
-    </script>
-</body>
-</html> 
+</script>
+@endpush

@@ -74,7 +74,7 @@ if ($request->has('delete_profile_image') && $request->delete_profile_image == 1
         $appearance->name = $request->name;
         $appearance->bio = $request->bio;
         $appearance->theme_color = $request->theme_color;
-        $appearance->background_color = $request->background_color;
+        $appearance->background_color = $request->background_color ?? '#FFFFFF';
         $appearance->instagram = $request->instagram;
         $appearance->tiktok = $request->tiktok;
         $appearance->whatsapp = $request->whatsapp;

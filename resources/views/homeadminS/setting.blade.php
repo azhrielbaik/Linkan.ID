@@ -1,39 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-        }
+@section("page_title", "Settings")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-        }
-
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
+@push("styles")
+<style>
+.header h1 {
             font-size: 24px;
             color: #333;
         }
@@ -87,16 +58,11 @@
                 margin-left: 0;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
+</style>
+@endpush
 
-        <div class="main-content">
-            <div class="header">
-                <h1>Settings</h1>
-            </div>
+@section("content")
+
 
             <div class="settings-card" onclick="window.location.href='{{ route('account.settings') }}'">
                 <div class="settings-card-icon">
@@ -118,7 +84,5 @@
                 </div>
             </div>
             </div>
-        </div>
-    </div>
-</body>
-</html>
+@endsection
+

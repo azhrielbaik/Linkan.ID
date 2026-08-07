@@ -504,7 +504,7 @@ tr:not(:last-child) {
                         data-title="{{ strtolower($product->title) }}"
                         >
                         <td>{{ $index + 1 }}.</td>
-                        <td>{{ $product->user->name }}</td>
+                        <td>{{ $product->user->name ?? 'Unknown User' }}</td>
                         <td>
                             <div class="content-preview">
                                 @if($product->image)

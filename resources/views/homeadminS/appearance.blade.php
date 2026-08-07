@@ -1,38 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appearance - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-        }
-        .container {
-    display: flex;
-    min-height: 100vh;
-    overflow: hidden;
-}
+@section("page_title", "Appearance")
 
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-            margin-right: 440px; /* Lebar preview + jarak */
-        }
+@push("styles")
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+@endpush
 
-        .url-section {
+@push("styles")
+<style>
+.url-section {
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -427,15 +403,11 @@
         margin-left: 0;
     }
 }
+</style>
+@endpush
 
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
-
-        <div class="main-content">
-            <form method="POST" action="{{ route('appearance.update') }}" enctype="multipart/form-data" id="appearanceForm">
+@section("content")
+<form method="POST" action="{{ route('appearance.update') }}" enctype="multipart/form-data" id="appearanceForm">
             @csrf
             <div class="content-section">
                 <div class="left-panel">
@@ -677,8 +649,13 @@
                       </div>
                   </div>
               </div>
-        </div>
-    </div>
+@endsection
+
+@push("scripts")
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+@endpush
+
+@push("scripts")
 <script>
 // Semua script dalam satu blok DOMContentLoaded
 
@@ -946,6 +923,4 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 });
 </script>
-
-</body>
-</html>
+@endpush

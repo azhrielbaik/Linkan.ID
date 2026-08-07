@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('theme_color')->default('#000000');
             $table->string('font_family')->default('Arial');
             $table->string('background_color')->default('#FFFFFF');
+            $table->string('instagram')->nullable();
+            $table->string('tiktok')->nullable();
+            $table->string('whatsapp')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

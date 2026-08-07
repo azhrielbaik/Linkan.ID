@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Shortlink;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ShortlinkAnalyticsTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_shortlink_redirect_records_a_click_with_source_details(): void
     {
@@ -72,15 +72,14 @@ class ShortlinkAnalyticsTest extends TestCase
         $this->withHeader('Referer', 'https://google.com/search?q=owner')
             ->get('/owner-link');
         $this->get('/other-link');
-
-        $response = $this->actingAs($owner)->get('/shortlink');
+        $response = $this->actingAs($owner)->get(route('shortlink.index'));
 
         $response->assertOk();
         $response->assertSee('owner-link');
         $response->assertSee('2');
         $response->assertDontSee('instagram');
         $response->assertDontSee('google.com');
-        $response->assertSee('Lihat Analitik');
+        $response->assertSee('Analitik');
         $response->assertDontSee('other-link');
     }
 

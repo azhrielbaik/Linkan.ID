@@ -27,6 +27,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// Route for changing language
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 // Route untuk tracking link (harus di atas route lain yang menggunakan parameter)
 Route::get('/linkan.id/{username}', [PublicPageController::class, 'show'])->name('track.view');
 Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
@@ -39,11 +47,9 @@ Route::get('/test-email', function () {
 });
 
 // Auth Routes
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit')->middleware('throttle:5,1');
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -57,7 +63,7 @@ Route::get('login/google/callback', [GoogleLoginController::class, 'handleGoogle
 // Halaman Statis
 Route::view('/pricing', 'pricing')->name('pricing');
 Route::view('/service', 'service')->name('service');
-Route::view('/faq', 'FAQ')->name('FAQ');
+Route::view('/faq', 'faq')->name('FAQ');
 Route::view('/about', 'about')->name('about');
 
 // Dashboard (middleware auth jika diperlukan)
@@ -119,10 +125,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/midtrans-callback', [DigitalProductController::class, 'midtransCallback'])->name('digital-product.midtrans-callback');
     });
 
-    Route::get('/shortlink', [ShortlinkController::class, 'index'])->name('shortlink.index');
-    Route::get('/shortlink/{shortlink}/analytics', [ShortlinkController::class, 'analytics'])->name('shortlink.analytics');
-    Route::get('/shortlink/{shortlink}/analytics/chart', [ShortlinkController::class, 'analyticsChart'])->name('shortlink.analytics.chart');
-    Route::post('/shorten', [ShortlinkController::class, 'store']);
+    Route::get('/homeadminS/shortlink', [ShortlinkController::class, 'index'])->name('shortlink.index');
+    Route::post('/homeadminS/shorten', [ShortlinkController::class, 'store'])->name('shortlink.store');
+    Route::put('/homeadminS/shortlink/{shortlink}', [ShortlinkController::class, 'update'])->name('shortlink.update');
+    Route::get('/homeadminS/shortlink/{shortlink}/analytics', [ShortlinkController::class, 'analytics'])->name('shortlink.analytics');
+    Route::get('/homeadminS/shortlink/{shortlink}/analytics/chart', [ShortlinkController::class, 'analyticsChart'])->name('shortlink.analytics.chart');
 });
 
 // Route lain yang tidak perlu auth
@@ -143,6 +150,10 @@ Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty'])-
 
 // Checkout
 Route::match(['get', 'post'], '/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
+
+// Password Protected Shortlink
+Route::get('/p/{slug}', [ShortlinkController::class, 'passwordForm'])->name('shortlink.password.form');
+Route::post('/p/{slug}', [ShortlinkController::class, 'verifyPassword'])->name('shortlink.password.verify');
 
 // Redirect berdasarkan slug (HARUS PALING BAWAH supaya tidak override route lain)
 Route::get('/{slug}', [ShortlinkController::class, 'redirect']);

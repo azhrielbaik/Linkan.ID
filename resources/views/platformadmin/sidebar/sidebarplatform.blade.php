@@ -46,7 +46,7 @@
 
 </style>
 <div class="sidebar">
-    <img src="{{ asset('images/logo.png') }}" alt="Linkan Logo" class="logo">
+    <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo">
     <a href="{{ route('beranda.platformadmin') }}" class="{{ request()->routeIs('beranda.platformadmin') ? 'active' : '' }}">
         <i class="fas fa-home"></i>Home
     </a>
@@ -56,12 +56,13 @@
     <hr>
 
     <div class="marketing-tools">
-        <a href="{{ route('welcome') }}">
-            <span style="display: flex; align-items: center;">
+        <form action="{{ route('logout') }}" method="POST" style="display: flex; align-items: center;">
+            @csrf
+            <button type="submit" style="background: none; border: none; padding: 10px; margin: 0; display: flex; align-items: center; color: #1a1a1a; cursor: pointer; width: 100%; transition: 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#d1d9ff'" onmouseout="this.style.backgroundColor='transparent'">
                 <img src="{{ asset('images/logout.png') }}" alt="Logout" style="width: 20px; height: 20px; margin-right: 10px;">
                 LogOut
-            </span>
-        </a>
+            </button>
+        </form>
     </div>
 </div>
 

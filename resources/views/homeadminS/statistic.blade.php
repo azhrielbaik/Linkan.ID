@@ -1,43 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistic - Dashboard</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-        }
+@section("page_title", "Statistic")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 25px 30px;
-            margin-left: 250px;
-            background-color: #f5f6fa;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
+@push("styles")
+<style>
+.header h1 {
             font-size: 26px;
             font-weight: bold;
             color: #000;
@@ -111,16 +78,11 @@
                 margin-left: 0;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
-        
-        <div class="main-content">
-            <div class="header">
-                <h1>Statistic</h1>
-            </div>
+</style>
+@endpush
+
+@section("content")
+
 
             <!-- Grafik Total Clicks & Views -->
             <div class="stats-section">
@@ -160,12 +122,15 @@
                     <canvas id="statsChart2"></canvas>
                 </div>
             </div>
-        </div>
-    </div>
+@endsection
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        let chart1, chart2;
+@push("scripts")
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endpush
+
+@push("scripts")
+<script>
+let chart1, chart2;
         let startDate1 = null, endDate1 = null;
         let startDate2 = null, endDate2 = null;
 
@@ -339,6 +304,5 @@
             updateChart1();
             updateChart2();
         });
-    </script>
-</body>
-</html> 
+</script>
+@endpush

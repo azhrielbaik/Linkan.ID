@@ -331,7 +331,7 @@
     <nav class="navbar">
         <div class="logo">
             <a href="{{ url('/') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Linkan Logo" id="logo">
+                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo">
             </a>
         </div>
     </nav>

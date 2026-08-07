@@ -79,7 +79,7 @@
             }
 
             .logo img {
-                height: 40px;
+                height: 80px;
                 width: auto;
                 transition: transform 0.3s ease;
                 filter: none;
@@ -325,13 +325,13 @@
                     transform: translateY(0px);
                 }
             }
-        </style>
+        </style>    
 </head>
 <body>
     <nav class="navbar">
     <div class="logo">
             <a href="{{ url('/') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Linkan Logo" id="logo">
+                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo">
             </a>
         </div>
     </nav>

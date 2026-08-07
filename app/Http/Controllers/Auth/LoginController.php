@@ -21,7 +21,11 @@ class LoginController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
-
+             \Log::info('Google User Data: ', [
+                'id' => $googleUser->id,
+                'name' => $googleUser->name,
+                'email' => $googleUser->email
+            ]);
             // Coba cari user berdasarkan google_id
             $user = User::where('google_id', $googleUser->id)->first();
 

@@ -4,18 +4,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 1.5rem 7%;
-            background-color: #E6F0FF;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
-            position: fixed;
+            background-color: transparent;
+            position: fixed; /* Fixed so it follows scroll */
             width: 100%;
             top: 0;
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .navbar.scrolled {
             padding: 1rem 7%;
-            background-color:#E6F0FF;
+            background: rgba(253, 251, 247, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
         .logo {
@@ -26,11 +29,11 @@
         .logo img {
             height: 40px;
             width: auto;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .logo img:hover {
-            transform: scale(1.05);
+            transform: scale(1.1) rotate(-2deg);
         }
 
         .nav-links {
@@ -41,447 +44,215 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            color: #000000;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0067D5;
+            transform: translateY(-2px);
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
             width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: #FF7733;
-            transition: width 0.3s ease;
+            height: 3px;
+            bottom: -6px;
+            left: 50%;
+            background-color: #0067D5;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 2px;
+            transform: translateX(-50%);
         }
 
         .nav-links a:hover::after {
             width: 100%;
         }
 
-        .nav-links a:hover {
-            color: #FF7733;
-        }
-
         .login {
-            color: #FF7733 !important;
-            font-weight: 600;
+            color: #000000 !important;
+            font-weight: 700;
             padding: 0.8rem 1.8rem;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .login:hover {
-            background-color: rgba(255,119,51,0.1);
-            transform: translateY(-2px);
+            background-color: rgba(0,103,213,0.1);
+            color: #0067D5 !important;
+            transform: translateY(-4px);
         }
 
         .sign-up {
-            background-color: #FF7733;
+            background: rgba(237, 132, 44, 0.9);
+            backdrop-filter: blur(10px);
             color: white !important;
             padding: 0.8rem 1.8rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,119,51,0.2);
+            border-radius: 30px;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(237, 132, 44, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         .sign-up:hover {
-            background-color: #ff6619;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255,119,51,0.3);
-        }
-
-        .hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8rem 7% 4rem;
-            gap: 4rem;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        .hero-content {
-            flex: 1;
-            max-width: 600px;
-            animation: fadeInLeft 1s ease;
-            transition: all 0.5s ease;
-        }
-
-        .hero-image {
-            flex: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            animation: fadeInRight 1s ease;
-            transition: all 0.5s ease;
-        }
-
-        .hero-content.transition {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-
-        .hero-image.transition {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-
-        .hero-title {
-            font-size: 54px;
-            color: #333;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-            font-weight: 700;
-        }
-
-        .hero-title span {
-            background: linear-gradient(120deg, #FF7733, #ff9966);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-description {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 2.5rem;
-            line-height: 1.8;
-        }
-
-        .create-section {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            position: relative;
-        }
-
-        .url-input {
-            flex: 1;
-            padding: 1.2rem;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .url-input:focus {
-            outline: none;
-            border-color: #FF7733;
-            box-shadow: 0 4px 20px rgba(255,119,51,0.1);
-        }
-
-        .create-button {
-            background: linear-gradient(135deg, #FF7733, #ff9966);
-            color: white;
-            border: none;
-            padding: 1.2rem 2.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,119,51,0.2);
-        }
-
-        .create-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255,119,51,0.3);
-            background: linear-gradient(135deg, #ff6619, #ff8c66);
-        }
-
-        .phone-mockup {
-            position: relative;
-            max-width: 400px;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .phone-mockup img {
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
-        }
-
-        .floating-elements {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-        .sign-up-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px; /* Sesuaikan jarak ke atas */
-        }
-
-        .floating-icon {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            animation: float 5s ease-in-out infinite;
-            pointer-events: auto;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-
-        .floating-icon:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-            background-color: white;
-        }
-
-        .floating-icon img {
-            width: 40px;
-            height: 40px;
-        }
-
-        .floating-icon span {
-            color: #FF7733;
-            font-weight: 600;
-            font-size: 16px;
-            white-space: nowrap;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .hero {
-                padding: 6rem 5% 3rem;
-            }
-            
-            .hero-title {
-                font-size: 44px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .floating-icon.calendar {
-                left: 1%;
-            }
-            .floating-icon.book {
-                right: 1%;
-            }
+            background: rgba(255, 49, 49, 0.95);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 49, 49, 0.4);
         }
         
+        .sign-up::after { display: none !important; }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            z-index: 1100;
+        }
+
+        .burger span {
+            height: 4px;
+            width: 100%;
+            background: #000000;
+            margin: 4px 0;
+            border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 80vw;
+                max-width: 350px;
+                background: rgba(253, 251, 247, 0.85);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 6rem 2rem 2rem;
+                z-index: 1050;
+                height: 100vh;
+                border-left: 1px solid rgba(255,255,255,0.4);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+                transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+                transform: translateX(100%);
+            }
+            .nav-links.active {
+                display: flex;
+                transform: translateX(0);
+            }
+            .burger {
+                display: flex;
+            }
             .navbar {
                 padding: 1rem 5%;
             }
 
-            .nav-links {
-                display: none;
+            .nav-links a {
+                padding: 1rem 0;
+                font-size: 18px;
+                color: #000000;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+                width: 100%;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 0.4s ease;
             }
 
-            .hero {
-                flex-direction: column;
+            .nav-links.active a {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            /* Staggered animation for nav items on mobile */
+            .nav-links.active a:nth-child(1) { transition-delay: 0.1s; }
+            .nav-links.active a:nth-child(2) { transition-delay: 0.2s; }
+            .nav-links.active a:nth-child(3) { transition-delay: 0.3s; }
+            .nav-links.active a:nth-child(4) { transition-delay: 0.4s; }
+            .nav-links.active a:nth-child(5) { transition-delay: 0.5s; }
+
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a.sign-up {
+                background: rgba(237, 132, 44, 0.9);
+                color: white !important;
+                padding: 1rem 1.5rem;
+                border-radius: 30px;
                 text-align: center;
-                padding-top: 5rem;
-                gap: 3rem;
+                margin-top: 1.5rem;
+                font-weight: 700;
+                box-shadow: 0 4px 15px rgba(237, 132, 44, 0.3);
             }
 
-            .hero-content {
-                order: 1;
-            }
-
-            .hero-image {
-                order: 2;
-                margin-top: 2rem;
-            }
-
-            .hero-title {
-                font-size: 36px;
-            }
-
-            .create-section {
-                flex-direction: column;
-            }
-
-            .floating-icon {
-                display: none;
+            .nav-links a.login {
+                color: #0067D5 !important;
+                font-weight: 700;
+                padding: 1rem 1.5rem;
+                text-align: center;
             }
         }
-/* ...existing code... */
 
-.burger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    z-index: 1100;
-}
-.burger span {
-    height: 4px;
-    width: 100%;
-    background: #FF7733;
-    margin: 4px 0;
-    border-radius: 2px;
-    transition: all 0.3s;
-}
+        .burger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+        .burger.open span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+        .burger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
 
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-        position: fixed;
-        top: 64px;
-        right: 0;
-        width: 70vw;
-        max-width: 320px;
-        background: #fff;
-        flex-direction: column;
-        gap: 0;
-        padding: 2rem 1.5rem;
-        z-index: 1050;
-        height: 100vh;
-        transition: right 0.3s;
-    }
-    .nav-links.active {
-        display: flex;
-        animation: slideInRight 0.3s;
-    }
-    .burger {
-        display: flex;
-    }
-    .navbar {
-        padding: 1rem 5%;
-    }
-}
-@media (max-width: 768px) {
-    .nav-links a {
-        padding: 1rem 0;
-        font-size: 16px;
-        color: #333;
-        font-weight: 500;
-        border-bottom: 1px solid #eee;
-        width: 100%;
-    }
-
-    .nav-links a:last-child {
-        border-bottom: none;
-    }
-
-    .nav-links a.sign-up {
-        background-color: #FF7733;
-        color: white !important;
-        padding: 0.8rem 1.5rem;
-        border-radius: 10px;
-        text-align: center;
-        margin-top: 1.5rem;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(255,119,51,0.2);
-    }
-
-    .nav-links a.login {
-        color: #FF7733 !important;
-        font-weight: 600;
-        padding: 0.8rem 1.5rem;
-        text-align: center;
-    }
-
-    .nav-links {
-        align-items: flex-start;
-        background: #E6F0FF; /* biru muda dengan transparansi */
-
-
-    }
-}
-
-.burger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-.burger.open span:nth-child(2) {
-    opacity: 0;
-}
-.burger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-@keyframes slideInRight {
-    from { right: -100vw; opacity: 0; }
-    to { right: 0; opacity: 1; }
-}
 </style>
 <nav class="navbar">
-        <div class="logo">
-            <a href="{{ url('/') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Linkan Logo" id="logo">
-            </a>
-        </div>
-          <div class="burger" id="burgerMenu">
+    <div class="logo">
+        <a href="{{ url('/') }}">
+            <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo"> 
+        </a>
+    </div>
+    <div class="burger" id="burgerMenu">
         <span></span>
         <span></span>
         <span></span>
     </div>
-        <div class="nav-links" id="navLinks">
-            <a href="{{ route('pricing') }}">Pricing</a>
-            <a href="{{ route('service') }}">Service</a>
-                <a href="{{ route('FAQ') }}">FAQ</a>
-            <a href="{{ route('login') }}">Sign In</a>
-            <a href="{{ route('register') }}" class="sign-up">SIGN UP FREE</a>
-        </div>
-    </nav>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const burger = document.getElementById('burgerMenu');
-        const navLinks = document.getElementById('navLinks');
-        burger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-            burger.classList.toggle('open');
-        });
+    <div class="nav-links" id="navLinks">
+        <a href="{{ route('pricing') }}">Pricing</a>
+        <a href="{{ route('service') }}">Service</a>
+        <a href="{{ route('FAQ') }}">FAQ</a>
+        <a href="{{ route('login') }}" class="login">Sign In</a>
+        <a href="{{ route('register') }}" class="sign-up">SIGN UP FREE</a>
+    </div>
+</nav>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const burger = document.getElementById('burgerMenu');
+    const navLinks = document.getElementById('navLinks');
+    
+    burger.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        burger.classList.toggle('open');
+    });
 
-        // Optional: close nav when link clicked (on mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', function() {
-                if(window.innerWidth <= 768){
-                    navLinks.classList.remove('active');
-                    burger.classList.remove('open');
-                }
-            });
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', function() {
+            if(window.innerWidth <= 768){
+                navLinks.classList.remove('active');
+                burger.classList.remove('open');
+            }
         });
     });
+});
 </script>

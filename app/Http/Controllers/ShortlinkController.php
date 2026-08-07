@@ -74,9 +74,40 @@ class ShortlinkController extends Controller
         return strtolower(preg_replace('/^www\./', '', $host));
     }
 
+    private function ipBreakdown(Shortlink $shortlink): array
+    {
+        return $shortlink->clicks()
+            ->select('ip_address', DB::raw('count(*) as total'))
+            ->groupBy('ip_address')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($row) => ['label' => $row->ip_address ?? 'Unknown', 'total' => (int) $row->total])
+            ->values()
+            ->all();
+    }
+
+    private function deviceBreakdown(Shortlink $shortlink): array
+    {
+        $clicks = $shortlink->clicks()->select('user_agent')->get();
+        $breakdown = ['Mobile' => 0, 'Tablet' => 0, 'Desktop' => 0];
+        
+        foreach ($clicks as $click) {
+            $type = \App\Services\DeviceDetector::detect((string) $click->user_agent);
+            if (isset($breakdown[$type])) {
+                $breakdown[$type]++;
+            }
+        }
+        
+        return [
+            ['label' => 'Mobile', 'total' => $breakdown['Mobile']],
+            ['label' => 'Tablet', 'total' => $breakdown['Tablet']],
+            ['label' => 'Desktop', 'total' => $breakdown['Desktop']],
+        ];
+    }
+
     public function create()
     {
-        return view('shortlink.create');
+        return view('homeadminS.shortlink.create');
     }
 
     public function store(Request $request)
@@ -85,12 +116,16 @@ class ShortlinkController extends Controller
         abort_unless($user, 403);
 
         $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'slug' => 'required|alpha_dash|unique:shortlinks,slug',
             'destination' => 'required|url',
         ]);
 
         Shortlink::create([
             'user_id' => $user->getKey(),
+            'title' => $request->title,
+            'description' => $request->description,
             'slug' => $request->slug,
             'destination' => $request->destination,
         ]);
@@ -104,9 +139,43 @@ class ShortlinkController extends Controller
 
     }
 
+    public function update(Request $request, Shortlink $shortlink)
+    {
+        $shortlink = $this->ownedShortlink($request, $shortlink);
+
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'slug' => 'required|alpha_dash|unique:shortlinks,slug,' . $shortlink->id,
+            'password' => 'nullable|string',
+            'expires_at' => 'nullable|date',
+        ]);
+
+        $shortlink->update([
+            'title' => $request->title,
+            'slug' => $request->slug,
+            'password' => $request->password,
+            'expires_at' => $request->expires_at,
+        ]);
+
+        return back()->with('success', 'Shortlink berhasil diperbarui.');
+    }
+
     public function redirect($slug)
     {
         $shortlink = Shortlink::where('slug', $slug)->firstOrFail();
+
+        // Check Expiration
+        if ($shortlink->expires_at && now()->greaterThan($shortlink->expires_at)) {
+            abort(410, 'Tautan ini telah kedaluwarsa.');
+        }
+
+        // Check Password
+        if ($shortlink->password) {
+            $sessionKey = 'unlocked_shortlink_' . $shortlink->id;
+            if (!session()->has($sessionKey)) {
+                return redirect()->route('shortlink.password.form', ['slug' => $slug]);
+            }
+        }
 
         ShortlinkClick::create([
             'shortlink_id' => $shortlink->id,
@@ -120,6 +189,32 @@ class ShortlinkController extends Controller
         return redirect($shortlink->destination);
     }
 
+    public function passwordForm($slug)
+    {
+        $shortlink = Shortlink::where('slug', $slug)->firstOrFail();
+        
+        // Check Expiration again
+        if ($shortlink->expires_at && now()->greaterThan($shortlink->expires_at)) {
+            abort(410, 'Tautan ini telah kedaluwarsa.');
+        }
+
+        return view('shortlink.password', compact('shortlink'));
+    }
+
+    public function verifyPassword(Request $request, $slug)
+    {
+        $shortlink = Shortlink::where('slug', $slug)->firstOrFail();
+        
+        $request->validate(['password' => 'required']);
+
+        if ($request->password === $shortlink->password) {
+            session(['unlocked_shortlink_' . $shortlink->id => true]);
+            return redirect('/' . $slug);
+        }
+
+        return back()->withErrors(['password' => 'Kata sandi salah.']);
+    }
+
     public function index()
     {
         $user = request()->user();
@@ -127,10 +222,13 @@ class ShortlinkController extends Controller
 
         $shortlinks = Shortlink::where('user_id', $user->getKey())
             ->withCount('clicks')
+            ->with(['clicks' => function ($query) {
+                $query->orderBy('created_at', 'desc')->limit(50);
+            }])
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        return view('shortlink.create', compact('shortlinks'));
+        return view('homeadminS.shortlink.create', compact('shortlinks'));
     }
 
     public function analytics(Request $request, Shortlink $shortlink)
@@ -142,7 +240,7 @@ class ShortlinkController extends Controller
         $totalClicks = $shortlink->clicks()->count();
         $sources = $this->sourceSummary($shortlink);
 
-        return view('shortlink.analytics', [
+        return view('homeadminS.shortlink.analytics', [
             'shortlink' => $shortlink,
             'totalClicks' => $totalClicks,
             'sources' => $sources,
@@ -188,6 +286,8 @@ class ShortlinkController extends Controller
             'total_clicks' => $shortlink->clicks()->count(),
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
+            'ip_breakdown' => $this->ipBreakdown($shortlink),
+            'device_breakdown' => $this->deviceBreakdown($shortlink),
         ]);
     }
 }

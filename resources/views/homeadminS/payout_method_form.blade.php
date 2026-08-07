@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set Payout Method</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .card {
+@extends("layouts.admin")
+
+@section("page_title", "Form")
+
+@push("styles")
+<style>
+.card {
             background-color: #fff;
             padding: 30px;
             border-radius: 10px;
@@ -78,10 +66,11 @@
             border-radius: 5px;
             text-align: left;
         }
-    </style>
-</head>
-<body>
-    <div class="card">
+</style>
+@endpush
+
+@section("content")
+<div class="card">
         <h2>Set Payout Method</h2>
 
         @if ($errors->any())
@@ -127,9 +116,11 @@
             </div>
         </form>
     </div>
+@endsection
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+@push("scripts")
+<script>
+document.addEventListener('DOMContentLoaded', function() {
             const methodTypeSelect = document.getElementById('method_type');
             const bankNameGroup = document.getElementById('bank_name_group');
             const bankNameInput = document.getElementById('bank_name');
@@ -150,6 +141,5 @@
             // Add event listener for changes
             methodTypeSelect.addEventListener('change', toggleBankNameField);
         });
-    </script>
-</body>
-</html> 
+</script>
+@endpush

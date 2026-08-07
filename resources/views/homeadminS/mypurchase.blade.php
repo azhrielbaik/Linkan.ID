@@ -1,56 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Purchased Content</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body { background-color: #f5f6fa; }
-        .container {
-            display: flex;
-            min-height: 100vh;
-            gap: 0;
-            padding: 0;
-        }
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            min-width: 0; /* Untuk mencegah overflow */
-            margin-left: 250px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
+@section("page_title", "My Purchases")
+
+@push("styles")
+<style>
+.header h1 {
             font-size: 24px;
             color: #333;
         }
-        .notification-icon {
-            background-color: #fff;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+        
         .notification-icon i {
             color: #333;
             font-size: 16px;
@@ -131,18 +89,11 @@
                 margin-left: 0;
             }
         }
-    </style>
-</head>
-<body>
-<div class="container">
-    @include('homeadminS.sidebar.sidebar')
-    <div class="main-content">
-        <div class="header">
-            <h1>Purchased Content</h1>
-            <div class="notification-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-        </div>
+</style>
+@endpush
+
+@section("content")
+
         <!-- Card My Linkan URL -->
         <div class="my-linkan-header">
             <div class="my-linkan-url">
@@ -188,8 +139,9 @@
                 @endforelse
             </div>
         </div>
-    </div>
-</div>
+@endsection
+
+@push("scripts")
 <script>
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
@@ -199,5 +151,4 @@ function copyToClipboard(text) {
     });
 }
 </script>
-</body>
-</html>
+@endpush

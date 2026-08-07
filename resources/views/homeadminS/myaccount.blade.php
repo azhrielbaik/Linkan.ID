@@ -1,39 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Setting</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-        }
+@section("page_title", "My Account")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-        }
-
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
+@push("styles")
+<style>
+.header h1 {
             font-size: 24px;
             color: #333;
         }
@@ -169,18 +140,11 @@
                 margin-left: 0;
             }
         }
+</style>
+@endpush
 
-    </style>
-</head>
-<body>
-    
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
+@section("content")
 
-        <div class="main-content">
-            <div class="header">
-                <h1><a href="{{ route('settings') }}">Settings</a> &gt; <span>Account Settings</h1>
-            </div>
 
             @if(session('success'))
                 <div style="color: green; margin-bottom: 15px;">
@@ -255,11 +219,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+@endsection
 
-    <script>
-        // Show the popup
+@push("scripts")
+<script>
+// Show the popup
         function showPopup() {
             document.getElementById('confirmationPopup').style.display = 'block';
         }
@@ -283,6 +247,5 @@
         function closeDeletePopup() {
             document.getElementById('deleteConfirmationPopup').style.display = 'none';
         }
-    </script>
-</body>
-</html>
+</script>
+@endpush

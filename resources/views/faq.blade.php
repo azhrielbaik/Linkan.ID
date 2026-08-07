@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ - Frequently Asked Questions</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @include('layout.header')
     <style>
+        :root {
+            --brand-orange: #ED842C; /* Or #FF9040 if they prefer the peach */
+            --brand-blue: #0067D5;
+            --brand-dark: #121212;
+            --bg-body: #F8F9FA;
+            --bg-card: #FFFFFF;
+            --bg-item: #F4F6F9;
+            --bg-item-hover: #EDF1F6;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,7 +26,7 @@
         }
 
         body {
-            background-color:#e3f3f6;
+            background-color: var(--bg-body);
             overflow-x: hidden;
             padding-top: 80px;
         }
@@ -26,224 +37,246 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(240,244,255,0.8) 0%, rgba(255,255,255,0.9) 100%);
+            background: var(--bg-body);
             z-index: -1;
         }
 
-        .faq-container {
-            max-width: 800px;
-            margin: auto;
-            margin-top: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .faq-wrapper {
+            max-width: 1000px;
+            margin: 60px auto 80px;
+            background: var(--bg-card);
+            padding: 60px 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .faq-badge {
+            color: var(--brand-blue);
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .faq-header h2 {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 16px;
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.2;
+        }
+
+        .faq-header p {
+            color: #666;
+            font-size: 17px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
         .faq-item {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
+            background: var(--bg-item);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .faq-question {
-            font-weight: bold;
-            cursor: pointer;
-            padding: 10px;
+            padding: 22px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s ease;
-            position: relative;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--brand-dark);
+            user-select: none;
+            transition: background-color 0.2s ease;
         }
 
         .faq-question:hover {
-            background-color: #f5f5f5;
+            background: var(--bg-item-hover);
+        }
+
+        .faq-icon {
+            font-size: 24px;
+            color: #999;
+            font-weight: 400;
+            line-height: 1;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            color: var(--brand-orange);
+        }
+
+        .faq-item.open {
+            background: var(--bg-item);
         }
 
         .faq-answer {
-            display: none;
-            margin-top: 5px;
-            padding: 0 10px;
-            line-height: 1.6;
-            color: #666;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(-10px);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 24px;
+            background: var(--bg-item);
         }
 
-        .faq-answer.show {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+            padding: 0 24px 24px 24px;
+        }
+
+        .faq-answer p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+            margin: 0;
         }
 
         @media screen and (max-width: 768px) {
-            .faq-container {
-                margin: 20px;
-                padding: 15px;
+            .faq-wrapper {
+                margin: 40px 20px;
+                padding: 40px 20px;
+            }
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+            .faq-header h2 {
+                font-size: 32px;
             }
         }
-
-        @media screen and (max-width: 480px) {
-            .faq-question {
-                font-size: 14px;
-            }
-
-            .faq-answer {
-                font-size: 13px;
-            }
-        }
-   .faq-arrow {
-    display: inline-block;
-    margin-left: 12px;
-    width: 18px;
-    height: 18px;
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-    vertical-align: middle;
-    position: relative;
-}
-.faq-arrow::before {
-    content: '';
-    display: block;
-    width: 0.7em;
-    height: 0.7em;
-    border-right: 2.5px solid #FF7A00;
-    border-bottom: 2.5px solid #FF7A00;
-    /* Panah ke kanan (rotate 315deg) */
-    transform: rotate(315deg);
-    position: absolute;
-    left: 3px;
-    top: 2px;
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-}
-.faq-question.open .faq-arrow::before {
-    /* Panah ke bawah (rotate 45deg) */
-    transform: rotate(45deg);
-}
     </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+    
+    <div class="faq-wrapper">
+        <div class="faq-header">
+            <span class="faq-badge">FAQ</span>
+            <h2>Frequently Asked Questions</h2>
+            <p>We compiled a list of answers to address your most pressing questions regarding our Services.</p>
+        </div>
+        
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apa itu Linkan.id?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Linkan.id adalah platform link-in-bio yang membantu kreator, pebisnis, dan influencer mengelola kehadiran digital mereka dengan lebih praktis dan profesional. Platform ini memungkinkan pengguna membuat halaman bio yang berisi tautan ke media sosial, konten digital, serta layanan donasi dalam satu tempat.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apa saja fitur utama Linkan.id?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Linkan.id menyediakan berbagai fitur unggulan, di antaranya: Halaman Link-in-Bio, Penjualan Produk Digital, Layanan Donasi Online, Sistem Pembayaran Aman, Analisis Performa Penjualan, dan Kustomisasi Template.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bagaimana sistem pembayaran bekerja?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Linkan.id menggunakan payment gateway real-time, sehingga transaksi pembelian produk digital dan donasi dilakukan secara otomatis tanpa perlu konfirmasi manual.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bisa menjual produk digital?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Ya. Linkan.id memungkinkan pengguna menjual berbagai produk digital seperti e-book, e-course, template, dan konten digital lainnya secara langsung.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bagaimana sistem pembagian komisi?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Admin Platform menerima komisi sebesar 5% dari pendapatan Admin Seller, yang secara otomatis dipotong saat penarikan pendapatan dilakukan.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bisa mengelola tampilan halaman?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Ya. Linkan.id menyediakan berbagai pilihan layout dan tema yang bisa dikustomisasi agar sesuai dengan identitas atau brand pengguna.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apakah ada fitur analisis performa?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Ya. Linkan.id dilengkapi dengan fitur laporan analitik komprehensif, sehingga pengguna bisa memantau trafik, klik, sumber trafik, hingga performa penjualan.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apakah gratis?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Linkan.id menyediakan akses gratis untuk fitur dasar link-in-bio. Namun untuk akses penuh terhadap fitur premium seperti penjualan digital dan analitik mendalam, terdapat sistem pembagian komisi atau langganan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const questions = document.querySelectorAll('.faq-question');
+            const faqItems = document.querySelectorAll('.faq-item');
 
-            questions.forEach(question => {
-                const answer = question.nextElementSibling;
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', () => {
+                    const isOpen = item.classList.contains('open');
 
-                question.addEventListener('click', function() {
-                    // Cek apakah jawaban sudah terbuka
-                    const isVisible = answer.classList.contains('show');
+                    // Tutup semua yang terbuka
+                    faqItems.forEach(faq => faq.classList.remove('open'));
 
-                    // Tutup semua jawaban
-                    document.querySelectorAll('.faq-answer').forEach(a => {
-                        a.classList.remove('show');
-                    });
-
-                    // Jika jawabannya belum terbuka, tampilkan jawaban yang diklik
-                    if (!isVisible) {
-                        answer.classList.add('show');
+                    // Buka yang di-klik jika sebelumnya tidak terbuka
+                    if (!isOpen) {
+                        item.classList.add('open');
                     }
                 });
             });
         });
-        document.addEventListener('DOMContentLoaded', function() {
-    const questions = document.querySelectorAll('.faq-question');
-
-    questions.forEach(question => {
-        const answer = question.nextElementSibling;
-
-        question.addEventListener('click', function() {
-            const isVisible = answer.classList.contains('show');
-
-            // Tutup semua jawaban & reset panah
-            document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('show'));
-            document.querySelectorAll('.faq-question').forEach(q => q.classList.remove('open'));
-
-            // Jika belum terbuka, buka jawaban & putar panah
-            if (!isVisible) {
-                answer.classList.add('show');
-                question.classList.add('open');
-            }
-        });
-    });
-});
     </script>
-</head>
-<body>
-<div class="background-gradient"></div>
-    <div class="faq-container">
-        <h2 style="text-align:center;color:#FF7A00">Frequently Asked Questions</h2>
-        <div class="faq-item">
-            <p class="faq-question">1. Apa itu Linkan.id?
-                 <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Linkan.id adalah platform link-in-bio yang membantu kreator, pebisnis, dan influencer mengelola kehadiran digital mereka dengan lebih praktis dan profesional. Platform ini memungkinkan pengguna membuat halaman bio yang berisi tautan ke media sosial, konten digital, serta layanan donasi dalam satu tempat.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">2. Apa saja fitur utama yang ditawarkan oleh Linkan.id?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Linkan.id menyediakan berbagai fitur unggulan, di antaranya: Halaman Link-in-Bio, Penjualan Produk Digital, Layanan Donasi Online, Sistem Pembayaran Aman, Analisis Performa Penjualan, dan Kustomisasi Template.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">3. Bagaimana sistem pembayaran di Linkan.id bekerja?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Linkan.id menggunakan payment gateway real-time, sehingga transaksi pembelian produk digital dan donasi dilakukan secara otomatis tanpa perlu konfirmasi manual.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">4. Apakah saya bisa menjual produk digital melalui Linkan.id?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Ya. Linkan.id memungkinkan pengguna menjual berbagai produk digital seperti e-book, e-course, template, dan konten digital lainnya.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">5. Bagaimana sistem pembagian komisi di Linkan.id?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Admin Platform menerima komisi sebesar 5% dari pendapatan Admin Seller, yang secara otomatis dipotong saat penarikan pendapatan dilakukan.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">6. Apakah saya bisa mengelola tampilan halaman saya di Linkan.id?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Ya. Linkan.id menyediakan berbagai template yang bisa dikustomisasi agar sesuai dengan identitas pengguna.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">7. Apakah ada fitur analisis performa di Linkan.id?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Ya. Linkan.id dilengkapi dengan fitur laporan analisis performa penjualan, sehingga pengguna bisa memantau perkembangan bisnis mereka dan mengoptimalkan strategi pemasaran.</p>
-        </div>
-        <div class="faq-item">
-            <p class="faq-question">8. Apakah saya bisa menggunakan Linkan.id secara gratis?
-                <span class="faq-arrow"></span>
-            </p>
-            <p class="faq-answer">Linkan.id mungkin menyediakan versi gratis dengan fitur terbatas, namun untuk akses penuh terhadap fitur premium seperti penjualan digital dan laporan analitik, kemungkinan ada biaya atau sistem pembagian komisi.</p>
-        </div>
-    </div>
 </body>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const questions = document.querySelectorAll('.faq-question');
-
-    questions.forEach(question => {
-        const answer = question.nextElementSibling;
-
-        question.addEventListener('click', function() {
-            const isVisible = answer.classList.contains('show');
-
-            // Tutup semua jawaban & reset panah
-            document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('show'));
-            document.querySelectorAll('.faq-question').forEach(q => q.classList.remove('open'));
-
-            // Jika belum terbuka, buka jawaban & putar panah
-            if (!isVisible) {
-                answer.classList.add('show');
-                question.classList.add('open');
-            }
-        });
-    });
-});
-</script>
 </html>
 @include('layout.footer')

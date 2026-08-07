@@ -1,42 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payout History</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+@extends("layouts.admin")
 
-        body {
-            background-color: #f5f6fa;
-            min-height: 100vh;
-        }
+@section("page_title", "Payout History")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 25px 30px;
-            margin-left: 250px;
-            background: transparent;
-        }
-
-        .header {
-            margin-bottom: 30px;
-            animation: slideDown 0.6s ease-out;
-        }
-
-        @keyframes slideDown {
+@push("styles")
+<style>
+@keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translateY(-20px);
@@ -424,16 +392,11 @@
                 margin-left: 0;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
+</style>
+@endpush
 
-        <div class="main-content">
-            <div class="header">
-                <h1><a href="{{ route('payout.index') }}">Payout Settings</a> &gt; <span>Payout History</span></h1>
-            </div>
+@section("content")
+
 
             <div class="history-container">
                 <div class="history-header">
@@ -500,7 +463,5 @@
         <!-- Floating Action Button -->
         <div class="floating-action" onclick="window.location.href='{{ route('payout.index') }}'">
             <i class="fas fa-arrow-left"></i>
-        </div>
-    </div>
-</body>
-</html>
+@endsection
+

@@ -26,6 +26,7 @@ class PublicPageController extends Controller
 
         if (!$existing) {
             DB::table('link_views')->insert([
+                'user_id' => $user->id,
                 'link_id' => $user->username,
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,

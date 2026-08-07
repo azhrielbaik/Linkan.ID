@@ -1,31 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Digital Product - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/shared.css') }}">
-    <style>
-        body {
-            background-color: #F8F9FE;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+@extends("layouts.admin")
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
+@section("page_title", "Digital Product")
 
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            padding-left: 250px !important;
-        }
-
-        .page-header {
+@push("styles")
+<style>
+.page-header {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
@@ -337,14 +316,11 @@
             max-width: 210px;
             width: 100%;
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        @include('homeadminS.sidebar.sidebar')
+</style>
+@endpush
 
-        <div class="main-content">
-            <div class="page-header">
+@section("content")
+<div class="page-header">
                 <h1 class="page-title">Add Digital Product</h1>
             </div>
 
@@ -478,11 +454,11 @@
                     <button type="submit" class="add-product-button">Add Product</button>
                 </div>
             </form>
-        </div>
-    </div>
+@endsection
 
-    <script>
-        // Format currency Rupiah
+@push("scripts")
+<script>
+// Format currency Rupiah
         function formatRupiah(angka) {
             var number_string = angka.replace(/[^,\d]/g, '').toString(),
                 split = number_string.split(','),
@@ -568,6 +544,5 @@
                 }
             });
         });
-    </script>
-</body>
-</html>
+</script>
+@endpush

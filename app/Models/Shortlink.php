@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shortlink extends Model
 {
-    protected $fillable = ['user_id', 'slug', 'destination'];
+    protected $fillable = ['user_id', 'slug', 'destination', 'title', 'description', 'password', 'expires_at'];
 
     protected $casts = [
         'user_id' => 'integer',
+        'expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
