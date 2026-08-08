@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -279,15 +279,15 @@
     <!-- NAVBAR -->
     <div class="navbar-wrapper">
         <div class="navbar-pill">
-            <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+            <a href="<?php echo e(url('/')); ?>" class="nav-logo">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
-                <a href="{{ route('service') }}" class="nav-link active">Service</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">FAQ</a>
-                <a href="{{ route('login') }}" class="nav-link">Log In</a>
-                <a href="{{ route('register') }}" class="btn-signup">Sign Up</a>
+                <a href="<?php echo e(route('pricing')); ?>" class="nav-link">Pricing</a>
+                <a href="<?php echo e(route('service')); ?>" class="nav-link active">Service</a>
+                <a href="<?php echo e(route('FAQ')); ?>" class="nav-link">FAQ</a>
+                <a href="<?php echo e(route('login')); ?>" class="nav-link">Log In</a>
+                <a href="<?php echo e(route('register')); ?>" class="btn-signup">Sign Up</a>
             </div>
         </div>
     </div>
@@ -297,11 +297,11 @@
         <div class="hero-content">
             <h1 class="hero-title">Digital marketing for your business</h1>
             <p class="hero-description">optimize digital marketing in your business through billions of users on various effective internet marketing channels</p>
-            <a href="{{ route('register') }}" class="create-button">Get Service</a>
+            <a href="<?php echo e(route('register')); ?>" class="create-button">Get Service</a>
         </div>
         <div class="hero-image">
             <div class="phone-mockup">
-                <img src="{{ asset('images/landing page/Service.png') }}" alt="Mobile App Preview" class="floating-animation">
+                <img src="<?php echo e(asset('images/landing page/Service.png')); ?>" alt="Mobile App Preview" class="floating-animation">
             </div>
         </div>
     </main>
@@ -309,12 +309,12 @@
     <!-- FOOTER -->
     <div class="footer-wrapper">
         <div class="footer-pill">
-            <a href="{{ url('/') }}" class="footer-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+            <a href="<?php echo e(url('/')); ?>" class="footer-logo">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo">
             </a>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">About Us</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">Contact Us</a>
+                <a href="<?php echo e(route('about')); ?>" class="footer-link">About Us</a>
+                <a href="<?php echo e(route('contact.form')); ?>" class="footer-link">Contact Us</a>
             </div>
         </div>
     </div>
@@ -333,4 +333,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\user\Documents\TUGAS PKL\linkan.id\Linkan.ID\resources\views/service.blade.php ENDPATH**/ ?>

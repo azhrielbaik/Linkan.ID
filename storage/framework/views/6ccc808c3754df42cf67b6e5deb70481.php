@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -283,15 +283,15 @@
     <!-- NAVBAR -->
     <div class="navbar-wrapper">
         <div class="navbar-pill">
-            <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+            <a href="<?php echo e(url('/')); ?>" class="nav-logo">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link active">Pricing</a>
-                <a href="{{ route('service') }}" class="nav-link">Service</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">FAQ</a>
-                <a href="{{ route('login') }}" class="nav-link">Log In</a>
-                <a href="{{ route('register') }}" class="btn-signup">Sign Up</a>
+                <a href="<?php echo e(route('pricing')); ?>" class="nav-link active">Pricing</a>
+                <a href="<?php echo e(route('service')); ?>" class="nav-link">Service</a>
+                <a href="<?php echo e(route('FAQ')); ?>" class="nav-link">FAQ</a>
+                <a href="<?php echo e(route('login')); ?>" class="nav-link">Log In</a>
+                <a href="<?php echo e(route('register')); ?>" class="btn-signup">Sign Up</a>
             </div>
         </div>
     </div>
@@ -307,7 +307,7 @@
                 <span class="price-period">Forever</span>
             </div>
 
-            <a href="{{ route('register') }}" class="btn-get-started">Get Started</a>
+            <a href="<?php echo e(route('register')); ?>" class="btn-get-started">Get Started</a>
 
             <h3 class="features-title">Everything in Free :</h3>
 
@@ -399,14 +399,14 @@
     <!-- FOOTER -->
     <div class="footer-wrapper">
         <div class="footer-pill">
-            <a href="{{ url('/') }}" class="footer-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+            <a href="<?php echo e(url('/')); ?>" class="footer-logo">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo">
             </a>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">About Us</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">Contact Us</a>
+                <a href="<?php echo e(route('about')); ?>" class="footer-link">About Us</a>
+                <a href="<?php echo e(route('contact.form')); ?>" class="footer-link">Contact Us</a>
             </div>
         </div>
     </div>
 </body>
-</html>
+</html><?php /**PATH C:\Users\user\Documents\TUGAS PKL\linkan.id\Linkan.ID\resources\views/pricing.blade.php ENDPATH**/ ?>

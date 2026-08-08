@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -278,47 +278,55 @@
         <div class="form-side">
             <div class="form-wrapper">
                 <div class="logo-container">
-                    <a href="{{ url('/') }}">
-                        <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+                    <a href="<?php echo e(url('/')); ?>">
+                        <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo">
                     </a>
                 </div>
 
                 <h2 class="title">Selamat Datang Kembali</h2>
                 <p class="subtitle">Masuk ke Linkan anda</p>
 
-                @if(session('success'))
+                <?php if(session('success')): ?>
                     <div class="success-message">
-                        {{ session('success') }}
-                    </div>
-                @endif
+                        <?php echo e(session('success')); ?>
 
-                <form method="POST" action="{{ route('login.submit') }}" class="login-form">
-                    @csrf
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="<?php echo e(route('login.submit')); ?>" class="login-form">
+                    <?php echo csrf_field(); ?>
                     <div class="form-input-group">
-                        <input type="email" id="email" name="email" placeholder="Email atau Username" value="{{ old('email') }}" required autocomplete="email">
+                        <input type="email" id="email" name="email" placeholder="Email atau Username" value="<?php echo e(old('email')); ?>" required autocomplete="email">
                     </div>
 
                     <div class="form-input-group">
                         <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
                     </div>
 
-                    @error('email')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
+                    <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <div class="error-message"><?php echo e($message); ?></div>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
 
                     <button type="submit" class="btn-submit">Masuk</button>
                 </form>
 
                 <div class="auth-divider">ATAU</div>
 
-                <a href="{{ url('/login/google') }}" class="btn-google">
-                    <img src="{{ asset('images/google.png') }}" alt="Google Logo">
+                <a href="<?php echo e(url('/login/google')); ?>" class="btn-google">
+                    <img src="<?php echo e(asset('images/google.png')); ?>" alt="Google Logo">
                     Login dengan google
                 </a>
 
                 <div class="links-container">
-                    <a href="{{ route('password.request') }}" class="link-item">Lupa kata sandi?</a>
-                    <a href="{{ route('register') }}" class="link-item">belum memiliki akun? daftar</a>
+                    <a href="<?php echo e(route('password.request')); ?>" class="link-item">Lupa kata sandi?</a>
+                    <a href="<?php echo e(route('register')); ?>" class="link-item">belum memiliki akun? daftar</a>
                 </div>
             </div>
         </div>
@@ -326,7 +334,7 @@
         <!-- Right side: Image Showcase -->
         <div class="mockup-side">
             <div class="mockup-wrapper">
-                <img src="{{ asset('images/login/Group 18.png') }}" alt="Login Showcase" class="mockup-image floating-animation">
+                <img src="<?php echo e(asset('images/login/Group 18.png')); ?>" alt="Login Showcase" class="mockup-image floating-animation">
             </div>
         </div>
     </div>
@@ -347,3 +355,4 @@
     </script>
 </body>
 </html>
+<?php /**PATH C:\Users\user\Documents\TUGAS PKL\linkan.id\Linkan.ID\resources\views/login.blade.php ENDPATH**/ ?>

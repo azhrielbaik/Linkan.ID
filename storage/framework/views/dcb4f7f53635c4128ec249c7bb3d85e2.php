@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Linkan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -231,31 +231,32 @@
             <div class="form-wrapper">
                 <h2 class="title">Buat Akun Anda</h2>
 
-                @if(session('error'))
+                <?php if(session('error')): ?>
                     <div class="error-message" style="margin-bottom: 20px;">
-                        {{ session('error') }}
-                    </div>
-                @endif
+                        <?php echo e(session('error')); ?>
 
-                <form method="POST" action="{{ route('register.submit') }}" class="login-form">
-                    @csrf
-                    @if(isset($googleData))
-                        <input type="hidden" name="google_id" value="{{ $googleData['google_id'] }}">
-                    @endif
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="<?php echo e(route('register.submit')); ?>" class="login-form">
+                    <?php echo csrf_field(); ?>
+                    <?php if(isset($googleData)): ?>
+                        <input type="hidden" name="google_id" value="<?php echo e($googleData['google_id']); ?>">
+                    <?php endif; ?>
 
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" placeholder="Enter your full name" value="{{ $googleData['name'] ?? old('name') }}" required>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" value="<?php echo e($googleData['name'] ?? old('name')); ?>" required>
                     </div>
 
                     <div class="form-group">
                         <label for="username">User Name</label>
-                        <input type="text" id="username" name="username" placeholder="Choose your username" value="{{ old('username') }}" required>
+                        <input type="text" id="username" name="username" placeholder="Choose your username" value="<?php echo e(old('username')); ?>" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Example@gmail.com" value="{{ $googleData['email'] ?? old('email') }}" required autocomplete="email">
+                        <input type="email" id="email" name="email" placeholder="Example@gmail.com" value="<?php echo e($googleData['email'] ?? old('email')); ?>" required autocomplete="email">
                     </div>
 
                     <div class="form-group">
@@ -268,24 +269,52 @@
                         <input type="password" id="password_confirmation" name="password_confirmation" placeholder="••••••••" required>
                     </div>
 
-                    @error('name')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                    @error('username')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                    @error('email')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                    @error('password')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
+                    <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <div class="error-message"><?php echo e($message); ?></div>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <div class="error-message"><?php echo e($message); ?></div>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <div class="error-message"><?php echo e($message); ?></div>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <div class="error-message"><?php echo e($message); ?></div>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
 
                     <button type="submit" class="btn-register">Create Account</button>
                 </form>
 
                 <div class="login-link">
-                    Already have an account? <a href="{{ route('login') }}">Sign in</a>
+                    Already have an account? <a href="<?php echo e(route('login')); ?>">Sign in</a>
                 </div>
             </div>
         </div>
@@ -293,10 +322,10 @@
         <!-- Right side: Welcome Info -->
         <div class="info-side">
             <h2 class="welcome-text">Selamat datang di</h2>
-            <img src="{{ asset('images/favicon.png') }}" alt="Linkan Icon" class="logo-icon">
+            <img src="<?php echo e(asset('images/favicon.png')); ?>" alt="Linkan Icon" class="logo-icon">
             <h3 class="brand-name">Linkan</h3>
             <p class="brand-desc">Join the vibrant creators economy. set up your fluid microsited, sell digital products dan receive donatios instantly</p>
         </div>
     </div>
 </body>
-</html>
+</html><?php /**PATH C:\Users\user\Documents\TUGAS PKL\linkan.id\Linkan.ID\resources\views/register.blade.php ENDPATH**/ ?>
