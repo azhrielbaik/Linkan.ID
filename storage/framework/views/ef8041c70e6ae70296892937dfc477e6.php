@@ -446,67 +446,133 @@
         flex: 1;
     }
 
-    /* SUCCESS TOAST */
-    .success-card {
+    /* LOTTIE SUCCESS MODAL */
+    .success-card-overlay {
         position: fixed;
-        bottom: 30px;
-        right: 30px;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        animation: fadeInOverlay 0.3s ease forwards;
+        padding: 20px;
+    }
+    
+    @keyframes fadeInOverlay {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .success-card {
         background: #fff;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        border-left: 6px solid #2ecc40;
+        border-radius: 28px;
+        padding: 40px 30px 30px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 16px;
-        z-index: 9999;
-        max-width: 400px;
-        animation: slideInToast 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        width: 100%;
+        max-width: 440px;
+        text-align: center;
+        position: relative;
+        animation: popInCard 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popInCard {
+        from { transform: scale(0.8) translateY(20px); opacity: 0; }
+        to { transform: scale(1) translateY(0); opacity: 1; }
     }
 
     .success-card.hiding {
-        animation: slideOutToast 0.4s ease forwards;
+        animation: popOutCard 0.4s ease forwards;
+    }
+    .success-card-overlay.hiding {
+        animation: fadeOutOverlay 0.4s ease forwards;
     }
 
-    @keyframes slideInToast {
-        from { transform: translateX(120%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+    @keyframes popOutCard {
+        from { transform: scale(1); opacity: 1; }
+        to { transform: scale(0.9); opacity: 0; }
     }
-    
-    @keyframes slideOutToast {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(120%); opacity: 0; }
-    }
-    .success-card-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        position: relative;
+    @keyframes fadeOutOverlay {
+        from { opacity: 1; }
+        to { opacity: 0; }
     }
     .success-card-close {
         position: absolute;
-        top: -10px;
-        right: -10px;
-        background: none;
+        top: 20px;
+        right: 20px;
+        background: #f5f5f5;
         border: none;
-        font-size: 18px;
-        color: #999;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #666;
         cursor: pointer;
+        transition: all 0.2s;
     }
-    .success-card-close:hover { color: #333; }
-    .success-card-header .icon {
-        width: 40px; height: 40px; border-radius: 50%; background: #2ecc40; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px;
+    .success-card-close:hover {
+        background: #e0e0e0;
+        color: #111;
+        transform: rotate(90deg);
     }
-    .success-card-header h3 { margin: 0; color: #2ecc40; }
+
+    .success-card h3 {
+        margin: 0;
+        color: #111;
+        font-size: 24px;
+        font-weight: 800;
+    }
+    
     .shortlink-display {
         display: flex;
-        gap: 12px;
+        gap: 10px;
+        width: 100%;
+        margin-top: 10px;
     }
     .shortlink-display input {
-        flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; background: #f9f9f9;
+        flex: 1; 
+        padding: 16px; 
+        border: 2px solid #eaeaea; 
+        border-radius: 14px; 
+        font-weight: 600; 
+        background: #fafafa; 
+        font-size: 15px; 
+        color: #111; 
+        outline: none; 
+        text-align: center;
+        transition: border-color 0.2s;
+    }
+    .shortlink-display input:focus {
+        border-color: #0067D5;
     }
     .shortlink-display button {
-        padding: 12px 20px; background: #2ecc40; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+        padding: 16px 24px; 
+        background: #0067D5; 
+        color: #fff; 
+        border: none; 
+        border-radius: 14px; 
+        font-weight: 700; 
+        font-size: 15px; 
+        cursor: pointer; 
+        transition: background 0.2s, transform 0.1s; 
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .shortlink-display button:hover {
+        background: #0056b3;
+    }
+    .shortlink-display button:active {
+        transform: scale(0.96);
     }
     
     /* PAGINATION FIX & ANIMATION */
@@ -917,50 +983,53 @@
         /* Show Performance Card (graphic) on mobile, style edge-to-edge, flat merge with divider */
         .left-col > .card.performance-card {
             display: block !important;
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             background: #fff !important;
         }
 
         /* Collapsible Creation Form on Mobile as a distinct card container */
         .mobile-form-collapse-header {
-            margin: 16px 16px 0 16px !important;
-            border-radius: 12px !important;
-            border: 1px solid #e2e8f0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
             background: #fff !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
         }
         .mobile-form-collapse.is-open .mobile-form-collapse-header {
-            margin-bottom: 0 !important;
-            border-radius: 12px 12px 0 0 !important;
-            border: 1px solid #e2e8f0 !important;
+            margin: 0 -16px !important; /* Pastikan state open juga mepet */
+            border-radius: 0 !important;
+            border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             background: #fbfbfc !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
         }
         .mobile-form-collapse-body > form > .card {
-            margin: 0 16px 16px 16px !important;
-            border-radius: 0 0 12px 12px !important;
-            border: 1px solid #e2e8f0 !important;
-            border-top: none !important;
+            margin: 0 -16px !important; /* Tarik card ujung layar */
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
         }
 
         /* Unified Container layout for search card and engagement card, flat merge with divider */
         .left-col > .card.search-filter-card {
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             background: #fff !important;
         }
         .dashboard-wrapper > .card.engagement-card {
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik list ke ujung layar menutupi padding content-wrapper */
             border-radius: 0 !important;
             border: none !important;
             box-shadow: none !important;
@@ -1019,7 +1088,7 @@
         .mobile-list-subheader {
             display: flex;
             justify-content: space-between;
-            padding: 12px 20px;
+            padding: 12px 10px; /* Tipis di pinggir */
             background: #f9f9fb;
             border-top: 1px solid #e2e8f0;
             border-bottom: 1px solid #e2e8f0;
@@ -1045,7 +1114,7 @@
             flex-direction: row !important;
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             border: none !important;
             border-bottom: 1px dashed #e2e8f0 !important;
             box-shadow: none !important;
@@ -1126,7 +1195,7 @@
         
         /* Pagination Container on mobile */
         .dashboard-wrapper > .card.engagement-card > div:last-child {
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             border-top: 1px solid #e2e8f0;
             margin-top: 0 !important;
         }
@@ -1141,15 +1210,22 @@
 
 
     <?php if(session('success')): ?>
-        <div class="success-card" id="successToast">
-            <div class="success-card-header">
-                <div class="icon"><i class="fas fa-check"></i></div>
-                <h3 style="font-size: 16px;"><?php echo e(__('shortlink.saved_successfully')); ?></h3>
+        <div class="success-card-overlay" id="successOverlay">
+            <div class="success-card" id="successToast">
                 <button class="success-card-close" onclick="closeToast()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="shortlink-display">
-                <input type="text" id="shortlinkInput" value="<?php echo e(session('success')); ?>" readonly>
-                <button class="btn-copy" onclick="copyToClipboard()"><i class="fas fa-copy"></i> <?php echo e(__('shortlink.copy')); ?></button>
+                
+                <dotlottie-wc src="https://lottie.host/5d51f8d8-3e8d-4466-9fa3-03a220ba6911/K5POZcWmAX.lottie" style="width: 200px; height: 200px;" autoplay loop></dotlottie-wc>
+                
+                <h3><?php echo e(__('shortlink.saved_successfully')); ?></h3>
+                <p style="color: #666; font-size: 15px; margin: 0;">Link telah berhasil dibuat dan siap untuk dibagikan.</p>
+                
+                <div class="shortlink-display">
+                    <input type="text" id="shortlinkInput" value="<?php echo e(session('success')); ?>" readonly>
+                    <button class="btn-copy" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> <?php echo e(__('shortlink.copy')); ?>
+
+                    </button>
+                </div>
             </div>
         </div>
     <?php endif; ?>
@@ -1564,6 +1640,7 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush("scripts"); ?>
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.4/dist/dotlottie-wc.js" type="module"></script>
 <script>
     function toggleSection(mode) {
         const viewSec = document.getElementById('panel-view-section');
@@ -1595,11 +1672,17 @@ unset($__errorArgs, $__bag); ?>
 
     function closeToast() {
         const toast = document.getElementById('successToast');
-        if (toast) {
-            toast.classList.add('hiding');
+        const overlay = document.getElementById('successOverlay');
+        if (toast) toast.classList.add('hiding');
+        if (overlay) {
+            overlay.classList.add('hiding');
+            setTimeout(() => {
+                overlay.remove();
+            }, 400); // Wait for animation to finish
+        } else if (toast) {
             setTimeout(() => {
                 toast.remove();
-            }, 400); // Wait for animation to finish
+            }, 400);
         }
     }
 

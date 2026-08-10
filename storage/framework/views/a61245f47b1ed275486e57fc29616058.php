@@ -102,6 +102,7 @@
             cursor: pointer;
             padding-left: 24px;
             border-left: 1px solid #eaeaea;
+            position: relative;
         }
 
         .top-avatar {
@@ -144,6 +145,54 @@
             margin-right: 15px;
         }
 
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: 0;
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            width: 180px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            padding: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: flex;
+        }
+
+        .profile-dropdown a {
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #181818;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .profile-dropdown a i {
+            color: #666;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+
+        .profile-dropdown a:hover {
+            background: #FFF0E5;
+            color: #FF9040;
+        }
+
+        .profile-dropdown a:hover i {
+            color: #FF9040;
+        }
+
         @media (max-width: 1200px) {
             .content-wrapper {
                 padding: 20px;
@@ -160,12 +209,44 @@
         }
 
         @media (max-width: 600px) {
-            .header { padding: 16px; }
-            .top-user-name, .top-profile-arrow { display: none; }
-            .top-profile { padding-left: 12px; gap: 8px; }
-            .header h1 { font-size: 16px; }
+            .header { 
+                padding: 12px 16px !important; 
+            }
+            .header-left {
+                gap: 12px;
+            }
+            .hamburger-menu {
+                margin-right: 0 !important;
+                font-size: 22px;
+            }
+            .header h1 { 
+                font-size: 15px !important; 
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 110px;
+            }
+            .header-right { 
+                gap: 12px !important; 
+            }
+            .header-actions {
+                gap: 12px !important;
+            }
+            .action-icon {
+                font-size: 18px !important;
+            }
+            .top-profile { 
+                padding-left: 12px !important; 
+                gap: 0 !important; 
+                border-left: 1px solid #eaeaea !important;
+            }
+            .top-user-name, .top-profile-arrow { display: none !important; }
+            .top-avatar {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 12px !important;
+            }
             .content-wrapper { padding: 16px; }
-            .header-right { gap: 16px; }
         }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -197,7 +278,7 @@
                         <a href="#" class="action-icon"><i class="far fa-bell"></i></a>
                     </div>
                     
-                    <div class="top-profile">
+                    <div class="top-profile" onclick="toggleProfileDropdown()">
                         <?php
                             $name = Auth::check() ? Auth::user()->name : 'User';
                             $initials = strtoupper(substr($name, 0, 2));
@@ -209,6 +290,23 @@
                         <div class="top-user-info">
                             <span class="top-user-name"><?php echo e($name); ?></span>
                             <i class="fas fa-caret-down top-profile-arrow"></i>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="<?php echo e(route('admin.account')); ?>">
+                                <i class="fas fa-user-circle"></i> Profile
+                            </a>
+                            <a href="<?php echo e(route('admin.settings')); ?>">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <!-- Logout uses a form, so we create a simple button looking like a link -->
+                            <form action="<?php echo e(route('logout')); ?>" method="POST" style="margin: 0; padding: 0;">
+                                <?php echo csrf_field(); ?>
+                                <button type="submit" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 10px 14px; font-size: 14px; font-weight: 600; color: #E53935; display: flex; align-items: center; gap: 12px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='transparent'">
+                                    <i class="fas fa-sign-out-alt" style="color: #E53935;"></i> Logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -227,6 +325,22 @@
                 sidebar.classList.toggle('show');
             }
         }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const profile = document.querySelector('.top-profile');
+            const dropdown = document.getElementById('profileDropdown');
+            if (profile && dropdown && !profile.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
     </script>
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>

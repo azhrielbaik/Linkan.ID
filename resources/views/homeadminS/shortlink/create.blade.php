@@ -919,50 +919,53 @@
         /* Show Performance Card (graphic) on mobile, style edge-to-edge, flat merge with divider */
         .left-col > .card.performance-card {
             display: block !important;
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             background: #fff !important;
         }
 
         /* Collapsible Creation Form on Mobile as a distinct card container */
         .mobile-form-collapse-header {
-            margin: 16px 16px 0 16px !important;
-            border-radius: 12px !important;
-            border: 1px solid #e2e8f0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
             background: #fff !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
         }
         .mobile-form-collapse.is-open .mobile-form-collapse-header {
-            margin-bottom: 0 !important;
-            border-radius: 12px 12px 0 0 !important;
-            border: 1px solid #e2e8f0 !important;
+            margin: 0 -16px !important; /* Pastikan state open juga mepet */
+            border-radius: 0 !important;
+            border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             background: #fbfbfc !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
         }
         .mobile-form-collapse-body > form > .card {
-            margin: 0 16px 16px 16px !important;
-            border-radius: 0 0 12px 12px !important;
-            border: 1px solid #e2e8f0 !important;
-            border-top: none !important;
+            margin: 0 -16px !important; /* Tarik card ujung layar */
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
         }
 
         /* Unified Container layout for search card and engagement card, flat merge with divider */
         .left-col > .card.search-filter-card {
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik ujung layar */
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: none !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             background: #fff !important;
         }
         .dashboard-wrapper > .card.engagement-card {
-            margin: 0 !important;
+            margin: 0 -16px !important; /* Tarik list ke ujung layar menutupi padding content-wrapper */
             border-radius: 0 !important;
             border: none !important;
             box-shadow: none !important;
@@ -1021,7 +1024,7 @@
         .mobile-list-subheader {
             display: flex;
             justify-content: space-between;
-            padding: 12px 20px;
+            padding: 12px 10px; /* Tipis di pinggir */
             background: #f9f9fb;
             border-top: 1px solid #e2e8f0;
             border-bottom: 1px solid #e2e8f0;
@@ -1047,7 +1050,7 @@
             flex-direction: row !important;
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             border: none !important;
             border-bottom: 1px dashed #e2e8f0 !important;
             box-shadow: none !important;
@@ -1128,7 +1131,7 @@
         
         /* Pagination Container on mobile */
         .dashboard-wrapper > .card.engagement-card > div:last-child {
-            padding: 16px 20px !important;
+            padding: 16px 10px !important; /* Tipis di pinggir */
             border-top: 1px solid #e2e8f0;
             margin-top: 0 !important;
         }

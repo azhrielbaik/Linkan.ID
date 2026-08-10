@@ -161,11 +161,9 @@
     .sidebar-close {
         display: none;
         color: #1a1a1a;
-        font-size: 24px;
-        position: absolute;
-        top: 20px;
-        right: 20px;
+        font-size: 22px; /* Sedikit lebih kecil agar rapi */
         cursor: pointer;
+        padding: 4px;
     }
     
     @media (max-width: 900px) {
@@ -176,14 +174,15 @@
 </style>
 
 <div class="sidebar" id="sidebar">
-    <i class="fas fa-times sidebar-close" onclick="toggleSidebar()"></i>
-    
-    <div class="logo-container" style="justify-content: space-between; width: 100%;">
+    <div class="logo-container" style="justify-content: space-between; width: 100%; align-items: center;">
         <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Logo" class="logo" style="width: 100px; height: auto;">
         
-        <div class="lang-toggle">
-            <a href="<?php echo e(route('lang.switch', 'id')); ?>" class="<?php echo e(App::getLocale() == 'id' ? 'active' : ''); ?>">ID</a>
-            <a href="<?php echo e(route('lang.switch', 'en')); ?>" class="<?php echo e(App::getLocale() == 'en' ? 'active' : ''); ?>">EN</a>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="lang-toggle" style="padding: 2px;">
+                <a href="<?php echo e(route('lang.switch', 'id')); ?>" data-turbo="false" class="<?php echo e(App::getLocale() == 'id' ? 'active' : ''); ?>" style="padding: 4px 8px !important; font-size: 10px !important;">ID</a>
+                <a href="<?php echo e(route('lang.switch', 'en')); ?>" data-turbo="false" class="<?php echo e(App::getLocale() == 'en' ? 'active' : ''); ?>" style="padding: 4px 8px !important; font-size: 10px !important;">EN</a>
+            </div>
+            <i class="fas fa-times sidebar-close" onclick="toggleSidebar()"></i>
         </div>
     </div>
 
