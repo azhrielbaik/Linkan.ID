@@ -215,18 +215,37 @@ class ShortlinkController extends Controller
         return back()->withErrors(['password' => 'Kata sandi salah.']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = request()->user();
+        $user = $request->user();
         abort_unless($user, 403);
 
-        $shortlinks = Shortlink::where('user_id', $user->getKey())
+        $query = Shortlink::where('user_id', $user->getKey())
             ->withCount('clicks')
             ->with(['clicks' => function ($query) {
                 $query->orderBy('created_at', 'desc')->limit(50);
-            }])
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            }]);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%")
+                  ->orWhere('destination', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $sort = $request->input('sort', 'newest');
+        if ($sort === 'popular') {
+            $query->orderBy('clicks_count', 'desc');
+        } elseif ($sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $shortlinks = $query->paginate(6);
 
         return view('homeadminS.shortlink.create', compact('shortlinks'));
     }

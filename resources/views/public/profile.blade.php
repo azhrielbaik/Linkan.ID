@@ -232,7 +232,7 @@
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->title }}">
                                 @else
                                     <i class="fas fa-file-alt"></i>
-                                @endif
+                                  @endif
                             </div>
                             <div class="product-info">
                                 <div class="preview-product-title">{{ $product->title }}</div>
@@ -242,6 +242,24 @@
                             </a>
                         </div>
                     @endif
+                @endforeach
+            </div>
+        @endif
+
+        @if($shortlinks && $shortlinks->count() > 0)
+            <div class="preview-products" style="margin-top: 10px;">
+                @foreach($shortlinks as $link)
+                    <div class="preview-product-item">
+                        <div class="preview-product-image" style="background: #FFE5D3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-link" style="color: {{ $appearance->theme_color ?? '#FF9040' }}; font-size: 16px;"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="preview-product-title">{{ $link->title ?: $link->slug }}</div>
+                        </div>
+                        <a href="{{ url('/' . $link->slug) }}" class="preview-product-button" target="_blank">
+                            Kunjungi
+                        </a>
+                    </div>
                 @endforeach
             </div>
         @endif

@@ -43,6 +43,11 @@ class PublicPageController extends Controller
             ->where('is_active', 1)
             ->get();
 
-        return view('public.profile', compact('user', 'appearance', 'products'));
+        // Ambil data shortlink user
+        $shortlinks = \App\Models\Shortlink::where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks'));
     }
 }

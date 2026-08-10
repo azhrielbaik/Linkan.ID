@@ -77,4 +77,6 @@ return [
     'filter_all' => 'All Links',
     'filter_popular' => 'Most Popular',
     'filter_newest' => 'Newest',
+    'name_label' => 'Name',
+    'actions_label' => 'Actions',
 ];

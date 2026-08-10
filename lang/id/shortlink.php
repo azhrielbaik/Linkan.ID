@@ -77,4 +77,6 @@ return [
     'filter_all' => 'Semua Tautan',
     'filter_popular' => 'Paling Populer',
     'filter_newest' => 'Terbaru',
+    'name_label' => 'Nama Tautan',
+    'actions_label' => 'Aksi',
 ];

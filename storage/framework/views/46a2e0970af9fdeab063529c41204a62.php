@@ -1,849 +1,1128 @@
-<?php $__env->startSection("page_title", "My Linkan"); ?>
+<?php $__env->startSection("page_title", "Microsite Management"); ?>
 
 <?php $__env->startPush("styles"); ?>
 <style>
-.header h1 {
-            font-size: 24px;
-            color: #333;
-        }
-
-        
-          .notification-icon i {
-            color: #333;
-            font-size: 16px;
-        }
-
-        .my-linkan-header {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .my-linkan-url {
-            background: #f5f5f5;
-            padding: 8px 15px;
-            border-radius: 5px;
-            flex-grow: 1;
-            color: #666;
-        }
-
-        .share-button {
-            background: none;
-            border: none;
-            color: #FF9040;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-
-
-        .settings-icon {
-            color: #666;
-            cursor: pointer;
-        }
-
-
-
-
-
-        .home-button {
-            background: #FF9040;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 15px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .add-block-button {
-            background: #FF9040;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            width: 100%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .block-list {
-            margin-top: 20px;
-        }
-
-        .block-item {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .drag-handle {
-            color: #666;
-            cursor: move;
-        }
-
-        .block-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FF9040;
-        }
-
-        .block-title {
-            flex-grow: 1;
-            color: #333;
-        }
-
-        .block-actions {
-            color: #666;
-            cursor: pointer;
-        }
-
-        /* Preview Section */
-        .preview-section {
-            background: #eee;
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 430px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .preview-header {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 18px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .phone-preview {
-            width: 100%;
-            max-width: 375px;
-            min-width: 250px;
-            aspect-ratio: 9/19.5;
-            min-height: 500px;
-            max-height: 800px;
-            border-radius: 40px;
-            background: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .phone-content {
-            width: 100%;
-            height: 100%;
-            background: #f8f9fa;
-            border-radius: 30px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-        }
-
-        .banner-preview {
-            width: 100%;
-            height: 120px;
-            background: #ddd;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .banner-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #ddd;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .profile-circle img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .preview-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .preview-bio {
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-            margin-bottom: 15px;
-            padding: 0 20px;
-            line-height: 1.4;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .social-links a {
-            font-size: 20px;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            opacity: 0.8;
-        }
-
-        .preview-products {
-            width: 100%;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .preview-product-item {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .preview-product-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .preview-product-image {
-            width: 40px;
-            height: 40px;
-            background: #FFE5D3;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .preview-product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .preview-product-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .preview-product-title {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .preview-product-button {
-            background: #FF9040;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            flex-shrink: 0;
-            min-width: 100px;
-            text-align: center;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        .preview-product-button:disabled {
-            background-color: #e9ecef;
-            color: #6c757d;
-            cursor: not-allowed;
-            opacity: 1;
-        }
-
-        .preview-product-button .status {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin: 0;
-            display: inline-block;
-            background: transparent;
-        }
-
-        .preview-product-button .status.pending {
-            color: #6c757d;
-        }
-
-        .preview-product-button .status.rejected {
-            color: #6c757d;
-        }
-
-        .preview-product-button .rejection-reason {
-            margin-top: 4px;
-            padding: 4px 8px;
-            background-color: #fff3f3;
-            border: 1px solid #ffcdd2;
-            border-radius: 4px;
-            font-size: 11px;
-            max-width: 100%;
-            display: block;
-            text-align: left;
-        }
-
-        .preview-product-button .rejection-reason strong {
-            color: #d32f2f;
-            display: inline;
-            margin-right: 4px;
-            font-size: 11px;
-        }
-
-        .preview-product-button .rejection-reason p {
-            margin: 0;
-            color: #666;
-            line-height: 1.2;
-            display: inline;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: white;
-            width: 400px;
-            border-radius: 20px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        .modal-header h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .close-button {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .block-option {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .block-option:hover {
-            background-color: #f5f5f5;
-        }
-
-        .block-option .block-icon {
-            width: 48px;
-            height: 48px;
-            background: #FFE5D3;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-
-        .block-option .block-icon img {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-        }
-
-        .block-option .block-info h3 {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .block-option .block-info p {
-            font-size: 14px;
-            color: #666;
-            margin: 0;
-        }
-
-        /* Blur effect when modal is open */
-        body.modal-open .container {
-            filter: blur(5px);
-            pointer-events: none;
-            transition: filter 0.3s ease;
-        }
-
-        body.modal-open {
-            overflow: hidden;
-        }
-
-        /* Coming Soon Block */
-        .block-option.coming-soon {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .block-option.coming-soon .block-icon {
-            background: #f5f5f5;
-        }
-
-        @media (max-width: 1200px) {
-            .container {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .main-content {
-                width: 100%;
-            }
-
-            .preview-section {
-                width: 100%;
-                position: relative;
-                top: 0;
-            }
-
-            .phone-preview {
-                margin: 0 auto;
-            }
-        }
-
-        /* Tambahkan style untuk tombol edit produk yang ditolak */
-        .edit-rejected {
-            display: none;
-        }
-
-        .rejection-reason {
-            margin-top: 4px;
-            padding: 4px 8px;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            font-size: 12px;
-            max-width: 90%;
-            display: inline-block;
-            color: #721c24;
-            line-height: 1.3;
-        }
-
-        .rejection-reason strong {
-            color: #721c24;
-            display: inline;
-            margin-right: 5px;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        .rejection-reason p {
-            margin: 0;
-            color: #721c24;
-            line-height: 1.3;
-            display: inline;
-            font-size: 12px;
-        }
-
-        .status {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-left: 8px;
-            display: inline-block;
-            line-height: 1.3;
-        }
-
-        .status.pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status.rejected {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .status.approved {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        @media (max-width: 900px) {
-            .main-content {
-                margin-left: 0;
-            }
-        }
+    /* PAGE BASE STYLES */
+    .microsite-container {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        color: #1f2937;
+        padding-bottom: 50px;
+    }
+
+    /* HEADER & STATS BAR */
+    .header-title-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .header-title-section h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.02em;
+    }
+
+    .header-title-section p {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .mode-switch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f3f4f6;
+        padding: 6px;
+        border-radius: 30px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .mode-switch-btn a {
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #4b5563;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .mode-switch-btn a.active {
+        background: #FF9040;
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 144, 64, 0.35);
+    }
+
+    /* STATS CARDS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #FFF3E6;
+        color: #FF9040;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .stat-info .stat-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: #111827;
+        line-height: 1.2;
+    }
+
+    .stat-info .stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* GALLERY GRID SECTION */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 19px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .microsite-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 24px;
+    }
+
+    /* MICROSITE CARD */
+    .microsite-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+    }
+
+    .microsite-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+        border-color: #ffd8bd;
+    }
+
+    /* CARD HEADER & THUMBNAIL AREA */
+    .card-thumbnail-container {
+        background: linear-gradient(135deg, #FFF3E6 0%, #FFE5D3 100%);
+        padding: 24px 20px 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* PHONE SCREENSHOT THUMBNAIL */
+    .phone-thumbnail {
+        width: 170px;
+        height: 310px;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 5px solid #1f2937;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .microsite-card:hover .phone-thumbnail {
+        transform: scale(1.03);
+    }
+
+    .phone-thumbnail-screen {
+        width: 100%;
+        height: 100%;
+        padding: 12px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .phone-thumb-banner {
+        width: 100%;
+        height: 48px;
+        border-radius: 6px;
+        background: #e5e7eb;
+        margin-bottom: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .phone-thumb-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .phone-thumb-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 2px solid white;
+        margin-bottom: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex-shrink: 0;
+    }
+
+    .phone-thumb-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .phone-thumb-name {
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .phone-thumb-bio {
+        font-size: 8px;
+        color: #6b7280;
+        text-align: center;
+        line-height: 1.2;
+        max-height: 20px;
+        overflow: hidden;
+        margin-bottom: 8px;
+        width: 100%;
+        padding: 0 4px;
+    }
+
+    .phone-thumb-block {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 6px;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+        font-size: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .phone-thumb-block i {
+        font-size: 8px;
+        color: #FF9040;
+    }
+
+    /* BADGES */
+    .status-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 2;
+        backdrop-filter: blur(8px);
+    }
+
+    .status-badge.active {
+        background: rgba(16, 185, 129, 0.15);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* CARD BODY DETAILS */
+    .card-body-details {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .card-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 6px;
+    }
+
+    .microsite-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin: 0;
+    }
+
+    .url-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8f9fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: #FF9040;
+        font-weight: 600;
+        margin-bottom: 14px;
+        text-decoration: none;
+        width: fit-content;
+    }
+
+    .url-pill:hover {
+        background: #FFF3E6;
+    }
+
+    .card-stats-tags {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .stat-tag {
+        font-size: 12px;
+        color: #4b5563;
+        background: #f3f4f6;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* ACTIONS BUTTON GRID */
+    .card-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .btn-action-primary {
+        background: #FF9040;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action-primary:hover {
+        background: #e57c2e;
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 144, 64, 0.3);
+    }
+
+    .btn-action-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action-secondary:hover {
+        background: #e5e7eb;
+        color: #111827;
+    }
+
+    /* CREATE NEW CARD */
+    .create-new-card {
+        background: #fafafa;
+        border: 2px dashed #d1d5db;
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 420px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .create-new-card:hover {
+        border-color: #FF9040;
+        background: #FFF9F5;
+        transform: translateY(-4px);
+    }
+
+    .create-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #FFF3E6;
+        color: #FF9040;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 14px rgba(255, 144, 64, 0.2);
+    }
+
+    .create-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .create-subtitle {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 20px;
+        max-width: 240px;
+    }
+
+    /* INTERACTIVE PHONE PREVIEW MODAL */
+    .preview-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(17, 24, 39, 0.75);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .preview-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .phone-modal-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        max-height: 90vh;
+    }
+
+    .phone-modal-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 10px 20px;
+        border-radius: 30px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .phone-modal-header span {
+        font-weight: 700;
+        font-size: 14px;
+        color: #1f2937;
+    }
+
+    .phone-device-frame {
+        width: 360px;
+        height: 720px;
+        max-height: 75vh;
+        background: #000000;
+        border-radius: 46px;
+        padding: 12px;
+        box-shadow: 0 25px 60px -15px rgba(0,0,0,0.6);
+        position: relative;
+        border: 4px solid #374151;
+    }
+
+    /* iPhone Notch */
+    .phone-notch {
+        position: absolute;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 22px;
+        background: #000000;
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        z-index: 10;
+    }
+
+    .phone-iframe {
+        width: 100%;
+        height: 100%;
+        border-radius: 36px;
+        border: none;
+        background: white;
+    }
+
+    .btn-close-modal {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #111827;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 20;
+    }
+
+    /* EDITOR STYLES (WHEN MODE IS EDIT) */
+    .editor-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+        .editor-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .editor-left-panel {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .editor-sticky-preview {
+        position: sticky;
+        top: 20px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid #eaeaea;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .block-item-card {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .block-item-card:hover {
+        background: #ffffff;
+        border-color: #FF9040;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 </style>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection("content"); ?>
+<div class="microsite-container">
+    
+    <!-- HEADER TITLE & MODE SWITCH -->
+    <div class="header-title-section">
+        <div>
+            <h1><?php echo e(__('sidebar.microsite')); ?> Management</h1>
+            <p>Kelola galeri microsite, lihat screenshot preview, dan kustomisasi konten publik Anda.</p>
+        </div>
+        
+        <div class="mode-switch-btn">
+            <a href="<?php echo e(route('mylinkan', ['mode' => 'gallery'])); ?>" class="<?php echo e($viewMode == 'gallery' ? 'active' : ''); ?>">
+                <i class="fas fa-th-large"></i> Galeri Microsite
+            </a>
+            <a href="<?php echo e(route('mylinkan', ['mode' => 'edit'])); ?>" class="<?php echo e($viewMode == 'edit' ? 'active' : ''); ?>">
+                <i class="fas fa-edit"></i> Edit Konten & Blok
+            </a>
+        </div>
+    </div>
 
+    <!-- STATS SUMMARY ROW -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-pager"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Microsite Aktif</div>
+            </div>
+        </div>
 
-            <div class="my-linkan-header">
-                <div class="my-linkan-url">
-                    <a href="<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>" style="color: #FF9040;">
-                        <?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #E6F6FF; color: #0088FF;">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?php echo e(number_format($totalViews ?? 0)); ?></div>
+                <div class="stat-label">Total Penayangan</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #E6FFFA; color: #00B894;">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?php echo e($totalProducts ?? 0); ?></div>
+                <div class="stat-label">Produk Terpasang</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #FFF0F6; color: #E83E8C;">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?php echo e($totalShortlinks ?? 0); ?></div>
+                <div class="stat-label">Shortlink Terhubung</div>
+            </div>
+        </div>
+    </div>
+
+    <?php if($viewMode == 'gallery'): ?>
+        <!-- GALLERY LIST VIEW -->
+        <div class="section-header">
+            <h2><i class="fas fa-layer-group" style="color: #FF9040;"></i> Daftar Microsite Saya</h2>
+        </div>
+
+        <div class="microsite-gallery-grid">
+            
+            <!-- MAIN MICROSITE CARD WITH PHONE SCREENSHOT THUMBNAIL -->
+            <div class="microsite-card">
+                
+                <!-- CARD HEADER & THUMBNAIL CONTAINER -->
+                <div class="card-thumbnail-container">
+                    <span class="status-badge active">
+                        <span class="dot"></span> Live Profil Utama
+                    </span>
+
+                    <!-- REAL PHONE THUMBNAIL REPRESENTATION -->
+                    <div class="phone-thumbnail">
+                        <div class="phone-thumbnail-screen" style="
+                            background-image: url('<?php echo e($appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : ''); ?>');
+                            background-color: <?php echo e($appearance && $appearance->background_color ? 'transparent' : '#f8f9fa'); ?>;
+                        ">
+                            <!-- Banner -->
+                            <div class="phone-thumb-banner">
+                                <?php if($appearance && $appearance->banner): ?>
+                                    <img src="<?php echo e(asset('storage/' . $appearance->banner)); ?>" alt="Banner">
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Avatar -->
+                            <div class="phone-thumb-avatar">
+                                <?php if($appearance && $appearance->profile_image): ?>
+                                    <img src="<?php echo e(asset('storage/' . $appearance->profile_image)); ?>" alt="Avatar">
+                                <?php else: ?>
+                                    <i class="fas fa-user" style="color: #888; font-size: 16px;"></i>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Name & Bio -->
+                            <div class="phone-thumb-name" style="color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>">
+                                <?php echo e($appearance ? $appearance->name : Auth::user()->name); ?>
+
+                            </div>
+                            <div class="phone-thumb-bio" style="color: <?php echo e($appearance ? $appearance->theme_color : '#666'); ?>">
+                                <?php echo strip_tags($appearance->bio ?? 'Selamat datang di linkan saya!'); ?>
+
+                            </div>
+
+                            <!-- Block Preview Snippets -->
+                            <?php if($digitalProducts && $digitalProducts->count() > 0): ?>
+                                <?php $__currentLoopData = $digitalProducts->take(2); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prod): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="phone-thumb-block">
+                                        <i class="fas fa-box"></i>
+                                        <span><?php echo e($prod->title); ?></span>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
+
+                            <?php if($shortlinks && $shortlinks->count() > 0): ?>
+                                <?php $__currentLoopData = $shortlinks->take(2); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sl): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="phone-thumb-block">
+                                        <i class="fas fa-link"></i>
+                                        <span><?php echo e($sl->title ?: $sl->slug); ?></span>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD BODY DETAILS -->
+                <div class="card-body-details">
+                    <div class="card-title-row">
+                        <h3 class="microsite-name"><?php echo e($appearance->name ?? Auth::user()->name); ?></h3>
+                    </div>
+
+                    <a href="<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>" target="_blank" class="url-pill">
+                        <i class="fas fa-globe"></i> linkan.id/<?php echo e(Auth::user()->username); ?>
 
                     </a>
 
+                    <div class="card-stats-tags">
+                        <span class="stat-tag"><i class="fas fa-eye"></i> <?php echo e(number_format($totalViews)); ?> views</span>
+                        <span class="stat-tag"><i class="fas fa-cube"></i> <?php echo e($digitalProducts->count()); ?> produk</span>
+                        <span class="stat-tag"><i class="fas fa-link"></i> <?php echo e($shortlinks->total()); ?> link</span>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="card-actions-grid">
+                        <button type="button" class="btn-action-secondary" onclick="openPreviewModal('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
+                            <i class="fas fa-mobile-alt"></i> Preview
+                        </button>
+                        <a href="<?php echo e(route('mylinkan', ['mode' => 'edit'])); ?>" class="btn-action-primary">
+                            <i class="fas fa-edit"></i> Edit Blok
+                        </a>
+                        <a href="<?php echo e(route('appearance')); ?>" class="btn-action-secondary">
+                            <i class="fas fa-paint-brush"></i> Tampilan
+                        </a>
+                        <button type="button" class="btn-action-secondary" onclick="copyToClipboard('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
+                            <i class="fas fa-copy"></i> Salin Link
+                        </button>
+                    </div>
                 </div>
-                <button class="share-button" onclick="copyToClipboard('http://localhost:8000/linkan.id/<?php echo e(Auth::user()->username); ?>')">
-                        <i class="fas fa-share-alt"></i>
+
+            </div>
+
+            <!-- CREATE NEW MICROSITE / TEMPLATE CARD -->
+            <div class="create-new-card" onclick="showAddBlockModal()">
+                <div class="create-icon-wrapper">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="create-title">Tambah Blok Baru</div>
+                <div class="create-subtitle">Tambahkan produk digital atau tautan singkat ke microsite Anda</div>
+                <button type="button" class="btn-action-primary">
+                    <i class="fas fa-plus-circle"></i> Tambah Blok
                 </button>
             </div>
 
-            <button class="home-button">Home</button>
-
-            <button class="add-block-button" onclick="showAddBlockModal()">
-                <i class="fas fa-plus"></i>
-                Add new block
-            </button>
-                        <?php if($digitalProducts->count()): ?>
-                <div class="block-list">
-                    <h3 style="margin-bottom: 10px; color: #333;">Produk Digital Terbaru</h3>
-                    <?php $__currentLoopData = $digitalProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="block-item" onclick="showActionModal(<?php echo e($product->id); ?>, '<?php echo e($product->title); ?>')">
-                        <i class="fas fa-grip-vertical drag-handle"></i>
-                        <div class="block-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="block-title">
-                            <?php echo e($product->title); ?>
-
-                            <?php if($product->verification_status == 'pending'): ?>
-                                <span class="status pending">Menunggu Verifikasi</span>
-                            <?php elseif($product->verification_status == 'rejected'): ?>
-                                <span class="status rejected">Ditolak</span>
-                                <?php if($product->rejection_reason): ?>
-                                    <div class="rejection-reason">
-                                        <strong>Reason:</strong>
-                                        <p><?php echo e($product->rejection_reason); ?></p>
-                                    </div>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <span class="status approved">Terverifikasi</span>
-                            <?php endif; ?>
-                        </div>
-                        <div class="block-actions">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </div>
-                    </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
-            <?php endif; ?>
-            </div>
-    <!-- Preview Section -->
-    <div class="preview-section">
-        <div class="preview-header">
-            <h2>Preview</h2>
         </div>
-        <div class="phone-preview">
-            <div class="phone-content" id="previewScreen" style="width: 100%; height: 100%; background: #f8f9fa; border-radius: 30px; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; background-image: url('<?php echo e($appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : ''); ?>'); background-size: cover; background-position: center;">
-                <?php if($appearance && $appearance->banner): ?>
-                    <div class="banner-preview" style="width: 100%; height: 120px; background: #ddd; border-radius: 10px; margin-bottom: 20px; overflow: hidden;">
-                        <img src="<?php echo e(asset('storage/' . $appearance->banner)); ?>" alt="Banner" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                <?php endif; ?>
-                <div class="profile-circle" style="width: 80px; height: 80px; border-radius: 50%; background: #ddd; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <?php if($appearance && $appearance->profile_image): ?>
-                        <img src="<?php echo e(asset('storage/' . $appearance->profile_image)); ?>" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
-                    <?php else: ?>
-                        <i class="fas fa-user"></i>
-                    <?php endif; ?>
+
+    <?php else: ?>
+        <!-- EDITOR VIEW MODE -->
+        <div class="section-header">
+            <h2>
+                <a href="<?php echo e(route('mylinkan', ['mode' => 'gallery'])); ?>" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <i class="fas fa-sliders-h" style="color: #FF9040;"></i> Editor Konten & Blok
+            </h2>
+            <button class="btn-action-primary" onclick="showAddBlockModal()">
+                <i class="fas fa-plus"></i> Add New Block
+            </button>
+        </div>
+
+        <div class="editor-layout">
+            <!-- LEFT PANEL: BLOCK MANAGEMENT -->
+            <div class="editor-left-panel">
+                
+                <!-- URL HEADER BAR -->
+                <div style="background: #f9fafb; padding: 14px 18px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e7eb;">
+                    <span style="font-weight: 600; font-size: 14px; color: #374151;">
+                        <i class="fas fa-link" style="color: #FF9040; margin-right: 8px;"></i> <?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>
+
+                    </span>
+                    <button type="button" class="btn-action-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="copyToClipboard('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
+                        <i class="fas fa-copy"></i> Salin
+                    </button>
                 </div>
-                <div class="preview-name" style="font-size: 18px; font-weight: 600; margin-bottom: 10px; text-align: center; color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"><?php echo e($appearance ? $appearance->name : Auth::user()->name); ?></div>
-                <?php if($appearance && $appearance->bio): ?>
-                    <div class="preview-bio" style="font-size: 14px; color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>; text-align: center; margin-bottom: 15px; padding: 0 20px; line-height: 1.4;"><?php echo $appearance->bio; ?></div>
-                <?php endif; ?>
-                <div class="social-links" style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <?php if($appearance && $appearance->instagram): ?>
-                        <a href="<?php echo e($appearance->instagram); ?>" target="_blank"><i class="fab fa-instagram" style="color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"></i></a>
-                    <?php endif; ?>
-                    <?php if($appearance && $appearance->tiktok): ?>
-                        <a href="<?php echo e($appearance->tiktok); ?>" target="_blank"><i class="fab fa-tiktok" style="color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"></i></a>
-                    <?php endif; ?>
-                    <?php if($appearance && $appearance->whatsapp): ?>
-                        <a href="<?php echo e($appearance->whatsapp); ?>" target="_blank"><i class="fab fa-whatsapp" style="color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"></i></a>
-                    <?php endif; ?>
-                </div>
-                <?php if($appearance && $appearance->description): ?>
-                    <div class="preview-bio" style="color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"><?php echo e($appearance->description); ?></div>
-                <?php endif; ?>
-                <?php if($appearance && $appearance->link): ?>
-                    <a href="<?php echo e($appearance->link); ?>" class="preview-product-button" style="background-color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>"><?php echo e($appearance->button_text ?? 'Beli'); ?></a>
-                <?php endif; ?>
-                <?php if($digitalProducts->count() > 0): ?>
-                    <div class="preview-products" style="width: 100%; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+
+                <!-- DIGITAL PRODUCTS BLOCKS -->
+                <?php if($digitalProducts->count()): ?>
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">Produk Digital Saya</h3>
                         <?php $__currentLoopData = $digitalProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div class="preview-product-item" style="background: white; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s ease;">
-                                <div class="preview-product-image" style="width: 40px; height: 40px; background: #FFE5D3; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-                                    <?php if($product->image): ?>
-                                        <img src="<?php echo e(asset('storage/' . $product->image)); ?>" alt="<?php echo e($product->title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                            <div class="block-item-card" onclick="showActionModal(<?php echo e($product->id); ?>, '<?php echo e($product->title); ?>')">
+                                <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
+                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-weight: 700; font-size: 14px; color: #111827;"><?php echo e($product->title); ?></div>
+                                    <?php if($product->verification_status == 'pending'): ?>
+                                        <span class="status pending" style="font-size: 11px; background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px;">Menunggu Verifikasi</span>
+                                    <?php elseif($product->verification_status == 'rejected'): ?>
+                                        <span class="status rejected" style="font-size: 11px; background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px;">Ditolak</span>
                                     <?php else: ?>
-                                        <i class="fas fa-file-alt"></i>
+                                        <span class="status approved" style="font-size: 11px; background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px;">Terverifikasi</span>
                                     <?php endif; ?>
                                 </div>
-                                <div class="preview-product-info" style="flex: 1; min-width: 0;">
-                                    <div class="preview-product-title" style="font-size: 14px; color: #333; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($product->title); ?></div>
-                                </div>
-                                <?php if($product->verification_status == 'approved'): ?>
-                                    <a href="<?php echo e(route('track.click', ['link_id' => Auth::user()->username, 'target' => $product->platform_url ?? '#'])); ?>" class="preview-product-button" style="background-color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.3s ease; flex-shrink: 0; min-width: 100px; text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none;" target="_blank"><?php echo e(str_replace('_', ' ', $product->button_text ?? 'Beli')); ?></a>
-                                <?php else: ?>
-                                    <button class="preview-product-button" disabled style="background-color: #e9ecef; color: #6c757d; cursor: not-allowed; opacity: 1;">
-                                        <?php if($product->verification_status == 'pending'): ?>
-                                            <span class="status pending">Menunggu Verifikasi</span>
-                                        <?php else: ?>
-                                            <span class="status rejected">Ditolak</span>
-                                        <?php endif; ?>
-                                    </button>
-                                <?php endif; ?>
+                                <i class="fas fa-ellipsis-v" style="color: #6b7280; cursor: pointer;"></i>
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 <?php endif; ?>
+
+                <!-- SHORTLINKS BLOCKS -->
+                <?php if($shortlinks->count()): ?>
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">Tautan Pendek (Shortlinks)</h3>
+                        <?php $__currentLoopData = $shortlinks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $link): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="block-item-card" onclick="window.location.href='<?php echo e(route('shortlink.index')); ?>'">
+                                <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
+                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #E6F6FF; color: #0088FF; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-weight: 700; font-size: 14px; color: #111827;"><?php echo e($link->title ?: $link->slug); ?></div>
+                                    <div style="font-size: 12px; color: #FF9040;">linkan.id/<?php echo e($link->slug); ?></div>
+                                </div>
+                                <i class="fas fa-external-link-alt" style="color: #6b7280;"></i>
+                            </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <div style="margin-top: 15px;">
+                            <?php echo e($shortlinks->appends(request()->except('links_page'))->links()); ?>
+
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
+            <div class="editor-sticky-preview">
+                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 14px;">Live Phone Preview</h3>
+                <div class="phone-preview" style="width: 100%; max-width: 320px; aspect-ratio: 9/19; border-radius: 36px; background: white; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 4px solid #111827;">
+                    <div class="phone-content" style="width: 100%; height: 100%; padding: 18px 14px; overflow-y: auto; background-image: url('<?php echo e($appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : ''); ?>'); background-size: cover; background-position: center;">
+                        <?php if($appearance && $appearance->banner): ?>
+                            <div style="width: 100%; height: 100px; border-radius: 10px; overflow: hidden; margin-bottom: 14px;">
+                                <img src="<?php echo e(asset('storage/' . $appearance->banner)); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        <?php endif; ?>
+
+                        <div style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; margin: 0 auto 10px; background: #e5e7eb; display: flex; align-items: center; justify-content: center;">
+                            <?php if($appearance && $appearance->profile_image): ?>
+                                <img src="<?php echo e(asset('storage/' . $appearance->profile_image)); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                            <?php else: ?>
+                                <i class="fas fa-user" style="font-size: 24px; color: #888;"></i>
+                            <?php endif; ?>
+                        </div>
+
+                        <div style="font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 6px; color: <?php echo e($appearance ? $appearance->theme_color : '#FF9040'); ?>">
+                            <?php echo e($appearance ? $appearance->name : Auth::user()->name); ?>
+
+                        </div>
+
+                        <?php if($appearance && $appearance->bio): ?>
+                            <div style="font-size: 12px; text-align: center; margin-bottom: 14px; color: <?php echo e($appearance ? $appearance->theme_color : '#666'); ?>">
+                                <?php echo $appearance->bio; ?>
+
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if($digitalProducts->count() > 0): ?>
+                            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                                <?php $__currentLoopData = $digitalProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div style="background: white; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <div style="width: 32px; height: 32px; border-radius: 6px; background: #FFE5D3; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-file-alt" style="color: #FF9040; font-size: 12px;"></i>
+                                        </div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($product->title); ?></div>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+</div>
+
+<!-- INTERACTIVE PHONE PREVIEW MODAL -->
+<div class="preview-modal-overlay" id="previewModalOverlay">
+    <div class="phone-modal-wrapper">
+        <button type="button" class="btn-close-modal" onclick="closePreviewModal()">&times;</button>
+        
+        <div class="phone-modal-header">
+            <i class="fas fa-globe" style="color: #FF9040;"></i>
+            <span id="modalUrlText">linkan.id/<?php echo e(Auth::user()->username); ?></span>
+            <button type="button" class="btn-action-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyToClipboard('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
+                <i class="fas fa-copy"></i>
+            </button>
+            <a href="<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>" target="_blank" class="btn-action-primary" style="padding: 4px 10px; font-size: 11px;">
+                <i class="fas fa-external-link-alt"></i> Buka
+            </a>
+        </div>
+
+        <div class="phone-device-frame">
+            <div class="phone-notch"></div>
+            <iframe src="" class="phone-iframe" id="phonePreviewIframe"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ADD BLOCK -->
+<div id="addBlockModal" class="modal">
+    <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
+        <div class="modal-header" style="background: #f9fafb; padding: 18px 24px; border-bottom: 1px solid #e5e7eb;">
+            <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Tambah Blok Baru</h2>
+            <button class="close-button" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+            <div class="block-option" onclick="selectBlockType('digital')" style="border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px; margin-bottom: 14px; cursor: pointer; transition: all 0.2s ease;">
+                <div class="block-icon">
+                    <img src="<?php echo e(asset('images/productdigital.png')); ?>" alt="Digital Product" style="width: 28px;">
+                </div>
+                <div class="block-info">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Produk Digital</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin: 0;">Jual produk digital, e-book, lisensi, atau file</p>
+                </div>
+            </div>
+
+            <div class="block-option" onclick="selectBlockType('shortlink')" style="border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px; cursor: pointer; transition: all 0.2s ease;">
+                <div class="block-icon">
+                    <i class="fas fa-link" style="color: #FF9040; font-size: 24px;"></i>
+                </div>
+                <div class="block-info">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Tautan Pendek</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin: 0;">Buat dan hubungkan tautan singkat kustom</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-    <!-- Modal untuk Add New Block -->
-    <div id="addBlockModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add new block</h2>
-                <button class="close-button" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="block-option" onclick="selectBlockType('digital')">
-                    <div class="block-icon">
-                        <img src="<?php echo e(asset('images/productdigital.png')); ?>" alt="Digital Product">
-                    </div>
-                    <div class="block-info">
-                        <h3>Digital Product</h3>
-                        <p>Sell Digital Products</p>
-                    </div>
-                </div>
-
-                <div class="block-option coming-soon">
-                    <div class="block-icon">
-                        <i class="fas fa-question" style="color: #FF9040; font-size: 24px;"></i>
-                    </div>
-                    <div class="block-info">
-                        <h3>COMMING SOON</h3>
-                        <p>Let's see</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="actionModal" class="modal">
-    <div class="modal-content">
+<!-- ACTION MODAL & DELETE CONFIRMATION -->
+<div id="actionModal" class="modal">
+    <div class="modal-content" style="border-radius: 20px; padding: 20px;">
         <div class="modal-header">
-            <h2>Action</h2>
+            <h2>Aksi Produk</h2>
             <button class="close-button" onclick="closeActionModal()">×</button>
         </div>
-        <div class="modal-body">
-            <!-- Tombol Edit -->
-            <a href="#" id="editButton" class="add-block-button" style="background-color: #FF9040; margin-bottom: 10px; text-decoration: none; text-align: center;">Edit</a>
-            <!-- Tombol Delete -->
+        <div class="modal-body" style="padding-top: 14px;">
+            <a href="#" id="editButton" class="btn-action-primary" style="margin-bottom: 10px; width: 100%;">
+                <i class="fas fa-edit"></i> Edit Produk
+            </a>
             <form id="deleteForm" method="POST" action="">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('DELETE'); ?>
-                <button type="button" class="add-block-button" style="background-color: #e3342f;" onclick="confirmDelete()">Delete</button>
+                <button type="button" class="btn-action-secondary" style="color: #ef4444; border-color: #fca5a5; width: 100%;" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> Hapus Produk
+                </button>
             </form>
         </div>
     </div>
 </div>
 
-
 <div id="confirmDeleteModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="border-radius: 20px; padding: 24px;">
         <div class="modal-header">
             <h2>Konfirmasi Hapus</h2>
             <button class="close-button" onclick="closeConfirmDeleteModal()">×</button>
         </div>
         <div class="modal-body">
-            <p id="deleteMessage" style="margin-bottom: 20px;"></p>
+            <p id="deleteMessage" style="margin-bottom: 20px; font-size: 14px; color: #4b5563;"></p>
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button onclick="closeConfirmDeleteModal()" class="add-block-button" style="background-color: gray;">No</button>
+                <button type="button" onclick="closeConfirmDeleteModal()" class="btn-action-secondary">Batal</button>
                 <form id="finalDeleteForm" method="POST" action="">
                     <?php echo csrf_field(); ?>
                     <?php echo method_field('DELETE'); ?>
-                    <button type="submit" class="add-block-button" style="background-color: #e3342f;">Yes</button>
+                    <button type="submit" class="btn-action-primary" style="background: #ef4444;">Ya, Hapus</button>
                 </form>
             </div>
         </div>
+    </div>
+</div>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush("scripts"); ?>
 <script>
-function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Link copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Tautan berhasil disalin ke clipboard!');
+        }).catch(err => {
+            console.error('Gagal menyalin teks: ', err);
+        });
+    }
+
+    function openPreviewModal(url) {
+        const modal = document.getElementById('previewModalOverlay');
+        const iframe = document.getElementById('phonePreviewIframe');
+        iframe.src = url;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePreviewModal() {
+        const modal = document.getElementById('previewModalOverlay');
+        const iframe = document.getElementById('phonePreviewIframe');
+        modal.classList.remove('active');
+        iframe.src = '';
+        document.body.style.overflow = 'auto';
+    }
+
+    function showAddBlockModal() {
+        document.getElementById('addBlockModal').style.display = 'block';
+        document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+        document.getElementById('addBlockModal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
+    function selectBlockType(type) {
+        if(type === 'digital') {
+            window.location.href = "<?php echo e(route('digital-product.create')); ?>";
+        } else if(type === 'shortlink') {
+            window.location.href = "<?php echo e(route('shortlink.index')); ?>";
         }
-        function showAddBlockModal() {
-            document.getElementById('addBlockModal').style.display = 'block';
-            document.body.classList.add('modal-open');
-        }
+    }
 
-        function closeModal() {
-            document.getElementById('addBlockModal').style.display = 'none';
-            document.body.classList.remove('modal-open');
-        }
+    function showActionModal(productId, productTitle) {
+        window.currentDeleteId = productId;
+        window.currentDeleteTitle = productTitle;
+        document.getElementById('deleteForm').action = `/digital-product/${productId}`;
+        document.getElementById('editButton').href = `/digital-product/${productId}/edit`;
+        document.getElementById('actionModal').style.display = 'block';
+        document.body.classList.add('modal-open');
+    }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.className === 'modal') {
-                closeModal();
-            }
-        }
+    function closeActionModal() {
+        document.getElementById('actionModal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
 
-        function selectBlockType(type) {
-            switch(type) {
-                case 'digital':
-                    window.location.href = "<?php echo e(route('digital-product.create')); ?>";
-                    break;
-                case 'donation':
-                    // Akan ditambahkan nanti
-                    break;
-                case 'course':
-                    // Akan ditambahkan nanti
-                    break;
-            }
-        }
+    function confirmDelete() {
+        const title = window.currentDeleteTitle;
+        const productId = window.currentDeleteId;
+        document.getElementById('deleteMessage').innerText = `Apakah Anda yakin ingin menghapus produk "${title}"?`;
+        document.getElementById('finalDeleteForm').action = `/digital-product/${productId}`;
+        closeActionModal();
+        document.getElementById('confirmDeleteModal').style.display = 'block';
+        document.body.classList.add('modal-open');
+    }
 
-        function showActionModal(productId, productTitle) {
-            // Simpan ID dan judul produk untuk keperluan penghapusan
-            window.currentDeleteId = productId;
-            window.currentDeleteTitle = productTitle;
+    function closeConfirmDeleteModal() {
+        document.getElementById('confirmDeleteModal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
 
-            // Set action tombol Delete untuk modal
-            document.getElementById('deleteForm').action = `/digital-product/${productId}`;
-
-            // Set URL tombol Edit
-            document.getElementById('editButton').href = `/digital-product/${productId}/edit`;
-
-            // Tampilkan modal
-            document.getElementById('actionModal').style.display = 'block';
-            document.body.classList.add('modal-open');
-        }
-
-        function closeActionModal() {
-            // Menutup modal
-            document.getElementById('actionModal').style.display = 'none';
-            document.body.classList.remove('modal-open');
-        }
-
-        function confirmDelete() {
-            // Menampilkan pesan konfirmasi
-            const title = window.currentDeleteTitle;
-            const productId = window.currentDeleteId;
-
-            document.getElementById('deleteMessage').innerText = `Apakah kamu yakin ingin menghapus produk "${title}"?`;
-            document.getElementById('finalDeleteForm').action = `/digital-product/${productId}`;
-
-            // Menutup modal sebelumnya dan menampilkan konfirmasi hapus
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal();
             closeActionModal();
-            document.getElementById('confirmDeleteModal').style.display = 'block';
-            document.body.classList.add('modal-open');
+            closeConfirmDeleteModal();
         }
-
-        function closeConfirmDeleteModal() {
-            document.getElementById('confirmDeleteModal').style.display = 'none';
-            document.body.classList.remove('modal-open');
+        if (event.target.id === 'previewModalOverlay') {
+            closePreviewModal();
         }
+    }
 </script>
 <?php $__env->stopPush(); ?>
 

@@ -28,11 +28,10 @@
             -webkit-font-smoothing: antialiased;
             background: linear-gradient(
                 180deg, 
-                #DE8654 0%, 
-                #D97F4E 15%, 
-                #3B76CD 40%, 
-                #3B76CD 55%, 
-                #F94B55 80%, 
+                #F68529 0%, 
+                #E4721C 15%, 
+                #1C64D3 42%, 
+                #E92E38 72%, 
                 #FFFFFF 100%
             );
             min-height: 100vh;
@@ -57,13 +56,13 @@
         .navbar-pill {
             background: #FFFFFF;
             border-radius: 50px;
-            padding: 10px 10px 10px 24px;
+            padding: 8px 12px 8px 24px;
             width: 90%;
             max-width: 1000px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
         .nav-logo {
@@ -74,14 +73,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-left: 11px;
             letter-spacing: -0.5px;
-        }
-
-        .nav-logo-icon {
-            color: var(--orange);
-            display: flex;
-            align-items: center;
         }
 
         .nav-links {
@@ -92,7 +84,7 @@
 
         .nav-link {
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
             transition: color 0.2s;
         }
@@ -102,19 +94,18 @@
         }
 
         .btn-signup {
-            background: var(--dark);
+            background: #1D5DC6;
             color: #fff;
-            padding: 12px 20px;
+            padding: 10px 22px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 700;
-            margin-right: 13px;
             transition: transform 0.2s, background 0.2s;
         }
 
         .btn-signup:hover {
+            background: #15459b;
             transform: scale(1.05);
-            background: #000;
         }
 
         /* MAIN SECTIONS */
@@ -254,6 +245,20 @@
             transform: translateY(-5px);
         }
 
+        .feature-mockup-wrapper {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .feature-mockup-img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.12));
+        }
+
         /* TESTIMONIALS SECTION */
         .testimonials-section {
             padding-top: 120px;
@@ -319,21 +324,100 @@
             font-weight: 500;
         }
 
-        /* IMAGE SECTION */
-        .image-section {
+        /* CREATOR SHOWCASE SECTION */
+        .creator-showcase-section {
             padding: 0;
             margin-top: -60px; /* Overlap slightly with red gradient */
             position: relative;
             z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .image-section img {
+        .showcase-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .showcase-img {
             max-width: 100%;
             width: 800px;
             height: auto;
             display: block;
-            margin: 0 auto;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+        }
+
+        .floating-tag {
+            position: absolute;
+            background: #FFFFFF;
+            color: #121212;
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 14px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            white-space: nowrap;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .floating-tag:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.16);
+        }
+
+        /* Position tags relative to the image container */
+        .tag-1 {
+            top: 15%;
+            right: 32%;
+            transform: translate(50%, -50%);
+        }
+
+        .tag-2 {
+            top: 36%;
+            right: 8%;
+            transform: translateY(-50%);
+        }
+
+        .tag-3 {
+            top: 58%;
+            right: 5%;
+            transform: translateY(-50%);
+        }
+
+        .tag-4 {
+            bottom: 12%;
+            right: 18%;
+            transform: translate(50%, 50%);
+        }
+
+        /* Responsive styling for tags */
+        @media (max-width: 768px) {
+            .floating-tag {
+                font-size: 11px;
+                padding: 8px 16px;
+            }
+            .tag-1 { top: 15%; right: 28%; }
+            .tag-2 { top: 36%; right: 5%; }
+            .tag-3 { top: 58%; right: 2%; }
+            .tag-4 { bottom: 12%; right: 15%; }
+        }
+
+        @media (max-width: 480px) {
+            .floating-tag {
+                font-size: 9px;
+                padding: 6px 12px;
+            }
+            .tag-1 { top: 15%; right: 24%; }
+            .tag-2 { top: 36%; right: 2%; }
+            .tag-3 { top: 58%; right: -2%; }
+            .tag-4 { bottom: 12%; right: 12%; }
         }
 
         /* FOOTER */
@@ -395,19 +479,21 @@
         /* ANIMATIONS */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: scale(0.85) translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .reveal.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1) translateY(0);
         }
 
         .reveal-scale {
             opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: scale(0.8);
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .reveal-scale.active {
@@ -439,21 +525,21 @@
     <nav class="navbar-wrapper">
         <div class="navbar-pill">
             <a href="<?php echo e(url('/')); ?>" class="nav-logo">
-                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" style="height: 50px; width: auto;">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" style="height: 45px; width: auto;">
             </a>
             <div class="nav-links">
                 <a href="<?php echo e(route('pricing')); ?>" class="nav-link">Pricing</a>
                 <a href="<?php echo e(route('service')); ?>" class="nav-link">Service</a>
                 <a href="<?php echo e(route('FAQ')); ?>" class="nav-link">FAQ</a>
                 <a href="<?php echo e(route('login')); ?>" class="nav-link">Sign In</a>
+                <a href="<?php echo e(route('register')); ?>" class="btn-signup">Sign Up</a>
             </div>
-            <a href="<?php echo e(route('register')); ?>" class="btn-signup">Sign Up</a>
         </div>
     </nav>
 
     <!-- HERO SECTION -->
     <section class="hero-section reveal">
-        <h1 class="hero-title">#PoweringCreatorsEconomy</h1>
+        <h1 class="hero-title">#Powering <span style="color: #121212;">Creators</span> Economy</h1>
         <p class="hero-subtitle">
             Create Instant Mobile Webpage to sell your knowledge, Chat, Video Calls, Events, Digital Product. Share it across social media.
         </p>
@@ -476,6 +562,10 @@
             <div class="feature-pill">Digital Product</div>
             <div class="feature-pill">Donations</div>
             <div class="feature-pill">Online Course</div>
+        </div>
+
+        <div class="feature-mockup-wrapper">
+            <img src="<?php echo e(asset('images/landing page/Group 15.png')); ?>" alt="Linkan Dashboard Mockup" class="feature-mockup-img">
         </div>
     </section>
 
@@ -519,9 +609,10 @@
         </div>
     </section>
 
-    <!-- IMAGE SECTION -->
-    <section class="image-section reveal">
-        <img src="<?php echo e(asset('images/hero_laptop.png')); ?>" alt="Linkan Dashboard Presentation">
+    <!-- CREATOR SHOWCASE SECTION -->
+    <section class="creator-showcase-section reveal">
+        <div class="showcase-container">
+            <img src="<?php echo e(asset('images/landing page/Group 17.png')); ?>" alt="Linkan Creator Showcase" class="showcase-img">
     </section>
 
     <!-- FOOTER -->
@@ -529,7 +620,7 @@
         <div class="footer-content">
             <div class="footer-left">
                 <div class="footer-logo">
-                    <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" style="height: 100px; width: auto;">
+                    <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" style="height: 45px; width: auto;">
                 </div>
                 <div class="footer-copyright">
                     © 2026 Linkan. Built for the Creator Economy.

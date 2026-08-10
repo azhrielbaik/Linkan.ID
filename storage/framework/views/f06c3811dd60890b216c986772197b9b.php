@@ -232,7 +232,7 @@
                                     <img src="<?php echo e(asset('storage/' . $product->image)); ?>" alt="<?php echo e($product->title); ?>">
                                 <?php else: ?>
                                     <i class="fas fa-file-alt"></i>
-                                <?php endif; ?>
+                                  <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <div class="preview-product-title"><?php echo e($product->title); ?></div>
@@ -243,6 +243,24 @@
                             </a>
                         </div>
                     <?php endif; ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if($shortlinks && $shortlinks->count() > 0): ?>
+            <div class="preview-products" style="margin-top: 10px;">
+                <?php $__currentLoopData = $shortlinks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $link): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="preview-product-item">
+                        <div class="preview-product-image" style="background: #FFE5D3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-link" style="color: <?php echo e($appearance->theme_color ?? '#FF9040'); ?>; font-size: 16px;"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="preview-product-title"><?php echo e($link->title ?: $link->slug); ?></div>
+                        </div>
+                        <a href="<?php echo e(url('/' . $link->slug)); ?>" class="preview-product-button" target="_blank">
+                            Kunjungi
+                        </a>
+                    </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         <?php endif; ?>

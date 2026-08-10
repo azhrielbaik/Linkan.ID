@@ -7,6 +7,11 @@
         box-sizing: border-box;
     }
     
+    /* Clean white flat canvas for shortlinks */
+    body, .main-content, .content-wrapper, .dashboard-wrapper {
+        background-color: #fff !important;
+    }
+
     .dashboard-wrapper {
         font-family: 'Plus Jakarta Sans', sans-serif;
         color: #181818;
@@ -159,11 +164,11 @@
     /* CARDS */
     .card {
         background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        border-radius: 12px;
+        box-shadow: none !important;
         padding: 24px;
         margin-bottom: 30px;
-        border: 1px solid #f5f5f5;
+        border: 1px solid #e2e8f0 !important;
     }
 
     .card-header {
@@ -874,11 +879,267 @@
     @media (max-width: 767px) {
         :root { --panel-w: 100vw; }
     }
+
+    /* Mobile App-like Styles */
+    .mobile-only-header-bar {
+        display: none;
+    }
+    .mobile-only-new-link-btn {
+        display: none;
+    }
+    .mobile-segment-control {
+        display: none;
+    }
+    .mobile-list-subheader {
+        display: none;
+    }
+    .mobile-only-actions {
+        display: none;
+    }
+    .mobile-list-icon-container {
+        display: none;
+    }
+    .mobile-slug-text {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        /* Force white background on wrapper and components */
+        body, .dashboard-wrapper, .dashboard-grid, .left-col, .right-col, .content-wrapper, .main-content {
+            background-color: #fff !important;
+        }
+
+        .dashboard-grid {
+            margin-top: 0px !important;
+            gap: 0px !important;
+        }
+
+        /* Show Performance Card (graphic) on mobile, style edge-to-edge, flat merge with divider */
+        .left-col > .card.performance-card {
+            display: block !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: none !important;
+            padding: 16px 20px !important;
+            background: #fff !important;
+        }
+
+        /* Collapsible Creation Form on Mobile as a distinct card container */
+        .mobile-form-collapse-header {
+            margin: 16px 16px 0 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: none !important;
+            background: #fff !important;
+        }
+        .mobile-form-collapse.is-open .mobile-form-collapse-header {
+            margin-bottom: 0 !important;
+            border-radius: 12px 12px 0 0 !important;
+            border: 1px solid #e2e8f0 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            background: #fbfbfc !important;
+        }
+        .mobile-form-collapse-body > form > .card {
+            margin: 0 16px 16px 16px !important;
+            border-radius: 0 0 12px 12px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-top: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Unified Container layout for search card and engagement card, flat merge with divider */
+        .left-col > .card.search-filter-card {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: none !important;
+            padding: 16px 20px !important;
+            background: #fff !important;
+        }
+        .dashboard-wrapper > .card.engagement-card {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            background: #fff !important;
+        }
+
+        /* Search input styling matching screenshot */
+        .left-col input[name="search"] {
+            border-radius: 100px !important;
+            background: #f4f4f6 !important;
+            border: none !important;
+            padding: 12px 40px 12px 40px !important;
+        }
+        
+        .desktop-sort-wrapper {
+            display: none !important;
+        }
+
+        /* Segmented control tabs */
+        .mobile-segment-control {
+            display: flex;
+            background: #f4f4f6;
+            border-radius: 100px;
+            padding: 4px;
+            margin-top: 12px;
+            gap: 4px;
+        }
+        .segment-tab {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .segment-tab.active {
+            background: #FFF3E6;
+            color: #FF9040;
+            box-shadow: 0 2px 6px rgba(255,144,64,0.12);
+            font-weight: 700;
+        }
+
+        /* Subheader */
+        .desktop-only-card-header {
+            display: none !important;
+        }
+        .mobile-list-subheader {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: #f9f9fb;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .mobile-list-subheader span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* List Items */
+        .engagement-list {
+            padding: 0 !important;
+            gap: 0 !important;
+        }
+        .engagement-item {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 16px 20px !important;
+            border: none !important;
+            border-bottom: 1px dashed #e2e8f0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            gap: 12px;
+        }
+        .engagement-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .mobile-list-icon-container {
+            display: flex;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: #FFF3E6;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #FF9040;
+            flex-shrink: 0;
+        }
+
+        .eng-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .eng-info h4 {
+            font-size: 14px !important;
+            font-weight: 700;
+            margin: 0 0 4px 0 !important;
+            color: #181818;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .eng-info p, .eng-info a {
+            display: none !important;
+        }
+        .mobile-slug-text {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Actions */
+        .desktop-only-actions {
+            display: none !important;
+        }
+        .mobile-only-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .mobile-action-circle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .mobile-action-circle-btn:hover, .mobile-action-circle-btn:active {
+            background: #FFF3E6;
+            color: #FF9040;
+            border-color: #FF9040;
+        }
+        
+        /* Pagination Container on mobile */
+        .dashboard-wrapper > .card.engagement-card > div:last-child {
+            padding: 16px 20px !important;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0 !important;
+        }
+    }
 </style>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection("content"); ?>
 <div class="dashboard-wrapper">
+
+
+
+
     <?php if(session('success')): ?>
         <div class="success-card" id="successToast">
             <div class="success-card-header">
@@ -897,7 +1158,7 @@
         <!-- LEFT COLUMN -->
         <div class="left-col">
             <!-- PERFORMANCE CARD -->
-            <div class="card">
+            <div class="card performance-card">
                 <div class="card-header">
                     <div class="card-title"><?php echo e(__('shortlink.performance')); ?></div>
                     <div style="font-size: 13px; color: #888;"><?php echo e(__('shortlink.data_preview')); ?></div>
@@ -932,21 +1193,38 @@
             </div>
 
             <!-- SEARCH & FILTER -->
-            <div class="card" style="margin-bottom: 0;">
-                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <div style="flex: 1; position: relative; min-width: 200px;">
-                        <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #999;"></i>
-                        <input type="text" placeholder="<?php echo e(__('shortlink.search_placeholder') ?? 'Search your links...'); ?>" style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
+            <div class="card search-filter-card" style="margin-bottom: 0;">
+                <form method="GET" action="<?php echo e(route('shortlink.index')); ?>" id="search-filter-form">
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <div style="flex: 1; position: relative; min-width: 200px;">
+                            <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #999;"></i>
+                            <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="<?php echo e(__('shortlink.search_placeholder') ?? 'Search your links...'); ?>" style="width: 100%; padding: 12px 40px 12px 40px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
+                            <?php if(request('search')): ?>
+                                <a href="<?php echo e(route('shortlink.index', request()->except(['search', 'page']))); ?>" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; text-decoration: none;"><i class="fas fa-times-circle"></i></a>
+                            <?php endif; ?>
+                        </div>
+                        <div style="width: 180px; position: relative; flex-shrink: 0;" class="desktop-sort-wrapper">
+                            <select name="sort" onchange="this.form.submit()" style="width: 100%; padding: 12px 32px 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; background: #fff; cursor: pointer; appearance: none; color: #181818; box-sizing: border-box;">
+                                <option value="newest" <?php echo e(request('sort') == 'newest' ? 'selected' : ''); ?>><?php echo e(__('shortlink.filter_newest') ?? 'Newest'); ?></option>
+                                <option value="oldest" <?php echo e(request('sort') == 'oldest' ? 'selected' : ''); ?>>Oldest</option>
+                                <option value="popular" <?php echo e(request('sort') == 'popular' ? 'selected' : ''); ?>><?php echo e(__('shortlink.filter_popular') ?? 'Most Popular'); ?></option>
+                            </select>
+                            <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none; font-size: 12px;"></i>
+                        </div>
                     </div>
-                    <div style="width: 180px; position: relative; flex-shrink: 0;">
-                        <select style="width: 100%; padding: 12px 32px 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; background: #fff; cursor: pointer; appearance: none; color: #181818; box-sizing: border-box;">
-                            <option value=""><?php echo e(__('shortlink.filter_all') ?? 'All Links'); ?></option>
-                            <option value="popular"><?php echo e(__('shortlink.filter_popular') ?? 'Most Popular'); ?></option>
-                            <option value="newest"><?php echo e(__('shortlink.filter_newest') ?? 'Newest'); ?></option>
-                        </select>
-                        <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none; font-size: 12px;"></i>
+
+                    <!-- Mobile Segmented Sorting Tabs -->
+                    <div class="mobile-segment-control">
+                        <button type="button" class="segment-tab <?php echo e(request('sort') != 'popular' ? 'active' : ''); ?>" data-sort="newest">
+                            <i class="fas fa-bolt"></i> <?php echo e(__('shortlink.filter_newest') ?? 'Newest'); ?>
+
+                        </button>
+                        <button type="button" class="segment-tab <?php echo e(request('sort') == 'popular' ? 'active' : ''); ?>" data-sort="popular">
+                            <i class="fas fa-fire"></i> <?php echo e(__('shortlink.filter_popular') ?? 'Most Popular'); ?>
+
+                        </button>
                     </div>
-                </div>
+                </form>
             </div>
 
         </div>
@@ -1038,10 +1316,16 @@ unset($__errorArgs, $__bag); ?>
     </div>
 
             <!-- ENGAGEMENT ALL TIME -->
-            <div class="card">
-                <div class="card-header">
+            <div class="card engagement-card">
+                <div class="card-header desktop-only-card-header">
                     <div class="card-title"><?php echo e(__('shortlink.engagement')); ?></div>
                     <div style="font-size: 13px; color: #888;"><?php echo e($shortlinks->total()); ?> <?php echo e(__('shortlink.results')); ?></div>
+                </div>
+
+                <!-- Mobile List Subheader -->
+                <div class="mobile-list-subheader">
+                    <span class="col-name"><?php echo e(__('shortlink.name_label')); ?> <i class="fas fa-sort"></i></span>
+                    <span class="col-actions"><?php echo e(__('shortlink.actions_label')); ?> <i class="fas fa-sort"></i></span>
                 </div>
 
                 <div class="engagement-list">
@@ -1058,6 +1342,11 @@ unset($__errorArgs, $__bag); ?>
                          data-password="<?php echo e($link->password); ?>"
                          data-expires="<?php echo e($link->expires_at ? $link->expires_at->format('Y-m-d\TH:i') : ''); ?>"
                     >
+                        <!-- Mobile Link Icon -->
+                        <div class="mobile-list-icon-container">
+                            <i class="fas fa-link"></i>
+                        </div>
+
                         <div class="eng-info">
                             <h4><?php echo e($link->title ?: __('shortlink.untitled') . ' (' . $link->slug . ')'); ?></h4>
                             <a href="<?php echo e(url('/' . $link->slug)); ?>" target="_blank" style="font-size: 13px; color: #FF9040; font-weight: 700; text-decoration: none; display: block; margin-bottom: 4px;">Linkan.id/<?php echo e($link->slug); ?></a>
@@ -1065,11 +1354,21 @@ unset($__errorArgs, $__bag); ?>
                             <?php if($link->description): ?>
                             <p style="font-size: 12px; color: #999; margin-top: 4px;"><?php echo e(Str::limit($link->description, 60)); ?></p>
                             <?php endif; ?>
+                            <!-- Mobile Subtitle -->
+                            <span class="mobile-slug-text">Linkan.id/<?php echo e($link->slug); ?></span>
                         </div>
-                        <div class="eng-actions">
+                        
+                        <!-- Desktop Actions -->
+                        <div class="eng-actions desktop-only-actions">
                             <button type="button" class="btn-detail-text sl-btn--detail"><?php echo e(__('shortlink.detail')); ?></button>
                             <a href="<?php echo e(route('shortlink.analytics', $link)); ?>" class="btn-icon" title="Analytics"><i class="fas fa-chart-bar"></i></a>
                             <button type="button" class="btn-icon sl-btn--copy" onclick="copySlugToClipboard('<?php echo e(url('/' . $link->slug)); ?>', this)" title="Copy Link"><i class="fas fa-copy"></i></button>
+                        </div>
+
+                        <!-- Mobile Actions -->
+                        <div class="mobile-only-actions">
+                            <button type="button" class="mobile-action-circle-btn sl-btn--edit-direct" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                            <button type="button" class="mobile-action-circle-btn sl-btn--detail" title="Detail"><i class="fas fa-ellipsis-h"></i></button>
                         </div>
                     </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
@@ -1081,7 +1380,7 @@ unset($__errorArgs, $__bag); ?>
                 </div>
                 
                 <div style="margin-top: 20px;">
-                    <?php echo e($shortlinks->links()); ?>
+                    <?php echo e($shortlinks->appends(request()->except('page'))->links()); ?>
 
                 </div>
             </div>
@@ -1379,97 +1678,283 @@ unset($__errorArgs, $__bag); ?>
             newOverlay.addEventListener('click', closePanel);
         }
 
-        document.querySelectorAll('.sl-btn--detail').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const card = this.closest('.sl-card');
-                if (!card) return;
+        // Event delegation for detail panel buttons to support dynamic AJAX elements
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.sl-btn--detail');
+            if (!btn) return;
 
-                const form = document.getElementById('panel-form');
-                if(form) {
-                    form.action = `/homeadminS/shortlink/${card.dataset.id}`;
+            e.preventDefault();
+            const card = btn.closest('.sl-card');
+            if (!card) return;
+
+            const form = document.getElementById('panel-form');
+            if(form) {
+                form.action = `/homeadminS/shortlink/${card.dataset.id}`;
+            }
+
+            const panelInputSlug = document.getElementById('panel-input-slug');
+            if(panelInputSlug) panelInputSlug.value = card.dataset.slug;
+
+            const panelInputTitle = document.getElementById('panel-input-title');
+            if(panelInputTitle) panelInputTitle.value = card.dataset.title;
+
+            const panelInputPassword = document.getElementById('panel-input-password');
+            if(panelInputPassword) panelInputPassword.value = card.dataset.password;
+
+            const panelInputExpires = document.getElementById('panel-input-expires');
+            if(panelInputExpires) panelInputExpires.value = card.dataset.expires;
+
+            toggleSection('view');
+
+            const panelTitle = document.getElementById('panel-title');
+            if(panelTitle) panelTitle.innerText = card.dataset.title;
+            
+            const urlEl = document.getElementById('panel-url');
+            if(urlEl) urlEl.href = card.dataset.url;
+
+            const panelCreatedDate = document.getElementById('panel-created-date');
+            if(panelCreatedDate) panelCreatedDate.innerText = card.dataset.created;
+
+            const statusPasswordIcon = document.getElementById('status-password-icon');
+            const statusPassword = document.getElementById('status-password');
+            if(statusPassword) {
+                if (card.dataset.password) {
+                    statusPassword.innerText = '<?php echo e(__('shortlink.password_protected')); ?>';
+                    if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-lock';
+                } else {
+                    statusPassword.innerText = '<?php echo e(__('shortlink.pub_link')); ?>';
+                    if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-unlock';
                 }
+            }
 
-                const panelInputSlug = document.getElementById('panel-input-slug');
-                if(panelInputSlug) panelInputSlug.value = card.dataset.slug;
-
-                const panelInputTitle = document.getElementById('panel-input-title');
-                if(panelInputTitle) panelInputTitle.value = card.dataset.title;
-
-                const panelInputPassword = document.getElementById('panel-input-password');
-                if(panelInputPassword) panelInputPassword.value = card.dataset.password;
-
-                const panelInputExpires = document.getElementById('panel-input-expires');
-                if(panelInputExpires) panelInputExpires.value = card.dataset.expires;
-
-                toggleSection('view');
-
-                const panelTitle = document.getElementById('panel-title');
-                if(panelTitle) panelTitle.innerText = card.dataset.title;
-                
-                const urlEl = document.getElementById('panel-url');
-                if(urlEl) urlEl.href = card.dataset.url;
-
-                const panelCreatedDate = document.getElementById('panel-created-date');
-                if(panelCreatedDate) panelCreatedDate.innerText = card.dataset.created;
-
-                const statusPasswordIcon = document.getElementById('status-password-icon');
-                const statusPassword = document.getElementById('status-password');
-                if(statusPassword) {
-                    if (card.dataset.password) {
-                        statusPassword.innerText = '<?php echo e(__('shortlink.password_protected')); ?>';
-                        if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-lock';
-                    } else {
-                        statusPassword.innerText = '<?php echo e(__('shortlink.pub_link')); ?>';
-                        if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-unlock';
-                    }
+            const statusExpires = document.getElementById('status-expires');
+            if(statusExpires) {
+                if (card.dataset.expires) {
+                    statusExpires.innerText = '<?php echo e(__('shortlink.expired_label')); ?>: ' + card.dataset.expires.replace('T', ' ');
+                } else {
+                    statusExpires.innerText = '<?php echo e(__('shortlink.no_time_limit')); ?>';
                 }
+            }
 
-                const statusExpires = document.getElementById('status-expires');
-                if(statusExpires) {
-                    if (card.dataset.expires) {
-                        statusExpires.innerText = '<?php echo e(__('shortlink.expired_label')); ?>: ' + card.dataset.expires.replace('T', ' ');
-                    } else {
-                        statusExpires.innerText = '<?php echo e(__('shortlink.no_time_limit')); ?>';
-                    }
-                }
+            const panelSlug = document.getElementById('panel-slug-badge');
+            if(panelSlug) {
+                const urlPath = new URL(card.dataset.url).pathname;
+                panelSlug.innerText = urlPath;
+            }
+            
+            const panelDesc = document.getElementById('panel-desc');
+            if(panelDesc) panelDesc.innerText = card.dataset.description || 'No description provided';
+            
+            const destEl = document.getElementById('panel-destination');
+            if(destEl) {
+                destEl.href = card.dataset.destination;
+                destEl.innerText = card.dataset.destination;
+            }
 
-                const panelSlug = document.getElementById('panel-slug-badge');
-                if(panelSlug) {
-                    const urlPath = new URL(card.dataset.url).pathname;
-                    panelSlug.innerText = urlPath;
-                }
-                
-                const panelDesc = document.getElementById('panel-desc');
-                if(panelDesc) panelDesc.innerText = card.dataset.description || 'No description provided';
-                
-                const destEl = document.getElementById('panel-destination');
-                if(destEl) {
-                    destEl.href = card.dataset.destination;
-                    destEl.innerText = card.dataset.destination;
-                }
+            const urlEl2 = document.getElementById('panel-url');
+            if(urlEl2) {
+                urlEl2.href = card.dataset.url;
+                urlEl2.innerText = card.dataset.url;
+            }
 
-                const urlEl2 = document.getElementById('panel-url');
-                if(urlEl2) {
-                    urlEl2.href = card.dataset.url;
-                    urlEl2.innerText = card.dataset.url;
-                }
+            const panelCreated = document.getElementById('panel-created');
+            if(panelCreated) panelCreated.innerText = card.dataset.created;
+            
+            const panelUpdated = document.getElementById('panel-updated');
+            if(panelUpdated) panelUpdated.innerText = card.dataset.updated;
 
-                const panelCreated = document.getElementById('panel-created');
-                if(panelCreated) panelCreated.innerText = card.dataset.created;
-                
-                const panelUpdated = document.getElementById('panel-updated');
-                if(panelUpdated) panelUpdated.innerText = card.dataset.updated;
-
-                openPanel();
-                const btnAnalytics = document.getElementById('panel-btn-analytics');
-                if(btnAnalytics) {
-                    // Get the analytics link from the card's actions block
-                    const analyticsLink = card.querySelector('a[title="Analytics"]');
-                    if(analyticsLink) btnAnalytics.href = analyticsLink.href;
-                }
-            });
+            openPanel();
+            const btnAnalytics = document.getElementById('panel-btn-analytics');
+            if(btnAnalytics) {
+                // Get the analytics link from the card's actions block
+                const analyticsLink = card.querySelector('a[title="Analytics"]');
+                if(analyticsLink) btnAnalytics.href = analyticsLink.href;
+            }
         });
+
+        // Handle segmented control tabs click on mobile
+        document.addEventListener('click', function(e) {
+            const tab = e.target.closest('.segment-tab');
+            if (tab) {
+                e.preventDefault();
+                const sortVal = tab.dataset.sort;
+                const sortSelect = document.querySelector('select[name="sort"]');
+                if (sortSelect) {
+                    sortSelect.value = sortVal;
+                    // Toggle active classes
+                    tab.parentElement.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    performAjaxSearch();
+                }
+            }
+        });
+
+        // Handle direct edit button click on mobile
+        document.addEventListener('click', function(e) {
+            const editBtn = e.target.closest('.sl-btn--edit-direct');
+            if (editBtn) {
+                e.preventDefault();
+                const card = editBtn.closest('.sl-card');
+                if (card) {
+                    const detailBtn = card.querySelector('.sl-btn--detail');
+                    if (detailBtn) {
+                        detailBtn.click();
+                        setTimeout(() => {
+                            toggleSection('edit');
+                        }, 50);
+                    }
+                }
+            }
+        });
+
+        // Toggle mobile form collapse
+        window.toggleMobileForm = function() {
+            const formCol = document.querySelector('.mobile-form-collapse');
+            if (formCol) {
+                formCol.classList.toggle('is-open');
+                if (formCol.classList.contains('is-open')) {
+                    formCol.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        };
+
+        // AJAX Search & Sort with Debounce
+        const searchInput = document.querySelector('input[name="search"]');
+        const sortSelect = document.querySelector('select[name="sort"]');
+        const searchForm = document.getElementById('search-filter-form');
+        let debounceTimeout;
+
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                performAjaxSearch();
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    performAjaxSearch();
+                }, 300);
+            });
+        }
+
+        // Handle clear search button click
+        document.addEventListener('click', function(e) {
+            const clearLink = e.target.closest('.fa-times-circle')?.parentElement || e.target.closest('input[name="search"] ~ a');
+            if (clearLink && clearLink.closest('div[style*="position: relative"]')) {
+                e.preventDefault();
+                if (searchInput) searchInput.value = '';
+                performAjaxSearch();
+            }
+        });
+
+        // Intercept pagination links
+        document.addEventListener('click', function(e) {
+            const pageLink = e.target.closest('.pagination a, .pagination-container a, [style*="margin-top: 20px"] a');
+            if (pageLink && pageLink.href) {
+                // Check if the link is inside the shortlinks paginator
+                const isShortlinkPagination = pageLink.closest('[style*="margin-top: 20px"]');
+                if (isShortlinkPagination) {
+                    e.preventDefault();
+                    fetchAndUpdate(pageLink.href);
+                }
+            }
+        });
+
+        function performAjaxSearch() {
+            const searchVal = searchInput ? searchInput.value : '';
+            const sortVal = sortSelect ? sortSelect.value : 'newest';
+            
+            const url = new URL(window.location.origin + window.location.pathname);
+            if (searchVal.trim() !== '') {
+                url.searchParams.set('search', searchVal);
+            }
+            if (sortVal !== 'newest') {
+                url.searchParams.set('sort', sortVal);
+            }
+            
+            fetchAndUpdate(url.toString());
+        }
+
+        function fetchAndUpdate(url) {
+            const listContainer = document.querySelector('.engagement-list');
+            if (listContainer) listContainer.style.opacity = '0.5';
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // 1. Update list content
+                const newList = doc.querySelector('.engagement-list');
+                const currentList = document.querySelector('.engagement-list');
+                if (newList && currentList) {
+                    currentList.innerHTML = newList.innerHTML;
+                    currentList.style.opacity = '1';
+                }
+
+                // 2. Update pagination
+                const newPagination = doc.querySelector('[style*="margin-top: 20px"]');
+                const currentPagination = document.querySelector('[style*="margin-top: 20px"]');
+                if (newPagination && currentPagination) {
+                    currentPagination.innerHTML = newPagination.innerHTML;
+                } else if (currentPagination) {
+                    currentPagination.innerHTML = '';
+                }
+
+                // 3. Update result stats
+                const newResultsText = doc.querySelector('.card-header div[style*="font-size: 13px"]');
+                const currentResultsText = document.querySelector('.card-header div[style*="font-size: 13px"]');
+                if (newResultsText && currentResultsText) {
+                    currentResultsText.innerHTML = newResultsText.innerHTML;
+                }
+
+                const newTotalLinksBox = doc.querySelector('.stat-box:nth-child(2) strong');
+                const currentTotalLinksBox = document.querySelector('.stat-box:nth-child(2) strong');
+                if (newTotalLinksBox && currentTotalLinksBox) {
+                    currentTotalLinksBox.innerHTML = newTotalLinksBox.innerHTML;
+                }
+
+                // 4. Update clear search button visibility
+                const newSearchWrapper = doc.querySelector('input[name="search"]').parentElement;
+                const currentSearchWrapper = document.querySelector('input[name="search"]').parentElement;
+                if (newSearchWrapper && currentSearchWrapper) {
+                    const clearBtn = currentSearchWrapper.querySelector('a');
+                    const newClearBtn = newSearchWrapper.querySelector('a');
+                    if (clearBtn && !newClearBtn) {
+                        clearBtn.remove();
+                    } else if (!clearBtn && newClearBtn) {
+                        currentSearchWrapper.appendChild(newClearBtn);
+                    }
+                }
+
+                // Update active segment tab on mobile if select exists
+                if (sortSelect) {
+                    const currentSort = sortSelect.value || 'newest';
+                    document.querySelectorAll('.segment-tab').forEach(t => {
+                        if (t.dataset.sort === currentSort) {
+                            t.classList.add('active');
+                        } else {
+                            t.classList.remove('active');
+                        }
+                    });
+                }
+
+                // 5. Update URL
+                history.pushState(null, '', url);
+            })
+            .catch(err => {
+                console.error('Ajax search failed:', err);
+                if (listContainer) listContainer.style.opacity = '1';
+            });
+        }
     });
 </script>
 <?php $__env->stopPush(); ?>
