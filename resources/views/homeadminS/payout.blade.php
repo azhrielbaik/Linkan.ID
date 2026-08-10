@@ -5,7 +5,7 @@
 @push("styles")
 <style>
 .header h1 {
-            font-size: 24px;
+            font-size: 18px;
             color: #333;
         }
 
@@ -170,10 +170,10 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 16px; margin-top: 28px;">
-                        <a href="{{ route('payout.showWithdrawForm') }}" class="btn btn-withdraw" style="background: white; color: #FF9040; border: none; font-weight: bold; border-radius: 6px; padding: 12px 28px; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 8px; text-decoration: none; transition: background 0.2s;">
+                        <a href="{{ route('admin.payout.withdraw') }}" class="btn btn-withdraw" style="background: white; color: #FF9040; border: none; font-weight: bold; border-radius: 6px; padding: 12px 28px; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 8px; text-decoration: none; transition: background 0.2s;">
                             <i class="fas fa-paper-plane"></i> Withdraw
                         </a>
-                        <a href="{{ route('payout.showPayoutHistory') }}" class="btn btn-history" style="background: white; color: #FF9040; border: none; font-weight: bold; border-radius: 6px; padding: 12px 28px; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 8px; text-decoration: none; transition: background 0.2s;">
+                        <a href="{{ route('admin.payout.history') }}" class="btn btn-history" style="background: white; color: #FF9040; border: none; font-weight: bold; border-radius: 6px; padding: 12px 28px; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 8px; text-decoration: none; transition: background 0.2s;">
                             <i class="fas fa-history"></i> History
                         </a>
                     </div>
@@ -206,7 +206,7 @@
                         <p>Belum ada metode pembayaran yang diatur.</p>
                     </div>
                     @endif
-                    <a href="{{ route('payout.showMethodForm') }}" class="btn" style="margin-top: 10px; display: inline-block; background: white; color: #FF9040; font-weight: bold; border-radius: 6px; padding: 12px 32px; font-size: 15px; box-shadow: 0 2px 8px rgba(255,144,64,0.10); text-decoration: none; transition: background 0.2s;">
+                    <a href="{{ route('admin.payout.method') }}" class="btn" style="margin-top: 10px; display: inline-block; background: white; color: #FF9040; font-weight: bold; border-radius: 6px; padding: 12px 32px; font-size: 15px; box-shadow: 0 2px 8px rgba(255,144,64,0.10); text-decoration: none; transition: background 0.2s;">
                         <i class="fas fa-cog"></i> {{ $payoutDetail ? 'Edit Payout Method' : 'Set Payout Method' }}
                     </a>
                 </div>

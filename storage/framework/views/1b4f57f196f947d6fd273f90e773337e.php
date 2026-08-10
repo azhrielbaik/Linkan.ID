@@ -3,7 +3,7 @@
 <?php $__env->startPush("styles"); ?>
 <style>
 .header h1 {
-            font-size: 24px;
+            font-size: 18px;
             color: #333;
         }
         

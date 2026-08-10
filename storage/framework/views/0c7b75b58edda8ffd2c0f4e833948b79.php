@@ -188,46 +188,48 @@
     </div>
 
     <div class="sidebar-nav">
-        <a href="<?php echo e(route('beranda.admins')); ?>" class="<?php echo e(request()->routeIs('beranda.admins') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="<?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
             <i class="fas fa-th-large"></i><?php echo e(__('sidebar.dashboard')); ?>
 
         </a>
         
-        <a href="<?php echo e(route('statistic')); ?>" class="<?php echo e(request()->routeIs('statistic') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.statistics')); ?>" class="<?php echo e(request()->routeIs('admin.statistics*') ? 'active' : ''); ?>">
             <i class="fas fa-chart-pie"></i><?php echo e(__('sidebar.analytics')); ?>
 
         </a>
 
-        <a href="<?php echo e(route('shortlink.index')); ?>" class="<?php echo e(request()->routeIs('shortlink.index') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.shortlinks.index')); ?>" class="<?php echo e(request()->routeIs('admin.shortlinks.*') ? 'active' : ''); ?>">
             <i class="fas fa-link"></i><?php echo e(__('sidebar.shortlink')); ?>
 
         </a>
 
-        <a href="<?php echo e(route('mylinkan')); ?>" class="<?php echo e(request()->routeIs('mylinkan') || request()->routeIs('digital-product.*') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.mylinkan')); ?>" class="<?php echo e(request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*') ? 'active' : ''); ?>">
             <i class="fas fa-pager"></i><?php echo e(__('sidebar.microsite')); ?>
 
         </a>
 
-        <a href="<?php echo e(route('orders')); ?>" class="<?php echo e(request()->routeIs('orders') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.orders')); ?>" class="<?php echo e(request()->routeIs('admin.orders*') ? 'active' : ''); ?>">
             <i class="fas fa-store"></i><?php echo e(__('sidebar.shop')); ?>
 
         </a>
 
-        <a href="<?php echo e(route('mypurchase')); ?>" class="<?php echo e(request()->routeIs('mypurchase') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.purchases')); ?>" class="<?php echo e(request()->routeIs('admin.purchases') ? 'active' : ''); ?>">
             <i class="fas fa-shopping-bag"></i><?php echo e(__('sidebar.mypurchases')); ?>
 
         </a>
 
-        <a href="<?php echo e(route('appearance')); ?>" class="<?php echo e(request()->routeIs('appearance') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.appearance')); ?>" class="<?php echo e(request()->routeIs('admin.appearance*') ? 'active' : ''); ?>">
             <i class="fas fa-paint-brush"></i><?php echo e(__('sidebar.appearance')); ?>
 
         </a>
 
         <?php
-            $isSettingsActive = request()->routeIs('settings') || request()->routeIs('account.settings') || request()->routeIs('payout.index');
+            $isSettingsActive = request()->routeIs('admin.settings')
+                || request()->routeIs('admin.account*')
+                || request()->routeIs('admin.payout.*');
         ?>
 
-        <a href="<?php echo e(route('settings')); ?>" class="<?php echo e($isSettingsActive ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('admin.settings')); ?>" class="<?php echo e($isSettingsActive ? 'active' : ''); ?>">
             <i class="fas fa-cog"></i><?php echo e(__('sidebar.settings')); ?>
 
         </a>

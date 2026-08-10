@@ -553,7 +553,7 @@ tr:not(:last-child) {
                                     <button type="button" class="btn accept" onclick="showPlatformModal({{ $product->id }}, '{{ $product->platform_type }}', '{{ $product->platform_url }}', '{{ $product->platform_file }}')">
                                         <i class="fas fa-eye"></i> View Platform
                                     </button>
-                                    <form action="{{ route('verifikasi.verify', $product->id) }}" method="POST">
+                                    <form action="{{ route('platform-admin.verifikasi.verify', $product->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="approved">
                                         <button type="submit" class="btn accept">

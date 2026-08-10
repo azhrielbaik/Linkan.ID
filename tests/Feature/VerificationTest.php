@@ -34,7 +34,7 @@ class VerificationTest extends TestCase
 
 
 
-        $response = $this->actingAs($admin)->get(route('verifikasi.platformadmin'));
+        $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi'));
 
         $response->assertStatus(200);
         $response->assertSee('A valid product');
@@ -60,7 +60,7 @@ class VerificationTest extends TestCase
             'verification_status' => 'pending'
         ]);
 
-        $response = $this->actingAs($admin)->post(route('verifikasi.verify', $product->id), [
+        $response = $this->actingAs($admin)->post(route('platform-admin.verifikasi.verify', $product->id), [
             'status' => 'approved'
         ]);
 
@@ -94,7 +94,7 @@ class VerificationTest extends TestCase
             'verification_status' => 'pending'
         ]);
 
-        $response = $this->actingAs($admin)->post(route('verifikasi.verify', $product->id), [
+        $response = $this->actingAs($admin)->post(route('platform-admin.verifikasi.verify', $product->id), [
             'status' => 'rejected',
             'rejection_reason' => 'Data tidak lengkap'
         ]);

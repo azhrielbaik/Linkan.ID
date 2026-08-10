@@ -36,25 +36,39 @@
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 18px 40px;
-            border-bottom: 1px solid #eaeaea;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            background: #fff !important;
+            padding: 10px 40px !important;
+            border-bottom: 1px solid #eaeaea !important;
+            min-height: 48px !important;
         }
         
         .content-wrapper {
-            padding: 30px 40px;
+            padding: 20px 40px !important;
             flex: 1;
         }
 
         .header h1 {
-            font-size: 18px;
-            font-weight: 800;
-            color: #181818;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            font-size: 18px !important;
+            font-weight: 800 !important;
+            color: #181818 !important;
+            letter-spacing: 0.5px !important;
+            text-transform: uppercase !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .stat-icon {
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 20px !important;
+            flex-shrink: 0 !important;
         }
 
         .header-right {
@@ -155,6 +169,7 @@
         }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
+    <?php echo $__env->yieldPushContent('page-styles'); ?>
     <meta name="view-transition" content="same-origin" />
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js"></script>
     <style>
@@ -178,7 +193,7 @@
                 
                 <div class="header-right">
                     <div class="header-actions">
-                        <a href="<?php echo e(route('settings')); ?>" class="action-icon"><i class="fas fa-cog"></i></a>
+                        <a href="<?php echo e(route('admin.settings')); ?>" class="action-icon"><i class="fas fa-cog"></i></a>
                         <a href="#" class="action-icon"><i class="far fa-bell"></i></a>
                     </div>
                     

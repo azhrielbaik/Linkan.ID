@@ -55,9 +55,9 @@ class LoginController extends Controller
             
             // Redirect berdasarkan role
             if ($user->role === 'admin_seller') {
-                return redirect()->route('beranda.admins');
-            } else if ($user->role === 'admin_platform') {
-                return redirect()->route('beranda.platformadmin');
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->role === 'admin_platform') {
+                return redirect()->route('platform-admin.dashboard');
             }
             
             // Default redirect jika role tidak sesuai

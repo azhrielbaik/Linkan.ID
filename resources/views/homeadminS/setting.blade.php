@@ -5,7 +5,7 @@
 @push("styles")
 <style>
 .header h1 {
-            font-size: 24px;
+            font-size: 18px;
             color: #333;
         }
 
@@ -64,7 +64,7 @@
 @section("content")
 
 
-            <div class="settings-card" onclick="window.location.href='{{ route('account.settings') }}'">
+            <div class="settings-card" onclick="window.location.href='{{ route('admin.account') }}'">
                 <div class="settings-card-icon">
                     <i class="fas fa-user"></i>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="settings-card" onclick="window.location.href='{{ route('payout.index') }}'">
+            <div class="settings-card" onclick="window.location.href='{{ route('admin.payout.index') }}'">
                 <div class="settings-card-icon">
                     <i class="fas fa-wallet"></i>
                 </div>

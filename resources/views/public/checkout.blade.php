@@ -301,7 +301,7 @@
                 console.log('Sending transaction data:', transactionData); // Log data yang akan dikirim
 
                 // Kirim ke server dengan status dari Midtrans
-                fetch("{{ route('digital-product.store-transaction') }}", {
+                fetch("{{ route('transaction.store') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -326,7 +326,7 @@
                                 window.location.href = data.redirect;
                             });
                         } else {
-                            window.location.href = '{{ route("digital-product.success") }}';
+                            window.location.href = '{{ route("admin.digital-products.success") }}';
                         }
                     } else {
                         Swal.fire('Error', data.message, 'error');

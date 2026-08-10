@@ -407,7 +407,7 @@
 @endpush
 
 @section("content")
-<form method="POST" action="{{ route('appearance.update') }}" enctype="multipart/form-data" id="appearanceForm">
+<form method="POST" action="{{ route('admin.appearance.update') }}" enctype="multipart/form-data" id="appearanceForm">
             @csrf
             <div class="content-section">
                 <div class="left-panel">

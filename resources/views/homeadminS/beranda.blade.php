@@ -5,7 +5,7 @@
 @push("styles")
 <style>
 .header h1 {
-            font-size: 26px;
+            font-size: 18px;
             font-weight: bold;
             color: #000;
         }
@@ -292,10 +292,10 @@
                 </div>
                 <div class="start-creating">START CREATING NOW...!</div>
                 <div class="action-buttons">
-                    <a href="{{ route('mylinkan') }}" class="action-button">
+                    <a href="{{ route('admin.mylinkan') }}" class="action-button">
                         <i class="fas fa-qrcode"></i> add Linkan
                     </a>
-                    <a href="{{ route('digital-product.create') }}" class="action-button">
+                    <a href="{{ route('admin.digital-products.create') }}" class="action-button">
                         <i class="fas fa-box"></i> Digital Product
                     </a>
                     <a href="{{ route('about') }}" class="action-button">

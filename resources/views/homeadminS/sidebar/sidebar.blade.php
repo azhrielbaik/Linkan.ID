@@ -188,39 +188,41 @@
     </div>
 
     <div class="sidebar-nav">
-        <a href="{{ route('beranda.admins') }}" class="{{ request()->routeIs('beranda.admins') ? 'active' : '' }}">
+        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="fas fa-th-large"></i>{{ __('sidebar.dashboard') }}
         </a>
         
-        <a href="{{ route('statistic') }}" class="{{ request()->routeIs('statistic') ? 'active' : '' }}">
+        <a href="{{ route('admin.statistics') }}" class="{{ request()->routeIs('admin.statistics*') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i>{{ __('sidebar.analytics') }}
         </a>
 
-        <a href="{{ route('shortlink.index') }}" class="{{ request()->routeIs('shortlink.index') ? 'active' : '' }}">
+        <a href="{{ route('admin.shortlinks.index') }}" class="{{ request()->routeIs('admin.shortlinks.*') ? 'active' : '' }}">
             <i class="fas fa-link"></i>{{ __('sidebar.shortlink') }}
         </a>
 
-        <a href="{{ route('mylinkan') }}" class="{{ request()->routeIs('mylinkan') || request()->routeIs('digital-product.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.mylinkan') }}" class="{{ request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*') ? 'active' : '' }}">
             <i class="fas fa-pager"></i>{{ __('sidebar.microsite') }}
         </a>
 
-        <a href="{{ route('orders') }}" class="{{ request()->routeIs('orders') ? 'active' : '' }}">
+        <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
             <i class="fas fa-store"></i>{{ __('sidebar.shop') }}
         </a>
 
-        <a href="{{ route('mypurchase') }}" class="{{ request()->routeIs('mypurchase') ? 'active' : '' }}">
+        <a href="{{ route('admin.purchases') }}" class="{{ request()->routeIs('admin.purchases') ? 'active' : '' }}">
             <i class="fas fa-shopping-bag"></i>{{ __('sidebar.mypurchases') }}
         </a>
 
-        <a href="{{ route('appearance') }}" class="{{ request()->routeIs('appearance') ? 'active' : '' }}">
+        <a href="{{ route('admin.appearance') }}" class="{{ request()->routeIs('admin.appearance*') ? 'active' : '' }}">
             <i class="fas fa-paint-brush"></i>{{ __('sidebar.appearance') }}
         </a>
 
         @php
-            $isSettingsActive = request()->routeIs('settings') || request()->routeIs('account.settings') || request()->routeIs('payout.index');
+            $isSettingsActive = request()->routeIs('admin.settings')
+                || request()->routeIs('admin.account*')
+                || request()->routeIs('admin.payout.*');
         @endphp
 
-        <a href="{{ route('settings') }}" class="{{ $isSettingsActive ? 'active' : '' }}">
+        <a href="{{ route('admin.settings') }}" class="{{ $isSettingsActive ? 'active' : '' }}">
             <i class="fas fa-cog"></i>{{ __('sidebar.settings') }}
         </a>
     </div>

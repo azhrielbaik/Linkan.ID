@@ -20,10 +20,10 @@
     }
 
     .header-title-section h1 {
-        font-size: 26px;
+        font-size: 18px;
         font-weight: 800;
         color: #111827;
-        margin: 0 0 6px 0;
+        margin: 0 0 4px 0;
         letter-spacing: -0.02em;
     }
 
@@ -87,7 +87,7 @@
     .stat-icon {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: 50% !important;
         background: #FFF3E6;
         color: #FF9040;
         display: flex;
@@ -639,10 +639,10 @@
         </div>
         
         <div class="mode-switch-btn">
-            <a href="<?php echo e(route('mylinkan', ['mode' => 'gallery'])); ?>" class="<?php echo e($viewMode == 'gallery' ? 'active' : ''); ?>">
+            <a href="<?php echo e(route('admin.mylinkan', ['mode' => 'gallery'])); ?>" class="<?php echo e($viewMode == 'gallery' ? 'active' : ''); ?>">
                 <i class="fas fa-th-large"></i> Galeri Microsite
             </a>
-            <a href="<?php echo e(route('mylinkan', ['mode' => 'edit'])); ?>" class="<?php echo e($viewMode == 'edit' ? 'active' : ''); ?>">
+            <a href="<?php echo e(route('admin.mylinkan', ['mode' => 'edit'])); ?>" class="<?php echo e($viewMode == 'edit' ? 'active' : ''); ?>">
                 <i class="fas fa-edit"></i> Edit Konten & Blok
             </a>
         </div>
@@ -651,7 +651,7 @@
     <!-- STATS SUMMARY ROW -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon">
+            <div class="stat-icon" style="background: #FFF3E6; color: #FF9040;">
                 <i class="fas fa-pager"></i>
             </div>
             <div class="stat-info">
@@ -784,10 +784,10 @@
                         <button type="button" class="btn-action-secondary" onclick="openPreviewModal('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
                             <i class="fas fa-mobile-alt"></i> Preview
                         </button>
-                        <a href="<?php echo e(route('mylinkan', ['mode' => 'edit'])); ?>" class="btn-action-primary">
+                        <a href="<?php echo e(route('admin.mylinkan', ['mode' => 'edit'])); ?>" class="btn-action-primary">
                             <i class="fas fa-edit"></i> Edit Blok
                         </a>
-                        <a href="<?php echo e(route('appearance')); ?>" class="btn-action-secondary">
+                        <a href="<?php echo e(route('admin.appearance')); ?>" class="btn-action-secondary">
                             <i class="fas fa-paint-brush"></i> Tampilan
                         </a>
                         <button type="button" class="btn-action-secondary" onclick="copyToClipboard('<?php echo e(url('/linkan.id/' . Auth::user()->username)); ?>')">
@@ -816,7 +816,7 @@
         <!-- EDITOR VIEW MODE -->
         <div class="section-header">
             <h2>
-                <a href="<?php echo e(route('mylinkan', ['mode' => 'gallery'])); ?>" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
+                <a href="<?php echo e(route('admin.mylinkan', ['mode' => 'gallery'])); ?>" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <i class="fas fa-sliders-h" style="color: #FF9040;"></i> Editor Konten & Blok
@@ -872,7 +872,7 @@
                     <div>
                         <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">Tautan Pendek (Shortlinks)</h3>
                         <?php $__currentLoopData = $shortlinks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $link): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div class="block-item-card" onclick="window.location.href='<?php echo e(route('shortlink.index')); ?>'">
+                            <div class="block-item-card" onclick="window.location.href='<?php echo e(route('admin.shortlinks.index')); ?>'">
                                 <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
                                 <div style="width: 36px; height: 36px; border-radius: 8px; background: #E6F6FF; color: #0088FF; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-link"></i>
@@ -1078,17 +1078,17 @@
 
     function selectBlockType(type) {
         if(type === 'digital') {
-            window.location.href = "<?php echo e(route('digital-product.create')); ?>";
+            window.location.href = "<?php echo e(route('admin.digital-products.create')); ?>";
         } else if(type === 'shortlink') {
-            window.location.href = "<?php echo e(route('shortlink.index')); ?>";
+            window.location.href = "<?php echo e(route('admin.shortlinks.index')); ?>";
         }
     }
 
     function showActionModal(productId, productTitle) {
         window.currentDeleteId = productId;
         window.currentDeleteTitle = productTitle;
-        document.getElementById('deleteForm').action = `/digital-product/${productId}`;
-        document.getElementById('editButton').href = `/digital-product/${productId}/edit`;
+        document.getElementById('deleteForm').action = `/admin/digital-products/${productId}`;
+        document.getElementById('editButton').href = `/admin/digital-products/${productId}/edit`;
         document.getElementById('actionModal').style.display = 'block';
         document.body.classList.add('modal-open');
     }
@@ -1102,7 +1102,7 @@
         const title = window.currentDeleteTitle;
         const productId = window.currentDeleteId;
         document.getElementById('deleteMessage').innerText = `Apakah Anda yakin ingin menghapus produk "${title}"?`;
-        document.getElementById('finalDeleteForm').action = `/digital-product/${productId}`;
+        document.getElementById('finalDeleteForm').action = `/admin/digital-products/${productId}`;
         closeActionModal();
         document.getElementById('confirmDeleteModal').style.display = 'block';
         document.body.classList.add('modal-open');

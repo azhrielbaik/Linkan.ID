@@ -15,7 +15,7 @@ class ShortlinkDetailAndAnalyticsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('shortlink.store'), [
+        $response = $this->actingAs($user)->post(route('admin.shortlinks.store'), [
             'title' => 'My Awesome Link',
             'description' => 'This is a test description for my shortlink.',
             'slug' => 'awesome-link',
@@ -43,7 +43,7 @@ class ShortlinkDetailAndAnalyticsTest extends TestCase
             'destination' => 'https://example.com',
         ]);
 
-        $response = $this->actingAs($user)->get(route('shortlink.index'));
+        $response = $this->actingAs($user)->get(route('admin.shortlinks.index'));
 
         $response->assertStatus(200);
         $response->assertSee('Test Link Title');

@@ -21,7 +21,7 @@ class ShortlinkFeatureTest extends TestCase
 
     public function test_store_accepts_title_and_description()
     {
-        $response = $this->post(route('shortlink.store'), [
+        $response = $this->post(route('admin.shortlinks.store'), [
             'title' => 'My Test Title',
             'description' => 'My Test Description',
             'slug' => 'test-slug-1',
@@ -38,7 +38,7 @@ class ShortlinkFeatureTest extends TestCase
 
     public function test_store_stores_null_when_title_omitted()
     {
-        $response = $this->post(route('shortlink.store'), [
+        $response = $this->post(route('admin.shortlinks.store'), [
             'slug' => 'test-slug-2',
             'destination' => 'https://example.com/dest2'
         ]);
@@ -53,7 +53,7 @@ class ShortlinkFeatureTest extends TestCase
 
     public function test_store_validates_title_max_length()
     {
-        $response = $this->post(route('shortlink.store'), [
+        $response = $this->post(route('admin.shortlinks.store'), [
             'title' => str_repeat('a', 256),
             'slug' => 'test-slug-3',
             'destination' => 'https://example.com/dest3'
@@ -71,7 +71,7 @@ class ShortlinkFeatureTest extends TestCase
             'title' => 'Render Title'
         ]);
 
-        $response = $this->get(route('shortlink.index'));
+        $response = $this->get(route('admin.shortlinks.index'));
         $response->assertOk();
         $response->assertSee('sl-card');
         $response->assertSee('Render Title');
@@ -103,7 +103,7 @@ class ShortlinkFeatureTest extends TestCase
             'source' => 'direct'
         ]);
 
-        $response = $this->get(route('shortlink.analytics.chart', $shortlink->id));
+        $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
         
@@ -143,7 +143,7 @@ class ShortlinkFeatureTest extends TestCase
             'source' => 'direct'
         ]);
 
-        $response = $this->get(route('shortlink.analytics.chart', $shortlink->id));
+        $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
         
@@ -168,7 +168,7 @@ class ShortlinkFeatureTest extends TestCase
             'destination' => 'https://example.com'
         ]);
 
-        $response = $this->get(route('shortlink.analytics.chart', $shortlink->id));
+        $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
         
@@ -189,7 +189,7 @@ class ShortlinkFeatureTest extends TestCase
             'destination' => 'https://example.com'
         ]);
 
-        $response = $this->get(route('shortlink.analytics.chart', $shortlink->id));
+        $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $json = $response->json();
 
         $requiredFields = ['labels', 'clicks', 'sources', 'total_clicks', 'start_date', 'end_date', 'ip_breakdown', 'device_breakdown'];
@@ -215,7 +215,7 @@ class ShortlinkFeatureTest extends TestCase
             'title' => 'Explicit Title'
         ]);
 
-        $response = $this->get(route('shortlink.index'));
+        $response = $this->get(route('admin.shortlinks.index'));
         $response->assertOk();
         $response->assertSee('Tanpa Judul (slug-only-1)');
         $response->assertSee('Explicit Title');
@@ -231,7 +231,7 @@ class ShortlinkFeatureTest extends TestCase
             'description' => 'Panel Description'
         ]);
 
-        $response = $this->get(route('shortlink.index'));
+        $response = $this->get(route('admin.shortlinks.index'));
         $response->assertOk();
         
         $response->assertSee('data-id="' . $link->id . '"', false);

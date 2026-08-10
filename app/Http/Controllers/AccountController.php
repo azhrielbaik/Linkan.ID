@@ -35,7 +35,7 @@ class AccountController extends Controller
         $user->save();
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('account.settings')->with('success', 'Account updated successfully.');
+        return redirect()->route('admin.account')->with('success', 'Account updated successfully.');
     }
 
     public function edit()

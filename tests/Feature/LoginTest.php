@@ -26,7 +26,7 @@ class LoginTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect(route('beranda.admins'));
+        $response->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 
@@ -46,7 +46,7 @@ class LoginTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect(route('beranda.platformadmin'));
+        $response->assertRedirect(route('platform-admin.dashboard'));
         $this->assertAuthenticatedAs($admin);
     }
 

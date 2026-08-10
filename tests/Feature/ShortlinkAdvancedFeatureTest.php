@@ -20,7 +20,7 @@ class ShortlinkAdvancedFeatureTest extends TestCase
             'destination' => 'https://example.com'
         ]);
 
-        $response = $this->actingAs($user)->put(route('shortlink.update', $shortlink), [
+        $response = $this->actingAs($user)->put(route('admin.shortlinks.update', $shortlink), [
             'slug' => 'new-slug',
             'password' => 'secret123',
             'expires_at' => now()->addDays(2)->format('Y-m-d\TH:i'),

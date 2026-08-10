@@ -155,7 +155,7 @@
 <!-- Form Account Detail -->
             <div class="account-detail">
                 <h2>Account Detail</h2>
-                <form id="accountForm" action="{{ route('account.update') }}" method="POST">
+                <form id="accountForm" action="{{ route('admin.account.update') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -211,7 +211,7 @@
                     <p style="color: red; margin: 10px 0;">Tindakan ini tidak dapat dibatalkan!</p>
                     <div class="popup-buttons">
                         <button class="btn-cancel" onclick="closeDeletePopup()">Cancel</button>
-                        <form action="{{ route('account.delete') }}" method="POST" style="display: inline;">
+                        <form action="{{ route('admin.account.delete') }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-confirm">Ya, Hapus Akun</button>

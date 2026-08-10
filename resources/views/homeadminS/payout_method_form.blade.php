@@ -83,7 +83,7 @@
             </div>
         @endif
 
-        <form action="{{ route('payout.saveMethod') }}" method="POST">
+        <form action="{{ route('admin.payout.method.save') }}" method="POST">
             @csrf
             <div class="form-group">
                 <label for="method_type">Method Type</label>

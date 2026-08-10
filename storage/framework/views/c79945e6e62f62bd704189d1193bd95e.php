@@ -2,9 +2,9 @@
 
 <?php $__env->startPush("styles"); ?>
 <style>
-.header, .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(24,24,24,0.06); }
+.analytics-header-card, .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(24,24,24,0.06); }
         
-        .header h1 { margin: 0; font-size: 26px; color: #181818; }
+        .analytics-header-card h1 { margin: 0; font-size: 18px; color: #181818; }
         .back-link { color: #FF9040; text-decoration: none; font-weight: 700; }
         .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-bottom: 24px; }
         .card { padding: 20px; }
@@ -18,12 +18,12 @@
         .chart-wrap { height: 320px; }
         .stack { display: grid; gap: 24px; }
         .muted { color: #666; font-size: 14px; }
-        @media (max-width: 900px) { .main-content { margin-left: 0; } .grid { grid-template-columns: 1fr; } .header, .chart-header { flex-direction: column; align-items: flex-start; } }
+        @media (max-width: 900px) { .main-content { margin-left: 0; } .grid { grid-template-columns: 1fr; } .analytics-header-card, .chart-header { flex-direction: column; align-items: flex-start; } }
 </style>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection("content"); ?>
-<div class="header" style="padding: 24px; margin-bottom: 24px;">
+<div class="analytics-header-card" style="padding: 24px; margin-bottom: 24px;">
     <h1>Analytics Shortlink</h1>
     <p style="color: #FF9040; margin-top: 8px; font-weight: 600;"><?php echo e($shortlink->slug); ?></p>
     <h2 style="font-size: 32px; margin-top: 12px; font-weight: 800;"><?php echo e($totalClicks); ?> <span style="font-size: 16px; color: #666; font-weight: normal;">Total Clicks</span></h2>
@@ -146,7 +146,7 @@ let chart;
             const endDate = document.getElementById('endDate').value;
             const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
 
-            fetch(`<?php echo e(route('shortlink.analytics.chart', $shortlink)); ?>?${params.toString()}`)
+            fetch(`<?php echo e(route('admin.shortlinks.analytics.chart', $shortlink)); ?>?${params.toString()}`)
                 .then((response) => response.json())
                 .then((data) => {
                     document.getElementById('totalClicksValue').textContent = data.total_clicks;

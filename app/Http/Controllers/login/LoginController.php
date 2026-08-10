@@ -8,16 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    protected $redirectTo = '/homeadminS/beranda';
+    protected $redirectTo = '/admin/dashboard';
 
     public function showLoginForm()
     {
         if (Auth::check()) {
             $user = Auth::user();
             if ($user->role === 'admin_seller') {
-                return redirect()->route('beranda.admins');
-            } else if ($user->role === 'admin_platform') {
-                return redirect()->route('beranda.platformadmin');
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->role === 'admin_platform') {
+                return redirect()->route('platform-admin.dashboard');
             }
         }
         return view('login');
@@ -32,12 +32,12 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+
             $user = Auth::user();
             if ($user->role === 'admin_seller') {
-                return redirect()->route('beranda.admins');
-            } else if ($user->role === 'admin_platform') {
-                return redirect()->route('beranda.platformadmin');
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->role === 'admin_platform') {
+                return redirect()->route('platform-admin.dashboard');
             }
         }
 

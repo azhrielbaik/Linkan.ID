@@ -173,7 +173,7 @@ class PayoutController extends Controller
             $message = 'Pengaturan metode pembayaran berhasil disimpan!';
         }
 
-        return redirect()->route('payout.index')->with('success', $message);
+        return redirect()->route('admin.payout.index')->with('success', $message);
     }
 
     /**
@@ -257,7 +257,7 @@ class PayoutController extends Controller
         //    Pastikan Anda memiliki detail bank/e-wallet pengguna yang tersimpan dengan aman.
         //    $payoutService->initiatePayout($amount, $user->bank_details);
 
-        return redirect()->route('payout.index')->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $method . '. Status akan diperbarui segera.');
+        return redirect()->route('admin.payout.index')->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $method . '. Status akan diperbarui segera.');
     }
 
     /**

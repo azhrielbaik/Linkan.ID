@@ -47,10 +47,10 @@
 </style>
 <div class="sidebar">
     <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo">
-    <a href="{{ route('beranda.platformadmin') }}" class="{{ request()->routeIs('beranda.platformadmin') ? 'active' : '' }}">
+    <a href="{{ route('platform-admin.dashboard') }}" class="{{ request()->routeIs('platform-admin.dashboard') ? 'active' : '' }}">
         <i class="fas fa-home"></i>Home
     </a>
-    <a href="{{ route('verifikasi.platformadmin') }}" class="{{ request()->routeIs('verifikasi.platformadmin') ? 'active' : '' }}">
+    <a href="{{ route('platform-admin.verifikasi') }}" class="{{ request()->routeIs('platform-admin.verifikasi*') ? 'active' : '' }}">
         <i class="fas fa-check-circle"></i> Verification
     </a>
     <hr>

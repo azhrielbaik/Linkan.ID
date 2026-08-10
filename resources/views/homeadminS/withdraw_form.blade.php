@@ -102,7 +102,7 @@
             </div>
         @endif
 
-        <form action="{{ route('payout.processWithdrawal') }}" method="POST">
+        <form action="{{ route('admin.payout.withdraw.process') }}" method="POST">
             @csrf
             <div class="form-group">
                 <label for="amount">Amount to Withdraw</label>

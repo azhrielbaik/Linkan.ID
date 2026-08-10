@@ -4,15 +4,6 @@
 
 @push("styles")
 <style>
-.header h1 {
-            font-size: 26px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .stats-section {
-            background: white;
-            border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -139,7 +130,7 @@ let chart1, chart2;
             if (startDate1) params.append('start_date', startDate1);
             if (endDate1) params.append('end_date', endDate1);
 
-            fetch(`{{ route('statistic.chart-data') }}?${params.toString()}`)
+            fetch(`{{ route('admin.statistics.chart-data') }}?${params.toString()}`)
                 .then(response => response.json())
                 .then(data => {
                     if (chart1) {
@@ -208,7 +199,7 @@ let chart1, chart2;
             if (startDate2) params.append('start_date', startDate2);
             if (endDate2) params.append('end_date', endDate2);
 
-            fetch(`{{ route('statistic.chart-data') }}?${params.toString()}`)
+            fetch(`{{ route('admin.statistics.chart-data') }}?${params.toString()}`)
                 .then(response => response.json())
                 .then(data => {
                     if (chart2) {

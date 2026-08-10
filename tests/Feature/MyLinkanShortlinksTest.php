@@ -33,11 +33,11 @@ class MyLinkanShortlinksTest extends TestCase
             $link->save();
         }
 
-        $response = $this->get(route('mylinkan'));
+        $response = $this->get(route('admin.mylinkan', ['mode' => 'edit']));
         $response->assertOk();
 
         // Should see the section header
-        $response->assertSee('Daftar Tautan (Shortlink)');
+        $response->assertSee('Tautan Pendek (Shortlinks)');
 
         // First page should show the latest 6 shortlinks: slug-7, slug-6, slug-5, slug-4, slug-3, slug-2
         for ($i = 2; $i <= 7; $i++) {
@@ -47,7 +47,7 @@ class MyLinkanShortlinksTest extends TestCase
         $response->assertDontSee("Shortlink Title 1");
 
         // Request page 2
-        $responsePage2 = $this->get(route('mylinkan') . '?links_page=2');
+        $responsePage2 = $this->get(route('admin.mylinkan', ['mode' => 'edit', 'links_page' => 2]));
         $responsePage2->assertOk();
         $responsePage2->assertSee("Shortlink Title 1");
         for ($i = 2; $i <= 7; $i++) {
@@ -87,7 +87,7 @@ class MyLinkanShortlinksTest extends TestCase
             $link->save();
         }
 
-        $response = $this->get(route('shortlink.index'));
+        $response = $this->get(route('admin.shortlinks.index'));
         $response->assertOk();
 
         // First page should show the latest 6 shortlinks
@@ -97,7 +97,7 @@ class MyLinkanShortlinksTest extends TestCase
         $response->assertDontSee("Shortlink Title 1");
 
         // Request page 2
-        $responsePage2 = $this->get(route('shortlink.index') . '?page=2');
+        $responsePage2 = $this->get(route('admin.shortlinks.index') . '?page=2');
         $responsePage2->assertOk();
         $responsePage2->assertSee("Shortlink Title 1");
         for ($i = 2; $i <= 7; $i++) {
@@ -124,13 +124,13 @@ class MyLinkanShortlinksTest extends TestCase
         ]);
 
         // Search for title "Toko"
-        $response = $this->get(route('shortlink.index') . '?search=Toko');
+        $response = $this->get(route('admin.shortlinks.index') . '?search=Toko');
         $response->assertOk();
         $response->assertSee('Promo Toko Baru');
         $response->assertDontSee('Diskon Akhir Tahun');
 
         // Search for slug "diskon"
-        $response2 = $this->get(route('shortlink.index') . '?search=diskon');
+        $response2 = $this->get(route('admin.shortlinks.index') . '?search=diskon');
         $response2->assertOk();
         $response2->assertSee('Diskon Akhir Tahun');
         $response2->assertDontSee('Promo Toko Baru');
@@ -174,7 +174,7 @@ class MyLinkanShortlinksTest extends TestCase
         }
 
         // Sort by popular
-        $response = $this->get(route('shortlink.index') . '?sort=popular');
+        $response = $this->get(route('admin.shortlinks.index') . '?sort=popular');
         $response->assertOk();
 
         // Verify ordering: More Popular Link should appear before Less Popular Link
@@ -208,7 +208,7 @@ class MyLinkanShortlinksTest extends TestCase
         $linkNew->save();
 
         // Sort by oldest
-        $responseOldest = $this->get(route('shortlink.index') . '?sort=oldest');
+        $responseOldest = $this->get(route('admin.shortlinks.index') . '?sort=oldest');
         $responseOldest->assertOk();
         $contentOldest = $responseOldest->getContent();
         $posOld1 = strpos($contentOldest, 'Oldest Link');
@@ -216,7 +216,7 @@ class MyLinkanShortlinksTest extends TestCase
         $this->assertTrue($posOld1 < $posNew1, 'Oldest Link should appear before Newest Link when sorted by oldest');
 
         // Sort by newest
-        $responseNewest = $this->get(route('shortlink.index') . '?sort=newest');
+        $responseNewest = $this->get(route('admin.shortlinks.index') . '?sort=newest');
         $responseNewest->assertOk();
         $contentNewest = $responseNewest->getContent();
         $posOld2 = strpos($contentNewest, 'Oldest Link');

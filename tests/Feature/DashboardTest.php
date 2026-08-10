@@ -12,7 +12,7 @@ class DashboardTest extends TestCase
 
     public function test_unauthenticated_user_cannot_access_dashboard(): void
     {
-        $response = $this->get(route('beranda.admins'));
+        $response = $this->get(route('admin.dashboard'));
 
         $response->assertRedirect('/login');
     }
@@ -21,7 +21,7 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('beranda.admins'));
+        $response = $this->actingAs($user)->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
         $response->assertViewIs('homeadminS.beranda');

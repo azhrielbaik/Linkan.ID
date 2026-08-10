@@ -461,7 +461,7 @@
         </div>
 
         <!-- Floating Action Button -->
-        <div class="floating-action" onclick="window.location.href='{{ route('payout.index') }}'">
+        <div class="floating-action" onclick="window.location.href='{{ route('admin.payout.index') }}'">
             <i class="fas fa-arrow-left"></i>
 @endsection
 

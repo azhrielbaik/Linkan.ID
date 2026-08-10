@@ -72,7 +72,7 @@ class ShortlinkAnalyticsTest extends TestCase
         $this->withHeader('Referer', 'https://google.com/search?q=owner')
             ->get('/owner-link');
         $this->get('/other-link');
-        $response = $this->actingAs($owner)->get(route('shortlink.index'));
+        $response = $this->actingAs($owner)->get(route('admin.shortlinks.index'));
 
         $response->assertOk();
         $response->assertSee('owner-link');
@@ -117,7 +117,7 @@ class ShortlinkAnalyticsTest extends TestCase
             ->get('/analytics-link');
         $this->get('/hidden-analytics-link');
 
-        $page = $this->actingAs($owner)->get(route('shortlink.analytics', $ownerShortlink));
+        $page = $this->actingAs($owner)->get(route('admin.shortlinks.analytics', $ownerShortlink));
 
         $page->assertOk();
         $page->assertSee('Analytics Shortlink');
@@ -128,7 +128,7 @@ class ShortlinkAnalyticsTest extends TestCase
         $page->assertSee('google.com');
         $page->assertDontSee('hidden-analytics-link');
 
-        $chart = $this->actingAs($owner)->getJson(route('shortlink.analytics.chart', $ownerShortlink));
+        $chart = $this->actingAs($owner)->getJson(route('admin.shortlinks.analytics.chart', $ownerShortlink));
 
         $chart->assertOk();
         $chart->assertJsonPath('total_clicks', 2);

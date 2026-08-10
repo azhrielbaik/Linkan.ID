@@ -405,7 +405,7 @@
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection("content"); ?>
-<form method="POST" action="<?php echo e(route('appearance.update')); ?>" enctype="multipart/form-data" id="appearanceForm">
+<form method="POST" action="<?php echo e(route('admin.appearance.update')); ?>" enctype="multipart/form-data" id="appearanceForm">
             <?php echo csrf_field(); ?>
             <div class="content-section">
                 <div class="left-panel">

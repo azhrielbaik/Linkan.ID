@@ -19,7 +19,7 @@ class AppearanceTest extends TestCase
             'role' => 'admin_seller',
         ]);
 
-        $response = $this->actingAs($user)->post(route('appearance.update'), [
+        $response = $this->actingAs($user)->post(route('admin.appearance.update'), [
             'name' => 'Custom Display Name',
             'bio' => 'This is a test bio',
             'theme_color' => '#ffffff',

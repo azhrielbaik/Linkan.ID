@@ -208,7 +208,7 @@
     .stat-icon {
         width: 48px;
         height: 48px;
-        border-radius: 50%;
+        border-radius: 50% !important;
         background: #FF9040;
         color: #fff;
         display: flex;
@@ -1166,14 +1166,14 @@
 
                 <div class="stats-row">
                     <div class="stat-box">
-                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-icon" style="background: #FFF3E6; color: #FF9040;"><i class="fas fa-chart-line"></i></div>
                         <div class="stat-info">
                             <span><?php echo e(__('shortlink.total_clicks')); ?></span>
                             <strong>2,280</strong>
                         </div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-icon" style="background: #3B76CD;"><i class="fas fa-link"></i></div>
+                        <div class="stat-icon" style="background: #E6F6FF; color: #0088FF;"><i class="fas fa-link"></i></div>
                         <div class="stat-info">
                             <span><?php echo e(__('shortlink.total_links')); ?></span>
                             <strong><?php echo e($shortlinks->total()); ?></strong>
@@ -1194,13 +1194,13 @@
 
             <!-- SEARCH & FILTER -->
             <div class="card search-filter-card" style="margin-bottom: 0;">
-                <form method="GET" action="<?php echo e(route('shortlink.index')); ?>" id="search-filter-form">
+                <form method="GET" action="<?php echo e(route('admin.shortlinks.index')); ?>" id="search-filter-form">
                     <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                         <div style="flex: 1; position: relative; min-width: 200px;">
                             <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #999;"></i>
                             <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="<?php echo e(__('shortlink.search_placeholder') ?? 'Search your links...'); ?>" style="width: 100%; padding: 12px 40px 12px 40px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
                             <?php if(request('search')): ?>
-                                <a href="<?php echo e(route('shortlink.index', request()->except(['search', 'page']))); ?>" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; text-decoration: none;"><i class="fas fa-times-circle"></i></a>
+                                <a href="<?php echo e(route('admin.shortlinks.index', request()->except(['search', 'page']))); ?>" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; text-decoration: none;"><i class="fas fa-times-circle"></i></a>
                             <?php endif; ?>
                         </div>
                         <div style="width: 180px; position: relative; flex-shrink: 0;" class="desktop-sort-wrapper">
@@ -1236,7 +1236,7 @@
                 <i class="fas fa-chevron-down" style="color:#999;"></i>
             </div>
             <div class="mobile-form-collapse-body">
-                <form action="<?php echo e(route('shortlink.store')); ?>" method="POST">
+                <form action="<?php echo e(route('admin.shortlinks.store')); ?>" method="POST">
                 <?php echo csrf_field(); ?>
                 
                 <!-- CREATE NEW LINK -->
@@ -1361,7 +1361,7 @@ unset($__errorArgs, $__bag); ?>
                         <!-- Desktop Actions -->
                         <div class="eng-actions desktop-only-actions">
                             <button type="button" class="btn-detail-text sl-btn--detail"><?php echo e(__('shortlink.detail')); ?></button>
-                            <a href="<?php echo e(route('shortlink.analytics', $link)); ?>" class="btn-icon" title="Analytics"><i class="fas fa-chart-bar"></i></a>
+                            <a href="<?php echo e(route('admin.shortlinks.analytics', $link)); ?>" class="btn-icon" title="Analytics"><i class="fas fa-chart-bar"></i></a>
                             <button type="button" class="btn-icon sl-btn--copy" onclick="copySlugToClipboard('<?php echo e(url('/' . $link->slug)); ?>', this)" title="Copy Link"><i class="fas fa-copy"></i></button>
                         </div>
 
@@ -1689,7 +1689,7 @@ unset($__errorArgs, $__bag); ?>
 
             const form = document.getElementById('panel-form');
             if(form) {
-                form.action = `/homeadminS/shortlink/${card.dataset.id}`;
+                form.action = `/admin/shortlinks/${card.dataset.id}`;
             }
 
             const panelInputSlug = document.getElementById('panel-input-slug');

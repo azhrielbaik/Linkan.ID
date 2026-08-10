@@ -349,7 +349,7 @@
 
             
             <form id="digitalProductForm"
-      action="{{ isset($product) ? route('digital-product.update', $product->id) : route('digital-product.store') }}"
+      action="{{ isset($product) ? route('admin.digital-products.update', $product->id) : route('admin.digital-products.store') }}"
       method="POST" enctype="multipart/form-data">
     @csrf
     @if (isset($product))
