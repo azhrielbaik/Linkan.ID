@@ -568,6 +568,12 @@
         transform: scale(1.1);
     }
 
+    /* Hide next/prev arrows */
+    span.relative.z-0.inline-flex > :first-child,
+    span.relative.z-0.inline-flex > :last-child {
+        display: none !important;
+    }
+
     @keyframes rollInActive {
         0% {
             transform: translateX(-30px) rotate(-180deg) scale(0.5);
@@ -607,13 +613,7 @@
     }
 
     nav[role="navigation"] .flex.justify-between:not(.hidden) {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        background: #fff;
-        padding: 10px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: none !important;
     }
     nav[role="navigation"] .flex.justify-between:not(.hidden) a, 
     nav[role="navigation"] .flex.justify-between:not(.hidden) span {

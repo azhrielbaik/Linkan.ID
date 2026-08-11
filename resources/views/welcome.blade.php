@@ -133,6 +133,34 @@
             text-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
+        .text-dark {
+            color: var(--dark);
+        }
+
+        /* 1. Target the outer clip wrapper span */
+        .hero-title > span:not(.text-dark),
+        .hero-title > .text-dark > span {
+            clip-path: inset(0px) !important;
+            position: relative !important;
+            vertical-align: bottom !important;
+            display: inline-block !important;
+            transform: translateZ(0) !important;
+        }
+
+        /* 2. Target the inner relative wrapper span */
+        .hero-title > span:not(.text-dark) > span,
+        .hero-title > .text-dark > span > span {
+            position: relative !important;
+            display: inline-block !important;
+            vertical-align: bottom !important;
+        }
+
+        /* 3. Target the character span itself */
+        .char-inner {
+            display: inline-block !important;
+            will-change: transform;
+        }
+
         .hero-subtitle {
             font-size: clamp(1rem, 2vw, 1.15rem);
             color: rgba(255, 255, 255, 0.95);
@@ -539,7 +567,7 @@
 
     <!-- HERO SECTION -->
     <section class="hero-section reveal">
-        <h1 class="hero-title">#Powering <span style="color: #121212;">Creators</span> Economy</h1>
+        <h1 class="hero-title">#Powering <span class="text-dark">Creators</span> Economy</h1>
         <p class="hero-subtitle">
             Create Instant Mobile Webpage to sell your knowledge, Chat, Video Calls, Events, Digital Product. Share it across social media.
         </p>
@@ -667,6 +695,38 @@
                     }
                 });
             }, 100);
+        });
+    </script>
+
+    <script type="module">
+        import { createTimeline, stagger, splitText } from 'https://esm.sh/animejs@4.5.0';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.fonts.ready.then(() => {
+                const heroTitle = document.querySelector('.hero-title');
+                if (heroTitle) {
+                    const split = splitText(heroTitle, {
+                        lines: false,
+                        words: false,
+                        chars: {
+                            class: 'char-inner',
+                            wrap: 'hidden',
+                            clone: 'bottom'
+                        },
+                    });
+
+                    split.addEffect(({ chars }) => {
+                        return createTimeline()
+                        .add(chars, {
+                            y: '-100%',
+                            loop: true,
+                            loopDelay: 350,
+                            duration: 750,
+                            ease: 'inOut(2)',
+                        }, stagger(150, { from: 'center' }));
+                    });
+                }
+            });
         });
     </script>
 </body>

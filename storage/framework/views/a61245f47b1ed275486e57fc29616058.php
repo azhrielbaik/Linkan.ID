@@ -248,6 +248,15 @@
             }
             .content-wrapper { padding: 16px; }
         }
+
+        /* Global Pagination Fix: Hide Next & Previous buttons, show numbers only */
+        nav[role="navigation"] .flex.justify-between:not(.hidden) {
+            display: none !important;
+        }
+        span.relative.z-0.inline-flex > :first-child,
+        span.relative.z-0.inline-flex > :last-child {
+            display: none !important;
+        }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
     <?php echo $__env->yieldPushContent('page-styles'); ?>
