@@ -3,25 +3,7 @@
 @section("page_title", "Analytics Shortlink")
 
 @push("styles")
-<style>
-.analytics-header-card, .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(24,24,24,0.06); }
-        
-        .analytics-header-card h1 { margin: 0; font-size: 18px; color: #181818; }
-        .back-link { color: #FF9040; text-decoration: none; font-weight: 700; }
-        .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-bottom: 24px; }
-        .card { padding: 20px; }
-        .label { color: #666; font-size: 13px; margin-bottom: 10px; }
-        .value { color: #181818; font-size: 28px; font-weight: 800; word-break: break-word; }
-        .sources { color: #444; line-height: 1.7; font-size: 15px; }
-        .chart-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .date-range-selector { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .date-input { padding: 7px 12px; border: 1px solid #eee; border-radius: 6px; background: white; font-size: 13px; color: #666; }
-        .apply-date { padding: 7px 12px; background: #FF9040; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
-        .chart-wrap { height: 320px; }
-        .stack { display: grid; gap: 24px; }
-        .muted { color: #666; font-size: 14px; }
-        @media (max-width: 900px) { .main-content { margin-left: 0; } .grid { grid-template-columns: 1fr; } .analytics-header-card, .chart-header { flex-direction: column; align-items: flex-start; } }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
@@ -94,8 +76,7 @@
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+    @endsection
 
 @push("scripts")
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
