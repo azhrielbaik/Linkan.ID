@@ -1,0 +1,412 @@
+.dashboard-appearance-page .url-section {
+    background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                padding: 24px 20px;
+                margin-bottom: 24px;
+                border: none;
+}
+
+.dashboard-appearance-page .url-input-group {
+    display: flex;
+                align-items: center;
+                gap: 10px;
+}
+
+.dashboard-appearance-page .url-input {
+    flex: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background: #f8f9fa;
+                color: #666;
+}
+
+.dashboard-appearance-page .share-button {
+    background: none;
+                border: none;
+                color: #FF9040;
+                cursor: pointer;
+                padding: 8px;
+                font-size: 16px;
+}
+
+.dashboard-appearance-page .content-section {
+    display: flex;
+        gap: 32px;
+        min-height: 100vh;
+}
+
+.dashboard-appearance-page .left-panel {
+    flex: 2;
+        padding-right: 10px;
+}
+
+.dashboard-appearance-page .left-panel form {
+    display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        gap: 20px;
+        padding-bottom: 100px; /* Tambahkan ini agar tombol tidak mentok */
+}
+
+.dashboard-appearance-page .save-button {
+    align-self: center; /* Tombol di tengah */
+        background: #FF9040; /* Warna fallback */
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+}
+
+.dashboard-appearance-page .right-panel {
+    flex: 1;
+                min-width: 300px;
+}
+
+.dashboard-appearance-page .card, .dashboard-appearance-page .preview-section, .dashboard-appearance-page .preview-phone {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                border-radius: 16px;
+}
+
+.dashboard-appearance-page .card {
+    background: #fff;
+    background: #fff;
+                padding: 24px 20px;
+                margin-bottom: 24px;
+                border: none;
+}
+
+.dashboard-appearance-page .preview-section {
+    background: #f7f8fa;
+                padding: 24px 20px;
+                border-radius: 16px;
+                width: 100%;
+                max-width: 400px;
+                position: sticky;
+                top: 20px;
+                z-index: 10;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+}
+
+.dashboard-appearance-page .preview-phone {
+                max-width: 375px;
+                height: 700px;
+                border-radius: 32px;
+                background: #fff;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                border: 1.5px solid #e5e7eb;
+}
+
+.dashboard-appearance-page .preview-screen {
+    width: 100%;
+                height: 100%;
+                background: #f8f9fa;
+                border-radius: 24px;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+}
+
+.dashboard-appearance-page .preview-banner {
+    width: 100%;
+                height: 120px;
+                background: #e5e7eb;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                overflow: hidden;
+}
+
+.dashboard-appearance-page .preview-profile {
+    width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: #e5e7eb;
+                margin-bottom: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.dashboard-appearance-page .preview-name {
+    font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 10px;
+                text-align: center;
+}
+
+.dashboard-appearance-page .preview-bio {
+    font-size: 14px;
+                color: #666;
+                text-align: center;
+                margin-bottom: 18px;
+                padding: 0 16px;
+                line-height: 1.5;
+}
+
+.dashboard-appearance-page .preview-social-links {
+    display: flex;
+                gap: 16px;
+                margin-bottom: 20px;
+}
+
+.dashboard-appearance-page .preview-products {
+    width: 100%;
+                padding: 10px 0;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+}
+
+.dashboard-appearance-page .preview-product-item {
+    background: #fff;
+                border-radius: 10px;
+                padding: 12px 14px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                border: 1px solid #ececec;
+                transition: transform 0.2s;
+}
+
+.dashboard-appearance-page .preview-product-item:hover {
+    transform: translateY(-2px) scale(1.01);
+}
+
+.dashboard-appearance-page .preview-product-image {
+    width: 40px;
+                height: 40px;
+                background: #FFE5D3;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                flex-shrink: 0;
+}
+
+.dashboard-appearance-page .preview-product-title {
+    font-size: 14px;
+                color: #333;
+                margin-bottom: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+}
+
+.dashboard-appearance-page .preview-product-button {
+    background: #FF9040;
+                color: white;
+                padding: 6px 16px;
+                border-radius: 6px;
+                font-size: 13px;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                flex-shrink: 0;
+                min-width: 90px;
+                text-align: center;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+}
+
+.dashboard-appearance-page .preview-product-button:hover {
+    opacity: 0.92;
+}
+
+.dashboard-appearance-page .card-title {
+    font-size: 18px;
+                color: #333;
+                margin-bottom: 18px;
+}
+
+.dashboard-appearance-page .card-priview {
+    font-size: 16px;
+                color: #333;
+                margin-bottom: 15px;
+                text-align: center;
+}
+
+.dashboard-appearance-page .banner-section {
+    border: 2px dashed #ddd;
+                border-radius: 10px;
+                padding: 30px;
+                text-align: center;
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* posisi horizontal tengah */
+                justify-content: center; /* opsional: posisi vertikal tengah */
+}
+
+.dashboard-appearance-page .banner-section i {
+    font-size: 40px;
+                color: #ddd;
+                margin-bottom: 10px;
+}
+
+.dashboard-appearance-page .banner-text {
+    color: #666;
+                margin-bottom: 15px;
+}
+
+.dashboard-appearance-page .upload-button {
+    background: #FF9040;
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+}
+
+.dashboard-appearance-page .profile-section {
+    text-align: center;
+                padding: 20px 0;
+}
+
+.dashboard-appearance-page .profile-image {
+    width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background: #f8f9fa;
+                margin: 0 auto 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                overflow: hidden;
+}
+
+.dashboard-appearance-page .profile-image img {
+    width: 100%;
+                height: 100%;
+                object-fit: cover;
+}
+
+.dashboard-appearance-page .profile-image i {
+    font-size: 40px;
+                color: #ddd;
+}
+
+.dashboard-appearance-page .profile-name {
+    width: 80%;
+                margin: 0 auto 10px;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+}
+
+.dashboard-appearance-page .bio-section textarea {
+    width: 100%;
+                height: 100px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                resize: vertical;
+                margin-top: 10px;
+}
+
+.dashboard-appearance-page .preview-name, .dashboard-appearance-page .preview-bio, .dashboard-appearance-page .preview-screen button {
+    transition: all 0.3s ease;
+}
+
+.dashboard-appearance-page .popup-modal {
+    position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+}
+
+.dashboard-appearance-page .popup-content {
+    background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        position: relative;
+        min-width: 300px;
+}
+
+.dashboard-appearance-page .close-btn {
+    position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 24px;
+        cursor: pointer;
+}
+
+.dashboard-appearance-page .social-btn {
+    margin: 5px;
+        padding: 8px 14px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+}
+
+.dashboard-appearance-page .social-btn i {
+    margin-right: 6px;
+}
+
+.dashboard-appearance-page .social-input {
+    display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+}
+
+.dashboard-appearance-page .social-input i {
+    font-size: 18px;
+}
+
+.dashboard-appearance-page .social-input input {
+    flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+}
+
+.dashboard-appearance-page .remove-social {
+    background: none;
+        border: none;
+        color: #888;
+        font-size: 27px;
+        cursor: pointer;
+        margin-left: 8px;
+        line-height: 1;
+        padding: 4px;
+}
+
+.dashboard-appearance-page .remove-social:hover {
+    color: red;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+            margin-left: 0;
+    }
+}

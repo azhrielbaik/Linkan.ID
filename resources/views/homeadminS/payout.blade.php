@@ -3,137 +3,12 @@
 @section("page_title", "Payout")
 
 @push("styles")
-<style>
-.header h1 {
-            font-size: 18px;
-            color: #333;
-        }
-
-        .payout-main-flex {
-            display: flex;
-            gap: 32px;
-            align-items: stretch;
-            flex-wrap: wrap;
-        }
-        .earnings-card, .payment-card {
-            flex: 1 1 350px;
-            min-width: 320px;
-            max-width: 600px;
-            box-sizing: border-box;
-        }
-        @media (max-width: 900px) {
-            .payout-main-flex {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        .earnings-card, .payment-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .earnings-card {
-            background: #FF9040;
-            color: white;
-            position: relative;
-        }
-
-        .earnings-card h2 {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .earnings-card p {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-
-        .earnings-card p:last-of-type {
-            font-style: italic;
-            color: #f0f0f0;
-        }
-
-        .earnings-card .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: #FF9040;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            border: 2px solid #FF9040;
-            cursor: pointer;
-        }
-
-        .earnings-card .btn:hover {
-            background: #f0f0f0;
-        }
-
-        .earnings-card .btn-withdraw {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
-        .earnings-card .btn-history {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-        }
-
-        .payment-card {
-            text-align: center;
-        }
-
-        .payment-card h2 {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .payment-card p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .payment-card .bank-info {
-            margin-top: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .payment-card .bank-info strong {
-            font-size: 16px;
-            color: #333;
-        }
-
-        .payment-card .bank-info img {
-            width: 40px;
-            height: 40px;
-        }
-        .header a {
-            color: black !important;
-            text-decoration: none; /* kalau mau hilangkan garis bawah juga */
-        }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/payout.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
+<div class="dashboard-payout-page">
+
 
 
             @if(session('success'))
@@ -211,6 +86,8 @@
                     </a>
                 </div>
             </div>
+
+</div>
 @endsection
 
 @push("scripts")

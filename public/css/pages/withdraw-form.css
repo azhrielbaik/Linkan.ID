@@ -1,0 +1,92 @@
+.dashboard-withdraw-page .withdraw-card {
+    background-color: #fff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+}
+
+.dashboard-withdraw-page .withdraw-card h2 {
+    margin-bottom: 20px;
+                color: #333;
+}
+
+.dashboard-withdraw-page .withdraw-card p {
+    color: #666;
+                margin-bottom: 25px;
+}
+
+.dashboard-withdraw-page .form-group {
+    margin-bottom: 20px;
+                text-align: left;
+}
+
+.dashboard-withdraw-page .form-group label {
+    display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                color: #555;
+}
+
+.dashboard-withdraw-page .form-group input[type="number"] {
+    width: calc(100% - 20px);
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+                box-sizing: border-box;
+}
+
+.dashboard-withdraw-page .form-group .currency-prefix {
+    position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+}
+
+.dashboard-withdraw-page .form-group .input-wrapper {
+    position: relative;
+                display: flex;
+                align-items: center;
+}
+
+.dashboard-withdraw-page .form-group .input-wrapper input {
+    padding-left: 40px; /
+            .form-actions button {
+                background-color: #FF9040;
+                color: white;
+                padding: 12px 25px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+                width: 100%;
+}
+
+.dashboard-withdraw-page .form-actions button:hover {
+    background-color: #e67e30;
+}
+
+.dashboard-withdraw-page .form-actions .btn-cancel {
+    background-color: #ccc;
+                margin-top: 10px;
+}
+
+.dashboard-withdraw-page .form-actions .btn-cancel:hover {
+    background-color: #bbb;
+}
+
+.dashboard-withdraw-page .alert-danger {
+    background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+                text-align: left;
+}

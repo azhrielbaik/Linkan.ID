@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreDigitalProductRequest;
+use App\Http\Requests\UpdateDigitalProductRequest;
 use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -34,22 +36,8 @@ public function show($id)
         return view('homeadminS.digital-product');
     }
 
-    public function store(Request $request)
+    public function store(StoreDigitalProductRequest $request)
     {
-        $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'platform_type' => 'required|string|in:upload,dropbox,gdrive,other',
-            'platform_url' => 'nullable|url|required_if:platform_type,dropbox,gdrive,other',
-            'platform_file' => 'nullable|file|mimes:pdf,zip,rar|required_if:platform_type,upload',
-            'price_raw' => 'required|numeric',
-            'sale_price_raw' => 'nullable|numeric',
-            'has_quantity_limit' => 'nullable|boolean',
-            'quantity' => 'nullable|integer|required_if:has_quantity_limit,1',
-            'button_text' => 'required|string',
-        ]);
-
         $data = $request->only([
             'title', 'description', 'platform_type', 'platform_url',
             'has_quantity_limit', 'quantity', 'button_text'
@@ -66,12 +54,16 @@ public function show($id)
         $data['user_id'] = Auth::id(); // ID user yang sedang login
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('product_images', 'public');
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('product_images', $filename, 'public');
             $data['image'] = $imagePath;
         }
 
         if ($request->platform_type === 'upload' && $request->hasFile('platform_file')) {
-            $filePath = $request->file('platform_file')->store('digital_products', 'public');
+            $file = $request->file('platform_file');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('digital_products', $filename, 'public');
             $data['platform_file'] = $filePath;
         }
 
@@ -91,24 +83,10 @@ public function show($id)
         return view('homeadminS.digital-product', compact('product'));
     }
     
-    public function update(Request $request, $id)
+    public function update(UpdateDigitalProductRequest $request, $id)
     {
         $product = DigitalProduct::findOrFail($id);
         
-        $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'platform_type' => 'required|string|in:upload,dropbox,gdrive,other',
-            'platform_url' => 'nullable|url|required_if:platform_type,dropbox,gdrive,other',
-            'platform_file' => 'nullable|file|mimes:pdf,zip,rar',
-            'price_raw' => 'required|numeric',
-            'sale_price_raw' => 'nullable|numeric',
-            'has_quantity_limit' => 'nullable|boolean',
-            'quantity' => 'nullable|integer|min:1',
-            'button_text' => 'required|string',
-        ]);
-
         $data = $request->only([
             'title', 'description', 'platform_type', 'platform_url',
             'has_quantity_limit', 'quantity', 'button_text'
@@ -136,7 +114,9 @@ public function show($id)
             if ($product->platform_file) {
                 Storage::disk('public')->delete($product->platform_file);
             }
-            $filePath = $request->file('platform_file')->store('digital_products', 'public');
+            $file = $request->file('platform_file');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('digital_products', $filename, 'public');
             $data['platform_file'] = $filePath;
         } else if ($request->platform_type !== 'upload') {
             // Jika platform_type bukan upload, hapus file yang ada
@@ -151,7 +131,9 @@ public function show($id)
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $imagePath = $request->file('image')->store('product_images', 'public');
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('product_images', $filename, 'public');
             $data['image'] = $imagePath;
         }
 

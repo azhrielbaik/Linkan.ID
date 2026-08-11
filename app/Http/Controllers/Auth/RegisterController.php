@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\login;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -45,4 +45,4 @@ class RegisterController extends Controller
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
-} 
+}

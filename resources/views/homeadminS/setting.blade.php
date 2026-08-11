@@ -3,65 +3,12 @@
 @section("page_title", "Settings")
 
 @push("styles")
-<style>
-.header h1 {
-            font-size: 18px;
-            color: #333;
-        }
-
-        .settings-card {
-            display: flex;
-            align-items: center;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .settings-card:hover {
-            background-color: #f0f0f0;
-        }
-
-        .settings-card-icon {
-            width: 50px;
-            height: 50px;
-            background: #FFE5D3;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-
-        .settings-card-icon i {
-            color: #FF9040;
-            font-size: 24px;
-        }
-
-        .settings-card-content h3 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .settings-card-content p {
-            font-size: 14px;
-            color: #666;
-            margin: 0;
-        }
-
-        @media (max-width: 900px) {
-            .main-content {
-                margin-left: 0;
-            }
-        }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/setting.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
+<div class="dashboard-setting-page">
+
 
 
             <div class="settings-card" onclick="window.location.href='{{ route('admin.account') }}'">
@@ -84,5 +31,7 @@
                 </div>
             </div>
             </div>
+
+</div>
 @endsection
 

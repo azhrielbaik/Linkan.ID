@@ -1,0 +1,64 @@
+.dashboard-statistic-page padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stats-header {
+    display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+}
+
+.dashboard-statistic-page .stats-header h3 {
+    font-size: 15px;
+                color: #333;
+                font-weight: 500;
+}
+
+.dashboard-statistic-page .date-range-selector {
+    display: flex;
+                align-items: center;
+                gap: 10px;
+}
+
+.dashboard-statistic-page .date-input {
+    padding: 7px 12px;
+                border: 1px solid #eee;
+                border-radius: 6px;
+                background: white;
+                font-size: 13px;
+                color: #666;
+}
+
+.dashboard-statistic-page .apply-date {
+    padding: 7px 12px;
+                background: #FF9040;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 13px;
+}
+
+.dashboard-statistic-page .apply-date:hover {
+    opacity: 0.9;
+}
+
+.dashboard-statistic-page .stats-numbers {
+    display: flex;
+                gap: 25px;
+                margin-bottom: 20px;
+                font-size: 14px;
+                color: #666;
+}
+
+.dashboard-statistic-page .stats-chart {
+    height: 300px;
+                margin-top: 15px;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+                    margin-left: 0;
+}

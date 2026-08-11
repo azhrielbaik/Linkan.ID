@@ -3,96 +3,12 @@
 <?php $__env->startSection("page_title", "My Purchases"); ?>
 
 <?php $__env->startPush("styles"); ?>
-<style>
-.header h1 {
-            font-size: 18px;
-            color: #333;
-        }
-        
-        .notification-icon i {
-            color: #333;
-            font-size: 16px;
-        }
-        .my-linkan-header {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .my-linkan-url {
-            background: #f5f5f5;
-            padding: 8px 15px;
-            border-radius: 5px;
-            flex-grow: 1;
-            color: #666;
-            font-weight: 600;
-        }
-        .share-button {
-            background: none;
-            border: none;
-            color: #FF9040;
-            cursor: pointer;
-            padding: 5px;
-            font-size: 18px;
-        }
-        .filter-sort-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .filter-sort-btn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px 12px;
-            color: #666;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .filter-sort-btn:hover {
-            background: #f5f5f5;
-        }
-        .search-bar {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 5px;
-        }
-        .search-bar input {
-            width: 180px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            font-size: 14px;
-        }
-        .search-bar button {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px 10px;
-            color: #666;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        @media (max-width: 900px) {
-            .main-content {
-                margin-left: 0;
-            }
-        }
-</style>
+<link rel="stylesheet" href="<?php echo e(asset('css/pages/mypurchase.css')); ?>" data-turbo-track="reload">
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection("content"); ?>
+<div class="dashboard-mypurchase-page">
+
 
         <!-- Card My Linkan URL -->
         <div class="my-linkan-header">
@@ -141,6 +57,8 @@
                 <?php endif; ?>
             </div>
         </div>
+
+</div>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush("scripts"); ?>

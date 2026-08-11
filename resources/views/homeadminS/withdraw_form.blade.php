@@ -3,91 +3,12 @@
 @section("page_title", "Form")
 
 @push("styles")
-<style>
-.withdraw-card {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .withdraw-card h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .withdraw-card p {
-            color: #666;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        .form-group input[type="number"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .form-group .currency-prefix {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-        }
-        .form-group .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .form-group .input-wrapper input {
-            padding-left: 40px; /
-        .form-actions button {
-            background-color: #FF9040;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            width: 100%;
-        }
-        .form-actions button:hover {
-            background-color: #e67e30;
-        }
-        .form-actions .btn-cancel {
-            background-color: #ccc;
-            margin-top: 10px;
-        }
-        .form-actions .btn-cancel:hover {
-            background-color: #bbb;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            text-align: left;
-        }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/withdraw-form.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
+<div class="dashboard-withdraw-page">
+
 <div class="withdraw-card">
         <h2>Withdraw Funds</h2>
         <p>Current balance: Rp {{ number_format($currentEarnings ?? 0, 0, ',', '.') }}</p>
@@ -159,6 +80,8 @@
             </div>
         </form>
     </div>
+
+</div>
 @endsection
 
 @push("scripts")

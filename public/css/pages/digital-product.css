@@ -1,0 +1,313 @@
+.dashboard-digital-product-page .page-header {
+    background: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dashboard-digital-product-page .page-title {
+    font-size: 20px;
+                font-weight: 600;
+                margin: 0;
+}
+
+.dashboard-digital-product-page .options-button {
+    background: #FF9040;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+}
+
+.dashboard-digital-product-page .content-card {
+    background: white;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dashboard-digital-product-page .card-title {
+    font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 20px;
+}
+
+.dashboard-digital-product-page .form-group {
+    margin-bottom: 20px;
+}
+
+.dashboard-digital-product-page .form-group label {
+    display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #333;
+}
+
+.dashboard-digital-product-page .form-control {
+    width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+                font-family: Arial, sans-serif;
+}
+
+.dashboard-digital-product-page textarea.form-control {
+    font-family: Arial, sans-serif;
+                font-size: 14px;
+                resize: vertical;
+                min-height: 100px;
+                line-height: 1.5;
+}
+
+.dashboard-digital-product-page .image-upload {
+    width: 100px;
+                height: 100px;
+                border: 1px dashed #ddd;
+                border-radius: 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                background: #fff;
+}
+
+.dashboard-digital-product-page .image-upload i {
+    font-size: 24px;
+                color: #666;
+                margin-bottom: 5px;
+}
+
+.dashboard-digital-product-page .image-upload span {
+    font-size: 12px;
+                color: #666;
+}
+
+.dashboard-digital-product-page .format-info {
+    font-size: 12px;
+                color: #666;
+                margin-top: 8px;
+}
+
+.dashboard-digital-product-page .platform-options {
+    display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+}
+
+.dashboard-digital-product-page .platform-button {
+    padding: 8px 20px;
+                border: none;
+                border-radius: 20px;
+                background: white;
+                color: #FF9040;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-size: 14px;
+                border: 1px solid #FF9040;
+}
+
+.dashboard-digital-product-page .platform-button.active {
+    background: #FF9040;
+                color: white;
+}
+
+.dashboard-digital-product-page .platform-container {
+    background: #F8F9FE;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 15px;
+}
+
+.dashboard-digital-product-page .toggle-switch {
+    position: relative;
+                display: inline-block;
+                width: 44px;
+                height: 24px;
+}
+
+.dashboard-digital-product-page .toggle-switch input {
+    opacity: 0;
+                width: 0;
+                height: 0;
+}
+
+.dashboard-digital-product-page .toggle-slider {
+    position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 24px;
+}
+
+.dashboard-digital-product-page .toggle-slider:before {
+    position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+}
+
+.dashboard-digital-product-page input:checked + .toggle-slider {
+    background-color: #FF9040;
+}
+
+.dashboard-digital-product-page input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.dashboard-digital-product-page .price-group {
+    display: flex;
+                gap: 20px;
+}
+
+.dashboard-digital-product-page .price-input {
+    flex: 1;
+}
+
+.dashboard-digital-product-page .currency-input {
+    width: 100px;
+}
+
+.dashboard-digital-product-page .action-buttons {
+    display: flex;
+                justify-content: space-between;
+                padding: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dashboard-digital-product-page .cancel-button {
+    padding: 10px 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background: white;
+                cursor: pointer;
+}
+
+.dashboard-digital-product-page .add-product-button {
+    padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                background: #FF9040;
+                color: white;
+                cursor: pointer;
+}
+
+.dashboard-digital-product-page .select-dropdown {
+    width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background: white;
+                cursor: pointer;
+}
+
+.dashboard-digital-product-page .select-file-button {
+    width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-top: 15px;
+                background: white;
+                display: none;
+                text-align: center;
+                cursor: pointer;
+                color: #FF9040;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+}
+
+.dashboard-digital-product-page .select-file-button i {
+    margin-right: 8px;
+                color: #FF9040;
+}
+
+.dashboard-digital-product-page #selected-file-name {
+    display: inline-block;
+                max-width: calc(100% - 30px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+                color: #FF9040;
+}
+
+.dashboard-digital-product-page .preview-product-item {
+    display: flex;
+                align-items: center;
+                gap: 10px;
+                background: white;
+                border-radius: 8px;
+                padding: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-digital-product-page .preview-product-image {
+    flex: 0 0 40px;
+                width: 40px;
+                height: 40px;
+                background: #FFE5D3;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+}
+
+.dashboard-digital-product-page .preview-product-image img {
+    width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 6px;
+                background: #fff;
+}
+
+.dashboard-digital-product-page .preview-product-info {
+    flex: 1 1 0;
+                min-width: 0;
+}
+
+.dashboard-digital-product-page .preview-product-title {
+    font-size: 14px;
+                color: #333;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+                    padding-left: 0 !important;
+}
+
+}
+
+        .sidebar {
+    width: 250px !important;
+                box-sizing: border-box;
+                max-width: 250px;
+                overflow-x: auto;
+}
+
+.dashboard-digital-product-page .sidebar .logo {
+    max-width: 210px;
+                width: 100%;
+}

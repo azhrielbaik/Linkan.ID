@@ -3,147 +3,12 @@
 @section("page_title", "My Account")
 
 @push("styles")
-<style>
-.header h1 {
-            font-size: 24px;
-            color: #333;
-        }
-
-        .account-detail, .delete-account {
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 10px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .account-detail h2, .delete-account h2 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .account-detail input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .delete-account button {
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .delete-account button:hover {
-            background-color: #e60000;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .form-group span {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .btn-save {
-            background-color: #FF9040; /* Warna oranye */
-            color: white; /* Warna font putih */
-            border: none;
-            padding: 10px 60px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: block; /* Pastikan tombol berada di baris baru */
-            margin-left: auto; /* Geser tombol ke kanan */
-            margin-top: 20px; /* Tambahkan jarak dari elemen sebelumnya */
-        }
-
-        .btn-save:hover {
-            background-color: #e67e22; /* Warna oranye lebih gelap saat hover */
-        }
-
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .popup-content {
-            position: fixed; /* agar posisinya tetap saat scroll */
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* untuk benar-benar menempatkan di tengah */
-            
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 10px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* pastikan tampil di atas elemen lain */
-        }
-
-
-        .popup-buttons button {
-            margin: 5px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-cancel {
-            background-color: #ccc;
-            color: #333;
-        }
-
-        .btn-cancel:hover {
-            background-color: #bbb;
-        }
-
-        .btn-confirm {
-            background-color: #FF9040;
-            color: white;
-        }
-
-        .btn-confirm:hover {
-            background-color: #e67e22;
-        }
-        .header a {
-            color: black !important;
-            text-decoration: none; /* kalau mau hilangkan garis bawah juga */
-        }
-
-        @media (max-width: 900px) {
-            .main-content {
-                margin-left: 0;
-            }
-        }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/myaccount.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
+<div class="dashboard-myaccount-page">
+
 
 
             @if(session('success'))
@@ -219,6 +84,8 @@
                     </div>
                 </div>
             </div>
+
+</div>
 @endsection
 
 @push("scripts")

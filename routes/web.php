@@ -4,12 +4,11 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppearanceController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LoginController as GoogleLoginController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DigitalProductController;
-use App\Http\Controllers\login\LoginController;
-use App\Http\Controllers\login\RegisterController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\PlatformAdmin\VerifikasiController;
@@ -50,8 +49,8 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 // Google OAuth
-Route::get('login/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('login/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
+Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 // Password Reset
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');

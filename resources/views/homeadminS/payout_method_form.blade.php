@@ -3,73 +3,12 @@
 @section("page_title", "Form")
 
 @push("styles")
-<style>
-.card {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        .card h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 18px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        .form-control {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .form-actions button {
-            background-color: #FF9040;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            width: 100%;
-        }
-        .form-actions button:hover {
-            background-color: #e67e30;
-        }
-        .form-actions .btn-cancel {
-            background-color: #ccc;
-            margin-top: 10px;
-        }
-        .form-actions .btn-cancel:hover {
-            background-color: #bbb;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            text-align: left;
-        }
-</style>
+<link rel="stylesheet" href="{{ asset('css/pages/payout-method-form.css') }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
+<div class="dashboard-payout-method-page">
+
 <div class="card">
         <h2>Set Payout Method</h2>
 
@@ -116,6 +55,8 @@
             </div>
         </form>
     </div>
+
+</div>
 @endsection
 
 @push("scripts")
