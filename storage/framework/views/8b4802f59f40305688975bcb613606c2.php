@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linkan - Powering Creators Economy</title>
     <meta name="description" content="Create your microsite, shorten links, and sell digital products all in one platform. Join the vibrant creators economy with Linkan.">
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -811,15 +811,15 @@
     <!-- NAVBAR -->
     <nav class="navbar-wrapper" id="navbarWrapper">
         <div class="navbar-pill">
-            <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo-img">
+            <a href="<?php echo e(url('/')); ?>" class="nav-logo">
+                <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" class="logo-img">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
-                <a href="{{ route('service') }}" class="nav-link">Service</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">FAQ</a>
-                <a href="{{ route('login') }}" class="nav-link">Sign In</a>
-                <a href="{{ route('register') }}" class="btn-signup">Sign Up</a>
+                <a href="<?php echo e(route('pricing')); ?>" class="nav-link">Pricing</a>
+                <a href="<?php echo e(route('service')); ?>" class="nav-link">Service</a>
+                <a href="<?php echo e(route('FAQ')); ?>" class="nav-link">FAQ</a>
+                <a href="<?php echo e(route('login')); ?>" class="nav-link">Sign In</a>
+                <a href="<?php echo e(route('register')); ?>" class="btn-signup">Sign Up</a>
             </div>
             <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu">
                 <span class="hamburger-line"></span>
@@ -832,11 +832,11 @@
     <!-- MOBILE NAVIGATION OVERLAY -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay">
         <div class="mobile-nav-menu">
-            <a href="{{ route('pricing') }}" class="mobile-nav-link">Pricing</a>
-            <a href="{{ route('service') }}" class="mobile-nav-link">Service</a>
-            <a href="{{ route('FAQ') }}" class="mobile-nav-link">FAQ</a>
-            <a href="{{ route('login') }}" class="mobile-nav-link">Sign In</a>
-            <a href="{{ route('register') }}" class="mobile-btn-signup">Sign Up</a>
+            <a href="<?php echo e(route('pricing')); ?>" class="mobile-nav-link">Pricing</a>
+            <a href="<?php echo e(route('service')); ?>" class="mobile-nav-link">Service</a>
+            <a href="<?php echo e(route('FAQ')); ?>" class="mobile-nav-link">FAQ</a>
+            <a href="<?php echo e(route('login')); ?>" class="mobile-nav-link">Sign In</a>
+            <a href="<?php echo e(route('register')); ?>" class="mobile-btn-signup">Sign Up</a>
         </div>
     </div>
 
@@ -852,7 +852,7 @@
                     Create Instant Mobile Webpage to sell your knowledge. Chat, Video Calls, Events, Digital Product. Share it across social media.
                 </p>
                 
-                <form action="{{ route('register') }}" method="GET" class="claim-wrapper">
+                <form action="<?php echo e(route('register')); ?>" method="GET" class="claim-wrapper">
                     <div class="claim-input-pill">
                         <span class="claim-prefix">Linkan.id/</span>
                         <input type="text" name="username" class="claim-input" placeholder="YourNameHere" autocomplete="off">
@@ -861,7 +861,7 @@
                 </form>
             </div>
             <div class="hero-image-wrapper">
-                <img src="{{ asset('images/landing page/pria_laptop.svg') }}" alt="Powering Creators Economy" class="hero-img">
+                <img src="<?php echo e(asset('images/landing page/pria_laptop.svg')); ?>" alt="Powering Creators Economy" class="hero-img">
             </div>
         </div>
     </section>
@@ -878,7 +878,7 @@
         </div>
 
         <div class="feature-mockup-wrapper">
-            <img src="{{ asset('images/landing page/Group 15.png') }}" alt="Linkan Dashboard Mockup" class="feature-mockup-img">
+            <img src="<?php echo e(asset('images/landing page/Group 15.png')); ?>" alt="Linkan Dashboard Mockup" class="feature-mockup-img">
         </div>
     </section>
 
@@ -925,7 +925,7 @@
     <!-- CREATOR SHOWCASE SECTION -->
     <section class="creator-showcase-section reveal">
         <div class="showcase-container">
-            <img src="{{ asset('images/landing page/wanita_laptop.svg') }}" alt="Linkan Creator Showcase" class="showcase-img">
+            <img src="<?php echo e(asset('images/landing page/wanita_laptop.svg')); ?>" alt="Linkan Creator Showcase" class="showcase-img">
             
             <div class="floating-tag anime-tag tag-1">Membantu Creator</div>
             <div class="floating-tag anime-tag tag-2">Memudahkan Pengguna</div>
@@ -939,15 +939,15 @@
         <div class="footer-content">
             <div class="footer-left">
                 <div class="footer-logo">
-                    <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" style="height: 45px; width: auto;">
+                    <img src="<?php echo e(asset('images/Logo.png')); ?>" alt="Linkan Logo" style="height: 45px; width: auto;">
                 </div>
                 <div class="footer-copyright">
                     © 2026 Linkan. Built for the Creator Economy.
                 </div>
             </div>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">About Us</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">Contact Us</a>
+                <a href="<?php echo e(route('about')); ?>" class="footer-link">About Us</a>
+                <a href="<?php echo e(route('contact.form')); ?>" class="footer-link">Contact Us</a>
             </div>
         </div>
     </footer>
@@ -1145,4 +1145,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH /home/rakanyuka/Documents/PKL/Linkan/resources/views/welcome.blade.php ENDPATH**/ ?>
