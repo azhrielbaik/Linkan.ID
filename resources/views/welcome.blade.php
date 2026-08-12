@@ -7,6 +7,13 @@
     <meta name="description" content="Create your microsite, shorten links, and sell digital products all in one platform. Join the vibrant creators economy with Linkan.">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <script>
+        // Force the page to always load at the very top (bypassing browser scroll restoration)
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
     <style>
         :root {
             --font-heading: 'Plus Jakarta Sans', sans-serif;
@@ -123,7 +130,7 @@
 
         /* HERO SECTION REDESIGN */
         .hero-section {
-            padding-top: 180px;
+            padding-top: 50px;
             padding-bottom: 60px;
             width: 100%;
             display: flex;
@@ -157,7 +164,7 @@
         .hero-img {
             width: 100%;
             height: auto;
-            max-height: 580px;
+            max-height: 600px;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
         }
 
@@ -183,12 +190,13 @@
         }
 
         .hero-subtitle {
-            font-size: clamp(1rem, 2vw, 1.15rem);
+            font-size: clamp(1.4rem, 2vw, 1.15rem);
             color: rgba(255, 255, 255, 0.95);
             font-weight: 400;
             line-height: 1.6;
             max-width: 600px;
-            margin: 0 auto 3rem;
+            margin: 0 auto 4rem;
+            margin-right: 70px;
         }
 
         /* CLAIM FORM */
@@ -255,12 +263,12 @@
         /* FEATURES SECTION */
         .features-section {
             padding-top: 100px;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
         }
 
         .section-title {
             font-family: var(--font-heading);
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(2.2rem, 3.5vw, 3rem);
             font-weight: 800;
             margin-bottom: 1rem;
             text-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -270,12 +278,13 @@
             font-size: 1.1rem;
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 3rem;
+            margin-top: 1rem;
         }
 
         .feature-pills {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 80px;
             flex-wrap: wrap;
         }
 
@@ -295,7 +304,7 @@
         }
 
         .feature-mockup-wrapper {
-            margin-top: 50px;
+            margin-top: -30px;
             width: 100%;
             max-width: 800px;
             display: flex;
@@ -306,6 +315,226 @@
             max-width: 100%;
             height: auto;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.12));
+        }
+
+        /* DIGITAL MARKETING SECTION */
+        .digital-marketing-section {
+            padding-top: 20px;
+            padding-bottom: 80px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .marketing-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 980px;
+            width: 100%;
+            gap: 50px;
+            text-align: left;
+        }
+
+        .marketing-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .marketing-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #FFFFFF;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .marketing-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.15rem);
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        .btn-service {
+            background: #FFFFFF;
+            color: var(--orange);
+            border: none;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .btn-service:hover {
+            transform: scale(1.05);
+        }
+
+        .marketing-image-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .marketing-img {
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+        }
+
+        /* PRICING SECTION */
+        .pricing-section {
+            padding-top: 60px;
+            padding-bottom: 100px;
+            width: 100%;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            align-items: end;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            color: var(--dark);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .pricing-card:hover {
+            transform: scale(1.03) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .pricing-card.popular {
+            border: 2px solid var(--orange);
+            background: #FFFFFF;
+            box-shadow: 0 20px 40px rgba(90, 91, 241, 0.15);
+            z-index: 2;
+        }
+
+        .pricing-card.popular:hover {
+            box-shadow: 0 25px 50px rgba(90, 91, 241, 0.3);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--orange);
+            color: #FFF;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(90, 91, 241, 0.3);
+            white-space: nowrap;
+        }
+
+        .pricing-header {
+            padding: 24px 24px 8px;
+            background: transparent;
+            border-bottom: none;
+        }
+
+        .pricing-body {
+            padding: 0 24px 24px;
+        }
+
+        .pricing-tier {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .pricing-price {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        
+        .pricing-price span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .btn-pricing {
+            display: block;
+            text-align: center;
+            background: var(--orange);
+            color: #FFFFFF;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 25px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-pricing:hover {
+            transform: scale(1.02);
+            color: #FFFFFF;
+            background: #4647D9;
+        }
+
+        .pricing-features-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .pricing-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pricing-features li {
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+        }
+
+        .pricing-check {
+            width: 6px;
+            height: 6px;
+            background: var(--dark);
+            border-radius: 50%;
+            display: inline-block;
         }
 
         /* TESTIMONIALS SECTION */
@@ -373,6 +602,10 @@
             font-weight: 500;
         }
 
+        .testi-mobile-marquee {
+            display: none;
+        }
+
         /* CREATOR SHOWCASE SECTION */
         .creator-showcase-section {
             padding: 0;
@@ -388,7 +621,7 @@
         .showcase-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
             display: flex;
             justify-content: center;
@@ -397,10 +630,11 @@
 
         .showcase-img {
             max-width: 100%;
-            width: 800px;
+            width: 700px;
             height: auto;
             display: block;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+            transform: translateX(-20px); /* Geser gambar ke kiri tanpa mengubah posisi tag */
         }
 
         .floating-tag {
@@ -524,6 +758,15 @@
         }
 
         /* ANIMATIONS */
+        @keyframes marquee-ltr {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
         .reveal {
             opacity: 0;
             transform: scale(0.85) translateY(40px);
@@ -672,12 +915,59 @@
         /* Responsive */
         @media (max-width: 900px) {
             .testi-grid {
+                display: none !important;
+            }
+            .testi-mobile-marquee {
+                display: flex;
+                overflow: hidden;
+                width: 100vw;
+                position: relative;
+                padding: 25px 0;
+                mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+                -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            }
+            .testi-marquee-track {
+                display: flex;
+                width: max-content;
+                gap: 16px;
+                padding: 0 8px;
+                animation: scroll-marquee 20s linear infinite;
+                will-change: transform;
+            }
+            @keyframes scroll-marquee {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(calc(-50% - 8px)); }
+            }
+            .testi-mobile-marquee .testi-card {
+                width: 280px;
+                flex-shrink: 0;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+                padding: 24px;
+                border-radius: 20px;
+                background: #FFFFFF;
+            }
+            .pricing-grid {
                 grid-template-columns: 1fr;
-                max-width: 450px;
+                max-width: 320px;
+                align-items: center;
             }
         }
 
         @media (max-width: 768px) {
+            .marketing-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .marketing-content {
+                align-items: center;
+                text-align: center;
+            }
+            .marketing-title {
+                text-align: center;
+            }
+            .marketing-image-wrapper {
+                margin-top: 30px;
+            }
             .navbar-wrapper {
                 padding: 12px 16px;
             }
@@ -704,7 +994,7 @@
             .hero-container {
                 flex-direction: column;
                 text-align: center;
-                gap: 32px;
+                gap: 20px;
             }
             .hero-content {
                 align-items: center;
@@ -753,7 +1043,7 @@
             }
             .features-section {
                 padding-top: 60px;
-                padding-bottom: 60px;
+                padding-bottom: 20px;
             }
             .section-title {
                 font-size: 1.8rem;
@@ -771,7 +1061,7 @@
                 font-size: 13px;
             }
             .feature-mockup-wrapper {
-                margin-top: 32px;
+                margin-top: -40px;
             }
             .testimonials-section {
                 padding-top: 60px;
@@ -868,7 +1158,7 @@
 
     <!-- FEATURES SECTION -->
     <section class="features-section reveal">
-        <h2 class="section-title">Not just another link-in-bio</h2>
+        <h2 class="section-title" id="changing-title" style="min-height: 48px; overflow: hidden; position: relative;">Not just another link-in-bio</h2>
         <p class="section-subtitle">Linkan.id take care of your entire workflow, start to finish.</p>
         
         <div class="feature-pills">
@@ -882,10 +1172,101 @@
         </div>
     </section>
 
+    <!-- DIGITAL MARKETING SECTION -->
+    <section class="digital-marketing-section reveal">
+        <div class="marketing-container">
+            <div class="marketing-content">
+                <h2 class="marketing-title">Digital marketing<br>for your business</h2>
+                <p class="marketing-subtitle">
+                    optimize digital marketing in your business through billions of users on various effective internet marketing channels
+                </p>
+                <a href="{{ route('service') }}" class="btn-service">Get Service</a>
+            </div>
+            <div class="marketing-image-wrapper">
+                <img src="{{ asset('images/landing page/handphone_besar.svg') }}" alt="Digital Marketing" class="marketing-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="pricing-section reveal" id="pricing">
+        <div class="pricing-grid">
+            <!-- Basic -->
+            <div class="pricing-card anime-pricing">
+                <div class="pricing-header">
+                    <h3 class="pricing-tier">Basic</h3>
+                </div>
+                <div class="pricing-body">
+                    <div class="pricing-price">$ 0</div>
+                    <a href="{{ route('register') }}" class="btn-pricing" style="background: #E8E8FF; color: var(--orange);">Get Started</a>
+                    <div class="pricing-features-title">Everything you need:</div>
+                    <ul class="pricing-features">
+                        <li><span class="pricing-check"></span> Unlimited Link</li>
+                        <li><span class="pricing-check"></span> Digital Product Store</li>
+                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
+                        <li><span class="pricing-check"></span> Link Thumbnails</li>
+                        <li><span class="pricing-check"></span> Templates</li>
+                        <li><span class="pricing-check"></span> Custom Background</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Standard -->
+            <div class="pricing-card popular anime-pricing">
+                <div class="popular-badge">Most Popular</div>
+                <div class="pricing-header">
+                    <h3 class="pricing-tier">Standard</h3>
+                </div>
+                <div class="pricing-body">
+                    <div class="pricing-price">$ 6 <span>/ Month</span></div>
+                    <a href="{{ route('register') }}" class="btn-pricing">Get Started</a>
+                    <div class="pricing-features-title">Everything you need:</div>
+                    <ul class="pricing-features">
+                        <li><span class="pricing-check"></span> Unlimited Link</li>
+                        <li><span class="pricing-check"></span> Digital Product Store</li>
+                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
+                        <li><span class="pricing-check"></span> Link Thumbnails</li>
+                        <li><span class="pricing-check"></span> Templates</li>
+                        <li><span class="pricing-check"></span> Custom Background</li>
+                        <li><span class="pricing-check"></span> About Me</li>
+                        <li><span class="pricing-check"></span> Email Notification</li>
+                        <li><span class="pricing-check"></span> Donation Page</li>
+                        <li><span class="pricing-check"></span> Transaction Fee</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Unlimited -->
+            <div class="pricing-card anime-pricing">
+                <div class="pricing-header">
+                    <h3 class="pricing-tier">Unlimited</h3>
+                </div>
+                <div class="pricing-body">
+                    <div class="pricing-price">$ 30 <span>/ Month</span></div>
+                    <a href="{{ route('register') }}" class="btn-pricing">Get Started</a>
+                    <div class="pricing-features-title">Everything you need:</div>
+                    <ul class="pricing-features">
+                        <li><span class="pricing-check"></span> Unlimited Link</li>
+                        <li><span class="pricing-check"></span> Digital Product Store</li>
+                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
+                        <li><span class="pricing-check"></span> Link Thumbnails</li>
+                        <li><span class="pricing-check"></span> Templates</li>
+                        <li><span class="pricing-check"></span> Custom Background</li>
+                        <li><span class="pricing-check"></span> About Me</li>
+                        <li><span class="pricing-check"></span> Email Notification</li>
+                        <li><span class="pricing-check"></span> Donation Page</li>
+                        <li><span class="pricing-check"></span> Transaction Fee</li>
+                        <li><span class="pricing-check"></span> Priority Support</li>
+                        <li><span class="pricing-check"></span> Custom Domain</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- TESTIMONIALS SECTION -->
     <section class="testimonials-section reveal">
         <h2 class="section-title">See What People Are Saying</h2>
         
+        <!-- Desktop Grid View -->
         <div class="testi-grid">
             <div class="testi-card reveal-scale">
                 <div class="testi-header">
@@ -918,6 +1299,79 @@
                     </div>
                 </div>
                 <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
+            </div>
+        </div>
+
+        <!-- Mobile Scroll View -->
+        <div class="testi-mobile-marquee">
+            <div class="testi-marquee-track">
+                <!-- SET 1 -->
+                <div class="testi-card">
+                    <div class="testi-header">
+                        <div class="testi-avatar avatar-red"></div>
+                        <div class="testi-meta">
+                            <h4>RakanMY</h4>
+                            <span>@rakanmy</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Sangat membantu saya untuk berjualan digital product dengan mudah dan cepat tanpa ribet. Tampilannya juga sangat premium."</p>
+                </div>
+                
+                <div class="testi-card">
+                    <div class="testi-header">
+                        <div class="testi-avatar" style="background: #E8E8E8; color: #555;">F</div>
+                        <div class="testi-meta">
+                            <h4>Frsbrly</h4>
+                            <span>@frsbrly</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Linkan.id memberikan solusi terbaik untuk mengelola semua link dan produk digital saya dalam satu tempat. Luar biasa!"</p>
+                </div>
+                
+                <div class="testi-card">
+                    <div class="testi-header">
+                        <div class="testi-avatar avatar-orange"></div>
+                        <div class="testi-meta">
+                            <h4>mhmdazrl</h4>
+                            <span>@mhmdazrl</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
+                </div>
+
+                <!-- SET 2 (DUPLICATE FOR SEAMLESS LOOP) -->
+                <div class="testi-card" aria-hidden="true">
+                    <div class="testi-header">
+                        <div class="testi-avatar avatar-red"></div>
+                        <div class="testi-meta">
+                            <h4>RakanMY</h4>
+                            <span>@rakanmy</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Sangat membantu saya untuk berjualan digital product dengan mudah dan cepat tanpa ribet. Tampilannya juga sangat premium."</p>
+                </div>
+                
+                <div class="testi-card" aria-hidden="true">
+                    <div class="testi-header">
+                        <div class="testi-avatar" style="background: #E8E8E8; color: #555;">F</div>
+                        <div class="testi-meta">
+                            <h4>Frsbrly</h4>
+                            <span>@frsbrly</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Linkan.id memberikan solusi terbaik untuk mengelola semua link dan produk digital saya dalam satu tempat. Luar biasa!"</p>
+                </div>
+                
+                <div class="testi-card" aria-hidden="true">
+                    <div class="testi-header">
+                        <div class="testi-avatar avatar-orange"></div>
+                        <div class="testi-meta">
+                            <h4>mhmdazrl</h4>
+                            <span>@mhmdazrl</span>
+                        </div>
+                    </div>
+                    <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1051,17 +1505,6 @@
                 setTimeout(type, 1000);
             }
 
-            // Navbar compact on scroll
-            const navbarWrapper = document.getElementById('navbarWrapper');
-            if (navbarWrapper) {
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 20) {
-                        navbarWrapper.classList.add('scrolled');
-                    } else {
-                        navbarWrapper.classList.remove('scrolled');
-                    }
-                });
-            }
 
             // Mobile menu toggle logic
             const mobileNavToggle = document.getElementById('mobileNavToggle');
@@ -1096,6 +1539,108 @@
         import { createTimeline, stagger, splitText } from 'https://esm.sh/animejs@4.5.0';
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Navbar Hide/Show on Scroll using AnimeJS
+            const navbarWrapper = document.getElementById('navbarWrapper');
+            if (navbarWrapper) {
+                let lastScrollY = window.scrollY;
+                let isNavbarVisible = true;
+                
+                window.addEventListener('scroll', () => {
+                    const currentScrollY = window.scrollY;
+                    
+                    // Compact styling check
+                    if (currentScrollY > 20) {
+                        navbarWrapper.classList.add('scrolled');
+                    } else {
+                        navbarWrapper.classList.remove('scrolled');
+                    }
+
+                    // Hide when scrolling down past 150px
+                    if (currentScrollY > lastScrollY && currentScrollY > 150) {
+                        if (isNavbarVisible) {
+                            isNavbarVisible = false;
+                            createTimeline().add(navbarWrapper, {
+                                y: -150,
+                                opacity: 0,
+                                duration: 400,
+                                ease: 'outQuad'
+                            });
+                        }
+                    } 
+                    // Show when scrolling up
+                    else if (currentScrollY < lastScrollY) {
+                        if (!isNavbarVisible) {
+                            isNavbarVisible = true;
+                            createTimeline().add(navbarWrapper, {
+                                y: 0,
+                                opacity: 1,
+                                duration: 400,
+                                ease: 'outQuad'
+                            });
+                        }
+                    }
+                    lastScrollY = currentScrollY;
+                });
+            }
+
+            // Rotating Text Animation for "Not just another link-in-bio"
+            const changingTitle = document.getElementById('changing-title');
+            if (changingTitle) {
+                const phrases = [
+                    "Not just another link-in-bio",
+                    "Your ultimate creator toolkit",
+                    "Monetize your audience easily",
+                    "All your links in one place"
+                ];
+                let phraseIndex = 0;
+
+                function animateChangingText() {
+                    changingTitle.style.opacity = '0';
+                    changingTitle.innerHTML = phrases[phraseIndex];
+                    const split = splitText(changingTitle, {
+                        lines: false,
+                        words: false,
+                        chars: { wrap: true }
+                    });
+
+                    const charElements = changingTitle.querySelectorAll('span');
+                    charElements.forEach(el => {
+                        el.style.display = 'inline-block';
+                        if (el.textContent === ' ' || el.innerHTML === ' ') {
+                            el.innerHTML = '&nbsp;';
+                        }
+                    });
+
+                    changingTitle.style.opacity = '1';
+
+                    const tl = createTimeline({
+                        onComplete: () => {
+                            phraseIndex = (phraseIndex + 1) % phrases.length;
+                            animateChangingText(); // Seamless transition to next word
+                        }
+                    });
+
+                    tl.add(split.chars, {
+                        y: ['25px', '0px'],
+                        opacity: [0, 1],
+                        duration: 800,
+                        ease: 'outQuad',
+                        delay: stagger(30)
+                    })
+                    .add(split.chars, {
+                        y: ['0px', '-25px'],
+                        opacity: [1, 0],
+                        duration: 500,
+                        ease: 'inQuad',
+                        delay: stagger(20, { from: 'first' })
+                    }, '+=2500'); // Delay reading time (2.5 seconds)
+                }
+
+                // Start the rotation
+                setTimeout(animateChangingText, 1000);
+            }
+
+
             document.fonts.ready.then(() => {
                 const heroTitle = document.querySelector('.hero-title');
                 if (heroTitle) {
