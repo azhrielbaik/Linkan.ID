@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Statistic")
+@section("page_title", __('admin.statistic_title'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/statistic.css') }}" data-turbo-track="reload">
@@ -14,17 +14,17 @@
             <!-- Grafik Total Clicks & Views -->
             <div class="stats-section">
                 <div class="stats-header">
-                    <h3>Total Click & Views</h3>
+                    <h3>{{ __('admin.total_click_views') }}</h3>
                     <div class="date-range-selector">
                         <input type="date" id="startDate1" class="date-input">
-                        <span>to</span>
+                        <span>{{ __('admin.to') }}</span>
                         <input type="date" id="endDate1" class="date-input">
-                        <button class="apply-date" onclick="applyDateFilter1()">Apply</button>
+                        <button class="apply-date" onclick="applyDateFilter1()">{{ __('admin.apply') }}</button>
                     </div>
                 </div>
                 <div class="stats-numbers">
-                    <span>Views: {{ $totalViews }}</span>
-                    <span>Clicks: {{ $totalClicks }}</span>
+                    <span>{{ __('admin.views') }}: {{ $totalViews }}</span>
+                    <span>{{ __('admin.clicks') }}: {{ $totalClicks }}</span>
                 </div>
                 <div class="stats-chart">
                     <canvas id="statsChart1"></canvas>
@@ -34,16 +34,16 @@
             <!-- Grafik Total Sales -->
             <div class="stats-section">
                 <div class="stats-header">
-                    <h3>Total Sales</h3>
+                    <h3>{{ __('admin.total_sales') }}</h3>
                     <div class="date-range-selector">
                         <input type="date" id="startDate2" class="date-input">
-                        <span>to</span>
+                        <span>{{ __('admin.to') }}</span>
                         <input type="date" id="endDate2" class="date-input">
-                        <button class="apply-date" onclick="applyDateFilter2()">Apply</button>
+                        <button class="apply-date" onclick="applyDateFilter2()">{{ __('admin.apply') }}</button>
                     </div>
                 </div>
                 <div class="stats-numbers">
-                    <span>Total Sales: IDR {{ number_format($totalSales, 0, ',', '.') }}</span>
+                    <span>{{ __('admin.total_sales') }}: IDR {{ number_format($totalSales, 0, ',', '.') }}</span>
                 </div>
                 <div class="stats-chart">
                     <canvas id="statsChart2"></canvas>

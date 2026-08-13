@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Microsite Management")
+@section("page_title", __('admin.microsite_management'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/mylinkan.css') }}" data-turbo-track="reload">
@@ -14,16 +14,16 @@
     <!-- HEADER TITLE & MODE SWITCH -->
     <div class="header-title-section">
         <div>
-            <h1>{{ __('sidebar.microsite') }} Management</h1>
-            <p>Kelola galeri microsite, lihat screenshot preview, dan kustomisasi konten publik Anda.</p>
+            <h1>{{ __('admin.microsite_management') }}</h1>
+            <p>{{ __('admin.microsite_management_desc') }}</p>
         </div>
         
         <div class="mode-switch-btn">
             <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="{{ $viewMode == 'gallery' ? 'active' : '' }}">
-                <i class="fas fa-th-large"></i> Galeri Microsite
+                <i class="fas fa-th-large"></i> {{ __('admin.microsite_gallery') }}
             </a>
             <a href="{{ route('admin.mylinkan', ['mode' => 'edit']) }}" class="{{ $viewMode == 'edit' ? 'active' : '' }}">
-                <i class="fas fa-edit"></i> Edit Konten & Blok
+                <i class="fas fa-edit"></i> {{ __('admin.edit_content_blocks') }}
             </a>
         </div>
     </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-value">1</div>
-                <div class="stat-label">Microsite Aktif</div>
+                <div class="stat-label">{{ __('admin.active_microsite') }}</div>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-value">{{ number_format($totalViews ?? 0) }}</div>
-                <div class="stat-label">Total Penayangan</div>
+                <div class="stat-label">{{ __('admin.total_views') }}</div>
             </div>
         </div>
 
@@ -56,7 +56,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-value">{{ $totalProducts ?? 0 }}</div>
-                <div class="stat-label">Produk Terpasang</div>
+                <div class="stat-label">{{ __('admin.installed_products') }}</div>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-value">{{ $totalShortlinks ?? 0 }}</div>
-                <div class="stat-label">Shortlink Terhubung</div>
+                <div class="stat-label">{{ __('admin.connected_shortlinks') }}</div>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
     @if($viewMode == 'gallery')
         <!-- GALLERY LIST VIEW -->
         <div class="section-header">
-            <h2><i class="fas fa-layer-group" style="color: #FF9040;"></i> Daftar Microsite Saya</h2>
+            <h2><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
         </div>
 
         <div class="microsite-gallery-grid">
@@ -85,7 +85,7 @@
                 <!-- CARD HEADER & THUMBNAIL CONTAINER -->
                 <div class="card-thumbnail-container">
                     <span class="status-badge active">
-                        <span class="dot"></span> Live Profil Utama
+                        <span class="dot"></span> {{ __('admin.live_main_profile') }}
                     </span>
 
                     <!-- REAL PHONE THUMBNAIL REPRESENTATION -->
@@ -152,23 +152,23 @@
 
                     <div class="card-stats-tags">
                         <span class="stat-tag"><i class="fas fa-eye"></i> {{ number_format($totalViews) }} views</span>
-                        <span class="stat-tag"><i class="fas fa-cube"></i> {{ $digitalProducts->count() }} produk</span>
-                        <span class="stat-tag"><i class="fas fa-link"></i> {{ $shortlinks->total() }} link</span>
+                        <span class="stat-tag"><i class="fas fa-cube"></i> {{ $digitalProducts->count() }} {{ __('admin.product') }}</span>
+                        <span class="stat-tag"><i class="fas fa-link"></i> {{ $shortlinks->total() }} {{ __('admin.link') }}</span>
                     </div>
 
                     <!-- ACTION BUTTONS -->
                     <div class="card-actions-grid">
                         <button type="button" class="btn-action-secondary" onclick="openPreviewModal('{{ url('/linkan.id/' . Auth::user()->username) }}')">
-                            <i class="fas fa-mobile-alt"></i> Preview
+                            <i class="fas fa-mobile-alt"></i> {{ __('admin.preview') }}
                         </button>
                         <a href="{{ route('admin.mylinkan', ['mode' => 'edit']) }}" class="btn-action-primary">
-                            <i class="fas fa-edit"></i> Edit Blok
+                            <i class="fas fa-edit"></i> {{ __('admin.edit_block') }}
                         </a>
                         <a href="{{ route('admin.appearance') }}" class="btn-action-secondary">
-                            <i class="fas fa-paint-brush"></i> Tampilan
+                            <i class="fas fa-paint-brush"></i> {{ __('admin.appearance') }}
                         </a>
                         <button type="button" class="btn-action-secondary" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')">
-                            <i class="fas fa-copy"></i> Salin Link
+                            <i class="fas fa-copy"></i> {{ __('admin.copy_link') }}
                         </button>
                     </div>
                 </div>
@@ -180,10 +180,10 @@
                 <div class="create-icon-wrapper">
                     <i class="fas fa-plus"></i>
                 </div>
-                <div class="create-title">Tambah Blok Baru</div>
-                <div class="create-subtitle">Tambahkan produk digital atau tautan singkat ke microsite Anda</div>
+                <div class="create-title">{{ __('admin.add_new_block') }}</div>
+                <div class="create-subtitle">{{ __('admin.add_new_block_desc') }}</div>
                 <button type="button" class="btn-action-primary">
-                    <i class="fas fa-plus-circle"></i> Tambah Blok
+                    <i class="fas fa-plus-circle"></i> {{ __('admin.add_block') }}
                 </button>
             </div>
 
@@ -196,10 +196,10 @@
                 <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <i class="fas fa-sliders-h" style="color: #FF9040;"></i> Editor Konten & Blok
+                <i class="fas fa-sliders-h" style="color: #FF9040;"></i> {{ __('admin.edit_content_blocks') }}
             </h2>
             <button class="btn-action-primary" onclick="showAddBlockModal()">
-                <i class="fas fa-plus"></i> Add New Block
+                <i class="fas fa-plus"></i> {{ __('admin.add_new_block') }}
             </button>
         </div>
 
@@ -213,14 +213,14 @@
                         <i class="fas fa-link" style="color: #FF9040; margin-right: 8px;"></i> {{ url('/linkan.id/' . Auth::user()->username) }}
                     </span>
                     <button type="button" class="btn-action-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')">
-                        <i class="fas fa-copy"></i> Salin
+                        <i class="fas fa-copy"></i> {{ __('admin.copy_link') }}
                     </button>
                 </div>
 
                 <!-- DIGITAL PRODUCTS BLOCKS -->
                 @if($digitalProducts->count())
                     <div style="margin-bottom: 30px;">
-                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">Produk Digital Saya</h3>
+                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">{{ __('admin.my_digital_products') }}</h3>
                         @foreach($digitalProducts as $product)
                             <div class="block-item-card" onclick="showActionModal({{ $product->id }}, '{{ $product->title }}')">
                                 <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
@@ -230,11 +230,11 @@
                                 <div style="flex: 1; min-width: 0;">
                                     <div style="font-weight: 700; font-size: 14px; color: #111827;">{{ $product->title }}</div>
                                     @if($product->verification_status == 'pending')
-                                        <span class="status pending" style="font-size: 11px; background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px;">Menunggu Verifikasi</span>
+                                        <span class="status pending" style="font-size: 11px; background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px;">{{ __('admin.waiting_verification') }}</span>
                                     @elseif($product->verification_status == 'rejected')
-                                        <span class="status rejected" style="font-size: 11px; background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px;">Ditolak</span>
+                                        <span class="status rejected" style="font-size: 11px; background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px;">{{ __('admin.rejected') }}</span>
                                     @else
-                                        <span class="status approved" style="font-size: 11px; background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px;">Terverifikasi</span>
+                                        <span class="status approved" style="font-size: 11px; background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px;">{{ __('admin.verified') }}</span>
                                     @endif
                                 </div>
                                 <i class="fas fa-ellipsis-v" style="color: #6b7280; cursor: pointer;"></i>
@@ -246,7 +246,7 @@
                 <!-- SHORTLINKS BLOCKS -->
                 @if($shortlinks->count())
                     <div>
-                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">Tautan Pendek (Shortlinks)</h3>
+                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">{{ __('admin.shortlinks') }}</h3>
                         @foreach($shortlinks as $link)
                             <div class="block-item-card" onclick="window.location.href='{{ route('admin.shortlinks.index') }}'">
                                 <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
@@ -269,7 +269,7 @@
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
             <div class="editor-sticky-preview">
-                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 14px;">Live Phone Preview</h3>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 14px;">{{ __('admin.live_phone_preview') }}</h3>
                 <div class="phone-preview" style="width: 100%; max-width: 320px; aspect-ratio: 9/19; border-radius: 36px; background: white; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 4px solid #111827;">
                     <div class="phone-content" style="width: 100%; height: 100%; padding: 18px 14px; overflow-y: auto; background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}'); background-size: cover; background-position: center;">
                         @if($appearance && $appearance->banner)
@@ -328,7 +328,7 @@
                 <i class="fas fa-copy"></i>
             </button>
             <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" target="_blank" class="btn-action-primary" style="padding: 4px 10px; font-size: 11px;">
-                <i class="fas fa-external-link-alt"></i> Buka
+                <i class="fas fa-external-link-alt"></i> {{ __('admin.open') }}
             </a>
         </div>
 
@@ -343,7 +343,7 @@
 <div id="addBlockModal" class="modal">
     <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
         <div class="modal-header" style="background: #f9fafb; padding: 18px 24px; border-bottom: 1px solid #e5e7eb;">
-            <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Tambah Blok Baru</h2>
+            <h2 style="font-size: 18px; font-weight: 700; margin: 0;">{{ __('admin.add_new_block') }}</h2>
             <button class="close-button" onclick="closeModal()">×</button>
         </div>
         <div class="modal-body" style="padding: 24px;">
@@ -352,8 +352,8 @@
                     <img src="{{ asset('images/productdigital.png') }}" alt="Digital Product" style="width: 28px;">
                 </div>
                 <div class="block-info">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Produk Digital</h3>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0;">Jual produk digital, e-book, lisensi, atau file</p>
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">{{ __('admin.digital_product') }}</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin: 0;">{{ __('admin.digital_product_desc') }}</p>
                 </div>
             </div>
 
@@ -362,8 +362,8 @@
                     <i class="fas fa-link" style="color: #FF9040; font-size: 24px;"></i>
                 </div>
                 <div class="block-info">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Tautan Pendek</h3>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0;">Buat dan hubungkan tautan singkat kustom</p>
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">{{ __('admin.shortlinks') }}</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin: 0;">{{ __('admin.shortlink_desc') }}</p>
                 </div>
             </div>
         </div>
@@ -374,18 +374,18 @@
 <div id="actionModal" class="modal">
     <div class="modal-content" style="border-radius: 20px; padding: 20px;">
         <div class="modal-header">
-            <h2>Aksi Produk</h2>
+            <h2>{{ __('admin.product_action') }}</h2>
             <button class="close-button" onclick="closeActionModal()">×</button>
         </div>
         <div class="modal-body" style="padding-top: 14px;">
             <a href="#" id="editButton" class="btn-action-primary" style="margin-bottom: 10px; width: 100%;">
-                <i class="fas fa-edit"></i> Edit Produk
+                <i class="fas fa-edit"></i> {{ __('admin.edit_product') }}
             </a>
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
                 <button type="button" class="btn-action-secondary" style="color: #ef4444; border-color: #fca5a5; width: 100%;" onclick="confirmDelete()">
-                    <i class="fas fa-trash"></i> Hapus Produk
+                    <i class="fas fa-trash"></i> {{ __('admin.delete_product') }}
                 </button>
             </form>
         </div>
@@ -395,17 +395,17 @@
 <div id="confirmDeleteModal" class="modal">
     <div class="modal-content" style="border-radius: 20px; padding: 24px;">
         <div class="modal-header">
-            <h2>Konfirmasi Hapus</h2>
+            <h2>{{ __('admin.delete_confirmation') }}</h2>
             <button class="close-button" onclick="closeConfirmDeleteModal()">×</button>
         </div>
         <div class="modal-body">
             <p id="deleteMessage" style="margin-bottom: 20px; font-size: 14px; color: #4b5563;"></p>
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="closeConfirmDeleteModal()" class="btn-action-secondary">Batal</button>
+                <button type="button" onclick="closeConfirmDeleteModal()" class="btn-action-secondary">{{ __('admin.cancel') }}</button>
                 <form id="finalDeleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-action-primary" style="background: #ef4444;">Ya, Hapus</button>
+                    <button type="submit" class="btn-action-primary" style="background: #ef4444;">{{ __('admin.yes_delete') }}</button>
                 </form>
             </div>
         </div>

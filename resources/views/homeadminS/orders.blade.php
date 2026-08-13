@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Orders")
+@section("page_title", __('admin.orders_title'))
 
 @push("page-styles")
     <link rel="stylesheet" href="{{ asset('css/pages/orders.css') }}" data-turbo-track="reload">
@@ -14,23 +14,23 @@
                         {{ url('/linkan.id/' . Auth::user()->username) }}
                     </a>
                 </div>
-                <button class="page-orders__btn-share">Share</button>
+                <button class="page-orders__btn-share">{{ __('admin.share') }}</button>
             </div>
             <div class="page-orders__content">
                 <div class="page-orders__product-orders">
-                    <h3>Product Orders</h3>
+                    <h3>{{ __('admin.product_orders') }}</h3>
                     <div class="page-orders__filter-bar">
                         <input type="date" id="dateFilter">
                     </div>
                     <select id="statusFilter" class="page-orders__select">
-                        <option value="">All Transaction</option>
-                        <option value="success">Success</option>
-                        <option value="pending">Pending</option>
-                        <option value="failed">Failed</option>
+                        <option value="">{{ __('admin.all_transaction') }}</option>
+                        <option value="success">{{ __('admin.success') }}</option>
+                        <option value="pending">{{ __('admin.pending') }}</option>
+                        <option value="failed">{{ __('admin.failed') }}</option>
                     </select>
                     <div class="page-orders__search-bar">
                         <input type="text" value="Product Title" readonly>
-                        <input type="text" id="searchInput" placeholder="Search by product title or buyer name">
+                        <input type="text" id="searchInput" placeholder="{{ __('admin.search_by_product_buyer') }}">
                     </div>
                     @foreach($transactions as $transaction)
                     <div class="page-orders__item" data-id="{{ $transaction->id }}" data-status="{{ $transaction->status }}" data-date="{{ $transaction->created_at->format('Y-m-d') }}">
@@ -41,7 +41,7 @@
                                 {{ $transaction->buyer_name }} • {{ $transaction->created_at->format('d M Y') }}
                             </div>
                         </div>
-                        <button class="page-orders__btn-detail" onclick="loadOrderDetail({{ $transaction->id }})">Detail</button>
+                        <button class="page-orders__btn-detail" onclick="loadOrderDetail({{ $transaction->id }})">{{ __('admin.detail') }}</button>
                     </div>
                     @endforeach
                 </div>
@@ -49,8 +49,7 @@
                 <div class="page-orders__order-details" id="orderDetails">
                     <div class="page-orders__empty-detail">
                         <div class="page-orders__icon-detail">📋</div>
-                        <p>Your transaction detail will appear here.<br>
-                        Click <strong>Detail</strong> button on the left side</p>
+                        <p>{!! __('admin.transaction_detail_empty') !!}</p>
                     </div>
                 </div>
             </div>
@@ -123,8 +122,7 @@ function loadOrderDetail(id) {
             $('#orderDetails').html(`
                 <div class="page-orders__empty-detail">
                     <div class="page-orders__icon-detail">📋</div>
-                    <p>Your transaction detail will appear here.<br>
-                    Click <strong>Detail</strong> button on the left side</p>
+                    <p>{!! __('admin.transaction_detail_empty') !!}</p>
                 </div>
             `);
 

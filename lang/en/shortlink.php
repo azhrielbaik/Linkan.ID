@@ -79,4 +79,10 @@ return [
     'filter_newest' => 'Newest',
     'name_label' => 'Name',
     'actions_label' => 'Actions',
+    'locked_link' => 'Locked Link',
+    'locked_desc' => 'Shortlink :url is protected by a password. Please enter the password to continue.',
+    'password' => 'Password',
+    'enter_password' => 'Enter password...',
+    'open_link' => 'Open Link',
+    'filter_oldest' => 'Oldest',
 ];

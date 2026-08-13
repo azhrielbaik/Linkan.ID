@@ -229,11 +229,11 @@
         <span></span>
     </div>
     <div class="nav-links" id="navLinks">
-        <a href="{{ route('pricing') }}">Pricing</a>
-        <a href="{{ route('service') }}">Service</a>
-        <a href="{{ route('FAQ') }}">FAQ</a>
-        <a href="{{ route('login') }}" class="login">Sign In</a>
-        <a href="{{ route('register') }}" class="sign-up">SIGN UP FREE</a>
+        <a href="{{ route('pricing') }}">{{ __('layout.pricing') }}</a>
+        <a href="{{ route('service') }}">{{ __('layout.service') }}</a>
+        <a href="{{ route('FAQ') }}">{{ __('layout.faq') }}</a>
+        <a href="{{ route('login') }}" class="login">{{ __('layout.sign_in') }}</a>
+        <a href="{{ route('register') }}" class="sign-up">{{ __('layout.sign_up_free') }}</a>
     </div>
 </nav>
 <script>

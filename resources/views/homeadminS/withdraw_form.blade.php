@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Form")
+@section("page_title", __('admin.form'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/withdraw-form.css') }}" data-turbo-track="reload">
@@ -10,8 +10,8 @@
 <div class="dashboard-withdraw-page">
 
 <div class="withdraw-card">
-        <h2>Withdraw Funds</h2>
-        <p>Current balance: Rp {{ number_format($currentEarnings ?? 0, 0, ',', '.') }}</p>
+        <h2>{{ __('admin.withdraw_funds') }}</h2>
+        <p>{{ __('admin.current_balance') }} Rp {{ number_format($currentEarnings ?? 0, 0, ',', '.') }}</p>
 
         @if ($errors->any())
             <div class="alert-danger">
@@ -26,7 +26,7 @@
         <form action="{{ route('admin.payout.withdraw.process') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="amount">Amount to Withdraw</label>
+                <label for="amount">{{ __('admin.amount_to_withdraw') }}</label>
                 <div class="input-wrapper">
                     <span class="currency-prefix"></span>
                     <input style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;" type="text" id="amount" name="amount" placeholder="Rp 0" required
@@ -38,7 +38,7 @@
             
 
          <div class="form-group">
-    <label for="method">Withdrawal Method</label>
+    <label for="method">{{ __('admin.withdrawal_method') }}</label>
     <input
         type="text"
         id="method"
@@ -52,13 +52,13 @@
 
 
            <div class="form-group" id="account-detail-group">
-    <label for="account_detail">Account Number / Phone Number</label>
+    <label for="account_detail">{{ __('admin.account_number_phone') }}</label>
     <input
         type="text"
         id="account_detail"
         name="account_detail"
         class="form-control"
-        placeholder="Enter account number or phone number"
+        placeholder="{{ __('admin.account_number_placeholder') }}"
         style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box;"
         value="{{ old('account_detail', $payoutDetail->account_number ?? '') }}"
         readonly
@@ -70,13 +70,13 @@
             <input type="hidden" id="account_name_hidden" name="account_name" value="{{ old('account_name', $payoutDetail->account_name ?? '') }}">
 
             <div class="form-group" id="bank_name_group" style="display: none;">
-                <label for="bank_name">Bank Name</label>
-                <input type="text" id="bank_name" name="bank_name" class="form-control" value="{{ old('bank_name', $payoutDetail->bank_name ?? '') }}" placeholder="e.g., Bank BJB">
+                <label for="bank_name">{{ __('admin.bank_name') }}</label>
+                <input type="text" id="bank_name" name="bank_name" class="form-control" value="{{ old('bank_name', $payoutDetail->bank_name ?? '') }}" placeholder="{{ __('admin.bank_name_placeholder') }}">
             </div>
 
             <div class="form-actions">
-                <button type="submit">Withdraw Now</button>
-                <button type="button" onclick="window.history.back()" class="btn-cancel">Cancel</button>
+                <button type="submit">{{ __('admin.withdraw_now') }}</button>
+                <button type="button" onclick="window.history.back()" class="btn-cancel">{{ __('admin.cancel') }}</button>
             </div>
         </form>
     </div>

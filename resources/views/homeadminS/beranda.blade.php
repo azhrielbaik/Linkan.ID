@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Overview Dasbor")
+@section("page_title", __('admin.overview_dashboard'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}" data-turbo-track="reload">
@@ -33,23 +33,23 @@
                         <i class="fas fa-share-alt"></i>
                     </button>
                 </div>
-                <div class="start-creating">START CREATING NOW...!</div>
+                <div class="start-creating">{{ __('admin.start_creating_now') }}</div>
                 <div class="action-buttons">
                     <a href="{{ route('admin.mylinkan') }}" class="action-button">
-                        <i class="fas fa-qrcode"></i> add Linkan
+                        <i class="fas fa-qrcode"></i> {{ __('admin.add_linkan') }}
                     </a>
                     <a href="{{ route('admin.digital-products.create') }}" class="action-button">
-                        <i class="fas fa-box"></i> Digital Product
+                        <i class="fas fa-box"></i> {{ __('admin.digital_product') }}
                     </a>
                     <a href="{{ route('about') }}" class="action-button">
-                        <i class="fas fa-headset"></i> About Us
+                        <i class="fas fa-headset"></i> {{ __('admin.about_us') }}
                     </a>
                 </div>
             </div>
 
             <div class="earnings-section">
                 <div class="earnings-header">
-                    <span>Earnings</span>
+                    <span>{{ __('admin.earnings') }}</span>
                     <i class="fas fa-cog"></i>
                 </div>
                 <div class="earnings-amount">IDR {{ number_format($totalEarnings, 0, ',', '.') }}</div>
@@ -57,17 +57,17 @@
 
             <div class="stats-section">
                 <div class="stats-header">
-                    <h3>Total Click & Views</h3>
+                    <h3>{{ __('admin.total_click_views') }}</h3>
                     <div class="date-range-selector">
                         <input type="date" id="startDate" class="date-input" />
-                        <span>to</span>
+                        <span>{{ __('admin.to') }}</span>
                         <input type="date" id="endDate" class="date-input" />
-                        <button class="apply-date" onclick="applyDateFilter()">Apply</button>
+                        <button class="apply-date" onclick="applyDateFilter()">{{ __('admin.apply') }}</button>
                     </div>
                 </div>
                 <div class="stats-numbers">
-                    <span>Views: <span id="totalViews">{{ $totalViews }}</span></span>
-                    <span>Clicks: <span id="totalClicks">{{ $totalClicks }}</span></span>
+                    <span>{{ __('admin.views') }} <span id="totalViews">{{ $totalViews }}</span></span>
+                    <span>{{ __('admin.clicks') }} <span id="totalClicks">{{ $totalClicks }}</span></span>
                 </div>
                 <div class="stats-chart">
                     <canvas id="statsChart"></canvas>
@@ -77,17 +77,17 @@
             <div class="summary-section">
                 <div class="summary-card">
                     <i class="fas fa-shopping-cart"></i>
-                    <div class="label">Lifetime Orders</div>
+                    <div class="label">{{ __('admin.lifetime_orders') }}</div>
                     <div class="number">{{ $lifetimeOrders }}</div>
                 </div>
                 <div class="summary-card">
                     <i class="fas fa-chart-line"></i>
-                    <div class="label">Lifetime sales (IDR)</div>
+                    <div class="label">{{ __('admin.lifetime_sales') }}</div>
                     <div class="number">{{ number_format($totalEarnings, 0, ',', '.') }}</div>
                 </div>
                 <div class="summary-card">
                     <i class="fas fa-box"></i>
-                    <div class="label">My Blocks</div>
+                    <div class="label">{{ __('admin.my_blocks') }}</div>
                     <div class="number">{{ $totalProducts }}</div>
                 </div>
             </div>

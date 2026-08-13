@@ -445,14 +445,14 @@ tr:not(:last-child) {
 
     {{-- Main Content --}}
     <div class="content">
-        <div class="header">Verification Content</div>
+        <div class="header">{{ __('admin.verification_content') }}</div>
 
         {{-- Tabs --}}
         <div class="tabs">
-            <button class="tab active" data-tab="pending">Pending Verification</button>
-            <button class="tab" data-tab="approved">Approved</button>
-            <button class="tab" data-tab="rejected">Rejected</button>
-            <button class="tab" data-tab="archive">Archive</button>
+            <button class="tab active" data-tab="pending">{{ __('admin.pending_verification') }}</button>
+            <button class="tab" data-tab="approved">{{ __('admin.approved') }}</button>
+            <button class="tab" data-tab="rejected">{{ __('admin.rejected') }}</button>
+            <button class="tab" data-tab="archive">{{ __('admin.archive') }}</button>
         </div>
 
         {{-- Filter Container --}}
@@ -460,15 +460,15 @@ tr:not(:last-child) {
             <div class="filter-controls">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search by title, username, or description...">
+                    <input type="text" id="searchInput" placeholder="{{ __('admin.search_verification') }}">
                 </div>
                 <div class="filter-group">
                     <select class="filter-select" id="platformFilter">
-                        <option value="">All Platforms</option>
-                        <option value="upload">Upload</option>
+                        <option value="">{{ __('admin.all_platforms') }}</option>
+                        <option value="upload">{{ __('admin.upload') }}</option>
                         <option value="dropbox">Dropbox</option>
                         <option value="gdrive">G-Drive</option>
-                        <option value="other">Other</option>
+                        <option value="other">{{ __('admin.other') }}</option>
                     </select>
                     <div class="date-filter">
                         <input type="date" class="date-input" id="startDate">
@@ -483,16 +483,16 @@ tr:not(:last-child) {
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Username</th>
-                        <th>Content</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Platform Type</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>{{ __('admin.no') }}</th>
+                        <th>{{ __('admin.username') }}</th>
+                        <th>{{ __('admin.content') }}</th>
+                        <th>{{ __('admin.description') }}</th>
+                        <th>{{ __('admin.price') }}</th>
+                        <th>{{ __('admin.platform_type') }}</th>
+                        <th>{{ __('admin.quantity') }}</th>
+                        <th>{{ __('admin.date') }}</th>
+                        <th>{{ __('admin.status') }}</th>
+                        <th>{{ __('admin.action') }}</th>
                     </tr>
                 </thead>
                 <tbody id="productTableBody">
@@ -504,7 +504,7 @@ tr:not(:last-child) {
                         data-title="{{ strtolower($product->title) }}"
                         >
                         <td>{{ $index + 1 }}.</td>
-                        <td>{{ $product->user->name ?? 'Unknown User' }}</td>
+                        <td>{{ $product->user->name ?? __('admin.unknown_user') }}</td>
                         <td>
                             <div class="content-preview">
                                 @if($product->image)
@@ -517,7 +517,7 @@ tr:not(:last-child) {
                         <td class="description-cell">
                             {{ Str::limit($product->description, 50) }}
                             @if(strlen($product->description) > 50)
-                                <span class="read-more-link" onclick="showDescriptionModal(this)" data-full-description="{{ addslashes($product->description) }}">Baca Selengkapnya</span>
+                                <span class="read-more-link" onclick="showDescriptionModal(this)" data-full-description="{{ addslashes($product->description) }}">{{ __('admin.read_more') }}</span>
                             @endif
                         </td>
                         <td>
@@ -534,44 +534,44 @@ tr:not(:last-child) {
                             @if($product->has_quantity_limit)
                                 {{ $product->quantity }}
                             @else
-                                Unlimited
+                                {{ __('admin.unlimited') }}
                             @endif
                         </td>
                         <td>{{ $product->created_at->format('d M Y') }}</td>
                         <td>
                             @if($product->verification_status == 'approved')
-                                <span class="status-completed">● Approved</span>
+                                <span class="status-completed">● {{ __('admin.approved') }}</span>
                             @elseif($product->verification_status == 'rejected')
-                                <span class="status-pending">● Rejected</span>
+                                <span class="status-pending">● {{ __('admin.rejected') }}</span>
                             @else
-                                <span class="status-pending">● Pending</span>
+                                <span class="status-pending">● {{ __('admin.pending') }}</span>
                             @endif
                         </td>
                         <td>
                             @if($product->verification_status == 'pending')
                                 <div class="action-buttons">
                                     <button type="button" class="btn accept" onclick="showPlatformModal({{ $product->id }}, '{{ $product->platform_type }}', '{{ $product->platform_url }}', '{{ $product->platform_file }}')">
-                                        <i class="fas fa-eye"></i> View Platform
+                                        <i class="fas fa-eye"></i> {{ __('admin.view_platform') }}
                                     </button>
                                     <form action="{{ route('platform-admin.verifikasi.verify', $product->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="approved">
                                         <button type="submit" class="btn accept">
-                                            <i class="fas fa-check"></i> Approve
+                                            <i class="fas fa-check"></i> {{ __('admin.approve') }}
                                         </button>
                                     </form>
                                     <button type="button" class="btn accept" style="background-color: #dc3545;" onclick="showRejectModal({{ $product->id }})">
-                                        <i class="fas fa-times"></i> Reject
+                                        <i class="fas fa-times"></i> {{ __('admin.reject') }}
                                     </button>
                                 </div>
                             @else
                                 <div class="action-buttons">
                                     <button class="btn accepted" disabled>
-                                        <i class="fas fa-check-circle"></i> {{ ucfirst($product->verification_status) }}
+                                        <i class="fas fa-check-circle"></i> {{ __('admin.' . $product->verification_status) ?? ucfirst($product->verification_status) }}
                                     </button>
                                     @if($product->verification_status == 'rejected' && $product->rejection_reason)
                                         <div class="rejection-reason">
-                                            <i class="fas fa-info-circle"></i> Alasan: {{ $product->rejection_reason }}
+                                            <i class="fas fa-info-circle"></i> {{ __('admin.reason') }} {{ $product->rejection_reason }}
                                         </div>
                                     @endif
                                 </div>
@@ -583,7 +583,7 @@ tr:not(:last-child) {
             </table>
             <div id="noDataMessage" class="no-data" style="display: none;">
                 <i class="fas fa-box-open"></i>
-                <p>No products found</p>
+                <p>{{ __('admin.no_products_found') }}</p>
             </div>
         </div>
     </div>
@@ -592,25 +592,25 @@ tr:not(:last-child) {
     <div id="platformModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Platform Details</h2>
+                <h2>{{ __('admin.platform_details') }}</h2>
                 <button class="close-button" onclick="closePlatformModal()">×</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Platform Type</label>
+                    <label>{{ __('admin.platform_type') }}</label>
                     <p id="platformType"></p>
                 </div>
                 <div class="form-group" id="platformUrlGroup">
-                    <label>Platform URL</label>
+                    <label>{{ __('admin.platform_url') }}</label>
                     <p id="platformUrl"></p>
                 </div>
                 <div class="form-group" id="platformFileGroup">
-                    <label>Platform File</label>
+                    <label>{{ __('admin.platform_file') }}</label>
                     <p id="platformFile"></p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel" onclick="closePlatformModal()">Tutup</button>
+                <button type="button" class="btn cancel" onclick="closePlatformModal()">{{ __('admin.close') }}</button>
             </div>
         </div>
     </div>
@@ -619,7 +619,7 @@ tr:not(:last-child) {
     <div id="rejectModal" class="modal">
         <div class="modal-content">
         <div class="modal-header">
-            <h2>Reject Content</h2>
+            <h2>{{ __('admin.reject_content') }}</h2>
             <button class="close-button" onclick="closeRejectModal()">×</button>
         </div>
 
@@ -628,13 +628,13 @@ tr:not(:last-child) {
                 <div class="modal-body">
                     <input type="hidden" name="status" value="rejected">
                     <div class="form-group">
-                        <label>Alasan Penolakan</label>
-                        <textarea name="rejection_reason" class="form-control" rows="4" required placeholder="Masukkan alasan penolakan produk..."></textarea>
+                        <label>{{ __('admin.rejection_reason') }}</label>
+                        <textarea name="rejection_reason" class="form-control" rows="4" required placeholder="{{ __('admin.enter_rejection_reason') }}"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn cancel" onclick="closeRejectModal()">Batal</button>
-                    <button type="submit" class="btn reject">Tolak</button>
+                    <button type="button" class="btn cancel" onclick="closeRejectModal()">{{ __('admin.cancel') }}</button>
+                    <button type="submit" class="btn reject">{{ __('admin.reject') }}</button>
                 </div>
             </form>
         </div>
@@ -644,14 +644,14 @@ tr:not(:last-child) {
     <div id="descriptionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Product Description</h2>
+                <h2>{{ __('admin.product_description') }}</h2>
                 <button class="close-button" onclick="closeDescriptionModal()">×</button>
             </div>
             <div class="modal-body">
                 <p id="fullDescription"></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel" onclick="closeDescriptionModal()">Tutup</button>
+                <button type="button" class="btn cancel" onclick="closeDescriptionModal()">{{ __('admin.close') }}</button>
             </div>
         </div>
     </div>
@@ -666,7 +666,7 @@ tr:not(:last-child) {
         if (platformType === 'upload') {
             urlGroup.style.display = 'none';
             fileGroup.style.display = 'block';
-            document.getElementById('platformFile').innerHTML = `<a href="{{ asset('storage/') }}/${platformFile}" target="_blank">Lihat File</a>`;
+            document.getElementById('platformFile').innerHTML = `<a href="{{ asset('storage/') }}/${platformFile}" target="_blank">{{ __('admin.view_file') }}</a>`;
         } else {
             urlGroup.style.display = 'block';
             fileGroup.style.display = 'none';

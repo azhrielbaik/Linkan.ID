@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linkan - Powering Creators Economy</title>
-    <meta name="description" content="Create your microsite, shorten links, and sell digital products all in one platform. Join the vibrant creators economy with Linkan.">
+    <title>{{ __('public.meta_title') }}</title>
+    <meta name="description" content="{{ __('public.meta_desc') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <script>
@@ -20,6 +20,27 @@
             --font-body: 'Plus Jakarta Sans', sans-serif;
             --dark: #121212;
             --orange: #5A5BF1;
+        }
+
+        /* Accessibility: Skip to Content */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: white;
+            padding: 8px;
+            z-index: 9999;
+            transition: top 0.2s;
+        }
+        .skip-to-content:focus {
+            top: 0;
+        }
+
+        /* Accessibility: High Visibility Focus */
+        *:focus-visible {
+            outline: 3px solid #FFD700 !important;
+            outline-offset: 2px !important;
         }
 
         * {
@@ -239,7 +260,7 @@
         }
 
         .claim-input::placeholder {
-            color: #aaa;
+            color: #767676; /* WCAG 2.0 AA contrast */
             font-weight: 400;
         }
 
@@ -650,11 +671,29 @@
             white-space: nowrap;
         }
 
+        @keyframes float-tag-1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(4px, -12px); }
+        }
+        @keyframes float-tag-2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5px, -9px); }
+        }
+        @keyframes float-tag-3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(3px, -15px); }
+        }
+        @keyframes float-tag-4 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-6px, -11px); }
+        }
+
         .floating-tag.active {
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         .floating-tag.active:hover {
+            animation-play-state: paused;
             transform: translateY(-2px) scale(1.05) !important;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.16);
         }
@@ -671,31 +710,57 @@
 
         /* Position tags relative to the image container */
         .tag-1 { top: 27%; left: 80%; }
+        .tag-1.active { animation: float-tag-1 3.5s ease-in-out infinite; }
+        
         .tag-2 { top: 37%; right: -20%; }
+        .tag-2.active { animation: float-tag-2 4.2s ease-in-out infinite; }
+        
         .tag-3 { top: 57%; right: -25%; }
+        .tag-3.active { animation: float-tag-3 3.8s ease-in-out infinite; }
+        
         .tag-4 { bottom: 20%; left: 84%; }
+        .tag-4.active { animation: float-tag-4 4.6s ease-in-out infinite; }
 
         /* Responsive styling for tags */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
+            .showcase-container {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+            .showcase-img {
+                width: 90%;
+                max-width: 100%;
+                transform: none;
+                margin: 0 auto;
+            }
             .floating-tag {
                 font-size: 11px;
                 padding: 8px 16px;
             }
-            .tag-1 { top: 15%; left: 55%; }
-            .tag-2 { top: 35%; right: -15%; }
-            .tag-3 { top: 60%; right: -10%; }
-            .tag-4 { bottom: 15%; left: 60%; }
+            .tag-1 { top: 35px; left: 0; right: 0; margin: 0 auto; width: max-content; }
+            .tag-2 { top: 35%; right: 2%; left: auto; margin: 0; }
+            .tag-3 { bottom: 40%; left: 2%; right: auto; margin: 0; }
+            .tag-4 { bottom: 0; left: 0; right: 0; margin: 0 auto; width: max-content; }
         }
 
         @media (max-width: 480px) {
+            .showcase-container {
+                padding-top: 50px;
+                padding-bottom: 50px;
+            }
+            .showcase-img {
+                width: 100%;
+                max-width: 100%;
+                transform: none;
+            }
             .floating-tag {
                 font-size: 9px;
                 padding: 6px 12px;
             }
-            .tag-1 { top: 12%; left: 50%; }
-            .tag-2 { top: 32%; right: -10%; }
-            .tag-3 { top: 58%; right: -2%; }
-            .tag-4 { bottom: 15%; left: 55%; }
+            .tag-1 { top: 70px; left: 0; right: 0; margin: 0 auto; width: max-content; }
+            .tag-2 { top: 40%; right: 2%; left: auto; margin: 0; }
+            .tag-3 { bottom: 35%; left: 2%; right: auto; margin: 0; }
+            .tag-4 { bottom: 5px; left: 0; right: 0; margin: 0 auto; width: max-content; }
         }
 
         /* FOOTER */
@@ -947,13 +1012,26 @@
                 background: #FFFFFF;
             }
             .pricing-grid {
-                grid-template-columns: 1fr;
-                max-width: 320px;
-                align-items: center;
+                display: flex;
+                overflow-x: auto;
+                padding: 20px;
+                scroll-snap-type: x mandatory;
+                max-width: 100vw;
+                gap: 20px;
+                width: 100%;
+                align-items: stretch;
+            }
+            .pricing-grid::-webkit-scrollbar {
+                display: none;
+            }
+            .pricing-card {
+                flex: 0 0 300px;
+                scroll-snap-align: center;
+                height: auto;
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .marketing-container {
                 flex-direction: column;
                 text-align: center;
@@ -988,58 +1066,95 @@
                 padding: 60px 20px;
             }
             .hero-section {
-                padding-top: 130px;
+                padding-top: 140px;
                 padding-bottom: 40px;
             }
             .hero-container {
+                flex-direction: row;
+                text-align: left;
+                gap: 20px;
+                align-items: center;
+            }
+            .hero-content {
+                align-items: flex-start;
+                text-align: left;
+                flex: 1.2;
+            }
+            .hero-title {
+                font-size: clamp(1.8rem, 4vw, 2.5rem);
+                text-align: left;
+                margin-bottom: 1rem;
+            }
+            .hero-subtitle {
+                text-align: left;
+                margin: 0 0 1rem 0;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            .claim-wrapper {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                width: 100%;
+                gap: 8px;
+                align-items: center;
+            }
+            .claim-input-pill {
+                width: auto;
+                flex: 1;
+                min-width: unset;
+                padding: 10px 16px;
+            }
+            .claim-prefix {
+                font-size: 12px;
+            }
+            .claim-input {
+                font-size: 12px;
+                width: 100%;
+            }
+            .btn-create {
+                width: auto;
+                justify-content: center;
+                padding: 10px 24px;
+                font-size: 13px;
+            }
+            .hero-image-wrapper {
+                flex: 0.8;
+                justify-content: flex-end;
+                margin-top: 0;
+            }
+            .hero-img {
+                max-width: 100%;
+                max-height: 350px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .hero-container {
                 flex-direction: column;
                 text-align: center;
-                gap: 20px;
+                gap: 30px;
             }
             .hero-content {
                 align-items: center;
                 text-align: center;
             }
             .hero-title {
-                font-size: clamp(2rem, 7vw, 2.8rem);
+                font-size: clamp(2.2rem, 8vw, 2.8rem);
                 text-align: center;
-                margin-bottom: 1rem;
             }
             .hero-subtitle {
                 text-align: center;
                 margin: 0 auto 1.8rem;
-                font-size: 15px;
             }
             .claim-wrapper {
-                flex-direction: column;
-                width: 100%;
-                gap: 12px;
-            }
-            .claim-input-pill {
-                width: 100%;
-                min-width: unset;
-                padding: 12px 20px;
-            }
-            .claim-prefix {
-                font-size: 15px;
-            }
-            .claim-input {
-                font-size: 15px;
-            }
-            .btn-create {
-                width: 100%;
-                justify-content: center;
-                padding: 12px 36px;
-                font-size: 15px;
+                align-items: center;
             }
             .hero-image-wrapper {
-                width: 100%;
                 justify-content: center;
-                margin-top: 10px;
+                margin-top: 20px;
             }
             .hero-img {
                 max-width: 90%;
-                max-height: 280px;
             }
             .features-section {
                 padding-top: 60px;
@@ -1097,57 +1212,60 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
 
     <!-- NAVBAR -->
-    <nav class="navbar-wrapper" id="navbarWrapper">
-        <div class="navbar-pill">
+    <header class="navbar-wrapper" id="navbarWrapper">
+        <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
                 <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo-img">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
-                <a href="{{ route('service') }}" class="nav-link">Service</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">FAQ</a>
-                <a href="{{ route('login') }}" class="nav-link">Sign In</a>
-                <a href="{{ route('register') }}" class="btn-signup">Sign Up</a>
+                <a href="{{ route('pricing') }}" class="nav-link">{{ __('layout.pricing') }}</a>
+                <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
+                <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
+                <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
+                <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
             </div>
-            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu">
+            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobileNavOverlay">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
             </button>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- MOBILE NAVIGATION OVERLAY -->
-    <div class="mobile-nav-overlay" id="mobileNavOverlay">
-        <div class="mobile-nav-menu">
-            <a href="{{ route('pricing') }}" class="mobile-nav-link">Pricing</a>
-            <a href="{{ route('service') }}" class="mobile-nav-link">Service</a>
-            <a href="{{ route('FAQ') }}" class="mobile-nav-link">FAQ</a>
-            <a href="{{ route('login') }}" class="mobile-nav-link">Sign In</a>
-            <a href="{{ route('register') }}" class="mobile-btn-signup">Sign Up</a>
-        </div>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+        <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
+            <a href="{{ route('pricing') }}" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
+            <a href="{{ route('service') }}" class="mobile-nav-link">{{ __('layout.service') }}</a>
+            <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>
+            <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('layout.sign_in') }}</a>
+            <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
+        </nav>
     </div>
 
-    <!-- HERO SECTION -->
-    <section class="hero-section reveal">
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <!-- HERO SECTION -->
+        <section class="hero-section reveal">
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    <span class="title-line">Powering Creators</span>
-                    <span class="title-line">Economy</span>
+                    <span class="title-line">{{ __('public.hero_title_1') }}</span>
+                    <span class="title-line">{{ __('public.hero_title_2') }}</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Create Instant Mobile Webpage to sell your knowledge. Chat, Video Calls, Events, Digital Product. Share it across social media.
+                    {{ __('public.hero_subtitle') }}
                 </p>
                 
                 <form action="{{ route('register') }}" method="GET" class="claim-wrapper">
                     <div class="claim-input-pill">
                         <span class="claim-prefix">Linkan.id/</span>
-                        <input type="text" name="username" class="claim-input" placeholder="YourNameHere" autocomplete="off">
+                        <input type="text" name="username" class="claim-input" placeholder="{{ __('public.claim_placeholder') }}" autocomplete="off" aria-label="Claim your username">
                     </div>
-                    <button type="submit" class="btn-create">Create</button>
+                    <button type="submit" class="btn-create">{{ __('public.btn_create') }}</button>
                 </form>
             </div>
             <div class="hero-image-wrapper">
@@ -1158,13 +1276,13 @@
 
     <!-- FEATURES SECTION -->
     <section class="features-section reveal">
-        <h2 class="section-title" id="changing-title" style="min-height: 48px; overflow: hidden; position: relative;">Not just another link-in-bio</h2>
-        <p class="section-subtitle">Linkan.id take care of your entire workflow, start to finish.</p>
+        <h2 class="section-title" id="changing-title" style="min-height: 48px; overflow: hidden; position: relative;">{{ __('public.features_title') }}</h2>
+        <p class="section-subtitle">{{ __('public.features_subtitle') }}</p>
         
         <div class="feature-pills">
-            <div class="feature-pill">Digital Product</div>
-            <div class="feature-pill">Donations</div>
-            <div class="feature-pill">Online Course</div>
+            <div class="feature-pill">{{ __('public.feat_digital_product') }}</div>
+            <div class="feature-pill">{{ __('public.feat_donations') }}</div>
+            <div class="feature-pill">{{ __('public.feat_online_course') }}</div>
         </div>
 
         <div class="feature-mockup-wrapper">
@@ -1176,11 +1294,11 @@
     <section class="digital-marketing-section reveal">
         <div class="marketing-container">
             <div class="marketing-content">
-                <h2 class="marketing-title">Digital marketing<br>for your business</h2>
+                <h2 class="marketing-title">{!! __('public.marketing_title') !!}</h2>
                 <p class="marketing-subtitle">
-                    optimize digital marketing in your business through billions of users on various effective internet marketing channels
+                    {{ __('public.marketing_subtitle') }}
                 </p>
-                <a href="{{ route('service') }}" class="btn-service">Get Service</a>
+                <a href="{{ route('service') }}" class="btn-service">{{ __('public.btn_service') }}</a>
             </div>
             <div class="marketing-image-wrapper">
                 <img src="{{ asset('images/landing page/handphone_besar.svg') }}" alt="Digital Marketing" class="marketing-img">
@@ -1194,68 +1312,68 @@
             <!-- Basic -->
             <div class="pricing-card anime-pricing">
                 <div class="pricing-header">
-                    <h3 class="pricing-tier">Basic</h3>
+                    <h3 class="pricing-tier">{{ __('public.pricing_basic_title') }}</h3>
                 </div>
                 <div class="pricing-body">
                     <div class="pricing-price">$ 0</div>
-                    <a href="{{ route('register') }}" class="btn-pricing" style="background: #E8E8FF; color: var(--orange);">Get Started</a>
-                    <div class="pricing-features-title">Everything you need:</div>
+                    <a href="{{ route('register') }}" class="btn-pricing" style="background: #E8E8FF; color: var(--orange);">{{ __('public.btn_get_started') }}</a>
+                    <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
-                        <li><span class="pricing-check"></span> Unlimited Link</li>
-                        <li><span class="pricing-check"></span> Digital Product Store</li>
-                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
-                        <li><span class="pricing-check"></span> Link Thumbnails</li>
-                        <li><span class="pricing-check"></span> Templates</li>
-                        <li><span class="pricing-check"></span> Custom Background</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_digital_store') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_statistic') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_link_thumbnails') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_templates') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_custom_bg') }}</li>
                     </ul>
                 </div>
             </div>
             <!-- Standard -->
             <div class="pricing-card popular anime-pricing">
-                <div class="popular-badge">Most Popular</div>
+                <div class="popular-badge">{{ __('public.pricing_popular_badge') }}</div>
                 <div class="pricing-header">
-                    <h3 class="pricing-tier">Standard</h3>
+                    <h3 class="pricing-tier">{{ __('public.pricing_standard_title') }}</h3>
                 </div>
                 <div class="pricing-body">
-                    <div class="pricing-price">$ 6 <span>/ Month</span></div>
-                    <a href="{{ route('register') }}" class="btn-pricing">Get Started</a>
-                    <div class="pricing-features-title">Everything you need:</div>
+                    <div class="pricing-price">$ 6 <span>{{ __('public.pricing_month') }}</span></div>
+                    <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
+                    <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
-                        <li><span class="pricing-check"></span> Unlimited Link</li>
-                        <li><span class="pricing-check"></span> Digital Product Store</li>
-                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
-                        <li><span class="pricing-check"></span> Link Thumbnails</li>
-                        <li><span class="pricing-check"></span> Templates</li>
-                        <li><span class="pricing-check"></span> Custom Background</li>
-                        <li><span class="pricing-check"></span> About Me</li>
-                        <li><span class="pricing-check"></span> Email Notification</li>
-                        <li><span class="pricing-check"></span> Donation Page</li>
-                        <li><span class="pricing-check"></span> Transaction Fee</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_digital_store') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_statistic') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_link_thumbnails') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_templates') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_custom_bg') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_about_me') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_email_notif') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_donation_page') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_transaction_fee') }}</li>
                     </ul>
                 </div>
             </div>
             <!-- Unlimited -->
             <div class="pricing-card anime-pricing">
                 <div class="pricing-header">
-                    <h3 class="pricing-tier">Unlimited</h3>
+                    <h3 class="pricing-tier">{{ __('public.pricing_unlimited_title') }}</h3>
                 </div>
                 <div class="pricing-body">
-                    <div class="pricing-price">$ 30 <span>/ Month</span></div>
-                    <a href="{{ route('register') }}" class="btn-pricing">Get Started</a>
-                    <div class="pricing-features-title">Everything you need:</div>
+                    <div class="pricing-price">$ 30 <span>{{ __('public.pricing_month') }}</span></div>
+                    <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
+                    <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
-                        <li><span class="pricing-check"></span> Unlimited Link</li>
-                        <li><span class="pricing-check"></span> Digital Product Store</li>
-                        <li><span class="pricing-check"></span> Statistic / Traffic</li>
-                        <li><span class="pricing-check"></span> Link Thumbnails</li>
-                        <li><span class="pricing-check"></span> Templates</li>
-                        <li><span class="pricing-check"></span> Custom Background</li>
-                        <li><span class="pricing-check"></span> About Me</li>
-                        <li><span class="pricing-check"></span> Email Notification</li>
-                        <li><span class="pricing-check"></span> Donation Page</li>
-                        <li><span class="pricing-check"></span> Transaction Fee</li>
-                        <li><span class="pricing-check"></span> Priority Support</li>
-                        <li><span class="pricing-check"></span> Custom Domain</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_digital_store') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_statistic') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_link_thumbnails') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_templates') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_custom_bg') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_about_me') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_email_notif') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_donation_page') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_transaction_fee') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_priority_support') }}</li>
+                        <li><span class="pricing-check"></span> {{ __('public.feat_custom_domain') }}</li>
                     </ul>
                 </div>
             </div>
@@ -1264,7 +1382,7 @@
 
     <!-- TESTIMONIALS SECTION -->
     <section class="testimonials-section reveal">
-        <h2 class="section-title">See What People Are Saying</h2>
+        <h2 class="section-title" style="margin-bottom: 4rem;">{{ __('public.testi_title') }}</h2>
         
         <!-- Desktop Grid View -->
         <div class="testi-grid">
@@ -1276,7 +1394,7 @@
                         <span>@rakanmy</span>
                     </div>
                 </div>
-                <p class="testi-text">"Sangat membantu saya untuk berjualan digital product dengan mudah dan cepat tanpa ribet. Tampilannya juga sangat premium."</p>
+                <p class="testi-text">"“Lorem ipsum dolor sit amet, lorem ipsum dolor si amet”"</p>
             </div>
             
             <div class="testi-card reveal-scale" style="transition-delay: 0.1s;">
@@ -1381,12 +1499,13 @@
         <div class="showcase-container">
             <img src="{{ asset('images/landing page/wanita_laptop.svg') }}" alt="Linkan Creator Showcase" class="showcase-img">
             
-            <div class="floating-tag anime-tag tag-1">Membantu Creator</div>
-            <div class="floating-tag anime-tag tag-2">Memudahkan Pengguna</div>
-            <div class="floating-tag anime-tag tag-3">Top 1 Platform Microsite</div>
-            <div class="floating-tag anime-tag tag-4">Optimalisasi digital</div>
+            <div class="floating-tag anime-tag tag-1">{{ __('public.creator_tag_1') }}</div>
+            <div class="floating-tag anime-tag tag-2">{{ __('public.creator_tag_2') }}</div>
+            <div class="floating-tag anime-tag tag-3">{{ __('public.creator_tag_3') }}</div>
+            <div class="floating-tag anime-tag tag-4">{{ __('public.creator_tag_4') }}</div>
         </div>
     </section>
+    </main>
 
     <!-- FOOTER -->
     <footer class="footer-wrapper">
@@ -1396,12 +1515,12 @@
                     <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" style="height: 45px; width: auto;">
                 </div>
                 <div class="footer-copyright">
-                    © 2026 Linkan. Built for the Creator Economy.
+                    {{ __('public.footer_copyright') }}
                 </div>
             </div>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">About Us</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">Contact Us</a>
+                <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}" class="footer-link">{{ __('layout.contact_us') }}</a>
             </div>
         </div>
     </footer>
@@ -1513,9 +1632,11 @@
                 const mobileNavLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-link');
                 
                 function toggleMenu() {
-                    mobileNavToggle.classList.toggle('active');
+                    const isActive = mobileNavToggle.classList.toggle('active');
                     mobileNavOverlay.classList.toggle('active');
-                    if (mobileNavOverlay.classList.contains('active')) {
+                    mobileNavToggle.setAttribute('aria-expanded', isActive);
+                    mobileNavOverlay.setAttribute('aria-hidden', !isActive);
+                    if (isActive) {
                         document.body.style.overflow = 'hidden';
                     } else {
                         document.body.style.overflow = '';
@@ -1528,6 +1649,8 @@
                     link.addEventListener('click', () => {
                         mobileNavToggle.classList.remove('active');
                         mobileNavOverlay.classList.remove('active');
+                        mobileNavToggle.setAttribute('aria-expanded', 'false');
+                        mobileNavOverlay.setAttribute('aria-hidden', 'true');
                         document.body.style.overflow = '';
                     });
                 });
@@ -1682,7 +1805,10 @@
 
                         // Add active class after animation so hover works
                         setTimeout(() => {
-                            tags.forEach(tag => tag.classList.add('active'));
+                            tags.forEach(tag => {
+                                tag.style.transform = '';
+                                tag.classList.add('active');
+                            });
                         }, 1500);
                     }
                 });

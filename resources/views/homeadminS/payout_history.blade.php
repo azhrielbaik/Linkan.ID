@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Payout History")
+@section("page_title", __('admin.payout_history'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/payout-history.css') }}" data-turbo-track="reload">
@@ -14,7 +14,7 @@
             <div class="history-container">
                 <div class="history-header">
                     <i class="fas fa-history"></i>
-                    <h2>Payout History</h2>
+                    <h2>{{ __('admin.payout_history') }}</h2>
                 </div>
 
                 <!-- Stats Cards -->
@@ -22,24 +22,24 @@
                     <div class="stat-card">
                         <i class="fas fa-wallet"></i>
                         <div class="stat-number">{{ $history->count() }}</div>
-                        <div class="stat-label">Total Transaksi</div>
+                        <div class="stat-label">{{ __('admin.total_transaction') }}</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-money-bill-wave"></i>
                         <div class="stat-number">Rp {{ number_format($history->sum('amount'), 0, ',', '.') }}</div>
-                        <div class="stat-label">Total Penarikan</div>
+                        <div class="stat-label">{{ __('admin.total_withdrawal') }}</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-chart-line"></i>
                         <div class="stat-number">{{ $history->groupBy('method')->count() }}</div>
-                        <div class="stat-label">Metode Pembayaran</div>
+                        <div class="stat-label">{{ __('admin.payment_method') }}</div>
                     </div>
                 </div>
 
                 @if ($history->isEmpty())
                     <div class="no-records">
                         <i class="fas fa-inbox"></i>
-                        <p>Belum ada riwayat penarikan</p>
+                        <p>{{ __('admin.no_withdrawal_history') }}</p>
                     </div>
                 @else
                     <div class="history-table">
@@ -47,8 +47,8 @@
                             <thead>
                                 <tr>
                                     <th>User ID</th>
-                                    <th>Jumlah</th>
-                                    <th>Metode Pembayaran</th>
+                                    <th>{{ __('admin.amount') }}</th>
+                                    <th>{{ __('admin.payment_method') }}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <title>Commission History - Admin Platform</title>
+    <title>{{ __('admin.commission_history_title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
@@ -157,19 +157,19 @@
 
     <div class="main">
         <!-- Judul -->
-        <div class="title">Commission History</div>
+        <div class="title">{{ __('admin.commission_history') }}</div>
 
         <!-- Card Total Earnings -->
         <div class="card-earning">
-            <div class="total">Total Earnings</div>
+            <div class="total">{{ __('admin.total_earnings') }}</div>
             <div class="amount">IDR 0</div>
             <div class="actions">
-                <button><i class="fa fa-paper-plane"></i> Withdraw</button>
+                <button><i class="fa fa-paper-plane"></i> {{ __('admin.withdraw') }}</button>
                 <button onclick="printCommissionReport()">
-                    <i class="fa fa-print"></i> Print
+                    <i class="fa fa-print"></i> {{ __('admin.print') }}
                 </button>
             </div>
-            <div class="history"><i class="fa fa-paperclip"></i> History</div>
+            <div class="history"><i class="fa fa-paperclip"></i> {{ __('admin.history') }}</div>
         </div>
 
         <!-- List Komisi Seller -->

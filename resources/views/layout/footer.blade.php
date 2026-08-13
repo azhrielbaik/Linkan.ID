@@ -3,8 +3,8 @@
         <div class="footer-container">
             <img src="{{ asset('images/logotext.png') }}" alt="Linkan Logo" class="footer-logo">
             <nav class="footer-nav">
-                <a href="{{ route('about') }}">About Us</a>
-                <a href="{{ route('contact.form') }}">Contact Us</a>
+                <a href="{{ route('about') }}">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}">{{ __('layout.contact_us') }}</a>
             </nav>
         </div>
     </footer>

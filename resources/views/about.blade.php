@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Linkan.id</title>
+    <title>{{ __('public.about_title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -312,11 +312,11 @@
                 <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
-                <a href="{{ route('service') }}" class="nav-link">Service</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">FAQ</a>
-                <a href="{{ route('login') }}" class="nav-link">Log In</a>
-                <a href="{{ route('register') }}" class="btn-signup">Sign Up</a>
+                <a href="{{ route('pricing') }}" class="nav-link">{{ __('layout.pricing') }}</a>
+                <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
+                <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
+                <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
+                <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
             </div>
         </div>
     </div>
@@ -324,49 +324,49 @@
     <!-- ABOUT CONTENT CONTAINER -->
     <div class="about-container">
         <div class="about-header">
-            <h1>Tentang Linkan.id</h1>
-            <p class="subtitle">Platform untuk Creator Economy</p>
+            <h1>{{ __('public.about_header_title') }}</h1>
+            <p class="subtitle">{{ __('public.about_header_subtitle') }}</p>
         </div>
 
         <div class="about-card">
-            <h2>Visi Kami</h2>
-            <p>Linkan.id hadir untuk memberdayakan para creator dalam mengembangkan bisnis mereka melalui platform yang aman, mudah digunakan, dan terintegrasi.</p>
+            <h2>{{ __('public.about_vision_title') }}</h2>
+            <p>{{ __('public.about_vision_desc') }}</p>
         </div>
 
         <div class="about-card">
-            <h2>Misi Kami</h2>
+            <h2>{{ __('public.about_mission_title') }}</h2>
             <ul>
-                <li>Menyediakan platform yang memudahkan creator dalam menjual produk digital mereka</li>
-                <li>Membantu creator dalam mengelola dan memonetisasi konten mereka</li>
-                <li>Menyediakan solusi terintegrasi untuk kebutuhan creator</li>
-                <li>Membangun komunitas creator yang kuat dan saling mendukung</li>
+                <li>{{ __('public.about_mission_1') }}</li>
+                <li>{{ __('public.about_mission_2') }}</li>
+                <li>{{ __('public.about_mission_3') }}</li>
+                <li>{{ __('public.about_mission_4') }}</li>
             </ul>
         </div>
     </div>
 
     <!-- FITUR UTAMA SECTION -->
     <div class="features-section">
-        <h2 class="features-title">Fitur Utama</h2>
+        <h2 class="features-title">{{ __('public.about_features_title') }}</h2>
         <div class="features-grid">
             <!-- Feature 1 -->
             <div class="feature-item">
                 <img src="{{ asset('images/icon/Vector.png') }}" alt="Digital Product Icon" class="feature-icon">
-                <h3>Digital Product</h3>
-                <p>Jual produk digital Anda dengan aman dan mudah</p>
+                <h3>{{ __('public.about_feat_1_title') }}</h3>
+                <p>{{ __('public.about_feat_1_desc') }}</p>
             </div>
 
             <!-- Feature 2 -->
             <div class="feature-item">
                 <img src="{{ asset('images/icon/game-icons_graduate-cap.png') }}" alt="Online Course Icon" class="feature-icon">
-                <h3>Online Course</h3>
-                <p>Bagikan pengetahuan Anda melalui kelas virtual</p>
+                <h3>{{ __('public.about_feat_2_title') }}</h3>
+                <p>{{ __('public.about_feat_2_desc') }}</p>
             </div>
 
             <!-- Feature 3 -->
             <div class="feature-item">
                 <img src="{{ asset('images/icon/mdi_donation.png') }}" alt="Donations Icon" class="feature-icon">
-                <h3>Donations</h3>
-                <p>Terima dukungan dari penggemar Anda</p>
+                <h3>{{ __('public.about_feat_3_title') }}</h3>
+                <p>{{ __('public.about_feat_3_desc') }}</p>
             </div>
         </div>
     </div>
@@ -378,8 +378,8 @@
                 <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
             </a>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">About Us</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">Contact Us</a>
+                <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}" class="footer-link">{{ __('layout.contact_us') }}</a>
             </div>
         </div>
     </div>

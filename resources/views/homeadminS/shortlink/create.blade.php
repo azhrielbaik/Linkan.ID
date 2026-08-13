@@ -78,7 +78,7 @@
                         <div style="width: 180px; position: relative; flex-shrink: 0;" class="desktop-sort-wrapper">
                             <select name="sort" onchange="this.form.submit()" style="width: 100%; padding: 12px 32px 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; background: #fff; cursor: pointer; appearance: none; color: #181818; box-sizing: border-box;">
                                 <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('shortlink.filter_newest') ?? 'Newest' }}</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('shortlink.filter_oldest') ?? 'Oldest' }}</option>
                                 <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>{{ __('shortlink.filter_popular') ?? 'Most Popular' }}</option>
                             </select>
                             <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none; font-size: 12px;"></i>
@@ -102,7 +102,7 @@
         <!-- RIGHT COLUMN -->
         <div class="right-col mobile-form-collapse">
             <div class="mobile-form-collapse-header" onclick="this.parentElement.classList.toggle('is-open')">
-                <span><i class="fas fa-plus-circle" style="color:#FF9040; margin-right:8px;"></i> Create New Link</span>
+                <span><i class="fas fa-plus-circle" style="color:#FF9040; margin-right:8px;"></i> {{ __('shortlink.create_new_link') }}</span>
                 <i class="fas fa-chevron-down" style="color:#999;"></i>
             </div>
             <div class="mobile-form-collapse-body">
@@ -249,9 +249,9 @@
                 <div class="identity-left" style="width: 100%;">
                     <div class="identity-icon"><i class="fas fa-link"></i></div>
                     <div class="identity-info">
-                        <h3 id="panel-title">Judul Shortlink</h3>
+                        <h3 id="panel-title">{{ __('shortlink.untitled') }}</h3>
                         <div class="identity-links">
-                            <span><i class="far fa-envelope"></i> <span id="panel-desc">Deskripsi link</span></span>
+                            <span><i class="far fa-envelope"></i> <span id="panel-desc">{{ __('shortlink.desc_placeholder') }}</span></span>
                             <span><i class="fas fa-globe"></i> <span id="panel-slug-badge" style="color: #FF9040; font-weight:700;">/slug</span></span>
                         </div>
                     </div>
@@ -340,7 +340,7 @@
                 
                 <div class="note-card">
                     <div class="note-header">
-                        <div class="note-header-left"><i class="far fa-sticky-note" style="color:#999;"></i> Shortlink URL</div>
+                        <div class="note-header-left"><i class="far fa-sticky-note" style="color:#999;"></i> {{ __('shortlink.short_link') }}</div>
                     </div>
                     <div class="note-body">
                         <a href="#" id="panel-url" target="_blank" style="color: #FF9040; text-decoration: none; word-break: break-all;"></a>
@@ -543,10 +543,10 @@
                 const statusPassword = document.getElementById('status-password');
                 if(statusPassword) {
                     if (card.dataset.password) {
-                        statusPassword.innerText = 'Password Protected';
+                        statusPassword.innerText = '{{ __('shortlink.password_protected') }}';
                         if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-lock';
                     } else {
-                        statusPassword.innerText = 'Public Link';
+                        statusPassword.innerText = '{{ __('shortlink.pub_link') }}';
                         if (statusPasswordIcon) statusPasswordIcon.className = 'fas fa-unlock';
                     }
                 }
@@ -554,9 +554,9 @@
                 const statusExpires = document.getElementById('status-expires');
                 if(statusExpires) {
                     if (card.dataset.expires) {
-                        statusExpires.innerText = 'Expired: ' + card.dataset.expires.replace('T', ' ');
+                        statusExpires.innerText = '{{ __('shortlink.expired_label') }}: ' + card.dataset.expires.replace('T', ' ');
                     } else {
-                        statusExpires.innerText = 'No Time Limit';
+                        statusExpires.innerText = '{{ __('shortlink.no_time_limit') }}';
                     }
                 }
 
@@ -567,7 +567,7 @@
                 }
                 
                 const panelDesc = document.getElementById('panel-desc');
-                if(panelDesc) panelDesc.innerText = card.dataset.description || 'No description provided';
+                if(panelDesc) panelDesc.innerText = card.dataset.description || '{{ __('shortlink.desc_placeholder') }}';
                 
                 const destEl = document.getElementById('panel-destination');
                 if(destEl) {

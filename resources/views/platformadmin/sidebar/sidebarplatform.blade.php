@@ -48,10 +48,10 @@
 <div class="sidebar">
     <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo">
     <a href="{{ route('platform-admin.dashboard') }}" class="{{ request()->routeIs('platform-admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i>Home
+        <i class="fas fa-home"></i>{{ __('admin.home') }}
     </a>
     <a href="{{ route('platform-admin.verifikasi') }}" class="{{ request()->routeIs('platform-admin.verifikasi*') ? 'active' : '' }}">
-        <i class="fas fa-check-circle"></i> Verification
+        <i class="fas fa-check-circle"></i> {{ __('admin.verification') }}
     </a>
     <hr>
 
@@ -60,7 +60,7 @@
             @csrf
             <button type="submit" style="background: none; border: none; padding: 10px; margin: 0; display: flex; align-items: center; color: #1a1a1a; cursor: pointer; width: 100%; transition: 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#d1d9ff'" onmouseout="this.style.backgroundColor='transparent'">
                 <img src="{{ asset('images/logout.png') }}" alt="Logout" style="width: 20px; height: 20px; margin-right: 10px;">
-                LogOut
+                {{ __('admin.logout') }}
             </button>
         </form>
     </div>

@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Settings")
+@section("page_title", __('admin.settings_title'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/setting.css') }}" data-turbo-track="reload">
@@ -16,8 +16,8 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="settings-card-content">
-                    <h3>My Account</h3>
-                    <p>Account detail, shop information, etc</p>
+                    <h3>{{ __('admin.my_account_title') }}</h3>
+                    <p>{{ __('admin.my_account_desc') }}</p>
                 </div>
             </div>
 
@@ -26,8 +26,8 @@
                     <i class="fas fa-wallet"></i>
                 </div>
                 <div class="settings-card-content">
-                    <h3>Payout Settings</h3>
-                    <p>Withdraw earnings, Bank account, etc</p>
+                    <h3>{{ __('admin.payout_settings') }}</h3>
+                    <p>{{ __('admin.payout_settings_desc') }}</p>
                 </div>
             </div>
             </div>

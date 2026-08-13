@@ -1,464 +1,345 @@
-<!-- resources/views/auth/reset-password.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - Linkan</title>
+    <title>{{ __('auth.reset_password_title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-       * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Inter', sans-serif;
-            }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-            body {
-                background-color: #ffffff;
-                background-image: url('{{ asset('images/background.png') }}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                display: flex;
-                min-height: 100vh;
-                position: relative;
-            }
+        body {
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
 
-            body::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('{{ asset('images/background.png') }}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                opacity: 0.1;
-                z-index: 0;
-                pointer-events: none;
-            }
+        .split-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
 
-            .container {
-                display: flex;
-                width: 100%;
-                max-width: 1440px;
-                margin: auto;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 80px;
-                position: relative;
-                z-index: 2;
-            }
+        /* Left Side: Form Container */
+        .form-side {
+            flex: 1;
+            background: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
 
-            .left-side {
-                flex: 0 0 45%;
-                max-width: 600px;
-                margin-right: 40px;
-            }
+        .form-wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
 
-            .left-side img {
-                width: 100%;
-                height: auto;
-                object-fit: contain;
-            }
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            color: #121212;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 36px;
+        }
 
-            .login-container {
-                flex: 0 0 400px;
-                margin-left: auto;
-                position: relative;
-                z-index: 3;
-            }
+        .btn-back-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
 
-            .logo {
-                display: flex;
-                align-items: center;
-                margin-bottom: 0;
-            }
+        .btn-back-home svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
 
-            .logo img {
-                height: 40px;
-                width: auto;
-                transition: transform 0.3s ease;
-                filter: none;
-            }
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #121212;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
 
-            .logo img:hover {
-                transform: scale(1.05);
-            }
+        .subtitle {
+            font-size: 15px;
+            font-weight: 500;
+            color: #667085;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
 
-            .login-box {
-                background: white;
-                padding: 40px;
-                border-radius: 24px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-                width: 100%;
-                position: relative;
-            }
+        .login-form {
+            width: 100%;
+        }
 
-            .login-box h2 {
-                font-size: 24px;
-                margin-bottom: 32px;
-                color: #333;
-                font-weight: 600;
-            }
+        .form-input-group {
+            margin-bottom: 24px;
+        }
 
-            .form-group {
-                position: relative;
-                margin-bottom: 24px;
-            }
-              .form-gmail {
-                position: relative;
-                margin-bottom: 24px;
-            }
+        .form-input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667085;
+            margin-bottom: 10px;
+            text-align: left;
+        }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 10px;
-                color: #333;
-                font-size: 15px;
-                font-weight: 500;
-            }
-             .form-gmail label {
-                display: block;
-                margin-bottom: 10px;
-                color: #333;
-                font-size: 15px;
-                font-weight: 500;
-            }
+        .form-input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #E4E7EC;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            background-color: #ffffff;
+            color: #121212;
+            outline: none;
+            transition: all 0.3s ease;
+        }
 
-            .form-group input {
-                width: 100%;
-                padding: 14px 18px;
-                border: 1px solid #e1e1e1;
-                border-radius: 14px;
-                font-size: 15px;
-                background-color: #fff;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .form-input-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #98A2B3;
+            cursor: not-allowed;
+        }
 
-             .form-gmail input {
-                width: 100%;
-                padding: 14px 18px;
-                border: 1px solid #e1e1e1;
-                border-radius: 14px;
-                font-size: 15px;
-                background-color: #fff;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .form-input-group input:not([readonly]):focus {
+            border-color: #EE8025;
+            box-shadow: 0 0 0 4px rgba(238, 128, 37, 0.1);
+        }
 
-            .form-group input:focus {
-                outline: none;
-                border-color: #FF7F50;
-                box-shadow: 0 0 0 4px rgba(255, 127, 80, 0.1);
-            }
+        .form-input-group input::placeholder {
+            color: #98A2B3;
+            font-weight: 400;
+        }
+        
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-            .form-group input::placeholder {
-                color: #999;
-            }
-            .form-gmail input::placeholder {
-                color: #999;
-            }
+        .password-wrapper input {
+            padding-right: 48px;
+        }
 
-            .forgot-password {
-                text-align: right;
-                margin: -12px 0 24px;
-            }
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #98A2B3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
 
-            .forgot-password a {
-                color: #FF7F50;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-            }
+        .toggle-password:hover {
+            color: #667085;
+        }
 
-            .btn-login {
-                width: 100%;
-                padding: 16px;
-                background: linear-gradient(135deg, #FF7F50, #ff6b3b);
-                color: white;
-                border: none;
-                border-radius: 14px;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                margin-bottom: 28px;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
 
-            .btn-login:hover {
-                background: linear-gradient(135deg, #ff6b3b, #FF7F50);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(255, 127, 80, 0.3);
-            }
+        .error-message {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
 
-            .divider {
-                text-align: center;
-                margin: 24px 0;
-                color: #666;
-                font-size: 14px;
-                position: relative;
-            }
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #ED842C;
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
 
-            .divider::before,
-            .divider::after {
-                content: "";
-                position: absolute;
-                top: 50%;
-                width: 45%;
-                height: 1px;
-                background-color: #e1e1e1;
-            }
+        .btn-submit:hover {
+            background: #ED842C;
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
 
-            .divider::before {
-                left: 0;
-            }
+        /* Right Side: Mockup Showcase Container */
+        .mockup-side {
+            flex: 1;
+            background: #ED842C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+        }
 
-            .divider::after {
-                right: 0;
-            }
+        .mockup-wrapper {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
 
-            .google-login {
-                width: 100%;
-                padding: 14px;
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 14px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 12px;
-                cursor: pointer;
-                font-size: 15px;
-                font-weight: 500;
-                color: #333;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .mockup-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+        }
 
-            .google-login:hover {
-                background: #f8f8f8;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            }
+        .floating-animation {
+            animation: floating 4s ease-in-out infinite;
+            transform-origin: center center;
+        }
 
-            .google-login img {
-                width: 24px;
-            }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
 
-            .error-message {
-                color: #dc3545;
-                font-size: 14px;
-                margin-top: 6px;
-            }
+        /* Responsive Layout styling */
+        @media (max-width: 900px) {
+            .form-side { padding: 30px; }
+            .mockup-side { padding: 30px; }
+        }
 
-            @media (max-width: 1200px) {
-                .container {
-                    padding: 0 40px;
-                }
-                
-                .left-side {
-                    flex: 0 0 40%;
-                }
-            }
-
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1.5rem 7%;
-                background-color: transparent;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                z-index: 1000;
-                transition: all 0.3s ease;
-            }
-
-            .navbar.scrolled {
-                padding: 1rem 7%;
-                background-color: rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(10px);
-            }
-
-            .logo {
-                display: flex;
-                align-items: center;
-                margin-bottom: 0;
-            }
-
-            .logo img {
-                height: 40px;
-                width: auto;
-                transition: transform 0.3s ease;
-                filter: none;
-            }
-
-            .logo img:hover {
-                transform: scale(1.05);
-            }
-
-            @media (max-width: 992px) {
-                .container {
-                    padding: 20px;
-                    flex-direction: column;
-                    gap: 40px;
-                }
-
-                .left-side {
-                    flex: 0 0 auto;
-                    margin-right: 0;
-                    max-width: 400px;
-                }
-
-                .login-container {
-                    margin-left: 0;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .left-side {
-                    display: none;
-                }
-
-                .login-box {
-                    padding: 30px 20px;
-                }
-            }
-
-            .floating-animation {
-                animation: floating 3s ease-in-out infinite;
-                transform-origin: center center;
-            }
-
-            @keyframes floating {
-                0% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-20px);
-                }
-                100% {
-                    transform: translateY(0px);
-                }
-            }
-            .form-gmail input[readonly] {
-    color: #aaa;
-    background-color: #f9f9f9;
-    cursor: not-allowed;
-}
-
+        @media (max-width: 768px) {
+            .mockup-side { display: none; }
+            .form-side { flex: 1; width: 100%; }
+        }
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="logo">
-        <a href="{{ url('/') }}">
-            <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo">
-        </a>
-    </div>
-</nav>
+    <div class="split-container">
+        <!-- Left side: Form -->
+        <div class="form-side">
+            <div class="form-wrapper">
+                
+                <!-- Back Button -->
+                <a href="{{ route('login') }}" class="btn-back-home" aria-label="{{ __('auth.back_to_login') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
 
-<div class="container">
-    <div class="left-side">
-        <img src="{{ asset('images/logohp.png') }}" alt="Reset Illustration" class="floating-animation">
-    </div>
+                <h2 class="title">{{ __('auth.create_new_password') }}</h2>
+                <p class="subtitle">{{ __('auth.reset_password_desc') }}</p>
 
-    <div class="login-container">
-        <div class="login-box">
-            <h2>Reset Your Password</h2>
+                @if ($errors->any())
+                    <div class="error-message">
+                        <ul style="padding-left: 20px; margin-bottom: 16px;">
+                            @foreach ($errors->all() as $error)
+                                <li style="color: #dc3545;">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-            @if ($errors->any())
-                <div class="error-message">
-                    <ul style="padding-left: 20px; margin-bottom: 16px;">
-                        @foreach ($errors->all() as $error)
-                            <li style="color: #dc3545;">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                <form method="POST" action="{{ route('password.update') }}" class="login-form">
+                    @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
+                    
+                    <div class="form-input-group">
+                        <label for="email">{{ __('auth.email') }}</label>
+                        <input type="email" id="email" name="email" value="{{ old('email', request()->email) }}" readonly onfocus="this.blur()">
+                    </div>
 
-            <form method="POST" action="{{ route('password.update') }}">
-                @csrf
-                <input type="hidden" name="token" value="{{ $token }}">
+                    <div class="form-input-group">
+                        <label for="password">{{ __('auth.new_password') }}</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="••••••••" required>
+                            <button type="button" class="toggle-password" aria-label="{{ __('auth.view_password') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                            </button>
+                        </div>
+                    </div>
 
-               <div class="form-gmail">
-    <label for="email">Gmail</label>
-    <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="Example@gmail.com"
-        value="{{ old('email', request()->email) }}"
-        readonly
-        onfocus="this.blur()"
-        style="color: #aaa; background-color: #f9f9f9; cursor: not-allowed;"
-    >
-</div>
+                    <div class="form-input-group">
+                        <label for="password_confirmation">{{ __('auth.confirm_new_password') }}</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="••••••••" required>
+                            <button type="button" class="toggle-password" aria-label="{{ __('auth.view_password') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                            </button>
+                        </div>
+                    </div>
 
+                    <button type="submit" class="btn-submit">{{ __('auth.reset_password_btn') }}</button>
+                </form>
 
-                <div class="form-group">
-                    <label for="password">New Password</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
-                </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="password_confirmation">Confirm Password</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="••••••••" required>
-                </div>
-
-                <button type="submit" class="btn-login">Reset Password</button>
-            </form>
+        <!-- Right side: Image Showcase -->
+        <div class="mockup-side">
+            <div class="mockup-wrapper">
+                <img src="{{ asset('images/logohp.png') }}" alt="Reset Password Showcase" class="mockup-image floating-animation">
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password toggle logic
+            const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+            togglePasswordBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    
+                    if (type === 'text') {
+                        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+                    } else {
+                        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>`;
+                    }
+                });
+            });
+
             const floatingImage = document.querySelector('.floating-animation');
-            
-            document.addEventListener('mousemove', function(e) {
-                const moveX = (e.clientX - window.innerWidth/2) * 0.005;
-                const moveY = (e.clientY - window.innerHeight/2) * 0.005;
-                
-                floatingImage.style.transform = `translate(${moveX}px, ${moveY}px) translateY(${getFloatingY()}px)`;
-            });
-
-            function getFloatingY() {
-                const time = Date.now() * 0.001;
-                return Math.sin(time) * 20;
+            if (floatingImage) {
+                document.addEventListener('mousemove', function(e) {
+                    const moveX = (e.clientX - window.innerWidth/2) * 0.004;
+                    const moveY = (e.clientY - window.innerHeight/2) * 0.004;
+                    floatingImage.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
             }
-
-            function updateFloating() {
-                if (!document.hidden) {
-                    const currentY = getFloatingY();
-                    floatingImage.style.transform = `translateY(${currentY}px)`;
-                }
-                requestAnimationFrame(updateFloating);
-            }
-
-            updateFloating();
-
-            // Navbar scroll effect
-            window.addEventListener('scroll', function() {
-                const navbar = document.querySelector('.navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
         });
-</script>
+    </script>
 </body>
 </html>

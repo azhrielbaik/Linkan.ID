@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Data</title>
+    <title>{{ __('admin.print_data') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -152,18 +152,18 @@
 <body>
     <div class="print-container">
         <div class="print-header">
-            <h1>Commission Report</h1>
-            <p>Generated on: {{ date('Y-m-d H:i:s') }}</p>
+            <h1>{{ __('admin.commission_report') }}</h1>
+            <p>{{ __('admin.generated_on') }} {{ date('Y-m-d H:i:s') }}</p>
         </div>
 
         <div class="print-content">
             <div class="total-earnings">
-                <h2>Total Earnings</h2>
+                <h2>{{ __('admin.total_earnings') }}</h2>
                 <h3>{{ $data['total_earnings'] ?? 'IDR 0' }}</h3>
             </div>
 
             <div class="commission-list">
-                <h3>Commission Details</h3>
+                <h3>{{ __('admin.commission_details') }}</h3>
                 @if(isset($data['commission_details']) && !empty($data['commission_details']))
                     @foreach($data['commission_details'] as $commission)
                         <div class="commission-item">
@@ -178,21 +178,21 @@
                         </div>
                     @endforeach
                 @else
-                    <p>No commission data available.</p>
+                    <p>{{ __('admin.no_commission_data') }}</p>
                 @endif
             </div>
         </div>
 
         <div class="print-footer">
-            <p>© {{ date('Y') }} Linkan.ID - Platform Admin</p>
+            <p>© {{ date('Y') }} Linkan.ID - {{ __('admin.platform_admin') }}</p>
         </div>
 
         <div class="no-print">
             <button class="print-button" onclick="window.print()">
-                <i class="fas fa-print"></i> Print Report
+                <i class="fas fa-print"></i> {{ __('admin.print_report') }}
             </button>
             <button class="print-button" onclick="window.close()">
-                <i class="fas fa-times"></i> Close
+                <i class="fas fa-times"></i> {{ __('admin.close') }}
             </button>
         </div>
     </div>

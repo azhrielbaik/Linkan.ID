@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Analytics Shortlink")
+@section("page_title", __('admin.analytics_shortlink'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}" data-turbo-track="reload">
@@ -8,11 +8,11 @@
 
 @section("content")
 <div class="analytics-header-card" style="padding: 24px; margin-bottom: 24px;">
-    <h1>Analytics Shortlink</h1>
+    <h1>{{ __('admin.analytics_shortlink') }}</h1>
     <p style="color: #FF9040; margin-top: 8px; font-weight: 600;">{{ $shortlink->slug }}</p>
-    <h2 style="font-size: 32px; margin-top: 12px; font-weight: 800;">{{ $totalClicks }} <span style="font-size: 16px; color: #666; font-weight: normal;">Total Clicks</span></h2>
+    <h2 style="font-size: 32px; margin-top: 12px; font-weight: 800;">{{ $totalClicks }} <span style="font-size: 16px; color: #666; font-weight: normal;">{{ __('admin.total_clicks') }}</span></h2>
     <div style="margin-top: 15px; color: #555;">
-        <strong>Top Sources:</strong>
+        <strong>{{ __('admin.top_sources') }}</strong>
         @foreach($sources as $source)
             <span style="display: inline-block; background: #eee; padding: 4px 8px; border-radius: 4px; margin-right: 5px; font-size: 13px;">{{ $source }}</span>
         @endforeach
@@ -22,14 +22,14 @@
                 <div class="card">
                     <div class="chart-header">
                         <div>
-                            <div class="label">Grafik Click Harian</div>
-                            <div class="muted">Destination: {{ $shortlink->destination }}</div>
+                            <div class="label">{{ __('admin.daily_click_chart') }}</div>
+                            <div class="muted">{{ __('admin.destination') }} {{ $shortlink->destination }}</div>
                         </div>
                         <div class="date-range-selector">
                             <input type="date" id="startDate" class="date-input" value="{{ $startDate }}">
-                            <span>to</span>
+                            <span>{{ __('admin.to') }}</span>
                             <input type="date" id="endDate" class="date-input" value="{{ $endDate }}">
-                            <button class="apply-date" onclick="applyDateFilter()">Apply</button>
+                            <button class="apply-date" onclick="applyDateFilter()">{{ __('admin.apply') }}</button>
                         </div>
                     </div>
                     <div class="chart-wrap">
@@ -40,8 +40,8 @@
                 <div class="card">
                     <div class="chart-header">
                         <div>
-                            <div class="label">Grafik Source Traffic</div>
-                            <div class="muted">Distribusi sumber trafik untuk shortlink ini</div>
+                            <div class="label">{{ __('admin.source_traffic_chart') }}</div>
+                            <div class="muted">{{ __('admin.source_traffic_desc') }}</div>
                         </div>
                     </div>
                     <div class="chart-wrap">
@@ -52,26 +52,26 @@
                 <div class="card">
                     <div class="chart-header">
                         <div>
-                            <div class="label">IP Address Breakdown</div>
-                            <div class="muted">Distribusi klik berdasarkan IP Address</div>
+                            <div class="label">{{ __('admin.ip_breakdown') }}</div>
+                            <div class="muted">{{ __('admin.ip_breakdown_desc') }}</div>
                         </div>
                     </div>
                     <div class="chart-wrap" style="position: relative;">
                         <canvas id="shortlinkIpChart"></canvas>
-                        <div id="ipNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">Belum ada data klik.</div>
+                        <div id="ipNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">{{ __('admin.no_click_data') }}</div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="chart-header">
                         <div>
-                            <div class="label">Device Breakdown</div>
-                            <div class="muted">Distribusi perangkat pengunjung (Mobile/Tablet/Desktop)</div>
+                            <div class="label">{{ __('admin.device_breakdown') }}</div>
+                            <div class="muted">{{ __('admin.device_breakdown_desc') }}</div>
                         </div>
                     </div>
                     <div class="chart-wrap" style="position: relative;">
                         <canvas id="shortlinkDeviceChart"></canvas>
-                        <div id="deviceNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">Belum ada data klik.</div>
+                        <div id="deviceNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">{{ __('admin.no_click_data') }}</div>
                     </div>
                 </div>
             </div>

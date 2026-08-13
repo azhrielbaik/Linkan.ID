@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tautan Dilindungi Sandi - Linkan.id</title>
+    <title>{{ __('shortlink.password_protected') }} - Linkan.id</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -66,7 +66,7 @@
             color: #fff;
             border: none;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 16px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
@@ -98,8 +98,8 @@
         <div class="auth-icon">
             <i class="fas fa-lock"></i>
         </div>
-        <h2>Tautan Terkunci</h2>
-        <p>Tautan pendek <strong>Linkan.id/{{ $shortlink->slug }}</strong> dilindungi oleh kata sandi. Silakan masukkan sandi untuk melanjutkannya.</p>
+        <h2>{{ __('shortlink.locked_link') }}</h2>
+        <p>{!! __('shortlink.locked_desc', ['url' => '<strong>Linkan.id/' . $shortlink->slug . '</strong>']) !!}</p>
 
         @if($errors->has('password'))
             <div class="error-message">
@@ -110,10 +110,10 @@
         <form action="{{ route('shortlink.password.verify', $shortlink->slug) }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="password">Kata Sandi</label>
-                <input type="password" name="password" id="password" required placeholder="Masukkan kata sandi...">
+                <label for="password">{{ __('shortlink.password') }}</label>
+                <input type="password" name="password" id="password" required placeholder="{{ __('shortlink.enter_password') }}">
             </div>
-            <button type="submit" class="btn-submit">Buka Tautan <i class="fas fa-arrow-right" style="margin-left: 6px;"></i></button>
+            <button type="submit" class="btn-submit">{{ __('shortlink.open_link') }} <i class="fas fa-arrow-right" style="margin-left: 6px;"></i></button>
         </form>
 
         <div class="footer-logo">Linkan.id</div>

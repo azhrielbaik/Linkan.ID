@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "My Purchases")
+@section("page_title", __('admin.my_purchases_title'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/mypurchase.css') }}" data-turbo-track="reload">
@@ -24,14 +24,14 @@
         <!-- Card Filter, Sort, Search, and Content -->
         <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
             <div class="filter-sort-bar">
-                <button class="filter-sort-btn"><i class="fas fa-filter"></i> Filter</button>
-                <button class="filter-sort-btn"><i class="fas fa-sort"></i> Sorting</button>
+                <button class="filter-sort-btn"><i class="fas fa-filter"></i> {{ __('admin.filter') }}</button>
+                <button class="filter-sort-btn"><i class="fas fa-sort"></i> {{ __('admin.sorting') }}</button>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search...">
+                    <input type="text" placeholder="{{ __('admin.search_placeholder') }}">
                     <button><i class="fas fa-search"></i></button>
                 </div>
             </div>
-            <div style="margin-bottom: 10px; font-weight: 500; color: #888;">Content Purchase Search Result</div>
+            <div style="margin-bottom: 10px; font-weight: 500; color: #888;">{{ __('admin.content_purchase_search_result') }}</div>
             <div class="row">
                 @forelse($purchasedProducts as $product)
                     @if($product)
@@ -43,14 +43,14 @@
                                 <div style="font-size: 12px; color: #888;">
                                     {{ optional($purchases->firstWhere('product_id', $product->id))->created_at ? optional($purchases->firstWhere('product_id', $product->id))->created_at->format('d M Y') : '-' }}
                                 </div>
-                                <span class="badge bg-secondary" style="font-size: 11px;">Purchased</span>
+                                <span class="badge bg-secondary" style="font-size: 11px;">{{ __('admin.purchased') }}</span>
                             </div>
                         </div>
                     </div>
                     @endif
                 @empty
                 <div class="col-12">
-                    <div style="padding: 30px; text-align: center; color: #aaa;">No purchased content found.</div>
+                    <div style="padding: 30px; text-align: center; color: #aaa;">{{ __('admin.no_purchased_content') }}</div>
                 </div>
                 @endforelse
             </div>

@@ -79,4 +79,10 @@ return [
     'filter_newest' => 'Terbaru',
     'name_label' => 'Nama Tautan',
     'actions_label' => 'Aksi',
+    'locked_link' => 'Tautan Terkunci',
+    'locked_desc' => 'Tautan pendek :url dilindungi oleh kata sandi. Silakan masukkan sandi untuk melanjutkannya.',
+    'password' => 'Kata Sandi',
+    'enter_password' => 'Masukkan kata sandi...',
+    'open_link' => 'Buka Tautan',
+    'filter_oldest' => 'Terlama',
 ];

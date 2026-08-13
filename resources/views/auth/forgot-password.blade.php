@@ -3,403 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - Linkan</title>
+    <title>{{ __('auth.forgot_password_title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Inter', sans-serif;
-            }
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-            body {
-                background-color: #ffffff;
-                background-image: url('{{ asset('images/background.png') }}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                display: flex;
-                min-height: 100vh;
-                position: relative;
-            }
+        body {
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
 
-            body::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('{{ asset('images/background.png') }}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                opacity: 0.1;
-                z-index: 0;
-                pointer-events: none;
-            }
+        .split-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
 
-            .container {
-                display: flex;
-                width: 100%;
-                max-width: 1440px;
-                margin: auto;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 80px;
-                position: relative;
-                z-index: 2;
-            }
+        /* Left Side: Form Container */
+        .form-side {
+            flex: 1;
+            background: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
 
-            .left-side {
-                flex: 0 0 45%;
-                max-width: 600px;
-                margin-right: 40px;
-            }
+        .form-wrapper {
+            width: 100%;
+            max-width: 420px;
+            margin-top:-108px;
+        }
 
-            .left-side img {
-                width: 100%;
-                height: auto;
-                object-fit: contain;
-            }
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            color: #121212;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 36px;
+        }
 
-            .login-container {
-                flex: 0 0 400px;
-                margin-left: auto;
-                position: relative;
-                z-index: 3;
-            }
+        .btn-back-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
 
-            .logo {
-                display: flex;
-                align-items: center;
-                margin-bottom: 0;
-            }
+        .btn-back-home svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
 
-            .logo img {
-                height: 40px;
-                width: auto;
-                transition: transform 0.3s ease;
-                filter: none;
-            }
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #121212;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
 
-            .logo img:hover {
-                transform: scale(1.05);
-            }
+        .subtitle {
+            font-size: 15px;
+            font-weight: 500;
+            color: #667085;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
 
-            .login-box {
-                background: white;
-                padding: 40px;
-                border-radius: 24px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-                width: 100%;
-                position: relative;
-            }
+        .login-form {
+            width: 100%;
+        }
 
-            .login-box h2 {
-                font-size: 24px;
-                margin-bottom: 32px;
-                color: #333;
-                font-weight: 600;
-            }
+        .form-input-group {
+            margin-bottom: 24px;
+        }
 
-            .form-group {
-                position: relative;
-                margin-bottom: 24px;
-            }
+        .form-input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667085;
+            margin-bottom: 10px;
+            text-align: left;
+        }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 10px;
-                color: #333;
-                font-size: 15px;
-                font-weight: 500;
-            }
+        .form-input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #E4E7EC;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            background-color: #ffffff;
+            color: #121212;
+            outline: none;
+            transition: all 0.3s ease;
+        }
 
-            .form-group input {
-                width: 100%;
-                padding: 14px 18px;
-                border: 1px solid #e1e1e1;
-                border-radius: 14px;
-                font-size: 15px;
-                background-color: #fff;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .form-input-group input:focus {
+            border-color: #EE8025;
+            box-shadow: 0 0 0 4px rgba(238, 128, 37, 0.1);
+        }
 
-            .form-group input:focus {
-                outline: none;
-                border-color: #FF7F50;
-                box-shadow: 0 0 0 4px rgba(255, 127, 80, 0.1);
-            }
+        .form-input-group input::placeholder {
+            color: #98A2B3;
+            font-weight: 400;
+        }
 
-            .form-group input::placeholder {
-                color: #999;
-            }
+        .error-message {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
 
-            .forgot-password {
-                text-align: right;
-                margin: -12px 0 24px;
-            }
+        .success-message {
+            background: #e6f4ea;
+            color: #137333;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-align: center;
+        }
 
-            .forgot-password a {
-                color: #FF7F50;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-            }
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #ED842C;
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
 
-            .btn-login {
-                width: 100%;
-                padding: 16px;
-                background: linear-gradient(135deg, #FF7F50, #ff6b3b);
-                color: white;
-                border: none;
-                border-radius: 14px;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                margin-bottom: 28px;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .btn-submit:hover {
+            background: #ED842C;
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
 
-            .btn-login:hover {
-                background: linear-gradient(135deg, #ff6b3b, #FF7F50);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(255, 127, 80, 0.3);
-            }
+        .footer-text {
+            font-size: 14px;
+            color: #667085;
+            text-align: center;
+            margin-top: 32px;
+            font-weight: 500;
+        }
 
-            .divider {
-                text-align: center;
-                margin: 24px 0;
-                color: #666;
-                font-size: 14px;
-                position: relative;
-            }
+        .footer-text a {
+            color: #121212;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-            .divider::before,
-            .divider::after {
-                content: "";
-                position: absolute;
-                top: 50%;
-                width: 45%;
-                height: 1px;
-                background-color: #e1e1e1;
-            }
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
 
-            .divider::before {
-                left: 0;
-            }
+        /* Right Side: Mockup Showcase Container */
+        .mockup-side {
+            flex: 1;
+            background: #ED842C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+        }
 
-            .divider::after {
-                right: 0;
-            }
+        .mockup-wrapper {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
 
-            .google-login {
-                width: 100%;
-                padding: 14px;
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 14px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 12px;
-                cursor: pointer;
-                font-size: 15px;
-                font-weight: 500;
-                color: #333;
-                transition: all 0.3s ease;
-                position: relative;
-                z-index: 2;
-            }
+        .mockup-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+        }
 
-            .google-login:hover {
-                background: #f8f8f8;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            }
+        .floating-animation {
+            animation: floating 4s ease-in-out infinite;
+            transform-origin: center center;
+        }
 
-            .google-login img {
-                width: 24px;
-            }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
 
-            .error-message {
-                color: #dc3545;
-                font-size: 14px;
-                margin-top: 6px;
-            }
+        /* Responsive Layout styling */
+        @media (max-width: 900px) {
+            .form-side { padding: 30px; }
+            .mockup-side { padding: 30px; }
+        }
 
-            @media (max-width: 1200px) {
-                .container {
-                    padding: 0 40px;
-                }
-                
-                .left-side {
-                    flex: 0 0 40%;
-                }
-            }
-
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1.5rem 7%;
-                background-color: transparent;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                z-index: 1000;
-                transition: all 0.3s ease;
-            }
-
-            .navbar.scrolled {
-                padding: 1rem 7%;
-                background-color: rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(10px);
-            }
-
-            .logo {
-                display: flex;
-                align-items: center;
-                margin-bottom: 0;
-            }
-
-            .logo img {
-                height: 40px;
-                width: auto;
-                transition: transform 0.3s ease;
-                filter: none;
-            }
-
-            .logo img:hover {
-                transform: scale(1.05);
-            }
-
-            @media (max-width: 992px) {
-                .container {
-                    padding: 20px;
-                    flex-direction: column;
-                    gap: 40px;
-                }
-
-                .left-side {
-                    flex: 0 0 auto;
-                    margin-right: 0;
-                    max-width: 400px;
-                }
-
-                .login-container {
-                    margin-left: 0;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .left-side {
-                    display: none;
-                }
-
-                .login-box {
-                    padding: 30px 20px;
-                }
-            }
-
-            .floating-animation {
-                animation: floating 3s ease-in-out infinite;
-                transform-origin: center center;
-            }
-
-            @keyframes floating {
-                0% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-20px);
-                }
-                100% {
-                    transform: translateY(0px);
-                }
-            }
+        @media (max-width: 768px) {
+            .mockup-side { display: none; }
+            .form-side { flex: 1; width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <a href="{{ url('/') }}">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo">
-            </a>
-        </div>
-    </nav>
-    <div class="container">
-        <div class="left-side">
-            <img src="{{ asset('images/logohp.png') }}" alt="Forgot Password Illustration" class="floating-animation">
-        </div>
+    <div class="split-container">
+        <!-- Left side: Form -->
+        <div class="form-side">
+            <div class="form-wrapper">
+                
+                <!-- Back Button -->
+                <a href="{{ route('login') }}" class="btn-back-home" aria-label="{{ __('auth.back_to_login') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
 
-        <div class="login-container">
-            <div class="login-box">
-                <h2>Forgot Password</h2>
+                <h2 class="title">{{ __('auth.forgot_password_heading') }}</h2>
+                <p class="subtitle">{{ __('auth.forgot_password_desc') }}</p>
 
                 @if (session('status'))
-                    <div class="success-message" style="background: #e0ffe0; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #007500;">
+                    <div class="success-message">
                         {{ session('status') }}
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.email') }}">
+                <form method="POST" action="{{ route('password.email') }}" class="login-form">
                     @csrf
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="Example@gmail.com" required>
+                    
+                    <div class="form-input-group">
+                        <label for="email">{{ __('auth.email_address') }}</label>
+                        <input type="email" id="email" name="email" placeholder="{{ __('auth.email_example') }}" value="{{ old('email') }}" required autocomplete="email">
                     </div>
 
                     @error('email')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
 
-                    <button type="submit" class="btn-login">Send Reset Link</button>
+                    <button type="submit" class="btn-submit">{{ __('auth.send_link') }}</button>
                 </form>
+                
+                <p class="footer-text">
+                    {{ __('auth.back_to') }} <a href="{{ route('login') }}">{{ __('auth.login_page') }}</a>
+                </p>
+
+            </div>
+        </div>
+
+        <!-- Right side: Image Showcase -->
+        <div class="mockup-side">
+            <div class="mockup-wrapper">
+                <img src="{{ asset('images/logohp.png') }}" alt="Forgot Password Showcase" class="mockup-image floating-animation">
             </div>
         </div>
     </div>
 
     <script>
-        // Salin bagian script dari login.blade.php
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const floatingImage = document.querySelector('.floating-animation');
-            document.addEventListener('mousemove', function (e) {
-                const moveX = (e.clientX - window.innerWidth / 2) * 0.005;
-                const moveY = (e.clientY - window.innerHeight / 2) * 0.005;
-                floatingImage.style.transform = `translate(${moveX}px, ${moveY}px) translateY(${getFloatingY()}px)`;
-            });
-
-            function getFloatingY() {
-                const time = Date.now() * 0.001;
-                return Math.sin(time) * 20;
+            if (floatingImage) {
+                document.addEventListener('mousemove', function(e) {
+                    const moveX = (e.clientX - window.innerWidth/2) * 0.004;
+                    const moveY = (e.clientY - window.innerHeight/2) * 0.004;
+                    floatingImage.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
             }
-
-            function updateFloating() {
-                if (!document.hidden) {
-                    const currentY = getFloatingY();
-                    floatingImage.style.transform = `translateY(${currentY}px)`;
-                }
-                requestAnimationFrame(updateFloating);
-            }
-
-            updateFloating();
-
-            window.addEventListener('scroll', function () {
-                const navbar = document.querySelector('.navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
         });
     </script>
 </body>

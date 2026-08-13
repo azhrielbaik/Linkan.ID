@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Appearance")
+@section("page_title", __('admin.appearance_title'))
 
 @push("styles")
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -34,20 +34,21 @@
          style="width: 589px; height: 233px; object-fit: cover; margin-bottom: 15px;" id="previewBanner">
     <input type="hidden" name="delete_banner" id="deleteBanner" value="0">
     <button type="button" onclick="confirmDeleteBanner()" class="upload-button" style="background-color: red; color: white;">
-        Hapus Banner
+    <button type="button" onclick="confirmDeleteBanner()" class="upload-button" style="background-color: red; color: white;">
+        {{ __('admin.delete_banner') }}
     </button>
 @else
     <i class="fas fa-image"></i>
-    <p class="banner-text">Optimize banner size 1056 x 638 px</p>
+    <p class="banner-text">{{ __('admin.optimize_banner_size') }}</p>
 @endif
 <input type="file" name="banner" id="bannerInput" style="display: none;" accept="image/*">
-<button type="button" class="upload-button" onclick="document.getElementById('bannerInput').click()">Upload Image</button>
+<button type="button" class="upload-button" onclick="document.getElementById('bannerInput').click()">{{ __('admin.upload_image') }}</button>
                         </div>
                     </div>
 
                     <!-- Profile -->
                     <div class="card">
-                        <h2 class="card-title">Profile</h2>
+                        <h2 class="card-title">{{ __('admin.profile') }}</h2>
                         <div class="profile-section">
                            <div class="profile-image" onclick="openProfilePopup()">
                                 @if($appearance && $appearance->profile_image)
@@ -57,14 +58,14 @@
                                 @endif
                             </div>
                             <input type="file" name="profile_image" id="profileImageInput" style="display: none;" accept="image/*">
-                            <input type="text" name="name" class="profile-name" placeholder="Your Name" value="{{ $appearance ? $appearance->name : Auth::user()->name }}" id="inputName">
+                            <input type="text" name="name" class="profile-name" placeholder="{{ __('admin.your_name') }}" value="{{ $appearance ? $appearance->name : Auth::user()->name }}" id="inputName">
                             <div class="bio-section">
                                 <div id="editor" style="height: 150px; margin-bottom: 10px;">{!! $appearance ? $appearance->bio : '' !!}</div>
                                 <input type="hidden" name="bio" id="bioInput" value="{{ $appearance ? $appearance->bio : '' }}">
                             </div>
                             <!-- 🎨 Color Picker -->
 <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-    <label for="colorPicker">Customize Color:</label>
+    <label for="colorPicker">{{ __('admin.customize_color') }}</label>
     <input type="color" id="colorPicker" name="themeColor" value="{{ $appearance ? $appearance->theme_color : '#FF9040' }}">
 
    <input type="hidden" name="theme_color" id="themeColor" value="{{ $appearance ? $appearance->theme_color : '#FF9040' }}">
@@ -74,7 +75,7 @@
                     </div>
                  <!-- Social Media Links -->
 <div class="card">
-    <h2 class="card-title">Social Links</h2>
+    <h2 class="card-title">{{ __('admin.social_links') }}</h2>
 
     <!-- Tombol Pilih Platform -->
     <div id="social-buttons" style="margin-bottom: 10px;">
@@ -136,7 +137,7 @@
 
     <!-- Theme -->
    <div class="card">
-    <h2 class="card-title">Theme</h2>
+    <h2 class="card-title">{{ __('admin.theme') }}</h2>
     <div class="theme-options" id="themeOptions"
          style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
 
@@ -165,7 +166,7 @@
 <div style="display: flex; justify-content: center; margin-top: 20px;">
     <button type="submit" class="save-button"
         style="background-color: #FF9040">
-        Save Changes
+        {{ __('admin.save_changes') }}
     </button>
 </div>
   </form>
@@ -175,13 +176,13 @@
         <span class="close-btn" onclick="closeProfilePopup()">&times;</span>
         
         @if($appearance && $appearance->profile_image)
-            <button type="button" class="upload-button" onclick="document.getElementById('profileImageInput').click()">Upload Image</button>
+            <button type="button" class="upload-button" onclick="document.getElementById('profileImageInput').click()">{{ __('admin.upload_image') }}</button>
            <input type="hidden" name="delete_profile_image" id="deleteProfileImage" value="0">
     <button type="button" onclick="confirmDeleteProfileImage()" class="upload-button" style="background-color: red; color: white; margin-top: 10px;">
-        Hapus Foto Profil
+        {{ __('admin.delete_profile_photo') }}
     </button>
         @else
-            <button type="button" class="upload-button" onclick="document.getElementById('profileImageInput').click()">Upload Image</button>
+            <button type="button" class="upload-button" onclick="document.getElementById('profileImageInput').click()">{{ __('admin.upload_image') }}</button>
         @endif
     </div>
 </div>
@@ -194,7 +195,7 @@
                     <div class="preview-section">
                           <div class="right-panel">
                      <div class="preview-header">
-                       <h2 class="card-priview">Preview</h2>
+                       <h2 class="card-priview">{{ __('admin.preview') }}</h2>
                       </div>
                           <div class="preview-phone">
                               <div class="preview-screen" id="previewScreen" style="width: 100%; height: 100%; background: #f8f9fa; border-radius: 30px; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}'); background-size: cover; background-position: center;">
@@ -227,7 +228,7 @@
                                       <div class="preview-bio" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance->description }}</div>
                                   @endif
                                   @if($appearance && $appearance->link)
-                                      <a href="{{ $appearance->link }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance->button_text ?? 'Beli' }}</a>
+                                      <a href="{{ $appearance->link }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance->button_text ?? __('admin.buy') }}</a>
                                   @endif
                                   @if($digitalProducts && $digitalProducts->count() > 0)
                                       <div class="preview-products" style="width: 100%; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -243,7 +244,7 @@
                                                   <div class="preview-product-info" style="flex: 1; min-width: 0;">
                                                       <div class="preview-product-title" style="font-size: 14px; color: #333; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $product->title }}</div>
                                                   </div>
-                                                  <a href="{{ route('track.click', ['link_id' => Auth::user()->username, 'target' => $product->platform_url ?? '#']) }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.3s ease; flex-shrink: 0; min-width: 100px; text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none;" target="_blank">{{ str_replace('_', ' ', $product->button_text ?? 'Beli') }}</a>
+                                                  <a href="{{ route('track.click', ['link_id' => Auth::user()->username, 'target' => $product->platform_url ?? '#']) }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.3s ease; flex-shrink: 0; min-width: 100px; text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none;" target="_blank">{{ str_replace('_', ' ', $product->button_text ?? __('admin.buy')) }}</a>
                                               </div>
                                           @endforeach
                                       </div>

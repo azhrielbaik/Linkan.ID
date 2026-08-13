@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", "Digital Product")
+@section("page_title", __('admin.digital_product'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/digital-product.css') }}" data-turbo-track="reload">
@@ -10,7 +10,7 @@
 <div class="dashboard-digital-product-page">
 
 <div class="page-header">
-                <h1 class="page-title">Add Digital Product</h1>
+                <h1 class="page-title">{{ __('admin.add_digital_product') }}</h1>
             </div>
 
             <!-- ✅ Alert messages -->
@@ -32,7 +32,7 @@
 
             @if(isset($product) && $product->verification_status === 'rejected')
                 <div class="alert alert-warning" style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #856404;">
-                    <i class="fas fa-exclamation-triangle"></i> Produk ini sebelumnya ditolak. Silakan perbaiki dan kirim ulang untuk verifikasi.
+                    <i class="fas fa-exclamation-triangle"></i> {{ __('admin.product_rejected') }}
                 </div>
             @endif
 
@@ -47,50 +47,50 @@
 
                 @csrf
                 <div class="content-card">
-                    <h2 class="card-title">Details</h2>
+                    <h2 class="card-title">{{ __('admin.details') }}</h2>
 
                     <div class="form-group">
-                        <label>Image</label>
+                        <label>{{ __('admin.image') }}</label>
                         <div class="image-upload" onclick="document.getElementById('productImage').click()">
                             @if(isset($product) && $product->image)
                                 <img src="{{ asset('storage/' . $product->image) }}" style="max-width: 100%; max-height: 100%; border-radius: 5px;">
                             @else
                                 <i class="fas fa-image"></i>
-                                <span>Add Image</span>
+                                <span>{{ __('admin.add_image') }}</span>
                             @endif
                         </div>
-                        <div class="format-info">Format: PNG, JPEG, JPG <strong> (Optimize size 566 x 525 px)</strong> </div>
+                        <div class="format-info">{{ __('admin.format_image') }} <strong> {{ __('admin.optimize_image_size') }}</strong> </div>
                         <input type="file" id="productImage" name="image" accept=".png,.jpg,.jpeg" style="display: none">
                     </div>
 
                     <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" name="title" class="form-control" placeholder="Title" value="{{ isset($product) ? $product->title : old('title') }}">
+                        <label>{{ __('admin.title') }}</label>
+                        <input type="text" name="title" class="form-control" placeholder="{{ __('admin.title') }}" value="{{ isset($product) ? $product->title : old('title') }}">
                     </div>
 
                     <div class="form-group">
-                        <label>Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Description">{{ isset($product) ? $product->description : old('description') }}</textarea>
+                        <label>{{ __('admin.description') }}</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="{{ __('admin.description') }}">{{ isset($product) ? $product->description : old('description') }}</textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>Platform</label>
+                        <label>{{ __('admin.platform') }}</label>
                         <div class="platform-container">
                             <div class="platform-options">
-                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'upload' ? 'active' : '' }}" data-platform="upload">Upload</button>
-                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'dropbox' ? 'active' : '' }}" data-platform="dropbox">Dropbox</button>
-                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'gdrive' ? 'active' : '' }}" data-platform="gdrive">G-Drive</button>
-                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'other' ? 'active' : '' }}" data-platform="other">Other</button>
+                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'upload' ? 'active' : '' }}" data-platform="upload">{{ __('admin.upload') }}</button>
+                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'dropbox' ? 'active' : '' }}" data-platform="dropbox">{{ __('admin.dropbox') }}</button>
+                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'gdrive' ? 'active' : '' }}" data-platform="gdrive">{{ __('admin.gdrive') }}</button>
+                                <button type="button" class="platform-button {{ isset($product) && $product->platform_type == 'other' ? 'active' : '' }}" data-platform="other">{{ __('admin.other') }}</button>
                             </div>
                             <input type="hidden" name="platform_type" value="{{ isset($product) ? $product->platform_type : 'upload' }}">
-                            <input type="text" class="form-control platform-input" placeholder="Enter your URL here" name="platform_url" style="display: {{ isset($product) && $product->platform_type != 'upload' ? 'block' : 'none' }};" value="{{ isset($product) ? $product->platform_url : old('platform_url') }}">
+                            <input type="text" class="form-control platform-input" placeholder="{{ __('admin.enter_url') }}" name="platform_url" style="display: {{ isset($product) && $product->platform_type != 'upload' ? 'block' : 'none' }};" value="{{ isset($product) ? $product->platform_url : old('platform_url') }}">
                             <div class="select-file-button form-control" onclick="document.getElementById('platform_file').click()" style="text-align: center; cursor: pointer; display: {{ isset($product) && $product->platform_type == 'upload' ? 'block' : 'none' }};">
                                 <i class="fas fa-paperclip"></i> 
                                 <span id="selected-file-name">
                                     @if(isset($product) && $product->platform_file)
                                         {{ basename($product->platform_file) }}
                                     @else
-                                        Select File
+                                        {{ __('admin.select_file') }}
                                     @endif
                                 </span>
                             </div>
@@ -100,11 +100,11 @@
                 </div>
 
                 <div class="content-card">
-                    <h2 class="card-title">Pricing</h2>
+                    <h2 class="card-title">{{ __('admin.pricing') }}</h2>
 
                     <div class="form-group">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <label style="margin: 0;">Allow Customer to pay what they want</label>
+                            <label style="margin: 0;">{{ __('admin.allow_pay_what_want') }}</label>
                             <!-- ✅ Hidden input + checkbox -->
                             <input type="hidden" name="pay_what_want" value="0">
                             <label class="toggle-switch">
@@ -117,30 +117,30 @@
                     <div class="form-group">
                         <div class="price-group">
                             <div class="price-input">
-                                <label>Price</label>
+                                <label>{{ __('admin.price') }}</label>
                                 <input type="text" name="price" id="priceInput" class="form-control" placeholder="Rp 0" value="{{ isset($product) ? 'Rp ' . number_format($product->price, 0, ',', '.') : old('price') }}">
                                 <input type="hidden" name="price_raw" id="priceRaw" value="{{ isset($product) ? $product->price : old('price') }}">
                             </div>
                             <div class="currency-input">
-                                <label>Currency</label>
+                                <label>{{ __('admin.currency') }}</label>
                                 <input type="text" name="currency" class="form-control" value="IDR" readonly>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Purchase Button</label>
+                        <label>{{ __('admin.purchase_button') }}</label>
                         <select name="button_text" class="select-dropdown">
-                            <option value="buy_now" {{ (isset($product) && $product->button_text == 'buy_now') || old('button_text') == 'buy_now' ? 'selected' : '' }}>Buy Now</option>
-                            <option value="purchase" {{ (isset($product) && $product->button_text == 'purchase') || old('button_text') == 'purchase' ? 'selected' : '' }}>Purchase</option>
-                            <option value="get_now" {{ (isset($product) && $product->button_text == 'get_now') || old('button_text') == 'get_now' ? 'selected' : '' }}>Get Now</option>
+                            <option value="buy_now" {{ (isset($product) && $product->button_text == 'buy_now') || old('button_text') == 'buy_now' ? 'selected' : '' }}>{{ __('admin.buy_now') }}</option>
+                            <option value="purchase" {{ (isset($product) && $product->button_text == 'purchase') || old('button_text') == 'purchase' ? 'selected' : '' }}>{{ __('admin.purchase') }}</option>
+                            <option value="get_now" {{ (isset($product) && $product->button_text == 'get_now') || old('button_text') == 'get_now' ? 'selected' : '' }}>{{ __('admin.get_now') }}</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button type="button" class="cancel-button" onclick="history.back()">Cancel</button>
-                    <button type="submit" class="add-product-button">Add Product</button>
+                    <button type="button" class="cancel-button" onclick="history.back()">{{ __('admin.cancel') }}</button>
+                    <button type="submit" class="add-product-button">{{ __('admin.add_product') }}</button>
                 </div>
             </form>
 
