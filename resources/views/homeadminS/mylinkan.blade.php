@@ -14,7 +14,23 @@
     <!-- COMBINED HEADER & MODE SWITCH -->
     <div class="section-header" style="margin-top: 10px;">
         @if($viewMode == 'gallery')
-            <h2 class="gallery-title"><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
+                
+                <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
+                <div class="microsite-actions-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Cari microsite...">
+                    </div>
+                    <button type="button" class="btn-action-secondary" style="padding: 10px 16px;">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button type="button" class="btn-action-primary" style="padding: 10px 16px;">
+                        <i class="fas fa-plus"></i> Buat Baru
+                    </button>
+                </div>
+            </div>
         @else
             <h2 style="display: flex; align-items: center; margin: 0;">
                 <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
@@ -23,20 +39,6 @@
                 <i class="fas fa-sliders-h" style="color: #FF9040; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
             </h2>
         @endif
-        
-        <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
-        <div class="microsite-actions-bar">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Cari microsite...">
-            </div>
-            <button type="button" class="btn-action-secondary" style="padding: 10px 16px;">
-                <i class="fas fa-filter"></i> Filter
-            </button>
-            <button type="button" class="btn-action-primary" style="padding: 10px 16px;">
-                <i class="fas fa-plus"></i> Buat Baru
-            </button>
-        </div>
     </div>
 
     @if($viewMode == 'gallery')
@@ -182,28 +184,7 @@
                     </div>
                 @endif
 
-                <!-- SHORTLINKS BLOCKS -->
-                @if($shortlinks->count())
-                    <div>
-                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">{{ __('admin.shortlinks') }}</h3>
-                        @foreach($shortlinks as $link)
-                            <div class="block-item-card" onclick="window.location.href='{{ route('admin.shortlinks.index') }}'">
-                                <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
-                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #E6F6FF; color: #0088FF; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-link"></i>
-                                </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-weight: 700; font-size: 14px; color: #111827;">{{ $link->title ?: $link->slug }}</div>
-                                    <div style="font-size: 12px; color: #FF9040;">linkan.id/{{ $link->slug }}</div>
-                                </div>
-                                <i class="fas fa-external-link-alt" style="color: #6b7280;"></i>
-                            </div>
-                        @endforeach
-                        <div style="margin-top: 15px;">
-                            {{ $shortlinks->appends(request()->except('links_page'))->links() }}
-                        </div>
-                    </div>
-                @endif
+
             </div>
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->

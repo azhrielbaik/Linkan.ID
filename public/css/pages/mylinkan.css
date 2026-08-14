@@ -76,6 +76,11 @@ body,
 }
 
 @media (max-width: 640px) {
+    .dashboard-mylinkan-page {
+        margin-left: -25px;
+        margin-right: -25px;
+    }
+
     .dashboard-mylinkan-page .microsite-actions-bar {
         flex-wrap: wrap;
         width: 100%;
@@ -93,6 +98,11 @@ body,
     /* Hide toggle buttons on mobile since they only make sense on desktop */
     .dashboard-mylinkan-page .device-toggle-btns {
         display: none !important;
+    }
+
+    .dashboard-mylinkan-page .microsite-gallery-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
     }
 }
 
@@ -170,7 +180,7 @@ body,
 
 .dashboard-mylinkan-page .microsite-gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
 }
 
@@ -185,8 +195,9 @@ body,
     flex-direction: column;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    margin-right: 27px;
     padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .dashboard-mylinkan-page .microsite-card:hover {
