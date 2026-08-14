@@ -67,6 +67,33 @@
             color: inherit;
         }
 
+                /* LANGUAGE TOGGLE PILL */
+        .lang-toggle-pill {
+            display: flex;
+            background: #f1f1f1;
+            border-radius: 20px;
+            padding: 3px;
+            align-items: center;
+        }
+        .lang-btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 16px;
+            color: #666;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .lang-btn.active {
+            background: #ffffff;
+            color: var(--dark);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .mobile-lang-toggle {
+            margin-top: 10px;
+            transform: scale(1.2);
+        }
+
         /* NAVBAR */
         .navbar-wrapper {
             width: 100%;
@@ -1220,7 +1247,11 @@
             <a href="{{ url('/') }}" class="nav-logo">
                 <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo-img">
             </a>
-            <div class="nav-links">
+                        <div class="nav-links">
+                <div class="lang-toggle-pill">
+                    <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                    <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+                </div>
                 <a href="{{ route('pricing') }}" class="nav-link">{{ __('layout.pricing') }}</a>
                 <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
@@ -1237,7 +1268,11 @@
 
     <!-- MOBILE NAVIGATION OVERLAY -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
-        <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
+                <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
+            <div class="lang-toggle-pill mobile-lang-toggle">
+                <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+            </div>
             <a href="{{ route('pricing') }}" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
             <a href="{{ route('service') }}" class="mobile-nav-link">{{ __('layout.service') }}</a>
             <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>

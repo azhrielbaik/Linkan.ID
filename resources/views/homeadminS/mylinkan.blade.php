@@ -11,71 +11,36 @@
 
 <div class="microsite-container">
     
-    <!-- HEADER TITLE & MODE SWITCH -->
-    <div class="header-title-section">
-        <div>
-            <h1>{{ __('admin.microsite_management') }}</h1>
-            <p>{{ __('admin.microsite_management_desc') }}</p>
-        </div>
+    <!-- COMBINED HEADER & MODE SWITCH -->
+    <div class="section-header" style="margin-top: 10px;">
+        @if($viewMode == 'gallery')
+            <h2 class="gallery-title"><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
+        @else
+            <h2 style="display: flex; align-items: center; margin: 0;">
+                <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <i class="fas fa-sliders-h" style="color: #FF9040; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
+            </h2>
+        @endif
         
-        <div class="mode-switch-btn">
-            <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="{{ $viewMode == 'gallery' ? 'active' : '' }}">
-                <i class="fas fa-th-large"></i> {{ __('admin.microsite_gallery') }}
-            </a>
-            <a href="{{ route('admin.mylinkan', ['mode' => 'edit']) }}" class="{{ $viewMode == 'edit' ? 'active' : '' }}">
-                <i class="fas fa-edit"></i> {{ __('admin.edit_content_blocks') }}
-            </a>
-        </div>
-    </div>
-
-    <!-- STATS SUMMARY ROW -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #FFF3E6; color: #FF9040;">
-                <i class="fas fa-pager"></i>
+        <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
+        <div class="microsite-actions-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Cari microsite...">
             </div>
-            <div class="stat-info">
-                <div class="stat-value">1</div>
-                <div class="stat-label">{{ __('admin.active_microsite') }}</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #E6F6FF; color: #0088FF;">
-                <i class="fas fa-eye"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value">{{ number_format($totalViews ?? 0) }}</div>
-                <div class="stat-label">{{ __('admin.total_views') }}</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #E6FFFA; color: #00B894;">
-                <i class="fas fa-box-open"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value">{{ $totalProducts ?? 0 }}</div>
-                <div class="stat-label">{{ __('admin.installed_products') }}</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #FFF0F6; color: #E83E8C;">
-                <i class="fas fa-link"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value">{{ $totalShortlinks ?? 0 }}</div>
-                <div class="stat-label">{{ __('admin.connected_shortlinks') }}</div>
-            </div>
+            <button type="button" class="btn-action-secondary" style="padding: 10px 16px;">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            <button type="button" class="btn-action-primary" style="padding: 10px 16px;">
+                <i class="fas fa-plus"></i> Buat Baru
+            </button>
         </div>
     </div>
 
     @if($viewMode == 'gallery')
         <!-- GALLERY LIST VIEW -->
-        <div class="section-header">
-            <h2><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
-        </div>
 
         <div class="microsite-gallery-grid">
             
@@ -84,9 +49,6 @@
                 
                 <!-- CARD HEADER & THUMBNAIL CONTAINER -->
                 <div class="card-thumbnail-container">
-                    <span class="status-badge active">
-                        <span class="dot"></span> {{ __('admin.live_main_profile') }}
-                    </span>
 
                     <!-- REAL PHONE THUMBNAIL REPRESENTATION -->
                     <div class="phone-thumbnail">
@@ -175,33 +137,10 @@
 
             </div>
 
-            <!-- CREATE NEW MICROSITE / TEMPLATE CARD -->
-            <div class="create-new-card" onclick="showAddBlockModal()">
-                <div class="create-icon-wrapper">
-                    <i class="fas fa-plus"></i>
-                </div>
-                <div class="create-title">{{ __('admin.add_new_block') }}</div>
-                <div class="create-subtitle">{{ __('admin.add_new_block_desc') }}</div>
-                <button type="button" class="btn-action-primary">
-                    <i class="fas fa-plus-circle"></i> {{ __('admin.add_block') }}
-                </button>
-            </div>
-
         </div>
 
     @else
         <!-- EDITOR VIEW MODE -->
-        <div class="section-header">
-            <h2>
-                <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <i class="fas fa-sliders-h" style="color: #FF9040;"></i> {{ __('admin.edit_content_blocks') }}
-            </h2>
-            <button class="btn-action-primary" onclick="showAddBlockModal()">
-                <i class="fas fa-plus"></i> {{ __('admin.add_new_block') }}
-            </button>
-        </div>
 
         <div class="editor-layout">
             <!-- LEFT PANEL: BLOCK MANAGEMENT -->
@@ -222,7 +161,7 @@
                     <div style="margin-bottom: 30px;">
                         <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 14px;">{{ __('admin.my_digital_products') }}</h3>
                         @foreach($digitalProducts as $product)
-                            <div class="block-item-card" onclick="showActionModal({{ $product->id }}, '{{ $product->title }}')">
+                            <div class="block-item-card">
                                 <i class="fas fa-grip-vertical" style="color: #9ca3af; cursor: move;"></i>
                                 <div style="width: 36px; height: 36px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-file-alt"></i>
@@ -332,82 +271,18 @@
             </a>
         </div>
 
-        <div class="phone-device-frame">
-            <div class="phone-notch"></div>
+        <div class="phone-device-frame" id="deviceFrame">
+            <div class="phone-notch" id="deviceNotch"></div>
             <iframe src="" class="phone-iframe" id="phonePreviewIframe"></iframe>
         </div>
-    </div>
-</div>
-
-<!-- MODAL ADD BLOCK -->
-<div id="addBlockModal" class="modal">
-    <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
-        <div class="modal-header" style="background: #f9fafb; padding: 18px 24px; border-bottom: 1px solid #e5e7eb;">
-            <h2 style="font-size: 18px; font-weight: 700; margin: 0;">{{ __('admin.add_new_block') }}</h2>
-            <button class="close-button" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body" style="padding: 24px;">
-            <div class="block-option" onclick="selectBlockType('digital')" style="border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px; margin-bottom: 14px; cursor: pointer; transition: all 0.2s ease;">
-                <div class="block-icon">
-                    <img src="{{ asset('images/productdigital.png') }}" alt="Digital Product" style="width: 28px;">
-                </div>
-                <div class="block-info">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">{{ __('admin.digital_product') }}</h3>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0;">{{ __('admin.digital_product_desc') }}</p>
-                </div>
-            </div>
-
-            <div class="block-option" onclick="selectBlockType('shortlink')" style="border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px; cursor: pointer; transition: all 0.2s ease;">
-                <div class="block-icon">
-                    <i class="fas fa-link" style="color: #FF9040; font-size: 24px;"></i>
-                </div>
-                <div class="block-info">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">{{ __('admin.shortlinks') }}</h3>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0;">{{ __('admin.shortlink_desc') }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ACTION MODAL & DELETE CONFIRMATION -->
-<div id="actionModal" class="modal">
-    <div class="modal-content" style="border-radius: 20px; padding: 20px;">
-        <div class="modal-header">
-            <h2>{{ __('admin.product_action') }}</h2>
-            <button class="close-button" onclick="closeActionModal()">×</button>
-        </div>
-        <div class="modal-body" style="padding-top: 14px;">
-            <a href="#" id="editButton" class="btn-action-primary" style="margin-bottom: 10px; width: 100%;">
-                <i class="fas fa-edit"></i> {{ __('admin.edit_product') }}
-            </a>
-            <form id="deleteForm" method="POST" action="">
-                @csrf
-                @method('DELETE')
-                <button type="button" class="btn-action-secondary" style="color: #ef4444; border-color: #fca5a5; width: 100%;" onclick="confirmDelete()">
-                    <i class="fas fa-trash"></i> {{ __('admin.delete_product') }}
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div id="confirmDeleteModal" class="modal">
-    <div class="modal-content" style="border-radius: 20px; padding: 24px;">
-        <div class="modal-header">
-            <h2>{{ __('admin.delete_confirmation') }}</h2>
-            <button class="close-button" onclick="closeConfirmDeleteModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <p id="deleteMessage" style="margin-bottom: 20px; font-size: 14px; color: #4b5563;"></p>
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="closeConfirmDeleteModal()" class="btn-action-secondary">{{ __('admin.cancel') }}</button>
-                <form id="finalDeleteForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-action-primary" style="background: #ef4444;">{{ __('admin.yes_delete') }}</button>
-                </form>
-            </div>
+        
+        <div class="device-toggle-btns" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; z-index: 10;">
+            <button type="button" class="btn-action-primary" id="btnMobilePreview" onclick="setPreviewDevice('mobile')" style="padding: 8px 16px; min-width: 110px;">
+                <i class="fas fa-mobile-alt"></i> Mobile
+            </button>
+            <button type="button" class="btn-action-secondary" id="btnDesktopPreview" onclick="setPreviewDevice('desktop')" style="padding: 8px 16px; min-width: 110px;">
+                <i class="fas fa-desktop"></i> Desktop
+            </button>
         </div>
     </div>
 </div>
@@ -425,12 +300,41 @@
         });
     }
 
+    function setPreviewDevice(device) {
+        const frame = document.getElementById('deviceFrame');
+        const notch = document.getElementById('deviceNotch');
+        const btnMobile = document.getElementById('btnMobilePreview');
+        const btnDesktop = document.getElementById('btnDesktopPreview');
+
+        if (!frame || !btnMobile || !btnDesktop) return;
+
+        if (device === 'mobile') {
+            frame.style.width = '360px';
+            frame.style.height = '720px';
+            frame.style.borderRadius = '46px';
+            if (notch) notch.style.display = 'block';
+            
+            btnMobile.className = 'btn-action-primary';
+            btnDesktop.className = 'btn-action-secondary';
+        } else {
+            frame.style.width = '90vw';
+            frame.style.maxWidth = '1000px';
+            frame.style.height = '80vh';
+            frame.style.borderRadius = '16px';
+            if (notch) notch.style.display = 'none';
+
+            btnDesktop.className = 'btn-action-primary';
+            btnMobile.className = 'btn-action-secondary';
+        }
+    }
+
     function openPreviewModal(url) {
         const modal = document.getElementById('previewModalOverlay');
         const iframe = document.getElementById('phonePreviewIframe');
         iframe.src = url;
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        setPreviewDevice('mobile');
     }
 
     function closePreviewModal() {
@@ -441,59 +345,7 @@
         document.body.style.overflow = 'auto';
     }
 
-    function showAddBlockModal() {
-        document.getElementById('addBlockModal').style.display = 'block';
-        document.body.classList.add('modal-open');
-    }
-
-    function closeModal() {
-        document.getElementById('addBlockModal').style.display = 'none';
-        document.body.classList.remove('modal-open');
-    }
-
-    function selectBlockType(type) {
-        if(type === 'digital') {
-            window.location.href = "{{ route('admin.digital-products.create') }}";
-        } else if(type === 'shortlink') {
-            window.location.href = "{{ route('admin.shortlinks.index') }}";
-        }
-    }
-
-    function showActionModal(productId, productTitle) {
-        window.currentDeleteId = productId;
-        window.currentDeleteTitle = productTitle;
-        document.getElementById('deleteForm').action = `/admin/digital-products/${productId}`;
-        document.getElementById('editButton').href = `/admin/digital-products/${productId}/edit`;
-        document.getElementById('actionModal').style.display = 'block';
-        document.body.classList.add('modal-open');
-    }
-
-    function closeActionModal() {
-        document.getElementById('actionModal').style.display = 'none';
-        document.body.classList.remove('modal-open');
-    }
-
-    function confirmDelete() {
-        const title = window.currentDeleteTitle;
-        const productId = window.currentDeleteId;
-        document.getElementById('deleteMessage').innerText = `Apakah Anda yakin ingin menghapus produk "${title}"?`;
-        document.getElementById('finalDeleteForm').action = `/admin/digital-products/${productId}`;
-        closeActionModal();
-        document.getElementById('confirmDeleteModal').style.display = 'block';
-        document.body.classList.add('modal-open');
-    }
-
-    function closeConfirmDeleteModal() {
-        document.getElementById('confirmDeleteModal').style.display = 'none';
-        document.body.classList.remove('modal-open');
-    }
-
     window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeModal();
-            closeActionModal();
-            closeConfirmDeleteModal();
-        }
         if (event.target.id === 'previewModalOverlay') {
             closePreviewModal();
         }

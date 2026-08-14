@@ -8,13 +8,94 @@
         top: 0;
         left: 0;
         padding: 24px 20px;
-        overflow-y: auto;
+        overflow-y: visible; /* changed from auto so button can overlap */
         z-index: 1000;
-        transition: transform 0.3s ease;
+        transition: width 0.3s ease, transform 0.3s ease;
         box-shadow: 2px 0 10px rgba(0,0,0,0.03);
         display: flex;
         flex-direction: column;
         border-right: 1px solid #eaeaea;
+    }
+    .sidebar-inner-scroll {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Minimize Button */
+    .sidebar-minimize-btn {
+        position: absolute;
+        top: 30px;
+        right: -15px;
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1001;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        color: #666;
+    }
+    
+    @media (min-width: 901px) {
+        .sidebar-minimize-btn {
+            display: flex;
+        }
+    }
+
+    .sidebar-minimize-btn i {
+        transform: rotate(90deg); /* Points left initially */
+        transition: transform 0.3s ease;
+    }
+
+    /* Mini Sidebar Overrides - Only on Desktop */
+    @media (min-width: 901px) {
+        body.mini-sidebar .sidebar {
+            width: 80px;
+            padding: 24px 10px;
+        }
+        
+        body.mini-sidebar .sidebar-minimize-btn i {
+            transform: rotate(270deg); /* Points right when minimized */
+        }
+
+        body.mini-sidebar .nav-text, 
+        body.mini-sidebar .badge {
+            display: none;
+        }
+
+        body.mini-sidebar .logo {
+            display: none; /* Hide main logo, optionally show small icon */
+        }
+        
+        body.mini-sidebar .lang-toggle,
+        body.mini-sidebar .sidebar-close {
+            display: none !important;
+        }
+        
+        body.mini-sidebar .sidebar a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+        
+        body.mini-sidebar .sidebar a i {
+            margin-right: 0;
+            font-size: 20px;
+        }
+        
+        body.mini-sidebar .marketing-tools form button {
+            justify-content: center;
+        }
+        
+        body.mini-sidebar .marketing-tools form button i {
+            margin-right: 0;
+            font-size: 20px;
+        }
     }
     
     /* Responsive behavior */
@@ -174,6 +255,11 @@
 </style>
 
 <div class="sidebar" id="sidebar">
+    <div class="sidebar-minimize-btn" onclick="toggleMinimize()">
+        <i class="fas fa-caret-down"></i>
+    </div>
+    
+    <div class="sidebar-inner-scroll">
     <div class="logo-container" style="justify-content: space-between; width: 100%; align-items: center;">
         <img src="{{ asset('images/Logo.png') }}" alt="Logo" class="logo" style="width: 100px; height: auto;">
         
@@ -188,31 +274,31 @@
 
     <div class="sidebar-nav">
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="fas fa-th-large"></i>{{ __('sidebar.dashboard') }}
+            <i class="fas fa-th-large"></i><span class="nav-text">{{ __('sidebar.dashboard') }}</span>
         </a>
         
         <a href="{{ route('admin.statistics') }}" class="{{ request()->routeIs('admin.statistics*') ? 'active' : '' }}">
-            <i class="fas fa-chart-pie"></i>{{ __('sidebar.analytics') }}
+            <i class="fas fa-chart-pie"></i><span class="nav-text">{{ __('sidebar.analytics') }}</span>
         </a>
 
         <a href="{{ route('admin.shortlinks.index') }}" class="{{ request()->routeIs('admin.shortlinks.*') ? 'active' : '' }}">
-            <i class="fas fa-link"></i>{{ __('sidebar.shortlink') }}
+            <i class="fas fa-link"></i><span class="nav-text">{{ __('sidebar.shortlink') }}</span>
         </a>
 
         <a href="{{ route('admin.mylinkan') }}" class="{{ request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*') ? 'active' : '' }}">
-            <i class="fas fa-pager"></i>{{ __('sidebar.microsite') }}
+            <i class="fas fa-pager"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
         </a>
 
         <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
-            <i class="fas fa-store"></i>{{ __('sidebar.shop') }}
+            <i class="fas fa-store"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
         </a>
 
         <a href="{{ route('admin.purchases') }}" class="{{ request()->routeIs('admin.purchases') ? 'active' : '' }}">
-            <i class="fas fa-shopping-bag"></i>{{ __('sidebar.mypurchases') }}
+            <i class="fas fa-shopping-bag"></i><span class="nav-text">{{ __('sidebar.mypurchases') }}</span>
         </a>
 
         <a href="{{ route('admin.appearance') }}" class="{{ request()->routeIs('admin.appearance*') ? 'active' : '' }}">
-            <i class="fas fa-paint-brush"></i>{{ __('sidebar.appearance') }}
+            <i class="fas fa-paint-brush"></i><span class="nav-text">{{ __('sidebar.appearance') }}</span>
         </a>
 
         @php
@@ -222,7 +308,7 @@
         @endphp
 
         <a href="{{ route('admin.settings') }}" class="{{ $isSettingsActive ? 'active' : '' }}">
-            <i class="fas fa-cog"></i>{{ __('sidebar.settings') }}
+            <i class="fas fa-cog"></i><span class="nav-text">{{ __('sidebar.settings') }}</span>
         </a>
     </div>
 
@@ -231,9 +317,10 @@
             @csrf
             <button type="submit">
                 <i class="fas fa-sign-out-alt"></i>
-                {{ __('sidebar.logout') }}
+                <span class="nav-text">{{ __('sidebar.logout') }}</span>
             </button>
         </form>
+    </div>
     </div>
 
 </div>

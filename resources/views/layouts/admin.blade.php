@@ -33,6 +33,11 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+        
+        body.mini-sidebar .main-content {
+            margin-left: 80px;
         }
 
         .header {
@@ -203,7 +208,7 @@
         }
 
         @media (max-width: 900px) {
-            .main-content { margin-left: 0; }
+            .main-content { margin-left: 0 !important; }
             .hamburger-menu { display: block; }
             .header-left { display: flex; align-items: center; }
         }
@@ -333,6 +338,18 @@
                 sidebar.classList.toggle('show');
             }
         }
+        
+        function toggleMinimize() {
+            document.body.classList.toggle('mini-sidebar');
+            const isMini = document.body.classList.contains('mini-sidebar');
+            localStorage.setItem('sidebar-mini', isMini ? 'true' : 'false');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('sidebar-mini') === 'true') {
+                document.body.classList.add('mini-sidebar');
+            }
+        });
 
         function toggleProfileDropdown() {
             const dropdown = document.getElementById('profileDropdown');
