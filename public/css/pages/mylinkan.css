@@ -534,22 +534,40 @@ body,
 }
 
 .dashboard-mylinkan-page .btn-close-modal {
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    width: 38px;
-    height: 38px;
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: #ffffff;
-    color: #111827;
-    border: none;
-    font-size: 18px;
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     z-index: 20;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.dashboard-mylinkan-page .btn-close-modal:hover {
+    background: #e5e7eb;
+    color: #111827;
+    border-color: #d1d5db;
+    transform: scale(1.05);
+}
+
+.dashboard-mylinkan-page .phone-modal-wrapper .btn-close-modal {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 /* EDITOR STYLES (WHEN MODE IS EDIT) */
@@ -602,4 +620,528 @@ body,
     background: #ffffff;
     border-color: #FF9040;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* NEW MICROSITE CREATION MODAL & MULTI-STEP WIZARD STYLES */
+.new-microsite-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 16px;
+}
+
+.new-microsite-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.new-microsite-modal-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin: auto;
+    overflow: visible;
+}
+
+.floating-close-btn {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #3f3f46;
+    border: 1px solid #e4e4e7;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    z-index: 100;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-close-btn:hover {
+    background: #ffffff;
+    color: #ef4444;
+    border-color: #fca5a5;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 12px 32px rgba(239, 68, 68, 0.25);
+}
+
+.new-microsite-modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-right: 18px;
+    padding-left: 18px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22);
+    transform: translateY(20px) scale(0.98);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE & Edge */
+}
+
+.new-microsite-modal-card::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.new-microsite-modal-overlay.active .new-microsite-modal-card {
+    transform: translateY(0) scale(1);
+}
+
+.new-microsite-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f4f4f5;
+}
+
+.new-microsite-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #18181b;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.01em;
+}
+
+.new-microsite-modal-subtitle {
+    font-size: 13.5px;
+    color: #71717a;
+    margin: 0;
+}
+
+.wizard-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* STEP DOTS INDICATOR (EXACT REFERENCE IMAGE MATCH) */
+.wizard-step-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    padding: 0;
+}
+
+.step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a1a1aa;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step-dot.active {
+    width: 32px;
+    height: 8px;
+    border-radius: 10px;
+    background: #18181b;
+}
+
+/* VERTICAL LIST & CARDS DESIGN (STREAMLINED DESKTOP FIT) */
+.purpose-vertical-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.image-style-option-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 11px 18px;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: none;
+}
+
+.image-style-option-card:hover {
+    border-color: #e4e4e7;
+    background: #fafafa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.image-style-option-card.active {
+    border-color: #ED842C;
+    background: #fff8f3;
+    box-shadow: 0 6px 20px rgba(237, 132, 44, 0.14);
+}
+
+/* LEFT GRAPHIC THUMBNAIL BOX (COMPACT DESKTOP) */
+.option-thumb-box {
+    width: 105px;
+    height: 68px;
+    border-radius: 12px;
+    background: #f4f5f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.thumb-ui-mockup {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+/* MOCKUP ILLUSTRATIONS */
+.portfolio-mockup {
+    background: #ffffff;
+    border-radius: 10px;
+    width: 90%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mock-avatar-circle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #dbeafe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mock-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.mock-line-title {
+    width: 75%;
+    height: 5px;
+    background: #18181b;
+    border-radius: 3px;
+}
+
+.mock-line-sub {
+    width: 45%;
+    height: 3px;
+    background: #a1a1aa;
+    border-radius: 3px;
+}
+
+.store-mockup .mock-store-card {
+    background: #ffffff;
+    padding: 6px 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mock-store-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: #ffedd5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mock-store-badge {
+    font-size: 8.5px;
+    font-weight: 800;
+    background: #ea580c;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 5px;
+    letter-spacing: 0.04em;
+}
+
+.affiliate-mockup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 90%;
+}
+
+.mock-link-pill {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #059669;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.mock-link-pill.sub {
+    color: #2563eb;
+    margin-left: 6px;
+}
+
+.custom-mockup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 80%;
+}
+
+.mock-layer-box {
+    height: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.mock-layer-box.top {
+    width: 100%;
+    background: #ddd6fe;
+}
+
+.mock-layer-box.mid {
+    width: 80%;
+    background: #ffffff;
+}
+
+.mock-layer-box.bot {
+    width: 60%;
+    background: #ffffff;
+}
+
+/* TEXT INFO AREA */
+.option-text-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.option-main-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #18181b;
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+    display: block;
+}
+
+.option-sub-desc {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: #71717a;
+    line-height: 1.4;
+    display: block;
+}
+
+.option-chevron-arrow {
+    font-size: 13px;
+    color: #a1a1aa;
+    margin-left: auto;
+    align-self: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.image-style-option-card:hover .option-chevron-arrow,
+.image-style-option-card.active .option-chevron-arrow {
+    color: #ED842C;
+    transform: translateX(3px);
+}
+
+.field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #27272a;
+    margin-bottom: 8px;
+}
+
+.form-control-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e4e4e7;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #18181b;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-control-input:focus {
+    outline: none;
+    border-color: #ED842C;
+    box-shadow: 0 0 0 4px rgba(237, 132, 44, 0.15);
+}
+
+.wizard-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #f4f4f5;
+}
+
+.dashboard-mylinkan-page .btn-action-primary:disabled {
+    background: #e5e7eb !important;
+    color: #9ca3af !important;
+    border: 1px solid #d1d5db !important;
+    cursor: not-allowed !important;
+    opacity: 0.75;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.option-mobile-icon-badge {
+    display: none;
+}
+
+/* MOBILE RESPONSIVE CREATION WIZARD MODAL (FULL SCREEN PAGE VIEW) */
+@media (max-width: 768px) {
+    .new-microsite-modal-overlay {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .new-microsite-modal-wrapper {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* HIDE FLOATING CLOSE BUTTON ON MOBILE */
+    .floating-close-btn {
+        display: none !important;
+    }
+
+    /* FULL SCREEN PAGE VIEW ON MOBILE (VERTICALLY CENTERED CONTENT) */
+    .new-microsite-modal-card {
+        width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        padding: 24px 20px !important;
+        box-shadow: none !important;
+        box-sizing: border-box;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+
+    .new-microsite-modal-header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+    }
+
+    .new-microsite-modal-title {
+        font-size: 19px;
+    }
+
+    .new-microsite-modal-subtitle {
+        font-size: 13px;
+    }
+
+    .purpose-vertical-list {
+        gap: 12px;
+    }
+
+    .image-style-option-card {
+        padding: 14px 16px;
+        gap: 14px;
+        border-radius: 16px;
+    }
+
+    /* HIDE LARGE MOCKUPS ON MOBILE, SHOW COMPACT ICON BADGE */
+    .thumb-ui-mockup {
+        display: none !important;
+    }
+
+    .option-thumb-box {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 12px;
+        background: transparent !important;
+        flex-shrink: 0;
+    }
+
+    .option-mobile-icon-badge {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+    }
+
+    .option-main-title {
+        font-size: 15px;
+        margin-bottom: 2px;
+    }
+
+    .option-sub-desc {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .option-chevron-arrow {
+        margin-bottom: 0 !important;
+        font-size: 12px;
+    }
+
+    .wizard-modal-footer {
+        margin-top: 28px;
+        padding-top: 20px;
+    }
 }

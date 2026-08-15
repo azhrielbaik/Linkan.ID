@@ -42,6 +42,40 @@ class AdminController extends Controller
         ));
     }
 
+    public function storeMicrosite(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'purpose' => 'required|string|in:portofolio,marketing,affiliate,lainnya',
+            'bio' => 'nullable|string|max:1000',
+        ]);
+
+        $themeColors = [
+            'portofolio' => '#2563EB',
+            'marketing'  => '#FF9040',
+            'affiliate'  => '#059669',
+            'lainnya'    => '#7C3AED',
+        ];
+
+        $themeColor = $themeColors[$request->purpose] ?? '#FF9040';
+
+        $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
+        if (!$appearance) {
+            $appearance = new \App\Models\Appearance();
+            $appearance->user_id = $user->id;
+        }
+
+        $appearance->name = $request->name;
+        $appearance->bio = $request->bio;
+        $appearance->theme_color = $themeColor;
+        $appearance->save();
+
+        return redirect()->route('admin.mylinkan', ['mode' => 'edit'])
+            ->with('success', 'Microsite baru "' . $request->name . '" berhasil dibuat! Silakan kustomisasi blok & konten Anda.');
+    }
+
     public function myPurchase()
     {
         $user = auth()->user();

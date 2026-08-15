@@ -58,8 +58,8 @@
     <div class="marketing-tools">
         <form action="{{ route('logout') }}" method="POST" style="display: flex; align-items: center;">
             @csrf
-            <button type="submit" style="background: none; border: none; padding: 10px; margin: 0; display: flex; align-items: center; color: #1a1a1a; cursor: pointer; width: 100%; transition: 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#d1d9ff'" onmouseout="this.style.backgroundColor='transparent'">
-                <img src="{{ asset('images/logout.png') }}" alt="Logout" style="width: 20px; height: 20px; margin-right: 10px;">
+            <button type="submit" style="background: none; border: none; padding: 10px; margin: 0; display: flex; align-items: center; color: #e53935; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='transparent'">
+                <i class="fas fa-sign-out-alt" style="margin-right: 10px; width: 20px; font-size: 18px; color: #e53935;"></i>
                 {{ __('admin.logout') }}
             </button>
         </form>

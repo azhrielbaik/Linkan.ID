@@ -95,6 +95,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
     // My Linkan (microsite builder)
     Route::get('/mylinkan', [AdminController::class, 'myLinkan'])->name('mylinkan');
+    Route::post('/microsite/create', [AdminController::class, 'storeMicrosite'])->name('microsite.store');
 
     // Appearance
     Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');

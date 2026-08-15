@@ -218,16 +218,17 @@
         margin: 0;
         display: flex;
         align-items: center;
-        color: #1a1a1a;
+        color: #e53935;
         cursor: pointer;
         border-radius: 8px;
         transition: all 0.3s ease;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 15px;
     }
 
     .sidebar .marketing-tools form button:hover {
-        background-color: #f0f0f0;
+        background-color: #ffebee;
+        color: #d32f2f;
     }
     
     .sidebar .marketing-tools form button i {
@@ -235,7 +236,12 @@
         font-size: 18px;
         text-align: center;
         margin-right: 14px;
-        color: #1a1a1a;
+        color: #e53935;
+        transition: color 0.3s ease;
+    }
+
+    .sidebar .marketing-tools form button:hover i {
+        color: #d32f2f;
     }
     
     /* Close button for mobile */
