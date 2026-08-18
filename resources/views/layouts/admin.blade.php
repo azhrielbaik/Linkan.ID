@@ -276,6 +276,11 @@
     </style>
 </head>
 <body>
+    <script>
+        if(localStorage.getItem('sidebar-mini') === 'true') {
+            document.body.classList.add('mini-sidebar');
+        }
+    </script>
     <div class="container">
         @include('homeadminS.sidebar.sidebar')
 
@@ -345,11 +350,7 @@
             localStorage.setItem('sidebar-mini', isMini ? 'true' : 'false');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if(localStorage.getItem('sidebar-mini') === 'true') {
-                document.body.classList.add('mini-sidebar');
-            }
-        });
+
 
         function toggleProfileDropdown() {
             const dropdown = document.getElementById('profileDropdown');
