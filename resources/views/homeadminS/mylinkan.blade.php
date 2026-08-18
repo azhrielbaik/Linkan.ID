@@ -180,54 +180,26 @@
                                 
                                 <!-- Element Option 1: Profile Block -->
                                 <div class="element-option-card card-profile" onclick="addProfileElement()">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div class="option-icon-box" style="background: #FFF7ED; color: #FF9040;">
-                                            <i class="fas fa-user-circle"></i>
-                                        </div>
-                                        <span style="font-weight: 700; font-size: 13px; color: #1f2937;">Profil</span>
-                                    </div>
-                                    <div class="option-plus-btn" style="background: #FFF7ED; color: #FF9040;">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Profil</div>
+                                    <div style="font-size: 13px; color: #6b7280;">Identitas & Foto</div>
                                 </div>
 
                                 <!-- Element Option 2: Digital Product Block -->
                                 <div class="element-option-card card-product">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div class="option-icon-box" style="background: #FFEDD5; color: #ea580c;">
-                                            <i class="fas fa-box-open"></i>
-                                        </div>
-                                        <span style="font-weight: 700; font-size: 13px; color: #1f2937;">Produk Digital</span>
-                                    </div>
-                                    <div class="option-plus-btn" style="background: #FFEDD5; color: #ea580c;">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Produk Digital</div>
+                                    <div style="font-size: 13px; color: #6b7280;">Jual file/kursus</div>
                                 </div>
 
                                 <!-- Element Option 3: Shortlink / Custom Link -->
                                 <div class="element-option-card card-link">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div class="option-icon-box" style="background: #EFF6FF; color: #2563eb;">
-                                            <i class="fas fa-link"></i>
-                                        </div>
-                                        <span style="font-weight: 700; font-size: 13px; color: #1f2937;">Tautan Kustom</span>
-                                    </div>
-                                    <div class="option-plus-btn" style="background: #EFF6FF; color: #2563eb;">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Tautan Kustom</div>
+                                    <div style="font-size: 13px; color: #6b7280;">Link eksternal</div>
                                 </div>
 
                                 <!-- Element Option 4: Social Icons -->
                                 <div class="element-option-card card-social">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div class="option-icon-box" style="background: #ECFDF5; color: #059669;">
-                                            <i class="fas fa-share-alt"></i>
-                                        </div>
-                                        <span style="font-weight: 700; font-size: 13px; color: #1f2937;">Sosial Media</span>
-                                    </div>
-                                    <div class="option-plus-btn" style="background: #ECFDF5; color: #059669;">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Sosial Media</div>
+                                    <div style="font-size: 13px; color: #6b7280;">Hubungkan akun</div>
                                 </div>
 
                             </div>
@@ -239,7 +211,7 @@
                 <div id="digitalProductsSection" style="margin-bottom: 30px; transition: opacity 0.25s ease, transform 0.25s ease;">
                     
                     <!-- EDIT ELEMENT HEADER -->
-                    <div id="elementSectionHeader" class="edit-element-header">
+                    <div id="elementSectionHeader" class="edit-element-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-layer-group" style="color: #FF9040;"></i> Edit Element
                         </h3>
@@ -346,11 +318,12 @@
                                             <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Nama Profil</label>
                                             <div style="border: 1px solid #d1d5db; border-radius: 10px; background: #ffffff; overflow: hidden;">
                                                 <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                                    <button type="button" onclick="formatProfileName('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" onclick="formatProfileName('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
                                                     <span style="font-size: 10px; color: #9ca3af; margin-left: auto;">Editor Nama</span>
                                                 </div>
-                                                <input type="text" name="name" id="inputProfileName" style="width: 100%; border: none; padding: 10px 12px; font-size: 13px; font-weight: 600; outline: none;" value="{{ old('name', $appearance->name ?? Auth::user()->name) }}" onkeyup="updateLiveProfileName(this.value)" placeholder="Masukkan nama profil Anda...">
+                                                <div id="editorProfileName" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 13px; font-weight: 600; outline: none; min-height: 20px; word-wrap: break-word;" placeholder="Masukkan nama profil Anda..." onkeyup="syncProfileName(); updateLiveProfileName(this.innerHTML)">{!! old('name', $appearance->name ?? Auth::user()->name) !!}</div>
+                                                <input type="hidden" name="name" id="inputProfileName" value="{{ old('name', $appearance->name ?? Auth::user()->name) }}">
                                             </div>
                                         </div>
 
@@ -359,12 +332,13 @@
                                             <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Deskripsi / Bio Profil</label>
                                             <div style="border: 1px solid #d1d5db; border-radius: 10px; background: #ffffff; overflow: hidden;">
                                                 <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                                    <button type="button" onclick="formatProfileBio('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" onclick="formatProfileBio('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
-                                                    <button type="button" onclick="formatProfileBio('underline')" style="background: none; border: none; font-size: 12px; text-decoration: underline; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('underline')" style="background: none; border: none; font-size: 12px; text-decoration: underline; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
                                                     <span style="font-size: 10px; color: #9ca3af; margin-left: auto;">Editor Bio</span>
                                                 </div>
-                                                <textarea name="bio" id="inputProfileBio" rows="3" style="width: 100%; border: none; padding: 10px 12px; font-size: 12px; outline: none; resize: vertical;" onkeyup="updateLiveProfileBio(this.value)" placeholder="Tulis deskripsi singkat profil Anda...">{{ old('bio', $appearance->bio ?? '') }}</textarea>
+                                                <div id="editorProfileBio" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 12px; outline: none; min-height: 55px; word-wrap: break-word;" placeholder="Tulis deskripsi singkat profil Anda..." onkeyup="syncProfileBio(); updateLiveProfileBio(this.innerHTML)">{!! old('bio', $appearance->bio ?? '') !!}</div>
+                                                <input type="hidden" name="bio" id="inputProfileBio" value="{{ old('bio', $appearance->bio ?? '') }}">
                                             </div>
                                         </div>
 
@@ -393,7 +367,7 @@
                 </div>
 
                 <!-- SIDE-BY-SIDE FLEX CONTAINER: PHONE MOCKUP (LEFT) + VERTICAL URL BAR (RIGHT) -->
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
+                <div class="phone-preview-flex-container" style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
                     
                     <!-- DAISYUI PHONE MOCKUP FRAME (LEFT) -->
                     <div class="mockup-phone border-[#ff8938]">
@@ -1008,7 +982,7 @@
 
     function updateLiveProfileName(val) {
         const liveName = document.getElementById('livePhoneName');
-        if (liveName) liveName.innerText = val || '{{ Auth::user()->name }}';
+        if (liveName) liveName.innerHTML = val || '{{ Auth::user()->name }}';
     }
 
     function updateLiveProfileBio(val) {
@@ -1016,30 +990,29 @@
         if (liveBio) liveBio.innerHTML = val;
     }
 
-    function formatProfileName(command) {
-        const input = document.getElementById('inputProfileName');
-        if (!input) return;
-        let val = input.value;
-        if (command === 'bold') {
-            input.value = '**' + val + '**';
-        } else if (command === 'italic') {
-            input.value = '*' + val + '*';
-        }
-        updateLiveProfileName(input.value);
+    function formatText(command) {
+        document.execCommand(command, false, null);
+        
+        syncProfileName();
+        syncProfileBio();
+        
+        const nameEditor = document.getElementById('editorProfileName');
+        if(nameEditor) updateLiveProfileName(nameEditor.innerHTML);
+        
+        const bioEditor = document.getElementById('editorProfileBio');
+        if(bioEditor) updateLiveProfileBio(bioEditor.innerHTML);
     }
 
-    function formatProfileBio(command) {
-        const textarea = document.getElementById('inputProfileBio');
-        if (!textarea) return;
-        let val = textarea.value;
-        if (command === 'bold') {
-            textarea.value = val + ' <b>Teks Tebal</b>';
-        } else if (command === 'italic') {
-            textarea.value = val + ' <i>Teks Miring</i>';
-        } else if (command === 'underline') {
-            textarea.value = val + ' <u>Garis Bawah</u>';
-        }
-        updateLiveProfileBio(textarea.value);
+    function syncProfileName() {
+        const editor = document.getElementById('editorProfileName');
+        const input = document.getElementById('inputProfileName');
+        if (editor && input) input.value = editor.innerHTML;
+    }
+
+    function syncProfileBio() {
+        const editor = document.getElementById('editorProfileBio');
+        const input = document.getElementById('inputProfileBio');
+        if (editor && input) input.value = editor.innerHTML;
     }
 
     // DRAG AND DROP REORDERING SYSTEM FOR MICROSITE ELEMENTS

@@ -267,7 +267,7 @@
     
     <div class="sidebar-inner-scroll">
     <div class="logo-container" style="justify-content: space-between; width: 100%; align-items: center;">
-        <img src="{{ asset('images/Logo.png') }}" alt="Logo" class="logo" style="width: 100px; height: auto;">
+        <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo" style="width: 90px; height: auto;">
         
         <div style="display: flex; align-items: center; gap: 8px;">
             <div class="lang-toggle" style="padding: 2px;">

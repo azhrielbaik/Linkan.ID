@@ -414,7 +414,7 @@
     <header class="navbar-wrapper">
         <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
                 <a href="{{ route('pricing') }}" class="nav-link active">{{ __('layout.pricing') }}</a>
@@ -528,7 +528,7 @@
     <footer class="footer-wrapper">
         <div class="footer-pill">
             <a href="{{ url('/') }}" class="footer-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="footer-links">
                 <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>

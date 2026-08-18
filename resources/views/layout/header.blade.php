@@ -220,7 +220,7 @@
 <nav class="navbar">
     <div class="logo">
         <a href="{{ url('/') }}">
-            <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" id="logo"> 
+            <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" id="logo"> 
         </a>
     </div>
     <div class="burger" id="burgerMenu">

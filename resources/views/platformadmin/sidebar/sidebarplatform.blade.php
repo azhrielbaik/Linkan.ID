@@ -46,7 +46,7 @@
 
 </style>
 <div class="sidebar">
-    <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo">
+    <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" class="logo">
     <a href="{{ route('platform-admin.dashboard') }}" class="{{ request()->routeIs('platform-admin.dashboard') ? 'active' : '' }}">
         <i class="fas fa-home"></i>{{ __('admin.home') }}
     </a>

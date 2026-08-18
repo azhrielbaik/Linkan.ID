@@ -129,7 +129,7 @@
         }
 
         .logo-img {
-            height: 45px;
+            height: 30px;
             width: auto;
             transition: height 0.3s ease;
         }
@@ -1252,7 +1252,7 @@
     <header class="navbar-wrapper" id="navbarWrapper">
         <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" class="logo-img">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" class="logo-img">
             </a>
                         <div class="nav-links">
                 <div class="lang-toggle-pill">
@@ -1554,7 +1554,7 @@
         <div class="footer-content">
             <div class="footer-left">
                 <div class="footer-logo">
-                    <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo" style="height: 45px; width: auto;">
+                    <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" style="height: 45px; width: auto;">
                 </div>
                 <div class="footer-copyright">
                     {{ __('public.footer_copyright') }}
