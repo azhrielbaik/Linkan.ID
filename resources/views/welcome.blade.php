@@ -682,7 +682,10 @@
             height: auto;
             display: block;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
-            transform: translateX(-20px); /* Geser gambar ke kiri tanpa mengubah posisi tag */
+            transform: translateX(-20px) translateZ(0);
+            will-change: transform, opacity;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .floating-tag {
@@ -696,6 +699,10 @@
             border-radius: 50px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
             white-space: nowrap;
+            will-change: transform, opacity;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
         }
 
         @keyframes float-tag-1 {
@@ -1304,7 +1311,7 @@
                 </form>
             </div>
             <div class="hero-image-wrapper">
-                <img src="{{ asset('images/landing page/pria_laptop.svg') }}" alt="Powering Creators Economy" class="hero-img">
+                <img src="{{ asset('images/landing page/pria_laptop.webp') }}" alt="Powering Creators Economy" class="hero-img">
             </div>
         </div>
     </section>
@@ -1336,7 +1343,7 @@
                 <a href="{{ route('service') }}" class="btn-service">{{ __('public.btn_service') }}</a>
             </div>
             <div class="marketing-image-wrapper">
-                <img src="{{ asset('images/landing page/handphone_besar.svg') }}" alt="Digital Marketing" class="marketing-img">
+                <img src="{{ asset('images/landing page/handphone_besar.webp') }}" alt="Digital Marketing" class="marketing-img">
             </div>
         </div>
     </section>
@@ -1532,7 +1539,7 @@
     <!-- CREATOR SHOWCASE SECTION -->
     <section class="creator-showcase-section reveal">
         <div class="showcase-container">
-            <img src="{{ asset('images/landing page/wanita_laptop.svg') }}" alt="Linkan Creator Showcase" class="showcase-img">
+            <img src="{{ asset('images/landing page/wanita_laptop.webp') }}" alt="Linkan Creator Showcase" class="showcase-img" loading="lazy">
             
             <div class="floating-tag anime-tag tag-1">{{ __('public.creator_tag_1') }}</div>
             <div class="floating-tag anime-tag tag-2">{{ __('public.creator_tag_2') }}</div>
@@ -1828,23 +1835,28 @@
                 window.addEventListener('showcase-revealed', () => {
                     const tags = document.querySelectorAll('.anime-tag');
                     if (tags.length > 0) {
+                        const isMobile = window.innerWidth <= 768;
+                        const duration = isMobile ? 700 : 900;
+                        const ease = isMobile ? 'outCubic' : 'outBack(1.2)';
+                        const stag = isMobile ? 80 : 120;
+
                         createTimeline()
                         .add(tags, {
                             opacity: [0, 1],
-                            scale: [0, 1],
-                            x: (el) => [parseFloat(el.dataset.dx || 0), 0],
-                            y: (el) => [parseFloat(el.dataset.dy || 0), 0],
-                            duration: 1200,
-                            ease: 'outElastic(1, .8)'
-                        }, stagger(150));
+                            scale: [0.6, 1],
+                            x: (el) => isMobile ? [0, 0] : [parseFloat(el.dataset.dx || 0), 0],
+                            y: (el) => isMobile ? [20, 0] : [parseFloat(el.dataset.dy || 0), 0],
+                            duration: duration,
+                            ease: ease
+                        }, stagger(stag));
 
-                        // Add active class after animation so hover works
+                        // Add active class after animation so hover/floating works smoothly
                         setTimeout(() => {
                             tags.forEach(tag => {
                                 tag.style.transform = '';
                                 tag.classList.add('active');
                             });
-                        }, 1500);
+                        }, duration + (tags.length * stag));
                     }
                 });
             });

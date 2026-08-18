@@ -19,7 +19,7 @@
                     <div class="url-section card">
                         <div class="url-input-group">
                             <input type="text" class="url-input" value="My Linkan: {{ url('linkan.id/' . Auth::user()->username) }}" readonly>
-                            <button class="share-button" onclick="copyToClipboard('http://localhost:8000/linkan.id/{{ Auth::user()->username }}')">
+                            <button class="share-button" type="button" onclick="copyToClipboard('{{ route('track.view', ['username' => Auth::user()->username]) }}')">
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>

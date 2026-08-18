@@ -22,26 +22,25 @@ class AppearanceController extends Controller
     {
         $user = Auth::user();
 
-      $request->validate([
-    'name' => 'required|string|max:255',
-    'bio' => 'nullable|string|max:500',
-    'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    'theme_color' => 'required|string|max:7',
-    'background_color' => 'nullable|string',
-    'instagram' => 'nullable|url|max:255',
-    'tiktok' => 'nullable|url|max:255',
-    'whatsapp' => 'nullable|url|max:255',
-    'linkedin' => 'nullable|url|max:255',
-    'facebook' => 'nullable|url|max:255',
-    'website' => 'nullable|url|max:255',
-    'twitter' => 'nullable|url|max:255',
-    'youtube' => 'nullable|url|max:255',
-    'telegram' => 'nullable|url|max:255',
-    'email' => 'nullable|email|max:255',
-    'discord' => 'nullable|url|max:255',
-]);
-
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'bio' => 'nullable|string|max:500',
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'theme_color' => 'nullable|string|max:7',
+            'background_color' => 'nullable|string',
+            'instagram' => 'nullable|url|max:255',
+            'tiktok' => 'nullable|url|max:255',
+            'whatsapp' => 'nullable|url|max:255',
+            'linkedin' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'website' => 'nullable|url|max:255',
+            'twitter' => 'nullable|url|max:255',
+            'youtube' => 'nullable|url|max:255',
+            'telegram' => 'nullable|url|max:255',
+            'email' => 'nullable|email|max:255',
+            'discord' => 'nullable|url|max:255',
+        ]);
 
         // Cari atau buat record appearance
         $appearance = Appearance::where('user_id', $user->id)->first();
@@ -49,32 +48,35 @@ class AppearanceController extends Controller
             $appearance = new Appearance();
             $appearance->user_id = $user->id;
         }
-          // Cek jika ada request untuk menghapus banner
-if ($request->input('delete_banner') == 1) {
-    if ($appearance && $appearance->banner) {
-        Storage::delete($appearance->banner);
-        $appearance->banner = null;
-    }
-}
 
+        // Cek jika ada request untuk menghapus banner
+        if ($request->input('delete_banner') == 1) {
+            if ($appearance && $appearance->banner) {
+                Storage::delete('public/' . $appearance->banner);
+                $appearance->banner = null;
+            }
+        }
 
-if ($request->has('delete_profile_image') && $request->delete_profile_image == 1) {
-    // Hapus file lama
-    if ($appearance->profile_image && Storage::exists('public/' . $appearance->profile_image)) {
-        Storage::delete('public/' . $appearance->profile_image);
-    }
-
-    // Setel jadi null (atau default jika pakai path khusus)
-    $appearance->profile_image = null;
-}
-
-
+        if ($request->has('delete_profile_image') && $request->delete_profile_image == 1) {
+            if ($appearance->profile_image && Storage::exists('public/' . $appearance->profile_image)) {
+                Storage::delete('public/' . $appearance->profile_image);
+            }
+            $appearance->profile_image = null;
+        }
 
         // Update data
         $appearance->name = $request->name;
         $appearance->bio = $request->bio;
-        $appearance->theme_color = $request->theme_color;
-        $appearance->background_color = $request->background_color ?? '#FFFFFF';
+        if ($request->filled('theme_color')) {
+            $appearance->theme_color = $request->theme_color;
+        } elseif (!$appearance->theme_color) {
+            $appearance->theme_color = '#FF9040';
+        }
+        if ($request->filled('background_color')) {
+            $appearance->background_color = $request->background_color;
+        } elseif (!$appearance->background_color) {
+            $appearance->background_color = '#FFFFFF';
+        }
         $appearance->instagram = $request->instagram;
         $appearance->tiktok = $request->tiktok;
         $appearance->whatsapp = $request->whatsapp;
@@ -108,6 +110,14 @@ $appearance->discord = $request->discord;
         }
 
         $appearance->save();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profil berhasil diperbarui!',
+                'appearance' => $appearance
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Appearance updated successfully!');
     }

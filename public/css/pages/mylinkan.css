@@ -622,6 +622,114 @@ body,
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+/* ADD ELEMENT SECTION */
+.add-element-wrapper {
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.btn-add-element {
+    width: 100%;
+    background: #FF9040;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 144, 64, 0.2);
+}
+
+.btn-add-element:hover {
+    background: #e57c2e;
+    box-shadow: 0 6px 16px rgba(255, 144, 64, 0.3);
+    transform: translateY(-2px);
+}
+
+.add-element-panel {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
+}
+
+.add-element-panel-inner {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.add-element-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.add-element-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.element-option-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.element-option-card:hover {
+    border-color: #FF9040;
+    box-shadow: 0 4px 12px rgba(255, 144, 64, 0.1);
+    transform: translateY(-2px);
+}
+
+.option-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.option-plus-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.2s ease;
+}
+
+.element-option-card:hover .option-plus-btn {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 /* NEW MICROSITE CREATION MODAL & MULTI-STEP WIZARD STYLES */
 .new-microsite-modal-overlay {
     position: fixed;
@@ -1144,4 +1252,86 @@ body,
         margin-top: 28px;
         padding-top: 20px;
     }
+}
+
+/* DAISYUI PHONE MOCKUP */
+.mockup-phone {
+    display: inline-block;
+    border: 4px solid #444;
+    border-radius: 50px;
+    background-color: #000;
+    padding: 10px;
+    margin: 0 auto;
+    position: relative;
+}
+.mockup-phone .mockup-phone-camera {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 150px;
+    height: 25px;
+    background-color: #000;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 11;
+}
+.mockup-phone .mockup-phone-display {
+    overflow: hidden;
+    border-radius: 40px;
+    background-color: #fff;
+    position: relative;
+    width: 280px;
+    height: 580px;
+    display: flex;
+    flex-direction: column;
+}
+.mockup-phone.border-\[\#ff8938\] {
+    border-color: #ff8938;
+}
+
+/* VERTICAL BROWSER URL PILL */
+.preview-url-browser-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 50px;
+    padding: 12px 8px;
+    gap: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    flex-shrink: 0;
+    height: 400px;
+}
+
+/* DRAGGABLE BLOCKS & EDIT FORMS */
+.draggable-element-block {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.draggable-element-block .block-item-card {
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+}
+
+.profile-edit-form-body {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    background: #fafbfc;
+    border-top: 1px solid #f3f4f6;
+    margin-top: 0;
+}
+
+.profile-edit-form-body.open {
+    overflow: visible;
 }
