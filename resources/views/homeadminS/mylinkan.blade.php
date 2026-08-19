@@ -210,133 +210,133 @@
                     <div id="elementBlocksList" style="display: flex; flex-direction: column; gap: 10px;">
                         
                         <!-- 1. PROFILE BLOCK CARD (DRAGGABLE, VISIBLE BY DEFAULT IN EDIT MODE) -->
-                        <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile" style="display: block; transition: all 0.25s ease;">
+                        <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile" class="draggable-element-block-inner">
                             
                             <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
-                                <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                 <div style="width: 36px; height: 36px; border-radius: 8px; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
+                                <div class="block-item-content">
+                                    <div class="block-item-title-wrapper">
                                         <span>Profil</span>
                                         <span style="font-size: 10px; font-weight: 700; background: #FF9040; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
                                     </div>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                <div class="block-item-actions" onclick="event.stopPropagation()">
                                     <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
-                                        <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="profileEditBtnText">Edit</span>
+                                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="profileEditBtnText">Edit</span>
                                     </button>
                                 </div>
                             </div>
 
                         <!-- EXPANDABLE EDIT FORM BODY (SLIDES DOWN WHEN EDIT CLICKED) -->
                         <div id="profileEditFormBody" class="profile-edit-form-body">
-                            <div style="padding: 20px;">
+                            <div class="profile-form-padding">
                                 <form action="{{ route('admin.appearance.update') }}" method="POST" enctype="multipart/form-data" id="profileBlockForm">
                                     @csrf
                                     <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#FF9040' }}">
                                     <input type="hidden" name="background_color" value="{{ $appearance->background_color ?? '#FFFFFF' }}">
                                     
-                                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                                        <div style="font-size: 14px; font-weight: 700; color: #111827; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                                    <div class="profile-form-group">
+                                        <div class="profile-form-header">
                                             Pengaturan Data Profil
                                         </div>
 
                                         <!-- 1. GAMBAR SAMPUL (COVER BANNER) -->
                                         <div>
-                                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Gambar Sampul (Banner)</label>
-                                            <div class="upload-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                                <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewProfileBanner(this)">
+                                            <label class="profile-form-label">Gambar Sampul (Banner)</label>
+                                            <div class="upload-dropzone banner-dropzone">
+                                                <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input" onchange="previewProfileBanner(this)">
                                                 
-                                                <div id="bannerPreviewPlaceholder" style="display: {{ ($appearance && $appearance->banner) ? 'none' : 'flex' }}; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #FF9040; transition: all 0.3s ease;"></i>
-                                                    <div style="font-size: 13px; font-weight: 600; color: #374151;">
-                                                        Drop your images here or <span style="color: #FF9040;">browse</span>
+                                                <div id="bannerPreviewPlaceholder" class="banner-placeholder" style="display: {{ ($appearance && $appearance->banner) ? 'none' : 'flex' }};">
+                                                    <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
+                                                    <div class="dropzone-text-primary">
+                                                        Drop your images here or <span class="dropzone-browse-text">browse</span>
                                                     </div>
-                                                    <div style="font-size: 10px; color: #9ca3af;">supports JPG, JPEG, PNG & GIF</div>
+                                                    <div class="dropzone-text-secondary">supports JPG, JPEG, PNG & GIF</div>
                                                 </div>
 
-                                                <div id="bannerPreviewContainer" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }}; width: 100%; aspect-ratio: 3 / 1; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
+                                                <div id="bannerPreviewContainer" class="banner-preview-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
                                                     @if($appearance && $appearance->banner)
-                                                        <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                                        <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" class="live-phone-banner-img">
                                                     @else
-                                                        <img src="" id="bannerPreviewImg" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                                        <img src="" id="bannerPreviewImg" class="banner-preview-img" style="display: none;">
                                                     @endif
                                                 </div>
                                                 
-                                                <div id="bannerSizeError" style="display: none; width: 100%; margin-top: 12px; background: #FEE2E2; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5;">
-                                                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal gambar sampul adalah 2MB!
+                                                <div id="bannerSizeError" class="dropzone-error-msg" style="display: none;">
+                                                    <i class="fas fa-exclamation-circle error-icon"></i> Gagal: Ukuran maksimal gambar sampul adalah 2MB!
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- 2. FOTO PROFILE -->
                                         <div>
-                                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Foto Profil</label>
-                                            <div class="upload-dropzone" style="display: flex; flex-direction: column; padding: 12px 16px;">
-                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewProfileAvatar(this)">
+                                            <label class="profile-form-label">Foto Profil</label>
+                                            <div class="upload-dropzone avatar-dropzone">
+                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input" onchange="previewProfileAvatar(this)">
                                                 
-                                                <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
-                                                    <div id="avatarPreviewContainer" style="width: 56px; height: 56px; border-radius: 50%; background: #ffffff; overflow: hidden; border: 2px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 1;">
+                                                <div class="avatar-dropzone-inner">
+                                                    <div id="avatarPreviewContainer" class="avatar-preview-container">
                                                         @if($appearance && $appearance->profile_image)
-                                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" class="live-phone-banner-img">
                                                         @else
-                                                            <i class="fas fa-user" id="avatarPreviewPlaceholder" style="color: #9ca3af; font-size: 20px;"></i>
-                                                            <img src="" id="avatarPreviewImg" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                                            <i class="fas fa-user" id="avatarPreviewPlaceholder" class="avatar-placeholder-icon"></i>
+                                                            <img src="" id="avatarPreviewImg" class="banner-preview-img" style="display: none;">
                                                         @endif
                                                     </div>
                                                     
-                                                    <div style="flex: 1; z-index: 1; text-align: left;">
-                                                        <div style="font-size: 13px; font-weight: 600; color: #374151;">Upload Foto Profil</div>
-                                                        <div style="font-size: 11px; color: #6b7280; margin-top: 2px;">Seret gambar ke sini atau <span style="color: #FF9040; font-weight: 600;">browse</span></div>
+                                                    <div class="avatar-dropzone-text">
+                                                        <div class="dropzone-text-primary">Upload Foto Profil</div>
+                                                        <div class="dropzone-text-secondary">Seret gambar ke sini atau <span class="dropzone-browse-text dropzone-browse-bold">browse</span></div>
                                                     </div>
                                                     
-                                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,144,64,0.1); display: flex; align-items: center; justify-content: center; z-index: 1;">
-                                                        <i class="fas fa-cloud-upload-alt" style="color: #FF9040; font-size: 14px; transition: all 0.3s ease;"></i>
+                                                    <div class="avatar-dropzone-action">
+                                                        <i class="fas fa-cloud-upload-alt dropzone-icon-small"></i>
                                                     </div>
                                                 </div>
 
-                                                <div id="avatarSizeError" style="display: none; width: 100%; margin-top: 10px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 6px 8px; z-index: 5; text-align: center;">
-                                                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal foto profil adalah 2MB!
+                                                <div id="avatarSizeError" class="dropzone-error-msg dropzone-error-sm" style="display: none;">
+                                                    <i class="fas fa-exclamation-circle error-icon"></i> Gagal: Ukuran maksimal foto profil adalah 2MB!
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- 3. BENTUK PROFILE (PROFILE SHAPE) -->
                                         <div>
-                                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Bentuk Foto Profil</label>
-                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                                                <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
+                                            <label class="profile-form-label" style="margin-bottom: 8px;">Bentuk Foto Profil</label>
+                                            <div class="shape-options-grid">
+                                                <label class="shape-option-label">
                                                     <input type="radio" name="profile_shape" value="circle" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'circle' ? 'checked' : '' }} onchange="updateProfileShape('circle')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
-                                                    <span style="font-size: 11px; font-weight: 600; color: #374151;">Lingkaran</span>
+                                                    <div class="shape-preview shape-circle"></div>
+                                                    <span class="shape-option-text">Lingkaran</span>
                                                 </label>
-                                                <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
+                                                <label class="shape-option-label">
                                                     <input type="radio" name="profile_shape" value="rounded" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'rounded' ? 'checked' : '' }} onchange="updateProfileShape('rounded')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
-                                                    <span style="font-size: 11px; font-weight: 600; color: #374151;">Rounded</span>
+                                                    <div class="shape-preview shape-rounded"></div>
+                                                    <span class="shape-option-text">Rounded</span>
                                                 </label>
-                                                <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
+                                                <label class="shape-option-label">
                                                     <input type="radio" name="profile_shape" value="square" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'square' ? 'checked' : '' }} onchange="updateProfileShape('square')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 0px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
-                                                    <span style="font-size: 11px; font-weight: 600; color: #374151;">Persegi</span>
+                                                    <div class="shape-preview shape-square"></div>
+                                                    <span class="shape-option-text">Persegi</span>
                                                 </label>
                                             </div>
                                         </div>
 
                                         <!-- 4. NAMA PROFILE (TEKS EDITOR SEDERHANA) -->
                                         <div>
-                                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Nama Profil</label>
-                                            <div style="border: 1px solid #d1d5db; border-radius: 10px; background: #ffffff; overflow: hidden;">
-                                                <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
+                                            <label class="profile-form-label">Nama Profil</label>
+                                            <div class="text-editor-container">
+                                                <div class="text-editor-toolbar">
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" class="toolbar-btn toolbar-btn-bold" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" class="toolbar-btn toolbar-btn-italic" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
                                                     
-                                                    <div style="height: 16px; width: 1px; background: #d1d5db; margin: 0 4px;"></div>
+                                                    <div class="toolbar-separator"></div>
                                                     
-                                                    <select onchange="formatText('fontName', this.value, 'editorProfileName')" style="border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; color: #4b5563; outline: none; background: #fff; cursor: pointer;" title="Pilih Font">
+                                                    <select onchange="formatText('fontName', this.value, 'editorProfileName')" class="toolbar-select" title="Pilih Font">
                                                         <option value="Plus Jakarta Sans">Jakarta Sans</option>
                                                         <option value="Arial">Arial</option>
                                                         <option value="Times New Roman">Times New Roman</option>
@@ -345,30 +345,30 @@
                                                         <option value="Verdana">Verdana</option>
                                                     </select>
                                                     
-                                                    <label style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #4b5563;" title="Pilih Warna">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna">
                                                         <i class="fas fa-eye-dropper"></i>
-                                                        <input type="color" id="colorPickerProfileName" oninput="formatText('foreColor', this.value, 'editorProfileName')" style="position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none;">
+                                                        <input type="color" id="colorPickerProfileName" oninput="formatText('foreColor', this.value, 'editorProfileName')" class="hidden-color-input">
                                                     </label>
                                                     
                                                     
                                                 </div>
-                                                <div id="editorProfileName" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 13px; font-weight: 600; outline: none; min-height: 20px; word-wrap: break-word;" placeholder="Masukkan nama profil Anda..." onkeyup="syncProfileName(); updateLiveProfileName(this.innerHTML)">{!! old('name', $appearance->name ?? Auth::user()->name) !!}</div>
+                                                <div id="editorProfileName" contenteditable="true" class="text-editor-body editor-name-body" placeholder="Masukkan nama profil Anda..." onkeyup="syncProfileName(); updateLiveProfileName(this.innerHTML)">{!! old('name', $appearance->name ?? Auth::user()->name) !!}</div>
                                                 <input type="hidden" name="name" id="inputProfileName" value="{{ old('name', $appearance->name ?? Auth::user()->name) }}">
                                             </div>
                                         </div>
 
                                         <!-- 5. DESKRIPSI PROFILE (TEKS EDITOR SEDERHANA) -->
                                         <div>
-                                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Deskripsi / Bio Profil</label>
-                                            <div style="border: 1px solid #d1d5db; border-radius: 10px; background: #ffffff; overflow: hidden;">
-                                                <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
-                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('underline')" style="background: none; border: none; font-size: 12px; text-decoration: underline; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
+                                            <label class="profile-form-label">Deskripsi / Bio Profil</label>
+                                            <div class="text-editor-container">
+                                                <div class="text-editor-toolbar">
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" class="toolbar-btn toolbar-btn-bold" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" class="toolbar-btn toolbar-btn-italic" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" onmousedown="event.preventDefault();" onclick="formatText('underline')" class="toolbar-btn toolbar-btn-underline" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
                                                     
-                                                    <div style="height: 16px; width: 1px; background: #d1d5db; margin: 0 4px;"></div>
+                                                    <div class="toolbar-separator"></div>
                                                     
-                                                    <select onchange="formatText('fontName', this.value, 'editorProfileBio')" style="border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; color: #4b5563; outline: none; background: #fff; cursor: pointer;" title="Pilih Font">
+                                                    <select onchange="formatText('fontName', this.value, 'editorProfileBio')" class="toolbar-select" title="Pilih Font">
                                                         <option value="Plus Jakarta Sans">Jakarta Sans</option>
                                                         <option value="Arial">Arial</option>
                                                         <option value="Times New Roman">Times New Roman</option>
@@ -376,20 +376,20 @@
                                                         <option value="Georgia">Georgia</option>
                                                         <option value="Verdana">Verdana</option>
                                                     </select>
-                                                    <label style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #4b5563;" title="Pilih Warna">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna">
                                                         <i class="fas fa-eye-dropper"></i>
-                                                        <input type="color" id="colorPickerProfileBio" oninput="formatText('foreColor', this.value, 'editorProfileBio')" style="position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none;">
+                                                        <input type="color" id="colorPickerProfileBio" oninput="formatText('foreColor', this.value, 'editorProfileBio')" class="hidden-color-input">
                                                     </label>
                                                 </div>
-                                                <div id="editorProfileBio" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 12px; outline: none; min-height: 55px; word-wrap: break-word;" placeholder="Tulis deskripsi singkat profil Anda..." onkeyup="syncProfileBio(); updateLiveProfileBio(this.innerHTML)">{!! old('bio', $appearance->bio ?? '') !!}</div>
+                                                <div id="editorProfileBio" contenteditable="true" class="text-editor-body editor-bio-body" placeholder="Tulis deskripsi singkat profil Anda..." onkeyup="syncProfileBio(); updateLiveProfileBio(this.innerHTML)">{!! old('bio', $appearance->bio ?? '') !!}</div>
                                                 <input type="hidden" name="bio" id="inputProfileBio" value="{{ old('bio', $appearance->bio ?? '') }}">
                                             </div>
                                         </div>
 
                                         <!-- ACTION BUTTONS -->
-                                        <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6;">
-                                            <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #d1d5db; color: #4b5563; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">Batal</button>
-                                            <button type="submit" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Simpan Perubahan</button>
+                                        <div class="form-actions-wrapper">
+                                            <button type="button" onclick="toggleProfileEditForm()" class="btn-secondary">Batal</button>
+                                            <button type="submit" class="btn-primary">Simpan Perubahan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -400,39 +400,39 @@
                         @if(isset($imageElements))
                             @foreach($imageElements as $imageEl)
                                 @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
-                                <div id="{{ $elementId }}" class="draggable-element-block existing-image-element" data-element-type="image" data-db-id="{{ $imageEl->id }}" style="display: block; transition: all 0.25s ease;">
+                                <div id="{{ $elementId }}" class="draggable-element-block existing-image-element" data-element-type="image" data-db-id="{{ $imageEl->id }}" class="draggable-element-block-inner">
                                     <div class="block-item-card" onclick="toggleImageEditForm('{{ $elementId }}')">
-                                        <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
-                                        <div style="width: 36px; height: 36px; border-radius: 8px; color: #6366F1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div class="block-item-icon-wrapper">
                                             <i class="fas fa-image"></i>
                                         </div>
-                                        <div style="flex: 1; min-width: 0;">
-                                            <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
+                                        <div class="block-item-content">
+                                            <div class="block-item-title-wrapper">
                                                 <span>Gambar</span>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
-                                            <button type="button" onclick="toggleImageEditForm('{{ $elementId }}')" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#6366F1'; this.style.color='#ffffff'; this.style.borderColor='#6366F1';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
-                                                <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                        <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <button type="button" onclick="toggleImageEditForm('{{ $elementId }}')" class="btn-edit-block">
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; margin-top: 0;">
-                                        <div style="padding: 20px;">
-                                            <div style="font-size: 14px; font-weight: 700; color: #111827; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                                        <div class="profile-form-padding">
+                                            <div class="profile-form-header" style="margin-bottom: 16px;">
                                                 Pengaturan Elemen Gambar
                                             </div>
                                             
                                             <div>
-                                                <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Unggah Gambar</label>
+                                                <label class="profile-form-label">Unggah Gambar</label>
                                                 <div class="upload-dropzone dynamic-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-                                                    <input type="file" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewDynamicImage(this, '{{ $elementId }}')">
+                                                    <input type="file" accept="image/jpeg, image/png, image/gif" class="dropzone-input" onchange="previewDynamicImage(this, '{{ $elementId }}')">
                                                     
                                                     <div id="placeholder_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'none' : 'flex' }}; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
                                                         <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #6366F1;"></i>
-                                                        <div style="font-size: 13px; font-weight: 600; color: #374151;">Seret gambar ke sini atau <span style="color: #6366F1;">browse</span></div>
-                                                        <div style="font-size: 10px; color: #9ca3af;">supports JPG, JPEG, PNG & GIF</div>
+                                                        <div class="dropzone-text-primary">Seret gambar ke sini atau <span style="color: #6366F1;">browse</span></div>
+                                                        <div class="dropzone-text-secondary">supports JPG, JPEG, PNG & GIF</div>
                                                     </div>
 
                                                     <div id="previewCont_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'block' : 'none' }}; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
@@ -440,21 +440,21 @@
                                                     </div>
                                                     
                                                     <div id="error_{{ $elementId }}" style="display: none; width: 100%; margin-top: 12px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5; background: #FEE2E2;">
-                                                        <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal gambar adalah 2MB!
+                                                        <i class="fas fa-exclamation-circle error-icon"></i> Gagal: Ukuran maksimal gambar adalah 2MB!
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div style="margin-top: 16px;">
-                                                <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">URL Tautan (Opsional)</label>
-                                                <input type="url" id="link_{{ $elementId }}" placeholder="https://..." value="{{ $imageEl->link_url }}" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s;" oninput="updateDynamicImageLink('{{ $elementId }}', this.value)">
+                                                <label class="profile-form-label">URL Tautan (Opsional)</label>
+                                                <input type="url" id="link_{{ $elementId }}" placeholder="https://..." value="{{ $imageEl->link_url }}" class="form-input-custom" oninput="updateDynamicImageLink('{{ $elementId }}', this.value)">
                                             </div>
 
-                                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #e5e7eb; margin-top: 20px;">
-                                                <button type="button" onclick="removeDynamicElement('{{ $elementId }}')" style="background: none; border: none; color: #EF4444; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px;">
+                                            <div class="element-action-footer">
+                                                <button type="button" onclick="removeDynamicElement('{{ $elementId }}')" class="btn-delete-element">
                                                     <i class="fas fa-trash-alt"></i> Hapus Elemen
                                                 </button>
-                                                <button type="button" onclick="saveDynamicElement('{{ $elementId }}')" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                                <button type="button" onclick="saveDynamicElement('{{ $elementId }}')" class="btn-save-element">
                                                     Simpan
                                                 </button>
                                             </div>
@@ -469,25 +469,25 @@
             </div> <!-- Closes editor-left-panel -->
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
-            <div class="editor-sticky-preview" style="background: #ffffff; border: none; padding: 0; width: 100%; max-width: 360px;">
+            <div class="editor-sticky-preview clean-sticky-preview">
                 <!-- SECTION TITLE -->
-                <div style="width: 100%; margin-bottom: 12px;">
-                    <h3 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-mobile-alt" style="color: #FF9040;"></i> {{ __('admin.live_phone_preview') }}
+                <div class="phone-preview-header">
+                    <h3 class="phone-preview-title">
+                        <i class="fas fa-mobile-alt phone-preview-icon"></i> {{ __('admin.live_phone_preview') }}
                     </h3>
                 </div>
 
                 <!-- SIDE-BY-SIDE FLEX CONTAINER: PHONE MOCKUP (LEFT) + VERTICAL URL BAR (RIGHT) -->
-                <div class="phone-preview-flex-container" style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
+                <div class="phone-preview-flex-container">
                     
                     <!-- DAISYUI PHONE MOCKUP FRAME (LEFT) -->
                     <div class="mockup-phone border-[#ff8938]">
                         <div class="mockup-phone-camera"></div>
                         <div class="mockup-phone-display">
                             <!-- REALISTIC SMARTPHONE TOP STATUS BAR -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 16px 2px; font-size: 10px; font-weight: 700; color: #1f2937; background: transparent; z-index: 10; position: relative; flex-shrink: 0;">
+                            <div class="mockup-phone-status-bar">
                                 <span>09:41</span>
-                                <div style="display: flex; gap: 4px; align-items: center; font-size: 9px; color: #374151;">
+                                <div class="mockup-phone-status-icons">
                                     <i class="fas fa-signal"></i>
                                     <i class="fas fa-wifi"></i>
                                     <i class="fas fa-battery-full"></i>
@@ -495,21 +495,21 @@
                             </div>
 
                             <!-- MAIN SCROLLABLE PHONE CONTENT -->
-                            <div class="phone-content" id="phonePreviewContent" style="flex: 1; min-height: 0; padding: 12px 14px 16px 14px; overflow-y: auto; background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}'); background-size: cover; background-position: center;">
+                            <div class="phone-content" id="phonePreviewContent" style="background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');">
                                 
                                 <!-- EMPTY STATE PLACEHOLDER (SHOWN WHEN NO ELEMENTS ARE ADDED IN LEFT PANEL) -->
                                 <div id="phoneEmptyState" class="phone-empty-state">
-                                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 144, 64, 0.1); color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px;">
+                                    <div class="empty-state-icon-wrapper">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
-                                    <div style="font-size: 13px; font-weight: 700; color: #4b5563; margin-bottom: 4px;">Belum Ada Elemen</div>
-                                    <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4;">Klik "Tambah Element" di sebelah kiri untuk menambahkan profil atau komponen ke microsite ini.</p>
+                                    <div class="empty-state-title">Belum Ada Elemen</div>
+                                    <p class="empty-state-desc">Klik "Tambah Element" di sebelah kiri untuk menambahkan profil atau komponen ke microsite ini.</p>
                                 </div>
 
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
-                                <div id="liveProfileSection" style="display: none; margin-bottom: 16px;">
-                                    <div id="livePhoneBannerContainer" style="width: 100%; aspect-ratio: 3 / 1; border-radius: 10px; overflow: hidden; margin-bottom: 12px; display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
-                                        <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div id="liveProfileSection" class="live-profile-section" style="display: none;">
+                                    <div id="livePhoneBannerContainer" class="live-phone-banner-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
+                                        <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" class="live-phone-banner-img">
                                     </div>
 
                                     @php
@@ -519,55 +519,55 @@
                                             if ($appearance->profile_shape === 'square') $shapeRadius = '0px';
                                         }
                                     @endphp
-                                    <div id="livePhoneAvatarContainer" style="width: 68px; height: 68px; border-radius: {{ $shapeRadius }}; overflow: hidden; margin: 0 auto 10px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: border-radius 0.25s ease;">
+                                    <div id="livePhoneAvatarContainer" class="live-phone-avatar-container" style="border-radius: {{ $shapeRadius }};">
                                         @if($appearance && $appearance->profile_image)
-                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="livePhoneAvatarImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="livePhoneAvatarImg" class="live-phone-banner-img">
                                         @else
-                                            <i class="fas fa-user" id="livePhoneAvatarPlaceholder" style="font-size: 24px; color: #888;"></i>
+                                            <i class="fas fa-user" id="livePhoneAvatarPlaceholder" class="live-phone-avatar-placeholder"></i>
                                         @endif
                                     </div>
 
-                                    <div id="livePhoneName" style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 4px; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">
+                                    <div id="livePhoneName" class="live-phone-name" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }};">
                                         {!! $appearance ? $appearance->name : Auth::user()->name !!}
                                     </div>
 
-                                    <div id="livePhoneBio" style="font-size: 12px; text-align: center; margin-bottom: 14px; color: {{ $appearance ? $appearance->theme_color : '#666' }}">
+                                    <div id="livePhoneBio" class="live-phone-bio" style="color: {{ $appearance ? $appearance->theme_color : '#666' }};">
                                         {!! $appearance ? $appearance->bio : '' !!}
                                     </div>
                                     
                                     <div class="preview-social-links" id="livePreviewSocialLinks">
                                         @if($appearance && $appearance->instagram)
-                                            <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                                            <a href="{{ $appearance->instagram }}" target="_blank" class="social-link-item"><i class="fab fa-instagram"></i></a>
                                         @endif
                                         @if($appearance && $appearance->tiktok)
-                                            <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
+                                            <a href="{{ $appearance->tiktok }}" target="_blank" class="social-link-item"><i class="fab fa-tiktok"></i></a>
                                         @endif
                                         @if($appearance && $appearance->whatsapp)
-                                            <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="{{ $appearance->whatsapp }}" target="_blank" class="social-link-item"><i class="fab fa-whatsapp"></i></a>
                                         @endif
                                         @if($appearance && $appearance->linkedin)
-                                            <a href="{{ $appearance->linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                                            <a href="{{ $appearance->linkedin }}" target="_blank" class="social-link-item"><i class="fab fa-linkedin"></i></a>
                                         @endif
                                         @if($appearance && $appearance->facebook)
-                                            <a href="{{ $appearance->facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
+                                            <a href="{{ $appearance->facebook }}" target="_blank" class="social-link-item"><i class="fab fa-facebook"></i></a>
                                         @endif
                                         @if($appearance && $appearance->website)
-                                            <a href="{{ $appearance->website }}" target="_blank"><i class="fas fa-globe"></i></a>
+                                            <a href="{{ $appearance->website }}" target="_blank" class="social-link-item"><i class="fas fa-globe"></i></a>
                                         @endif
                                         @if($appearance && $appearance->twitter)
-                                            <a href="{{ $appearance->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                                            <a href="{{ $appearance->twitter }}" target="_blank" class="social-link-item"><i class="fab fa-twitter"></i></a>
                                         @endif
                                         @if($appearance && $appearance->youtube)
-                                            <a href="{{ $appearance->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                                            <a href="{{ $appearance->youtube }}" target="_blank" class="social-link-item"><i class="fab fa-youtube"></i></a>
                                         @endif
                                         @if($appearance && $appearance->telegram)
-                                            <a href="{{ $appearance->telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
+                                            <a href="{{ $appearance->telegram }}" target="_blank" class="social-link-item"><i class="fab fa-telegram"></i></a>
                                         @endif
                                         @if($appearance && $appearance->email)
-                                            <a href="mailto:{{ $appearance->email }}"><i class="fas fa-envelope"></i></a>
+                                            <a href="mailto:{{ $appearance->email }}" class="social-link-item"><i class="fas fa-envelope"></i></a>
                                         @endif
                                         @if($appearance && $appearance->discord)
-                                            <a href="{{ $appearance->discord }}" target="_blank"><i class="fab fa-discord"></i></a>
+                                            <a href="{{ $appearance->discord }}" target="_blank" class="social-link-item"><i class="fab fa-discord"></i></a>
                                         @endif
                                     </div>
                                     
@@ -577,9 +577,9 @@
                                 @if(isset($imageElements))
                                     @foreach($imageElements as $imageEl)
                                         @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
-                                        <div id="live_{{ $elementId }}" class="live-image-element" style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: all 0.3s ease;">
-                                            <a href="{{ $imageEl->link_url ?? '#' }}" id="liveLink_{{ $elementId }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
-                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" style="width: 100%; display: block; object-fit: cover;">
+                                        <div id="live_{{ $elementId }}" class="live-image-element">
+                                            <a href="{{ $imageEl->link_url ?? '#' }}" id="liveLink_{{ $elementId }}" target="_blank" class="live-image-link">
+                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" class="live-image-img">
                                             </a>
                                         </div>
                                     @endforeach
@@ -588,8 +588,8 @@
                             </div>
 
                             <!-- REALISTIC SMARTPHONE BOTTOM HOME GESTURE INDICATOR -->
-                            <div style="padding: 4px 0 6px; background: transparent; display: flex; justify-content: center; flex-shrink: 0;">
-                                <div style="width: 100px; height: 4px; background: #9ca3af; border-radius: 4px;"></div>
+                            <div class="mockup-home-gesture-wrapper">
+                                <div class="mockup-home-gesture-bar"></div>
                             </div>
                         </div>
                     </div>
@@ -687,27 +687,27 @@
 
     <!-- TEMPLATES FOR DYNAMIC ELEMENTS -->
     <template id="image-block-template">
-        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="image" style="display: block; transition: all 0.25s ease;">
+        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="image" class="draggable-element-block-inner">
             <div class="block-item-card" onclick="toggleImageEditForm('__ELEMENT_ID__')">
-                <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
-                <div style="width: 36px; height: 36px; border-radius: 8px; color: #6366F1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <div class="block-item-icon-wrapper">
                     <i class="fas fa-image"></i>
                 </div>
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
+                <div class="block-item-content">
+                    <div class="block-item-title-wrapper">
                         <span>Gambar</span>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
-                    <button type="button" onclick="toggleImageEditForm('__ELEMENT_ID__')" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#6366F1'; this.style.color='#ffffff'; this.style.borderColor='#6366F1';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
-                        <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
+                <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <button type="button" onclick="toggleImageEditForm('__ELEMENT_ID__')" class="btn-edit-block">
+                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
                     </button>
                 </div>
             </div>
 
-            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; margin-top: 0;">
-                <div style="padding: 20px;">
-                    <div style="font-size: 14px; font-weight: 700; color: #111827; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
+            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                <div class="profile-form-padding">
+                    <div class="profile-form-header" style="margin-bottom: 16px;">
                         Pengaturan Elemen Gambar
                     </div>
                     
@@ -716,13 +716,13 @@
                         <div class="upload-dropzone dynamic-dropzone image-block-dropzone">
                             <input type="file" accept="image/jpeg, image/png, image/gif" class="hidden-file-input" onchange="previewDynamicImage(this, '__ELEMENT_ID__')">
                             
-                            <div id="placeholder___ELEMENT_ID__" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                <i class="fas fa-cloud-upload-alt" class="upload-icon-indigo"></i>
+                            <div id="placeholder___ELEMENT_ID__" class="dropzone-placeholder-flex">
+                                <i class="fas fa-cloud-upload-alt upload-icon-indigo"></i>
                                 <div class="upload-text-main">Seret gambar ke sini atau <span class="upload-text-highlight-indigo">browse</span></div>
                                 <div class="upload-text-sub">supports JPG, JPEG, PNG & GIF</div>
                             </div>
 
-                            <div id="previewCont___ELEMENT_ID__" style="display: none; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
+                            <div id="previewCont___ELEMENT_ID__" class="dynamic-preview-container" style="display: none;">
                                 <img src="" id="previewImg___ELEMENT_ID__" class="preview-img-contain">
                             </div>
                             
@@ -734,14 +734,14 @@
 
                     <div class="form-field-margin">
                         <label class="form-label-custom">URL Tautan (Opsional)</label>
-                        <input type="url" id="link___ELEMENT_ID__" placeholder="https://..." style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s;" oninput="updateDynamicImageLink('__ELEMENT_ID__', this.value)">
+                        <input type="url" id="link___ELEMENT_ID__" placeholder="https://..." class="form-input-custom" oninput="updateDynamicImageLink('__ELEMENT_ID__', this.value)">
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #e5e7eb; margin-top: 20px;">
-                        <button type="button" onclick="removeDynamicElement('__ELEMENT_ID__')" style="background: none; border: none; color: #EF4444; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px;">
+                    <div class="element-action-footer">
+                        <button type="button" onclick="removeDynamicElement('__ELEMENT_ID__')" class="btn-delete-element">
                             <i class="fas fa-trash-alt"></i> Hapus Elemen
                         </button>
-                        <button type="button" onclick="saveDynamicElement('__ELEMENT_ID__')" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        <button type="button" onclick="saveDynamicElement('__ELEMENT_ID__')" class="btn-save-element">
                             Simpan
                         </button>
                     </div>
@@ -751,9 +751,9 @@
     </template>
 
     <template id="image-live-template">
-        <div id="live___ELEMENT_ID__" class="microsite-live-element" style="width: 100%; margin-bottom: 16px; border-radius: 12px; overflow: hidden; display: none; transition: all 0.3s ease; text-align: center;">
-            <a id="liveLink___ELEMENT_ID__" href="#" target="_blank" style="display: block; width: 100%; cursor: default; pointer-events: none;">
-                <img id="liveImg___ELEMENT_ID__" src="" style="width: 100%; height: auto; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <div id="live___ELEMENT_ID__" class="microsite-live-element" style="display: none;">
+            <a id="liveLink___ELEMENT_ID__" href="#" target="_blank" class="live-element-link">
+                <img id="liveImg___ELEMENT_ID__" src="" class="live-element-img">
             </a>
         </div>
     </template>
