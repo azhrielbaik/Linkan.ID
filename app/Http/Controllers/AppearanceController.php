@@ -27,6 +27,7 @@ class AppearanceController extends Controller
             'bio' => 'nullable|string|max:500',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_shape' => 'nullable|string|in:circle,rounded,square',
             'theme_color' => 'nullable|string|max:7',
             'background_color' => 'nullable|string',
             'instagram' => 'nullable|url|max:255',
@@ -67,6 +68,9 @@ class AppearanceController extends Controller
         // Update data
         $appearance->name = $request->name;
         $appearance->bio = $request->bio;
+        if ($request->filled('profile_shape')) {
+            $appearance->profile_shape = $request->profile_shape;
+        }
         if ($request->filled('theme_color')) {
             $appearance->theme_color = $request->theme_color;
         } elseif (!$appearance->theme_color) {

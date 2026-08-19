@@ -120,10 +120,10 @@ class ShortlinkAnalyticsTest extends TestCase
         $page = $this->actingAs($owner)->get(route('admin.shortlinks.analytics', $ownerShortlink));
 
         $page->assertOk();
-        $page->assertSee('Analytics Shortlink');
+        $page->assertSee(__('admin.analytics_shortlink'));
         $page->assertSee('analytics-link');
         $page->assertSee('2');
-        $page->assertSee('Grafik Source Traffic');
+        $page->assertSee(__('admin.source_traffic_chart'));
         $page->assertSee('instagram');
         $page->assertSee('google.com');
         $page->assertDontSee('hidden-analytics-link');

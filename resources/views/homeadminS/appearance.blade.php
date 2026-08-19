@@ -58,7 +58,7 @@
                                 @endif
                             </div>
                             <input type="file" name="profile_image" id="profileImageInput" style="display: none;" accept="image/*">
-                            <input type="text" name="name" class="profile-name" placeholder="{{ __('admin.your_name') }}" value="{{ $appearance ? $appearance->name : Auth::user()->name }}" id="inputName">
+                            <input type="text" name="name" class="profile-name" placeholder="{{ __('admin.your_name') }}" value="{{ strip_tags($appearance ? $appearance->name : Auth::user()->name) }}" id="inputName">
                             <div class="bio-section">
                                 <div id="editor" style="height: 150px; margin-bottom: 10px;">{!! $appearance ? $appearance->bio : '' !!}</div>
                                 <input type="hidden" name="bio" id="bioInput" value="{{ $appearance ? $appearance->bio : '' }}">
@@ -211,7 +211,7 @@
                                           <i class="fas fa-user"></i>
                                       @endif
                                   </div>
-                                  <div class="preview-name" id="livePreviewName" style="font-size: 18px; font-weight: 600; margin-bottom: 10px; text-align: center; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance ? $appearance->name : Auth::user()->name }}</div>
+                                  <div class="preview-name" id="livePreviewName" style="font-size: 18px; font-weight: 600; margin-bottom: 10px; text-align: center; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{!! $appearance ? $appearance->name : Auth::user()->name !!}</div>
                                   <div class="preview-bio" id="livePreviewBio" style="font-size: 14px; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}; text-align: center; margin-bottom: 15px; padding: 0 20px; line-height: 1.4;">{!! $appearance ? $appearance->bio : '' !!}</div>
                                   <div class="preview-social-links" id="livePreviewSocialLinks" style="display: flex; gap: 15px; margin-bottom: 20px;">
                                       @if($appearance && $appearance->instagram)

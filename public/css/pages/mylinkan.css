@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 /* PAGE BASE STYLES */
 body,
 .main-content,
@@ -18,7 +19,8 @@ body,
     content: attr(placeholder);
     color: #9ca3af;
     pointer-events: none;
-    display: block; /* For Firefox */
+    display: block;
+    /* For Firefox */
 }
 
 /* MODERN SIMPLE FILE INPUT */
@@ -626,24 +628,18 @@ input[type="file"]::file-selector-button {
         padding: 10px 16px !important;
     }
 
-    .preview-url-browser-bar > div:nth-child(2) {
+    .preview-url-browser-bar>div:nth-child(2) {
         writing-mode: horizontal-tb !important;
         transform: none !important;
         font-size: 13px !important;
     }
 
-    .preview-url-browser-bar > div:nth-child(3) {
+    .preview-url-browser-bar>div:nth-child(3) {
         flex-direction: row !important;
     }
 }
 
-.editor-left-panel {
-    background: white;
-    border-radius: 20px;
-    padding: 24px;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-}
+
 
 .dashboard-mylinkan-page .editor-sticky-preview {
     position: sticky;
@@ -659,8 +655,8 @@ input[type="file"]::file-selector-button {
 
 .dashboard-mylinkan-page .block-item-card {
     background: #f9fafb;
-    border: 1px solid #e5e7eb;
     border-radius: 12px;
+    border: 1px solid #e5e7eb;
     padding: 14px 18px;
     margin-bottom: 12px;
     display: flex;
@@ -672,7 +668,6 @@ input[type="file"]::file-selector-button {
 .dashboard-mylinkan-page .block-item-card:hover {
     background: #ffffff;
     border-color: #FF9040;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* ADD ELEMENT SECTION */
@@ -684,8 +679,8 @@ input[type="file"]::file-selector-button {
 
 .btn-add-element {
     width: 100%;
-    background: #FF9040;
     color: #ffffff;
+    background: #ED842C;
     border: none;
     border-radius: 12px;
     padding: 14px 20px;
@@ -697,12 +692,10 @@ input[type="file"]::file-selector-button {
     justify-content: center;
     gap: 10px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(255, 144, 64, 0.2);
 }
 
 .btn-add-element:hover {
-    background: #e57c2e;
-    box-shadow: 0 6px 16px rgba(255, 144, 64, 0.3);
+    background: #ED842C;
     transform: translateY(-2px);
 }
 
@@ -722,14 +715,6 @@ input[type="file"]::file-selector-button {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.add-element-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f3f4f6;
-}
 
 .add-element-grid {
     display: grid;
@@ -1288,6 +1273,7 @@ input[type="file"]::file-selector-button {
     margin: 0 auto;
     position: relative;
 }
+
 .mockup-phone .mockup-phone-camera {
     position: absolute;
     top: 0px;
@@ -1300,6 +1286,7 @@ input[type="file"]::file-selector-button {
     border-bottom-right-radius: 20px;
     z-index: 11;
 }
+
 .mockup-phone .mockup-phone-display {
     overflow: hidden;
     border-radius: 40px;
@@ -1310,6 +1297,7 @@ input[type="file"]::file-selector-button {
     display: flex;
     flex-direction: column;
 }
+
 .mockup-phone.border-\[\#ff8938\] {
     border-color: #ff8938;
 }
@@ -1322,7 +1310,7 @@ input[type="file"]::file-selector-button {
     justify-content: space-between;
     background: #ffffff;
     border: 1px solid #eaeaea;
-    border-radius: 50px;
+    border-radius: 16px;
     padding: 12px 8px;
     gap: 24px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -1358,4 +1346,133 @@ input[type="file"]::file-selector-button {
 
 .profile-edit-form-body.open {
     overflow: visible;
+}
+/* =========================================
+   PHONE PREVIEW EXACT MATCH STYLES 
+   ========================================= */
+.preview-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.preview-social-links a {
+    font-size: 20px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.preview-social-links a:hover {
+    opacity: 0.8;
+}
+.preview-products {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.preview-product-item {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+.preview-product-image {
+    width: 40px;
+    height: 40px;
+    background: #FFE5D3;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.preview-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.product-info {
+    flex: 1;
+    overflow: hidden;
+}
+.preview-product-title {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.preview-product-button {
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    margin-left: auto;
+}
+
+/* =========================================
+   FONT SETTINGS AND EDITOR OVERRIDES
+   ========================================= */
+
+/* Force font face to override parent elements in preview */
+font[face="Plus Jakarta Sans"] { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+font[face="Arial"] { font-family: 'Arial', sans-serif !important; }
+font[face="Times New Roman"] { font-family: 'Times New Roman', serif !important; }
+font[face="Courier New"] { font-family: 'Courier New', monospace !important; }
+font[face="Georgia"] { font-family: 'Georgia', serif !important; }
+font[face="Verdana"] { font-family: 'Verdana', sans-serif !important; }
+
+/* Force the text editor text to remain dark, hiding the preview color inside the editor UI */
+#editorProfileName, 
+#editorProfileBio, 
+#editorProfileName *, 
+#editorProfileBio *, 
+#editorProfileName font, 
+#editorProfileBio font {
+    color: #111827 !important;
+}
+
+/* =========================================
+   DRAG AND DROP FILE UPLOAD ZONES
+   ========================================= */
+.upload-dropzone {
+    position: relative;
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.upload-dropzone:hover {
+    border-color: #FF9040;
+    background-color: #ffffff;
+}
+
+.upload-dropzone.drag-over-active {
+    border-color: #FF9040 !important;
+    background-color: rgba(255, 144, 64, 0.08) !important;
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(255, 144, 64, 0.15);
+}
+
+.upload-dropzone.drag-over-active i.fa-cloud-upload-alt {
+    transform: translateY(-5px);
+    color: #ff7b1a !important;
+    transition: transform 0.3s ease, color 0.3s ease;
 }

@@ -21,7 +21,7 @@
                         @endif
                     </div>
                     <div class="profile-info">
-                        <h3>{{ $appearance && $appearance->name ? $appearance->name : Auth::user()->name }}</h3>
+                        <h3>{!! $appearance && $appearance->name ? $appearance->name : Auth::user()->name !!}</h3>
                         <a href="{{ route('track.view', ['username' => Auth::user()->username]) }}" style="color: #FF9040;">
                             {{ url('/linkan.id/' . Auth::user()->username) }}
                         </a>

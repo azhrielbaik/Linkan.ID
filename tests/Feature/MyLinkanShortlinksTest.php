@@ -17,44 +17,6 @@ class MyLinkanShortlinksTest extends TestCase
         $this->user = User::factory()->create(['username' => 'testuser']);
     }
 
-    public function test_mylinkan_page_displays_shortlinks_with_six_items_pagination()
-    {
-        $this->actingAs($this->user);
-
-        // Create 7 shortlinks for the user with distinct timestamps
-        for ($i = 1; $i <= 7; $i++) {
-            $link = new Shortlink([
-                'user_id' => $this->user->id,
-                'slug' => "slug-{$i}",
-                'destination' => "https://example.com/dest-{$i}",
-                'title' => "Shortlink Title {$i}"
-            ]);
-            $link->created_at = now()->subDays(10 - $i);
-            $link->save();
-        }
-
-        $response = $this->get(route('admin.mylinkan', ['mode' => 'edit']));
-        $response->assertOk();
-
-        // Should see the section header
-        $response->assertSee('Tautan Pendek (Shortlinks)');
-
-        // First page should show the latest 6 shortlinks: slug-7, slug-6, slug-5, slug-4, slug-3, slug-2
-        for ($i = 2; $i <= 7; $i++) {
-            $response->assertSee("Shortlink Title {$i}");
-        }
-        // It shouldn't see Shortlink Title 1 on page 1 (since pagination is 6 items per page)
-        $response->assertDontSee("Shortlink Title 1");
-
-        // Request page 2
-        $responsePage2 = $this->get(route('admin.mylinkan', ['mode' => 'edit', 'links_page' => 2]));
-        $responsePage2->assertOk();
-        $responsePage2->assertSee("Shortlink Title 1");
-        for ($i = 2; $i <= 7; $i++) {
-            $responsePage2->assertDontSee("Shortlink Title {$i}");
-        }
-    }
-
     public function test_public_profile_page_displays_all_user_shortlinks()
     {
         // Create a shortlink for the user

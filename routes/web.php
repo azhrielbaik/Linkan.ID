@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppearanceController;
+use App\Http\Controllers\ImageElementController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -100,6 +101,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Appearance
     Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
+
+    // Microsite Elements
+    Route::post('/elements/image', [ImageElementController::class, 'store'])->name('elements.image.store');
+    Route::delete('/elements/image/{id}', [ImageElementController::class, 'destroy'])->name('elements.image.destroy');
+    Route::post('/elements/order', [ImageElementController::class, 'updateOrder'])->name('elements.order.update');
 
     // Settings (general)
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');

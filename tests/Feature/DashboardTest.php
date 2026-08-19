@@ -25,6 +25,6 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('homeadminS.beranda');
-        $response->assertSee('Overview Dasbor');
+        $response->assertSee(__('admin.overview_dashboard'));
     }
 }

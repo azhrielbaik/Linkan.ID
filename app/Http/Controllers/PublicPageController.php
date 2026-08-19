@@ -48,6 +48,9 @@ class PublicPageController extends Controller
             ->latest()
             ->get();
 
-        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks'));
+        // Ambil data image elements
+        $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
+
+        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements'));
     }
 }

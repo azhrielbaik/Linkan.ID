@@ -20,6 +20,7 @@ class AdminController extends Controller
         $shortlinks = \App\Models\Shortlink::where('user_id', $user->id)
             ->latest()
             ->paginate(6, ['*'], 'links_page');
+        $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
 
         // Total page views for user's microsite
         $totalViews = \Illuminate\Support\Facades\DB::table('link_views')
@@ -35,6 +36,7 @@ class AdminController extends Controller
             'digitalProducts',
             'appearance',
             'shortlinks',
+            'imageElements',
             'totalViews',
             'totalProducts',
             'totalShortlinks',

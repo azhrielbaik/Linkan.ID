@@ -76,7 +76,7 @@
 
                             <!-- Name & Bio -->
                             <div class="phone-thumb-name" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">
-                                {{ $appearance ? $appearance->name : Auth::user()->name }}
+                                {!! $appearance ? $appearance->name : Auth::user()->name !!}
                             </div>
                             <div class="phone-thumb-bio" style="color: {{ $appearance ? $appearance->theme_color : '#666' }}">
                                 {!! strip_tags($appearance->bio ?? 'Selamat datang di linkan saya!') !!}
@@ -107,7 +107,7 @@
                 <!-- CARD BODY DETAILS -->
                 <div class="card-body-details">
                     <div class="card-title-row">
-                        <h3 class="microsite-name">{{ $appearance->name ?? Auth::user()->name }}</h3>
+                        <h3 class="microsite-name">{!! $appearance->name ?? Auth::user()->name !!}</h3>
                     </div>
 
                     <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" target="_blank" class="url-pill">
@@ -159,29 +159,15 @@
                     <!-- INLINE SLIDE-DOWN PANEL -->
                     <div id="addElementPanel" class="add-element-panel">
                         <div class="add-element-panel-inner">
-                            <!-- PANEL HEADER -->
-                            <div class="add-element-panel-header">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-                                        <i class="fas fa-cubes"></i>
-                                    </div>
-                                    <div>
-                                        <h4 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0;">{{ __('admin.add_element_title') }}</h4>
-                                        <p style="font-size: 12px; color: #6b7280; margin: 0;">{{ __('admin.add_element_subtitle') }}</p>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="toggleAddElementPanel()" style="background: none; border: none; color: #9ca3af; font-size: 16px; cursor: pointer; padding: 4px;" title="Tutup">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-
                             <!-- PANEL CONTENT AREA (COMPONENT CARDS SELECTOR) -->
                             <div id="addElementPanelBody" class="add-element-grid">
                                 
-                                <!-- Element Option 1: Profile Block -->
-                                <div class="element-option-card card-profile" onclick="addProfileElement()">
-                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Profil</div>
-                                    <div style="font-size: 13px; color: #6b7280;">Identitas & Foto</div>
+                                <!-- Profile Block is default and cannot be added/removed -->
+                                
+                                <!-- Element Option 1: Gambar -->
+                                <div class="element-option-card card-image" onclick="addGambarElement()">
+                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Gambar</div>
+                                    <div style="font-size: 13px; color: #6b7280;">Upload gambar & link</div>
                                 </div>
 
                                 <!-- Element Option 2: Digital Product Block -->
@@ -229,7 +215,7 @@
                             <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
                                 <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
-                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <div style="width: 36px; height: 36px; border-radius: 8px; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
                                 <div style="flex: 1; min-width: 0;">
@@ -241,9 +227,6 @@
                                 <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
                                     <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
                                         <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="profileEditBtnText">Edit</span>
-                                    </button>
-                                    <button type="button" onclick="removeProfileElement()" style="background: transparent; border: none; color: #ef4444; font-size: 14px; cursor: pointer; padding: 6px;" title="Hapus Elemen Profil">
-                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -264,30 +247,60 @@
                                         <!-- 1. GAMBAR SAMPUL (COVER BANNER) -->
                                         <div>
                                             <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Gambar Sampul (Banner)</label>
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                <div id="bannerPreviewContainer" style="width: 96px; height: 56px; border-radius: 8px; background: #f3f4f6; overflow: hidden; border: 1px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                                            <div class="upload-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                                <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewProfileBanner(this)">
+                                                
+                                                <div id="bannerPreviewPlaceholder" style="display: {{ ($appearance && $appearance->banner) ? 'none' : 'flex' }}; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #FF9040; transition: all 0.3s ease;"></i>
+                                                    <div style="font-size: 13px; font-weight: 600; color: #374151;">
+                                                        Drop your images here or <span style="color: #FF9040;">browse</span>
+                                                    </div>
+                                                    <div style="font-size: 10px; color: #9ca3af;">supports JPG, JPEG, PNG & GIF</div>
+                                                </div>
+
+                                                <div id="bannerPreviewContainer" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }}; width: 100%; aspect-ratio: 3 / 1; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
                                                     @if($appearance && $appearance->banner)
                                                         <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" style="width: 100%; height: 100%; object-fit: cover;">
                                                     @else
-                                                        <i class="fas fa-image" id="bannerPreviewPlaceholder" style="color: #9ca3af; font-size: 18px;"></i>
+                                                        <img src="" id="bannerPreviewImg" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                                                     @endif
                                                 </div>
-                                                <input type="file" name="banner" id="inputBannerFile" accept="image/*" style="font-size: 12px; color: #4b5563;" onchange="previewProfileBanner(this)">
+                                                
+                                                <div id="bannerSizeError" style="display: none; width: 100%; margin-top: 12px; background: #FEE2E2; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5;">
+                                                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal gambar sampul adalah 2MB!
+                                                </div>
                                             </div>
                                         </div>
 
                                         <!-- 2. FOTO PROFILE -->
                                         <div>
                                             <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Foto Profil</label>
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                <div id="avatarPreviewContainer" style="width: 48px; height: 48px; border-radius: 50%; background: #f3f4f6; overflow: hidden; border: 1px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                                                    @if($appearance && $appearance->profile_image)
-                                                        <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    @else
-                                                        <i class="fas fa-user" id="avatarPreviewPlaceholder" style="color: #9ca3af; font-size: 18px;"></i>
-                                                    @endif
+                                            <div class="upload-dropzone" style="display: flex; flex-direction: column; padding: 12px 16px;">
+                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewProfileAvatar(this)">
+                                                
+                                                <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
+                                                    <div id="avatarPreviewContainer" style="width: 56px; height: 56px; border-radius: 50%; background: #ffffff; overflow: hidden; border: 2px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 1;">
+                                                        @if($appearance && $appearance->profile_image)
+                                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                                        @else
+                                                            <i class="fas fa-user" id="avatarPreviewPlaceholder" style="color: #9ca3af; font-size: 20px;"></i>
+                                                            <img src="" id="avatarPreviewImg" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <div style="flex: 1; z-index: 1; text-align: left;">
+                                                        <div style="font-size: 13px; font-weight: 600; color: #374151;">Upload Foto Profil</div>
+                                                        <div style="font-size: 11px; color: #6b7280; margin-top: 2px;">Seret gambar ke sini atau <span style="color: #FF9040; font-weight: 600;">browse</span></div>
+                                                    </div>
+                                                    
+                                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,144,64,0.1); display: flex; align-items: center; justify-content: center; z-index: 1;">
+                                                        <i class="fas fa-cloud-upload-alt" style="color: #FF9040; font-size: 14px; transition: all 0.3s ease;"></i>
+                                                    </div>
                                                 </div>
-                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/*" style="font-size: 12px; color: #4b5563;" onchange="previewProfileAvatar(this)">
+
+                                                <div id="avatarSizeError" style="display: none; width: 100%; margin-top: 10px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 6px 8px; z-index: 5; text-align: center;">
+                                                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal foto profil adalah 2MB!
+                                                </div>
                                             </div>
                                         </div>
 
@@ -296,17 +309,17 @@
                                             <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Bentuk Foto Profil</label>
                                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
-                                                    <input type="radio" name="profile_shape" value="circle" checked onchange="updateProfileShape('circle')">
+                                                    <input type="radio" name="profile_shape" value="circle" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'circle' ? 'checked' : '' }} onchange="updateProfileShape('circle')">
                                                     <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Lingkaran</span>
                                                 </label>
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
-                                                    <input type="radio" name="profile_shape" value="rounded" onchange="updateProfileShape('rounded')">
+                                                    <input type="radio" name="profile_shape" value="rounded" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'rounded' ? 'checked' : '' }} onchange="updateProfileShape('rounded')">
                                                     <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Rounded</span>
                                                 </label>
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
-                                                    <input type="radio" name="profile_shape" value="square" onchange="updateProfileShape('square')">
+                                                    <input type="radio" name="profile_shape" value="square" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'square' ? 'checked' : '' }} onchange="updateProfileShape('square')">
                                                     <div style="width: 24px; height: 24px; border-radius: 0px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Persegi</span>
                                                 </label>
@@ -320,7 +333,24 @@
                                                 <div style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                                     <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
                                                     <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
-                                                    <span style="font-size: 10px; color: #9ca3af; margin-left: auto;">Editor Nama</span>
+                                                    
+                                                    <div style="height: 16px; width: 1px; background: #d1d5db; margin: 0 4px;"></div>
+                                                    
+                                                    <select onchange="formatText('fontName', this.value, 'editorProfileName')" style="border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; color: #4b5563; outline: none; background: #fff; cursor: pointer;" title="Pilih Font">
+                                                        <option value="Plus Jakarta Sans">Jakarta Sans</option>
+                                                        <option value="Arial">Arial</option>
+                                                        <option value="Times New Roman">Times New Roman</option>
+                                                        <option value="Courier New">Courier New</option>
+                                                        <option value="Georgia">Georgia</option>
+                                                        <option value="Verdana">Verdana</option>
+                                                    </select>
+                                                    
+                                                    <label style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #4b5563;" title="Pilih Warna">
+                                                        <i class="fas fa-eye-dropper"></i>
+                                                        <input type="color" id="colorPickerProfileName" oninput="formatText('foreColor', this.value, 'editorProfileName')" style="position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none;">
+                                                    </label>
+                                                    
+                                                    
                                                 </div>
                                                 <div id="editorProfileName" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 13px; font-weight: 600; outline: none; min-height: 20px; word-wrap: break-word;" placeholder="Masukkan nama profil Anda..." onkeyup="syncProfileName(); updateLiveProfileName(this.innerHTML)">{!! old('name', $appearance->name ?? Auth::user()->name) !!}</div>
                                                 <input type="hidden" name="name" id="inputProfileName" value="{{ old('name', $appearance->name ?? Auth::user()->name) }}">
@@ -335,7 +365,21 @@
                                                     <button type="button" onmousedown="event.preventDefault();" onclick="formatText('bold')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
                                                     <button type="button" onmousedown="event.preventDefault();" onclick="formatText('italic')" style="background: none; border: none; font-size: 12px; font-style: italic; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
                                                     <button type="button" onmousedown="event.preventDefault();" onclick="formatText('underline')" style="background: none; border: none; font-size: 12px; text-decoration: underline; color: #4b5563; cursor: pointer; padding: 2px 6px;" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
-                                                    <span style="font-size: 10px; color: #9ca3af; margin-left: auto;">Editor Bio</span>
+                                                    
+                                                    <div style="height: 16px; width: 1px; background: #d1d5db; margin: 0 4px;"></div>
+                                                    
+                                                    <select onchange="formatText('fontName', this.value, 'editorProfileBio')" style="border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; color: #4b5563; outline: none; background: #fff; cursor: pointer;" title="Pilih Font">
+                                                        <option value="Plus Jakarta Sans">Jakarta Sans</option>
+                                                        <option value="Arial">Arial</option>
+                                                        <option value="Times New Roman">Times New Roman</option>
+                                                        <option value="Courier New">Courier New</option>
+                                                        <option value="Georgia">Georgia</option>
+                                                        <option value="Verdana">Verdana</option>
+                                                    </select>
+                                                    <label style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #4b5563;" title="Pilih Warna">
+                                                        <i class="fas fa-eye-dropper"></i>
+                                                        <input type="color" id="colorPickerProfileBio" oninput="formatText('foreColor', this.value, 'editorProfileBio')" style="position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none;">
+                                                    </label>
                                                 </div>
                                                 <div id="editorProfileBio" contenteditable="true" style="width: 100%; border: none; padding: 10px 12px; font-size: 12px; outline: none; min-height: 55px; word-wrap: break-word;" placeholder="Tulis deskripsi singkat profil Anda..." onkeyup="syncProfileBio(); updateLiveProfileBio(this.innerHTML)">{!! old('bio', $appearance->bio ?? '') !!}</div>
                                                 <input type="hidden" name="bio" id="inputProfileBio" value="{{ old('bio', $appearance->bio ?? '') }}">
@@ -350,8 +394,75 @@
                                     </div>
                                 </form>
                             </div>
+                            </div>
                         </div>
-                    </div>
+
+                        @if(isset($imageElements))
+                            @foreach($imageElements as $imageEl)
+                                @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block existing-image-element" data-element-type="image" data-db-id="{{ $imageEl->id }}" style="display: block; transition: all 0.25s ease;">
+                                    <div class="block-item-card" onclick="toggleImageEditForm('{{ $elementId }}')">
+                                        <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div style="width: 36px; height: 36px; border-radius: 8px; color: #6366F1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
+                                                <span>Gambar</span>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <button type="button" onclick="toggleImageEditForm('{{ $elementId }}')" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#6366F1'; this.style.color='#ffffff'; this.style.borderColor='#6366F1';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
+                                                <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; margin-top: 0;">
+                                        <div style="padding: 20px;">
+                                            <div style="font-size: 14px; font-weight: 700; color: #111827; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
+                                                Pengaturan Elemen Gambar
+                                            </div>
+                                            
+                                            <div>
+                                                <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Unggah Gambar</label>
+                                                <div class="upload-dropzone dynamic-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                                                    <input type="file" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewDynamicImage(this, '{{ $elementId }}')">
+                                                    
+                                                    <div id="placeholder_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'none' : 'flex' }}; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                                                        <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #6366F1;"></i>
+                                                        <div style="font-size: 13px; font-weight: 600; color: #374151;">Seret gambar ke sini atau <span style="color: #6366F1;">browse</span></div>
+                                                        <div style="font-size: 10px; color: #9ca3af;">supports JPG, JPEG, PNG & GIF</div>
+                                                    </div>
+
+                                                    <div id="previewCont_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'block' : 'none' }}; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
+                                                        <img src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" id="previewImg_{{ $elementId }}" style="width: 100%; object-fit: contain;">
+                                                    </div>
+                                                    
+                                                    <div id="error_{{ $elementId }}" style="display: none; width: 100%; margin-top: 12px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5; background: #FEE2E2;">
+                                                        <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal gambar adalah 2MB!
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="margin-top: 16px;">
+                                                <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">URL Tautan (Opsional)</label>
+                                                <input type="url" id="link_{{ $elementId }}" placeholder="https://..." value="{{ $imageEl->link_url }}" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s;" oninput="updateDynamicImageLink('{{ $elementId }}', this.value)">
+                                            </div>
+
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #e5e7eb; margin-top: 20px;">
+                                                <button type="button" onclick="removeDynamicElement('{{ $elementId }}')" style="background: none; border: none; color: #EF4444; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px;">
+                                                    <i class="fas fa-trash-alt"></i> Hapus Elemen
+                                                </button>
+                                                <button type="button" onclick="saveDynamicElement('{{ $elementId }}')" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                                    Simpan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
 
                     </div> <!-- Closes elementBlocksList -->
                 </div> <!-- Closes digitalProductsSection -->
@@ -397,11 +508,18 @@
 
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
                                 <div id="liveProfileSection" style="display: none; margin-bottom: 16px;">
-                                    <div id="livePhoneBannerContainer" style="width: 100%; height: 95px; border-radius: 10px; overflow: hidden; margin-bottom: 12px; display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
+                                    <div id="livePhoneBannerContainer" style="width: 100%; aspect-ratio: 3 / 1; border-radius: 10px; overflow: hidden; margin-bottom: 12px; display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
                                         <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" style="width: 100%; height: 100%; object-fit: cover;">
                                     </div>
 
-                                    <div id="livePhoneAvatarContainer" style="width: 68px; height: 68px; border-radius: 50%; overflow: hidden; margin: 0 auto 10px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: border-radius 0.25s ease;">
+                                    @php
+                                        $shapeRadius = '50%';
+                                        if (isset($appearance->profile_shape)) {
+                                            if ($appearance->profile_shape === 'rounded') $shapeRadius = '14px';
+                                            if ($appearance->profile_shape === 'square') $shapeRadius = '0px';
+                                        }
+                                    @endphp
+                                    <div id="livePhoneAvatarContainer" style="width: 68px; height: 68px; border-radius: {{ $shapeRadius }}; overflow: hidden; margin: 0 auto 10px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: border-radius 0.25s ease;">
                                         @if($appearance && $appearance->profile_image)
                                             <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="livePhoneAvatarImg" style="width: 100%; height: 100%; object-fit: cover;">
                                         @else
@@ -410,13 +528,62 @@
                                     </div>
 
                                     <div id="livePhoneName" style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 4px; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">
-                                        {{ $appearance ? $appearance->name : Auth::user()->name }}
+                                        {!! $appearance ? $appearance->name : Auth::user()->name !!}
                                     </div>
 
                                     <div id="livePhoneBio" style="font-size: 12px; text-align: center; margin-bottom: 14px; color: {{ $appearance ? $appearance->theme_color : '#666' }}">
                                         {!! $appearance ? $appearance->bio : '' !!}
                                     </div>
+                                    
+                                    <div class="preview-social-links" id="livePreviewSocialLinks">
+                                        @if($appearance && $appearance->instagram)
+                                            <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->tiktok)
+                                            <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->whatsapp)
+                                            <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->linkedin)
+                                            <a href="{{ $appearance->linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->facebook)
+                                            <a href="{{ $appearance->facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->website)
+                                            <a href="{{ $appearance->website }}" target="_blank"><i class="fas fa-globe"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->twitter)
+                                            <a href="{{ $appearance->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->youtube)
+                                            <a href="{{ $appearance->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->telegram)
+                                            <a href="{{ $appearance->telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->email)
+                                            <a href="mailto:{{ $appearance->email }}"><i class="fas fa-envelope"></i></a>
+                                        @endif
+                                        @if($appearance && $appearance->discord)
+                                            <a href="{{ $appearance->discord }}" target="_blank"><i class="fab fa-discord"></i></a>
+                                        @endif
+                                    </div>
+                                    
+
                                 </div>
+
+                                @if(isset($imageElements))
+                                    @foreach($imageElements as $imageEl)
+                                        @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
+                                        <div id="live_{{ $elementId }}" class="live-image-element" style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: all 0.3s ease;">
+                                            <a href="{{ $imageEl->link_url ?? '#' }}" id="liveLink_{{ $elementId }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
+                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" style="width: 100%; display: block; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                @endif
 
                             </div>
 
@@ -687,6 +854,9 @@
 @endsection
 
 @push("scripts")
+<!-- Include SortableJS for robust drag and drop -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
 <script>
     let currentStep = 1;
 
@@ -850,37 +1020,6 @@
         }
     }
 
-    function addProfileElement() {
-        toggleAddElementPanel();
-        
-        const digitalProductsSection = document.getElementById('digitalProductsSection');
-        if (digitalProductsSection) {
-            digitalProductsSection.style.display = 'block';
-            digitalProductsSection.style.opacity = '1';
-            digitalProductsSection.style.transform = 'translateY(0)';
-        }
-
-        const card = document.getElementById('profileBlockCard');
-        if (card) {
-            card.style.display = 'block';
-            updatePhonePreviewVisibility();
-            setTimeout(() => {
-                toggleProfileEditForm(true);
-                initElementDragAndDrop();
-            }, 150);
-        }
-    }
-
-    function removeProfileElement() {
-        if (confirm('Apakah Anda yakin ingin menghapus elemen Profil dari daftar?')) {
-            const card = document.getElementById('profileBlockCard');
-            if (card) {
-                card.style.display = 'none';
-                updatePhonePreviewVisibility();
-            }
-        }
-    }
-
     function toggleProfileEditForm(forceOpen = false) {
         const formBody = document.getElementById('profileEditFormBody');
         const btnText = document.getElementById('profileEditBtnText');
@@ -905,7 +1044,15 @@
     }
 
     function previewProfileBanner(input) {
+        const errorDiv = document.getElementById('bannerSizeError');
+        if (errorDiv) errorDiv.style.display = 'none';
+
         if (input.files && input.files[0]) {
+            if (input.files[0].size > 2 * 1024 * 1024) {
+                if (errorDiv) errorDiv.style.display = 'block';
+                input.value = '';
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(e) {
                 const bannerContainer = document.getElementById('bannerPreviewContainer');
@@ -913,12 +1060,17 @@
                 const placeholder = document.getElementById('bannerPreviewPlaceholder');
 
                 if (placeholder) placeholder.style.display = 'none';
+                if (bannerContainer) bannerContainer.style.display = 'block';
+                
                 if (!img) {
                     img = document.createElement('img');
                     img.id = 'bannerPreviewImg';
-                    img.className = 'w-full h-full object-cover';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
                     bannerContainer.appendChild(img);
                 }
+                img.style.display = 'block';
                 img.src = e.target.result;
 
                 const liveBannerContainer = document.getElementById('livePhoneBannerContainer');
@@ -931,7 +1083,15 @@
     }
 
     function previewProfileAvatar(input) {
+        const errorDiv = document.getElementById('avatarSizeError');
+        if (errorDiv) errorDiv.style.display = 'none';
+
         if (input.files && input.files[0]) {
+            if (input.files[0].size > 2 * 1024 * 1024) {
+                if (errorDiv) errorDiv.style.display = 'block';
+                input.value = '';
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(e) {
                 const avatarContainer = document.getElementById('avatarPreviewContainer');
@@ -990,8 +1150,27 @@
         if (liveBio) liveBio.innerHTML = val;
     }
 
-    function formatText(command) {
-        document.execCommand(command, false, null);
+    function formatText(command, value = null, editorId = null) {
+        if (editorId) {
+            const editor = document.getElementById(editorId);
+            if (editor) {
+                editor.focus();
+                const range = document.createRange();
+                range.selectNodeContents(editor);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+        
+        document.execCommand(command, false, value);
+        
+        if (editorId) {
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+            }
+        }
         
         syncProfileName();
         syncProfileBio();
@@ -1016,43 +1195,25 @@
     }
 
     // DRAG AND DROP REORDERING SYSTEM FOR MICROSITE ELEMENTS
+    let elementSortable = null;
+
     function initElementDragAndDrop() {
         const list = document.getElementById('elementBlocksList');
         if (!list) return;
 
-        let dragSrcEl = null;
+        if (elementSortable) {
+            elementSortable.destroy();
+        }
 
-        const items = list.querySelectorAll('.draggable-element-block');
-        items.forEach(item => {
-            item.setAttribute('draggable', 'true');
-
-            item.addEventListener('dragstart', function(e) {
-                dragSrcEl = this;
-                this.style.opacity = '0.5';
-                this.style.border = '2px dashed #FF9040';
-                e.dataTransfer.effectAllowed = 'move';
-            });
-
-            item.addEventListener('dragend', function() {
-                this.style.opacity = '1';
-                this.style.border = 'none';
-                dragSrcEl = null;
+        elementSortable = new Sortable(list, {
+            animation: 150,
+            handle: '.drag-handle', // Dragging is only allowed when clicking the handle icon
+            ghostClass: 'sortable-ghost', // Styling for drop placeholder
+            onEnd: function (evt) {
+                // Trigger visual sync and database save on drop
                 syncPhonePreviewOrder();
-            });
-
-            item.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                if (this !== dragSrcEl && dragSrcEl) {
-                    const rect = this.getBoundingClientRect();
-                    const mid = rect.top + rect.height / 2;
-                    if (e.clientY < mid) {
-                        list.insertBefore(dragSrcEl, this);
-                    } else {
-                        list.insertBefore(dragSrcEl, this.nextSibling);
-                    }
-                }
-            });
+                if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            }
         });
     }
 
@@ -1070,13 +1231,350 @@
                 if (liveProfile) {
                     phoneContent.appendChild(liveProfile);
                 }
+            } else if (type === 'image') {
+                const liveEl = document.getElementById('live_' + block.id);
+                if (liveEl) {
+                    phoneContent.appendChild(liveEl);
+                }
             }
         });
     }
 
-    function initPageEvents() {
+    // DYNAMIC IMAGE ELEMENT LOGIC
+    let imageElementCounter = 0;
+
+    function addGambarElement() {
+        toggleAddElementPanel(); // Hide side menu
+        
+        imageElementCounter++;
+        const elementId = 'imageBlock_' + new Date().getTime();
+        const list = document.getElementById('elementBlocksList');
+        
+        const html = `
+            <div id="${elementId}" class="draggable-element-block" data-element-type="image" style="display: block; transition: all 0.25s ease;">
+                <div class="block-item-card" onclick="toggleImageEditForm('${elementId}')">
+                    <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                    <div style="width: 36px; height: 36px; border-radius: 8px; color: #6366F1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
+                            <span>Gambar</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                        <button type="button" onclick="toggleImageEditForm('${elementId}')" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#6366F1'; this.style.color='#ffffff'; this.style.borderColor='#6366F1';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
+                            <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="btnText_${elementId}">Edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="formBody_${elementId}" class="edit-form-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; margin-top: 0;">
+                    <div style="padding: 20px;">
+                        <div style="font-size: 14px; font-weight: 700; color: #111827; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
+                            Pengaturan Elemen Gambar
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Unggah Gambar</label>
+                            <div class="upload-dropzone dynamic-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                                <input type="file" accept="image/jpeg, image/png, image/gif" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onchange="previewDynamicImage(this, '${elementId}')">
+                                
+                                <div id="placeholder_${elementId}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #6366F1;"></i>
+                                    <div style="font-size: 13px; font-weight: 600; color: #374151;">Seret gambar ke sini atau <span style="color: #6366F1;">browse</span></div>
+                                    <div style="font-size: 10px; color: #9ca3af;">supports JPG, JPEG, PNG & GIF</div>
+                                </div>
+
+                                <div id="previewCont_${elementId}" style="display: none; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
+                                    <img src="" id="previewImg_${elementId}" style="width: 100%; object-fit: contain;">
+                                </div>
+                                
+                                <div id="error_${elementId}" style="display: none; width: 100%; margin-top: 12px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5; background: #FEE2E2;">
+                                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Gagal: Ukuran maksimal gambar adalah 2MB!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">URL Tautan (Opsional)</label>
+                            <input type="url" id="link_${elementId}" placeholder="https://..." style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s;" oninput="updateDynamicImageLink('${elementId}', this.value)">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #e5e7eb; margin-top: 20px;">
+                            <button type="button" onclick="removeDynamicElement('${elementId}')" style="background: none; border: none; color: #EF4444; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px;">
+                                <i class="fas fa-trash-alt"></i> Hapus Elemen
+                            </button>
+                            <button type="button" onclick="saveDynamicElement('${elementId}')" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        list.insertAdjacentHTML('beforeend', html);
+        
+        // Add to Phone Preview
+        const phoneContent = document.getElementById('phonePreviewContent');
+        if (phoneContent) {
+            const liveHtml = `
+                <div id="live_${elementId}" class="microsite-live-element" style="width: 100%; margin-bottom: 16px; border-radius: 12px; overflow: hidden; display: none; transition: all 0.3s ease; text-align: center;">
+                    <a id="liveLink_${elementId}" href="#" target="_blank" style="display: block; width: 100%; cursor: default; pointer-events: none;">
+                        <img id="liveImg_${elementId}" src="" style="width: 100%; height: auto; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    </a>
+                </div>
+            `;
+            phoneContent.insertAdjacentHTML('beforeend', liveHtml);
+        }
+        
         initElementDragAndDrop();
+        bindDynamicDropzone(elementId);
+        syncPhonePreviewOrder();
+        
+        setTimeout(() => toggleImageEditForm(elementId), 50);
+    }
+
+    function toggleImageEditForm(elementId) {
+        const formBody = document.getElementById('formBody_' + elementId);
+        const btnText = document.getElementById('btnText_' + elementId);
+        if (!formBody) return;
+
+        if (formBody.classList.contains('open')) {
+            formBody.style.maxHeight = '0px';
+            formBody.style.opacity = '0';
+            formBody.style.marginTop = '0px';
+            formBody.classList.remove('open');
+            if (btnText) btnText.innerText = 'Edit';
+        } else {
+            formBody.classList.add('open');
+            formBody.style.marginTop = '8px';
+            formBody.style.maxHeight = (formBody.scrollHeight + 500) + 'px';
+            formBody.style.opacity = '1';
+            if (btnText) btnText.innerText = 'Tutup';
+        }
+    }
+
+    function previewDynamicImage(input, elementId) {
+        const errorDiv = document.getElementById('error_' + elementId);
+        if (errorDiv) errorDiv.style.display = 'none';
+
+        if (input.files && input.files[0]) {
+            if (input.files[0].size > 2 * 1024 * 1024) {
+                if (errorDiv) errorDiv.style.display = 'block';
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const placeholder = document.getElementById('placeholder_' + elementId);
+                const previewCont = document.getElementById('previewCont_' + elementId);
+                const previewImg = document.getElementById('previewImg_' + elementId);
+                
+                if (placeholder) placeholder.style.display = 'none';
+                if (previewCont) previewCont.style.display = 'block';
+                if (previewImg) previewImg.src = e.target.result;
+
+                const liveEl = document.getElementById('live_' + elementId);
+                const liveImg = document.getElementById('liveImg_' + elementId);
+                if (liveEl && liveImg) {
+                    liveEl.style.display = 'block';
+                    liveImg.src = e.target.result;
+                }
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function updateDynamicImageLink(elementId, url) {
+        const liveLink = document.getElementById('liveLink_' + elementId);
+        if (liveLink) {
+            liveLink.href = url || '#';
+            if (url && url.length > 0) {
+                liveLink.style.pointerEvents = 'auto';
+                liveLink.style.cursor = 'pointer';
+            } else {
+                liveLink.style.pointerEvents = 'none';
+                liveLink.style.cursor = 'default';
+                liveLink.removeAttribute('href');
+            }
+        }
+    }
+
+    function removeDynamicElement(elementId) {
+        if(confirm('Hapus elemen gambar ini?')) {
+            const block = document.getElementById(elementId);
+            const dbId = block ? block.getAttribute('data-db-id') : null;
+            
+            if (dbId) {
+                fetch(`{{ url('/admin/elements/image') }}/${dbId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                }).then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        block.remove();
+                        const liveEl = document.getElementById('live_' + elementId);
+                        if (liveEl) liveEl.remove();
+                        syncPhonePreviewOrder();
+                        saveElementsOrder();
+                    } else {
+                        alert('Gagal menghapus dari database.');
+                    }
+                }).catch(err => {
+                    console.error(err);
+                    alert('Terjadi kesalahan saat menghapus.');
+                });
+            } else {
+                if (block) block.remove();
+                const liveEl = document.getElementById('live_' + elementId);
+                if (liveEl) liveEl.remove();
+                syncPhonePreviewOrder();
+                saveElementsOrder();
+            }
+        }
+    }
+
+    function saveDynamicElement(elementId) {
+        const block = document.getElementById(elementId);
+        const fileInput = block.querySelector('input[type="file"]');
+        const linkInput = document.getElementById('link_' + elementId);
+        const originalBtnText = document.getElementById('btnText_' + elementId);
+        
+        let formData = new FormData();
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            formData.append('image', fileInput.files[0]);
+        }
+        if (linkInput && linkInput.value) {
+            formData.append('link_url', linkInput.value);
+        }
+        
+        const dbId = block.getAttribute('data-db-id');
+        if (dbId) {
+            formData.append('element_id', dbId);
+        }
+
+        const btn = block.querySelector('button[onclick^="saveDynamicElement"]');
+        if(btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            btn.disabled = true;
+        }
+
+        fetch('{{ route('admin.elements.image.store') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btn) {
+                btn.innerHTML = 'Simpan';
+                btn.disabled = false;
+            }
+            if (data.success) {
+                block.setAttribute('data-db-id', data.id);
+                // Also update the live preview image if needed (already handled by onchange locally, but good to have)
+                syncPhonePreviewOrder();
+                saveElementsOrder();
+                toggleImageEditForm(elementId);
+                showSuccessToast('Elemen gambar berhasil disimpan!');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.innerHTML = 'Simpan';
+                btn.disabled = false;
+            }
+            console.error(err);
+            alert('Terjadi kesalahan saat menyimpan. Pastikan file max 2MB.');
+        });
+    }
+
+    function saveElementsOrder() {
+        const list = document.getElementById('elementBlocksList');
+        if(!list) return;
+        const blocks = list.querySelectorAll('.draggable-element-block');
+        let order = [];
+        blocks.forEach(block => {
+            const type = block.getAttribute('data-element-type');
+            if (type === 'profile') {
+                order.push('profile');
+            } else if (type === 'image') {
+                const dbId = block.getAttribute('data-db-id');
+                if (dbId) order.push('image_' + dbId);
+            }
+        });
+
+        const blocksOrderStr = order.join(',');
+
+        fetch('{{ route('admin.elements.order.update') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ blocks_order: blocksOrderStr })
+        });
+    }
+
+    function bindDynamicDropzone(elementId) {
+        const block = document.getElementById(elementId);
+        if(!block) return;
+        const zone = block.querySelector('.dynamic-dropzone');
+        const input = zone.querySelector('input[type="file"]');
+        if(input && zone) {
+            input.addEventListener('dragenter', () => zone.classList.add('drag-over-active'));
+            input.addEventListener('dragleave', () => zone.classList.remove('drag-over-active'));
+            input.addEventListener('drop', () => zone.classList.remove('drag-over-active'));
+        }
+    }
+
+    function initPageEvents() {
+        // Sort blocks based on DB order
+        const list = document.getElementById('elementBlocksList');
+        const dbOrderStr = '{!! $appearance->blocks_order ?? "" !!}';
+        if (list && dbOrderStr) {
+            const dbOrder = dbOrderStr.split(',');
+            dbOrder.forEach(blockId => {
+                let el = null;
+                if (blockId === 'profile') {
+                    el = document.getElementById('profileBlockCard');
+                } else if (blockId.startsWith('image_')) {
+                    const dbId = blockId.split('_')[1];
+                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"]`);
+                }
+                if (el) {
+                    list.appendChild(el);
+                }
+            });
+        }
+
+        initElementDragAndDrop();
+        syncPhonePreviewOrder();
         updatePhonePreviewVisibility();
+
+        // Initialize drag and drop visual states for upload zones
+        const dropzones = document.querySelectorAll('.upload-dropzone');
+        dropzones.forEach(zone => {
+            const input = zone.querySelector('input[type="file"]');
+            if(input && !input.dataset.dragbound) {
+                input.dataset.dragbound = 'true';
+                input.addEventListener('dragenter', () => {
+                    zone.classList.add('drag-over-active');
+                });
+                input.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over-active');
+                });
+                input.addEventListener('drop', () => {
+                    zone.classList.remove('drag-over-active');
+                });
+            }
+        });
 
         // AJAX PROFILE FORM SUBMISSION (NO RELOAD NEEDED)
         const profileForm = document.getElementById('profileBlockForm');
@@ -1092,6 +1590,8 @@
                     submitBtn.innerText = 'Menyimpan...';
                 }
 
+                if (typeof syncProfileName === 'function') syncProfileName();
+                if (typeof syncProfileBio === 'function') syncProfileBio();
                 const formData = new FormData(this);
 
                 fetch("{{ route('admin.appearance.update') }}", {
@@ -1102,14 +1602,20 @@
                     },
                     body: formData
                 })
-                .then(res => res.json())
+                .then(async res => {
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw errData;
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.innerText = origText;
                     }
 
-                    if (data.success) {
+                    if (data && data.success) {
                         const card = document.getElementById('profileBlockCard');
                         if (card) card.style.display = 'block';
 
@@ -1124,7 +1630,15 @@
                         submitBtn.disabled = false;
                         submitBtn.innerText = origText;
                     }
-                    this.submit();
+                    
+                    if (err && err.errors) {
+                        // Extract first validation error
+                        const firstError = Object.values(err.errors)[0][0];
+                        alert('Gagal menyimpan: ' + firstError);
+                    } else {
+                        // If it's a server error or non-JSON response, fallback to normal submission
+                        HTMLFormElement.prototype.submit.call(this);
+                    }
                 });
             });
         }
