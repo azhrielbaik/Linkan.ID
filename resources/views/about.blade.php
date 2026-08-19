@@ -312,8 +312,8 @@
                 <img src="{{ asset('images/Logo.png') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link">{{ __('layout.pricing') }}</a>
-                <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
+                <a href="{{ url('/') }}#pricing" class="nav-link">{{ __('layout.pricing') }}</a>
+                <a href="{{ url('/') }}#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
                 <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
