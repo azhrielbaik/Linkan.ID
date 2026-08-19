@@ -15,7 +15,7 @@
     <div class="section-header" style="margin-top: 10px;">
         @if($viewMode == 'gallery')
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
-                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
+                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #5A5BF1;"></i> {{ __('admin.my_microsite_list') }}</h2>
                 
                 <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
                 <div class="microsite-actions-bar">
@@ -36,7 +36,7 @@
                 <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <i class="fas fa-sliders-h" style="color: #FF9040; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
+                <i class="fas fa-sliders-h" style="color: #5A5BF1; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
             </h2>
         @endif
     </div>
@@ -75,7 +75,7 @@
                             </div>
 
                             <!-- Name & Bio -->
-                            <div class="phone-thumb-name" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">
+                            <div class="phone-thumb-name" style="color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">
                                 {{ $appearance ? $appearance->name : Auth::user()->name }}
                             </div>
                             <div class="phone-thumb-bio" style="color: {{ $appearance ? $appearance->theme_color : '#666' }}">
@@ -162,7 +162,7 @@
                             <!-- PANEL HEADER -->
                             <div class="add-element-panel-header">
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #FFE5D3; color: #5A5BF1; display: flex; align-items: center; justify-content: center; font-size: 14px;">
                                         <i class="fas fa-cubes"></i>
                                     </div>
                                     <div>
@@ -213,7 +213,7 @@
                     <!-- EDIT ELEMENT HEADER -->
                     <div id="elementSectionHeader" class="edit-element-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-layer-group" style="color: #FF9040;"></i> Edit Element
+                            <i class="fas fa-layer-group" style="color: #5A5BF1;"></i> Edit Element
                         </h3>
                         <span style="font-size: 11px; color: #6b7280; font-weight: 500;">
                             <i class="fas fa-arrows-alt-v" style="margin-right: 4px;"></i> Drag & Drop untuk mengurutkan
@@ -229,17 +229,17 @@
                             <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
                                 <i class="fas fa-grip-vertical drag-handle" style="color: #9ca3af; cursor: grab;" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
-                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #FFE5D3; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <div style="width: 36px; height: 36px; border-radius: 8px; background: #FFE5D3; color: #5A5BF1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
                                 <div style="flex: 1; min-width: 0;">
                                     <div style="font-weight: 700; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;">
                                         <span>Profil</span>
-                                        <span style="font-size: 10px; font-weight: 700; background: #FF9040; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
+                                        <span style="font-size: 10px; font-weight: 700; background: #5A5BF1; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
-                                    <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
+                                    <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#5A5BF1'; this.style.color='#ffffff'; this.style.borderColor='#5A5BF1';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
                                         <i class="fas fa-pen" style="font-size: 10px;"></i> <span id="profileEditBtnText">Edit</span>
                                     </button>
                                     <button type="button" onclick="removeProfileElement()" style="background: transparent; border: none; color: #ef4444; font-size: 14px; cursor: pointer; padding: 6px;" title="Hapus Elemen Profil">
@@ -253,7 +253,7 @@
                             <div style="padding: 20px;">
                                 <form action="{{ route('admin.appearance.update') }}" method="POST" enctype="multipart/form-data" id="profileBlockForm">
                                     @csrf
-                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#FF9040' }}">
+                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#5A5BF1' }}">
                                     <input type="hidden" name="background_color" value="{{ $appearance->background_color ?? '#FFFFFF' }}">
                                     
                                     <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -297,17 +297,17 @@
                                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
                                                     <input type="radio" name="profile_shape" value="circle" checked onchange="updateProfileShape('circle')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
+                                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 144, 64, 0.2); border: 2px solid #5A5BF1;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Lingkaran</span>
                                                 </label>
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
                                                     <input type="radio" name="profile_shape" value="rounded" onchange="updateProfileShape('rounded')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
+                                                    <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(255, 144, 64, 0.2); border: 2px solid #5A5BF1;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Rounded</span>
                                                 </label>
                                                 <label style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; text-align: center;">
                                                     <input type="radio" name="profile_shape" value="square" onchange="updateProfileShape('square')">
-                                                    <div style="width: 24px; height: 24px; border-radius: 0px; background: rgba(255, 144, 64, 0.2); border: 2px solid #FF9040;"></div>
+                                                    <div style="width: 24px; height: 24px; border-radius: 0px; background: rgba(255, 144, 64, 0.2); border: 2px solid #5A5BF1;"></div>
                                                     <span style="font-size: 11px; font-weight: 600; color: #374151;">Persegi</span>
                                                 </label>
                                             </div>
@@ -345,7 +345,7 @@
                                         <!-- ACTION BUTTONS -->
                                         <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6;">
                                             <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #d1d5db; color: #4b5563; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">Batal</button>
-                                            <button type="submit" style="background: #FF9040; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Simpan Perubahan</button>
+                                            <button type="submit" style="background: #5A5BF1; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Simpan Perubahan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -362,7 +362,7 @@
                 <!-- SECTION TITLE -->
                 <div style="width: 100%; margin-bottom: 12px;">
                     <h3 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-mobile-alt" style="color: #FF9040;"></i> {{ __('admin.live_phone_preview') }}
+                        <i class="fas fa-mobile-alt" style="color: #5A5BF1;"></i> {{ __('admin.live_phone_preview') }}
                     </h3>
                 </div>
 
@@ -370,7 +370,7 @@
                 <div class="phone-preview-flex-container" style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
                     
                     <!-- DAISYUI PHONE MOCKUP FRAME (LEFT) -->
-                    <div class="mockup-phone border-[#ff8938]">
+                    <div class="mockup-phone border-[#5A5BF1]">
                         <div class="mockup-phone-camera"></div>
                         <div class="mockup-phone-display">
                             <!-- REALISTIC SMARTPHONE TOP STATUS BAR -->
@@ -388,7 +388,7 @@
                                 
                                 <!-- EMPTY STATE PLACEHOLDER (SHOWN WHEN NO ELEMENTS ARE ADDED IN LEFT PANEL) -->
                                 <div id="phoneEmptyState" class="phone-empty-state">
-                                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 144, 64, 0.1); color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px;">
+                                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 144, 64, 0.1); color: #5A5BF1; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px;">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
                                     <div style="font-size: 13px; font-weight: 700; color: #4b5563; margin-bottom: 4px;">Belum Ada Elemen</div>
@@ -409,7 +409,7 @@
                                         @endif
                                     </div>
 
-                                    <div id="livePhoneName" style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 4px; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">
+                                    <div id="livePhoneName" style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 4px; color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">
                                         {{ $appearance ? $appearance->name : Auth::user()->name }}
                                     </div>
 
@@ -459,7 +459,7 @@
                             align-items: center;
                             gap: 4px;
                         ">
-                            <span style="color: #9CA3AF; font-weight: 500;">linkan.id/</span><span style="color: #FF9040;">{{ Auth::user()->username }}</span>
+                            <span style="color: #9CA3AF; font-weight: 500;">linkan.id/</span><span style="color: #5A5BF1;">{{ Auth::user()->username }}</span>
                         </div>
 
                         <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
@@ -468,7 +468,7 @@
                             <button type="button" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')" style="
                                 background: #FFF7ED;
                                 border: 1px solid #FFEDD5;
-                                color: #FF9040;
+                                color: #5A5BF1;
                                 width: 32px;
                                 height: 32px;
                                 border-radius: 10px;
@@ -478,7 +478,7 @@
                                 align-items: center;
                                 justify-content: center;
                                 transition: all 0.2s ease;
-                            " onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#FFF7ED'; this.style.color='#FF9040'; this.style.borderColor='#FFEDD5';" title="Salin Tautan Microsite">
+                            " onmouseover="this.style.background='#5A5BF1'; this.style.color='#ffffff'; this.style.borderColor='#5A5BF1';" onmouseout="this.style.background='#FFF7ED'; this.style.color='#5A5BF1'; this.style.borderColor='#FFEDD5';" title="Salin Tautan Microsite">
                                 <i class="fas fa-copy"></i>
                             </button>
                             
@@ -526,7 +526,7 @@
             <div class="new-microsite-modal-header">
                 <div>
                     <h3 class="new-microsite-modal-title" id="wizardTitle">
-                        <i class="fas fa-brush" style="color: #FF9040;"></i> {{ __('admin.create_new_microsite') }}
+                        <i class="fas fa-brush" style="color: #5A5BF1;"></i> {{ __('admin.create_new_microsite') }}
                     </h3>
                     <p class="new-microsite-modal-subtitle" id="wizardSubtitle">
                         Langkah 1 dari 2: Pilih Tujuan Pembuatan Microsite
@@ -791,7 +791,7 @@
             panel.style.marginTop = '0px';
             panel.classList.remove('open');
             btn.classList.remove('active');
-            btn.style.backgroundColor = '#FF9040';
+            btn.style.backgroundColor = '#5A5BF1';
 
             if (digitalProductsSection) {
                 digitalProductsSection.style.display = 'block';
@@ -1029,7 +1029,7 @@
             item.addEventListener('dragstart', function(e) {
                 dragSrcEl = this;
                 this.style.opacity = '0.5';
-                this.style.border = '2px dashed #FF9040';
+                this.style.border = '2px dashed #5A5BF1';
                 e.dataTransfer.effectAllowed = 'move';
             });
 

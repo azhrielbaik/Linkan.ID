@@ -114,12 +114,19 @@
         }
 
         /* KNOWLEDGE BASE CARD */
+        main {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .kb-card {
             background: #FFFFFF;
             border-radius: 30px;
             width: 100%;
-            max-width: 800px;
-            padding: 40px 32px;
+            max-width: 620px;
+            padding: 40px 40px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             margin-bottom: 40px;
@@ -140,29 +147,37 @@
             margin-bottom: 24px;
         }
 
+        .kb-search-wrapper {
+            display: flex;
+            align-items: center;
+            background: #6B6DFF;
+            border-radius: 50px;
+            padding: 6px 6px 6px 24px;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(90, 91, 241, 0.25);
+        }
+
         .kb-search-container {
             display: flex;
             justify-content: center;
-            gap: 16px;
             width: 100%;
-            flex-wrap: wrap;
         }
 
         .kb-search-input {
-            background: #6B6DFF;
+            background: transparent;
             color: #FFFFFF;
             border: none;
-            border-radius: 50px;
-            padding: 14px 28px;
-            width: 100%;
-            max-width: 400px;
+            flex: 1;
             font-size: 15px;
             font-weight: 500;
             outline: none;
+            min-width: 0;
         }
 
         .kb-search-input::placeholder {
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.75);
             font-weight: 500;
         }
 
@@ -171,16 +186,17 @@
             color: #FFFFFF;
             border: none;
             border-radius: 50px;
-            padding: 14px 32px;
+            padding: 12px 28px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
+            flex-shrink: 0;
             transition: background 0.2s, transform 0.2s;
         }
 
         .kb-search-btn:hover {
             background: #4142D6;
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         /* SECTION TITLE */
@@ -515,14 +531,16 @@
             .links-section {
                 grid-template-columns: 1fr;
             }
-            .kb-search-container {
-                flex-direction: column;
-            }
-            .kb-search-input {
+            .kb-search-wrapper {
+                padding: 5px 5px 5px 18px;
                 max-width: 100%;
             }
+            .kb-search-input {
+                font-size: 14px;
+            }
             .kb-search-btn {
-                width: 100%;
+                padding: 10px 20px;
+                font-size: 14px;
             }
             .footer-pill {
                 flex-direction: column;
@@ -572,8 +590,10 @@
         <h1 class="kb-title">Linkan.id Knowledge Base</h1>
         <p class="kb-subtitle">Discover what Linkan.id can do to help you achieve your goals</p>
         <div class="kb-search-container">
-            <input type="text" class="kb-search-input" placeholder="e.g. custom domain" aria-label="Search Knowledge Base">
-            <button class="kb-search-btn">Search</button>
+            <div class="kb-search-wrapper">
+                <input type="text" class="kb-search-input" id="kbSearchInput" placeholder="e.g. custom domain" aria-label="Search Knowledge Base" autocomplete="new-password" spellcheck="false">
+                <button class="kb-search-btn">Search</button>
+            </div>
         </div>
     </div>
 
@@ -761,6 +781,19 @@
                     });
                 });
             }
+        // Disable browser autocomplete on search input
+        const kbInput = document.getElementById('kbSearchInput');
+        if (kbInput) {
+            kbInput.setAttribute('autocomplete', 'off');
+            kbInput.setAttribute('autocomplete', 'new-password');
+            kbInput.addEventListener('focus', function() {
+                this.setAttribute('autocomplete', 'new-password');
+            });
+            // Prevent autofill
+            setTimeout(function() {
+                kbInput.value = '';
+            }, 100);
+        }
         });
     </script>
 </body>

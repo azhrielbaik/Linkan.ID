@@ -587,71 +587,241 @@
 
         /* TESTIMONIALS SECTION */
         .testimonials-section {
-            padding-top: 120px;
-            padding-bottom: 60px;
-        }
-
-        .testi-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            max-width: 1100px;
-            margin: 0 auto;
+            padding-top: 100px;
+            padding-bottom: 70px;
+            position: relative;
+            overflow: hidden;
             width: 100%;
         }
 
+        .testi-header-container {
+            text-align: center;
+            max-width: 760px;
+            margin: 0 auto 45px;
+            padding: 0 20px;
+        }
+
+        .testi-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .testi-pill-badge span.pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #22C55E;
+        }
+
+        .testimonials-marquee-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            position: relative;
+            padding: 10px 0;
+            mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+        }
+
+        .testi-marquee-row {
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            user-select: none;
+        }
+
+        .testi-track {
+            display: flex;
+            width: max-content;
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .testi-track-left {
+            animation: scroll-left 45s linear infinite;
+        }
+
+        .testi-track-right {
+            animation: scroll-right 45s linear infinite;
+        }
+
+        .testimonials-marquee-wrapper:hover .testi-track,
+        .testi-marquee-row:hover .testi-track,
+        .testi-track:hover,
+        .testi-card:hover {
+            animation-play-state: paused !important;
+            -webkit-animation-play-state: paused !important;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-50% - 10px));
+            }
+        }
+
+        @keyframes scroll-right {
+            0% {
+                transform: translateX(calc(-50% - 10px));
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
         .testi-card {
+            width: 380px;
+            max-width: 85vw;
+            flex-shrink: 0;
             background: #FFFFFF;
-            border-radius: 30px;
-            padding: 30px;
+            border-radius: 24px;
+            padding: 26px 28px;
             text-align: left;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.9);
             color: var(--dark);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .testi-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 22px 45px rgba(0, 0, 0, 0.14);
+            border-color: rgba(90, 91, 241, 0.35);
+            z-index: 10;
         }
 
         .testi-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .testi-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .testi-avatar {
-            width: 45px;
-            height: 45px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 700;
-            font-size: 18px;
+            font-weight: 800;
+            font-size: 17px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
-        .avatar-red { background: #FF4A50; }
-        .avatar-orange { background: #ED842C; }
+        .avatar-grad-1 { background: linear-gradient(135deg, #FF4A50 0%, #FF8533 100%); }
+        .avatar-grad-2 { background: linear-gradient(135deg, #5A5BF1 0%, #8A4AF3 100%); }
+        .avatar-grad-3 { background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%); }
+        .avatar-grad-4 { background: linear-gradient(135deg, #ED842C 0%, #F59E0B 100%); }
+        .avatar-grad-5 { background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%); }
+        .avatar-grad-6 { background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%); }
+        .avatar-grad-7 { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%); }
+        .avatar-grad-8 { background: linear-gradient(135deg, #FA709A 0%, #FEE140 100%); }
+        .avatar-grad-9 { background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); }
+        .avatar-grad-10 { background: linear-gradient(135deg, #14B8A6 0%, #059669 100%); }
+        .avatar-grad-11 { background: linear-gradient(135deg, #F97316 0%, #DC2626 100%); }
+        .avatar-grad-12 { background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%); }
+
+        .testi-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .testi-name-wrap {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .testi-meta h4 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: var(--dark);
             line-height: 1.2;
+            margin: 0;
+        }
+
+        .testi-verified {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #3B82F6;
+            flex-shrink: 0;
+        }
+
+        .testi-verified svg {
+            width: 15px;
+            height: 15px;
+            fill: #3B82F6;
         }
 
         .testi-meta span {
             font-size: 12px;
-            color: #888;
-        }
-
-        .testi-text {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #555;
+            color: #71717A;
             font-weight: 500;
         }
 
-        .testi-mobile-marquee {
-            display: none;
+        .testi-role-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #F4F4F5;
+            color: #52525B;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .testi-stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 12px;
+        }
+
+        .testi-stars svg {
+            width: 15px;
+            height: 15px;
+            fill: #F59E0B;
+        }
+
+        .testi-text {
+            font-size: 13.5px;
+            line-height: 1.65;
+            color: #3F3F46;
+            font-weight: 500;
+            margin: 0;
         }
 
         /* CREATOR SHOWCASE SECTION */
@@ -1013,37 +1183,41 @@
 
         /* Responsive */
         @media (max-width: 900px) {
-            .testi-grid {
-                display: none !important;
+            .testimonials-section {
+                padding-top: 70px;
+                padding-bottom: 50px;
             }
-            .testi-mobile-marquee {
-                display: flex;
-                overflow: hidden;
-                width: 100vw;
-                position: relative;
-                padding: 25px 0;
-                mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-                -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            .testi-header-container {
+                margin-bottom: 30px;
             }
-            .testi-marquee-track {
-                display: flex;
-                width: max-content;
-                gap: 16px;
-                padding: 0 8px;
-                animation: scroll-marquee 20s linear infinite;
-                will-change: transform;
+            .testimonials-marquee-wrapper {
+                gap: 14px;
             }
-            @keyframes scroll-marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(calc(-50% - 8px)); }
+            .testi-track {
+                gap: 14px;
             }
-            .testi-mobile-marquee .testi-card {
-                width: 280px;
-                flex-shrink: 0;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-                padding: 24px;
+            .testi-track-left {
+                animation-duration: 32s;
+            }
+            .testi-track-right {
+                animation-duration: 34s;
+            }
+            .testi-card {
+                width: 310px;
+                padding: 20px 22px;
                 border-radius: 20px;
-                background: #FFFFFF;
+            }
+            .testi-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 15px;
+            }
+            .testi-meta h4 {
+                font-size: 14px;
+            }
+            .testi-text {
+                font-size: 12.5px;
+                line-height: 1.55;
             }
             .pricing-grid {
                 display: flex;
@@ -1424,113 +1598,677 @@
 
     <!-- TESTIMONIALS SECTION -->
     <section class="testimonials-section reveal">
-        <h2 class="section-title" style="margin-bottom: 4rem;">{{ __('public.testi_title') }}</h2>
-        
-        <!-- Desktop Grid View -->
-        <div class="testi-grid">
-            <div class="testi-card reveal-scale">
-                <div class="testi-header">
-                    <div class="testi-avatar avatar-red"></div>
-                    <div class="testi-meta">
-                        <h4>RakanMY</h4>
-                        <span>@rakanmy</span>
-                    </div>
-                </div>
-                <p class="testi-text">"“Lorem ipsum dolor sit amet, lorem ipsum dolor si amet”"</p>
+        <div class="testi-header-container">
+            <div class="testi-pill-badge">
+                <span class="pulse-dot"></span>
+                <span>Testimonial & Review</span>
             </div>
-            
-            <div class="testi-card reveal-scale" style="transition-delay: 0.1s;">
-                <div class="testi-header">
-                    <div class="testi-avatar" style="background: #E8E8E8; color: #555;">F</div>
-                    <div class="testi-meta">
-                        <h4>Frsbrly</h4>
-                        <span>@frsbrly</span>
-                    </div>
-                </div>
-                <p class="testi-text">"Linkan.id memberikan solusi terbaik untuk mengelola semua link dan produk digital saya dalam satu tempat. Luar biasa!"</p>
-            </div>
-            
-            <div class="testi-card reveal-scale" style="transition-delay: 0.2s;">
-                <div class="testi-header">
-                    <div class="testi-avatar avatar-orange"></div>
-                    <div class="testi-meta">
-                        <h4>mhmdazrl</h4>
-                        <span>@mhmdazrl</span>
-                    </div>
-                </div>
-                <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
-            </div>
+            <h2 class="section-title">{{ __('public.testi_title') }}</h2>
+            <p class="section-subtitle" style="margin-top: 0.5rem; margin-bottom: 0;">
+                {{ app()->getLocale() == 'id' ? 'Dipercaya oleh ribuan kreator, pebisnis online, dan profesional di seluruh Indonesia' : 'Trusted by thousands of creators, online sellers, and professionals' }}
+            </p>
         </div>
+        
+        <div class="testimonials-marquee-wrapper">
+            <!-- ROW 1: SLIDE LEFT -->
+            <div class="testi-marquee-row">
+                <div class="testi-track testi-track-left">
+                    <!-- SET 1 (Unique Items 1 - 6) -->
+                    <!-- Card 1 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-1">R</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>RakanMY</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@rakanmy</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🚀 Digital Creator</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Linkan.id beneran ngebantu banget buat jualan e-book dan preset foto secara otomatis. Setup cuma 5 menit, langsung siap jualan!"</p>
+                    </div>
 
-        <!-- Mobile Scroll View -->
-        <div class="testi-mobile-marquee">
-            <div class="testi-marquee-track">
-                <!-- SET 1 -->
-                <div class="testi-card">
-                    <div class="testi-header">
-                        <div class="testi-avatar avatar-red"></div>
-                        <div class="testi-meta">
-                            <h4>RakanMY</h4>
-                            <span>@rakanmy</span>
+                    <!-- Card 2 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-2">F</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Faris Berly</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@frsbrly</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🛍️ Brand Founder</span>
                         </div>
-                    </div>
-                    <p class="testi-text">"Sangat membantu saya untuk berjualan digital product dengan mudah dan cepat tanpa ribet. Tampilannya juga sangat premium."</p>
-                </div>
-                
-                <div class="testi-card">
-                    <div class="testi-header">
-                        <div class="testi-avatar" style="background: #E8E8E8; color: #555;">F</div>
-                        <div class="testi-meta">
-                            <h4>Frsbrly</h4>
-                            <span>@frsbrly</span>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                         </div>
+                        <p class="testi-text">"Solusi all-in-one terbaik untuk kelola link promosi dan katalog produk. Konversi checkout naik lebih dari 40% sejak pakai Linkan!"</p>
                     </div>
-                    <p class="testi-text">"Linkan.id memberikan solusi terbaik untuk mengelola semua link dan produk digital saya dalam satu tempat. Luar biasa!"</p>
-                </div>
-                
-                <div class="testi-card">
-                    <div class="testi-header">
-                        <div class="testi-avatar avatar-orange"></div>
-                        <div class="testi-meta">
-                            <h4>mhmdazrl</h4>
-                            <span>@mhmdazrl</span>
-                        </div>
-                    </div>
-                    <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
-                </div>
 
-                <!-- SET 2 (DUPLICATE FOR SEAMLESS LOOP) -->
-                <div class="testi-card" aria-hidden="true">
-                    <div class="testi-header">
-                        <div class="testi-avatar avatar-red"></div>
-                        <div class="testi-meta">
-                            <h4>RakanMY</h4>
-                            <span>@rakanmy</span>
+                    <!-- Card 3 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-5">N</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Nadia Safitri</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@nadiasaf</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">✨ Beauty & Lifestyle</span>
                         </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Bio link Instagram aku sekarang jadi jauh lebih aesthetic dan elegan. Followers gampang banget nemu link barang rekomendasi aku."</p>
                     </div>
-                    <p class="testi-text">"Sangat membantu saya untuk berjualan digital product dengan mudah dan cepat tanpa ribet. Tampilannya juga sangat premium."</p>
+
+                    <!-- Card 4 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-3">D</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Dimas Pratama</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@dimas.tech</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📚 Course Instructor</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Jualan modul pembelajaran & video course jadi serba otomatis. Pembeli bayar via QRIS langsung dapat akses instan tanpa konfirmasi manual."</p>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-7">C</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Clara Veronica</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@claraveron</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🎨 UI/UX Designer</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Kustomisasi tampilannya fleksibel banget! Bisa sesuaikan warna, font, dan layout portofolio agar matching dengan visual identity saya."</p>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-4">R</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Rian Hidayat</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@rianhidayat</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📦 E-Commerce Seller</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Integrasi katalog tokonya simpel dan enteng. Gak perlu pusing bikin website mahal, cukup satu link Linkan sudah bisa jualan puluhan produk."</p>
+                    </div>
+
+                    <!-- SET 2 (DUPLICATE CLONE 1 - 6 FOR SEAMLESS LOOP) -->
+                    <!-- Card 1 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-1">R</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>RakanMY</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@rakanmy</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🚀 Digital Creator</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Linkan.id beneran ngebantu banget buat jualan e-book dan preset foto secara otomatis. Setup cuma 5 menit, langsung siap jualan!"</p>
+                    </div>
+
+                    <!-- Card 2 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-2">F</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Faris Berly</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@frsbrly</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🛍️ Brand Founder</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Solusi all-in-one terbaik untuk kelola link promosi dan katalog produk. Konversi checkout naik lebih dari 40% sejak pakai Linkan!"</p>
+                    </div>
+
+                    <!-- Card 3 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-5">N</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Nadia Safitri</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@nadiasaf</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">✨ Beauty & Lifestyle</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Bio link Instagram aku sekarang jadi jauh lebih aesthetic dan elegan. Followers gampang banget nemu link barang rekomendasi aku."</p>
+                    </div>
+
+                    <!-- Card 4 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-3">D</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Dimas Pratama</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@dimas.tech</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📚 Course Instructor</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Jualan modul pembelajaran & video course jadi serba otomatis. Pembeli bayar via QRIS langsung dapat akses instan tanpa konfirmasi manual."</p>
+                    </div>
+
+                    <!-- Card 5 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-7">C</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Clara Veronica</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@claraveron</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🎨 UI/UX Designer</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Kustomisasi tampilannya fleksibel banget! Bisa sesuaikan warna, font, dan layout portofolio agar matching dengan visual identity saya."</p>
+                    </div>
+
+                    <!-- Card 6 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-4">R</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Rian Hidayat</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@rianhidayat</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📦 E-Commerce Seller</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Integrasi katalog tokonya simpel dan enteng. Gak perlu pusing bikin website mahal, cukup satu link Linkan sudah bisa jualan puluhan produk."</p>
+                    </div>
                 </div>
-                
-                <div class="testi-card" aria-hidden="true">
-                    <div class="testi-header">
-                        <div class="testi-avatar" style="background: #E8E8E8; color: #555;">F</div>
-                        <div class="testi-meta">
-                            <h4>Frsbrly</h4>
-                            <span>@frsbrly</span>
+            </div>
+
+            <!-- ROW 2: SLIDE RIGHT -->
+            <div class="testi-marquee-row">
+                <div class="testi-track testi-track-right">
+                    <!-- SET 1 (Unique Items 7 - 12) -->
+                    <!-- Card 7 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-6">M</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Muhammad Azriel</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@mhmdazrl</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">💡 Tech Creator</span>
                         </div>
-                    </div>
-                    <p class="testi-text">"Linkan.id memberikan solusi terbaik untuk mengelola semua link dan produk digital saya dalam satu tempat. Luar biasa!"</p>
-                </div>
-                
-                <div class="testi-card" aria-hidden="true">
-                    <div class="testi-header">
-                        <div class="testi-avatar avatar-orange"></div>
-                        <div class="testi-meta">
-                            <h4>mhmdazrl</h4>
-                            <span>@mhmdazrl</span>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                         </div>
+                        <p class="testi-text">"Platform yang sangat intuitif dan cepat. Fitur analitik kliknya akurat banget untuk optimasi performa campaign di media sosial."</p>
                     </div>
-                    <p class="testi-text">"Platform yang sangat intuitif dan mudah digunakan. Sangat direkomendasikan untuk kreator pemula maupun profesional."</p>
+
+                    <!-- Card 8 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-9">B</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Bayu Aditya</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@bayuaditya</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📈 Affiliate Marketer</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Komisi affiliate naik signifikan sejak pakai Linkan. Halamannya terbuka super kilat di smartphone dan minim bounce rate."</p>
+                    </div>
+
+                    <!-- Card 9 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-8">S</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Siti Rahmawati</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@siti_craft</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🧶 Artisan & Handmade</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Suka banget sama desainnya yang bersih dan rapi. Pelanggan gak kebingungan lagi saat mau order custom merchandise via WhatsApp."</p>
+                    </div>
+
+                    <!-- Card 10 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-10">K</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Kevin Santoso</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@kevinsan</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🎙️ Podcaster & Host</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Linkan jadi pusat navigasi untuk episode podcast, form sponsorship, dan link donasi komunitas kami. Sangat powerful dan recommended!"</p>
+                    </div>
+
+                    <!-- Card 11 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-11">M</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Maya Anggraini</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@mayangrn</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">✈️ Travel Blogger</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Desain responsifnya juara! Semua link rekomendasi hotel, kuliner, dan itinerary tersusun cantik tanpa bikin audiens pusing."</p>
+                    </div>
+
+                    <!-- Card 12 -->
+                    <div class="testi-card">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-12">B</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Bagas Triputra</h4>
+                                        <span class="testi-verified" title="Verified Creator">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@bagastri</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📸 Commercial Photo</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Portofolio photoshoot dan jadwal booking foto jadi jauh lebih profesional. Klien baru langsung yakin dari first impression!"</p>
+                    </div>
+
+                    <!-- SET 2 (DUPLICATE CLONE 7 - 12 FOR SEAMLESS LOOP) -->
+                    <!-- Card 7 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-6">M</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Muhammad Azriel</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@mhmdazrl</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">💡 Tech Creator</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Platform yang sangat intuitif dan cepat. Fitur analitik kliknya akurat banget untuk optimasi performa campaign di media sosial."</p>
+                    </div>
+
+                    <!-- Card 8 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-9">B</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Bayu Aditya</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@bayuaditya</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📈 Affiliate Marketer</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Komisi affiliate naik signifikan sejak pakai Linkan. Halamannya terbuka super kilat di smartphone dan minim bounce rate."</p>
+                    </div>
+
+                    <!-- Card 9 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-8">S</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Siti Rahmawati</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@siti_craft</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🧶 Artisan & Handmade</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Suka banget sama desainnya yang bersih dan rapi. Pelanggan gak kebingungan lagi saat mau order custom merchandise via WhatsApp."</p>
+                    </div>
+
+                    <!-- Card 10 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-10">K</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Kevin Santoso</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@kevinsan</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">🎙️ Podcaster & Host</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Linkan jadi pusat navigasi untuk episode podcast, form sponsorship, dan link donasi komunitas kami. Sangat powerful dan recommended!"</p>
+                    </div>
+
+                    <!-- Card 11 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-11">M</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Maya Anggraini</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@mayangrn</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">✈️ Travel Blogger</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Desain responsifnya juara! Semua link rekomendasi hotel, kuliner, dan itinerary tersusun cantik tanpa bikin audiens pusing."</p>
+                    </div>
+
+                    <!-- Card 12 Duplicate -->
+                    <div class="testi-card" aria-hidden="true">
+                        <div class="testi-header">
+                            <div class="testi-profile">
+                                <div class="testi-avatar avatar-grad-12">B</div>
+                                <div class="testi-meta">
+                                    <div class="testi-name-wrap">
+                                        <h4>Bagas Triputra</h4>
+                                        <span class="testi-verified">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                        </span>
+                                    </div>
+                                    <span>@bagastri</span>
+                                </div>
+                            </div>
+                            <span class="testi-role-tag">📸 Commercial Photo</span>
+                        </div>
+                        <div class="testi-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <p class="testi-text">"Portofolio photoshoot dan jadwal booking foto jadi jauh lebih profesional. Klien baru langsung yakin dari first impression!"</p>
+                    </div>
                 </div>
             </div>
         </div>

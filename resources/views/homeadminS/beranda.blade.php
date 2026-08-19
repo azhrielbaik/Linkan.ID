@@ -1,6 +1,6 @@
 @extends("layouts.admin")
 
-@section("page_title", __('admin.overview_dashboard'))
+@section("page_title", __('admin.dashboard_title'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}" data-turbo-track="reload">
@@ -9,88 +9,115 @@
 @section("content")
 <div class="dashboard-beranda-page">
 
-
-
-            <div class="account-section">
-                <div class="profile">
-                    <div class="profile-image">
-                        @if($appearance && $appearance->profile_image)
-                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                        @else
-                            <i class="fas fa-user"></i>
-                        @endif
-                    </div>
-                    <div class="profile-info">
-                        <h3>{{ $appearance && $appearance->name ? $appearance->name : Auth::user()->name }}</h3>
-                        <a href="{{ route('track.view', ['username' => Auth::user()->username]) }}" style="color: #FF9040;">
-                            {{ url('/linkan.id/' . Auth::user()->username) }}
-                        </a>
-                    </div>
-                    <button
-                      class="share-button"
-                      onclick="copyToClipboard('{{ route('track.view', ['username' => Auth::user()->username]) }}')"
-                    >
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                </div>
-                <div class="start-creating">{{ __('admin.start_creating_now') }}</div>
-                <div class="action-buttons">
-                    <a href="{{ route('admin.mylinkan') }}" class="action-button">
-                        <i class="fas fa-qrcode"></i> {{ __('admin.add_linkan') }}
-                    </a>
-                    <a href="{{ route('admin.digital-products.create') }}" class="action-button">
-                        <i class="fas fa-box"></i> {{ __('admin.digital_product') }}
-                    </a>
-                    <a href="{{ route('about') }}" class="action-button">
-                        <i class="fas fa-headset"></i> {{ __('admin.about_us') }}
-                    </a>
-                </div>
+    <!-- 4 TOP STAT CARDS -->
+    <div class="top-stat-grid">
+        <div class="top-stat-card">
+            <div class="stat-icon-box">
+                <i class="fas fa-id-card"></i>
             </div>
-
-            <div class="earnings-section">
-                <div class="earnings-header">
-                    <span>{{ __('admin.earnings') }}</span>
-                    <i class="fas fa-cog"></i>
-                </div>
-                <div class="earnings-amount">IDR {{ number_format($totalEarnings, 0, ',', '.') }}</div>
+            <div class="stat-info">
+                <div class="stat-number">{{ $activeMicrosite ?? 1 }}</div>
+                <div class="stat-label">{{ __('admin.active_microsite_label') }}</div>
             </div>
+        </div>
 
-            <div class="stats-section">
-                <div class="stats-header">
-                    <h3>{{ __('admin.total_click_views') }}</h3>
-                    <div class="date-range-selector">
-                        <input type="date" id="startDate" class="date-input" />
-                        <span>{{ __('admin.to') }}</span>
-                        <input type="date" id="endDate" class="date-input" />
-                        <button class="apply-date" onclick="applyDateFilter()">{{ __('admin.apply') }}</button>
-                    </div>
-                </div>
-                <div class="stats-numbers">
-                    <span>{{ __('admin.views') }} <span id="totalViews">{{ $totalViews }}</span></span>
-                    <span>{{ __('admin.clicks') }} <span id="totalClicks">{{ $totalClicks }}</span></span>
-                </div>
-                <div class="stats-chart">
-                    <canvas id="statsChart"></canvas>
-                </div>
+        <div class="top-stat-card">
+            <div class="stat-icon-box">
+                <i class="fas fa-eye"></i>
             </div>
+            <div class="stat-info">
+                <div class="stat-number" id="topStatViews">{{ $totalViews }}</div>
+                <div class="stat-label">{{ __('admin.total_views_label') }}</div>
+            </div>
+        </div>
 
-            <div class="summary-section">
-                <div class="summary-card">
-                    <i class="fas fa-shopping-cart"></i>
-                    <div class="label">{{ __('admin.lifetime_orders') }}</div>
-                    <div class="number">{{ $lifetimeOrders }}</div>
-                </div>
-                <div class="summary-card">
-                    <i class="fas fa-chart-line"></i>
-                    <div class="label">{{ __('admin.lifetime_sales') }}</div>
-                    <div class="number">{{ number_format($totalEarnings, 0, ',', '.') }}</div>
-                </div>
-                <div class="summary-card">
-                    <i class="fas fa-box"></i>
-                    <div class="label">{{ __('admin.my_blocks') }}</div>
-                    <div class="number">{{ $totalProducts }}</div>
-                </div>
+        <div class="top-stat-card">
+            <div class="stat-icon-box">
+                <i class="fas fa-box-open"></i>
             </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ $totalProducts }}</div>
+                <div class="stat-label">{{ __('admin.installed_products_label') }}</div>
+            </div>
+        </div>
+
+        <div class="top-stat-card">
+            <div class="stat-icon-box">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ $totalShortlinks ?? 0 }}</div>
+                <div class="stat-label">{{ __('admin.connected_shortlinks_label') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATOR PROFILE CARD -->
+    <div class="account-section">
+        <div class="profile">
+            <div class="profile-image">
+                @if($appearance && $appearance->profile_image)
+                    <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                @else
+                    <i class="fas fa-user"></i>
+                @endif
+            </div>
+            <div class="profile-info">
+                <h3>{{ $appearance && $appearance->name ? $appearance->name : Auth::user()->name }}</h3>
+                <a href="{{ route('track.view', ['username' => Auth::user()->username]) }}">
+                    {{ url('/linkan.id/' . Auth::user()->username) }}
+                </a>
+            </div>
+            <button
+              class="share-button"
+              onclick="copyToClipboard('{{ route('track.view', ['username' => Auth::user()->username]) }}')"
+              title="Copy Link"
+            >
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+        <div class="start-creating">{{ __('admin.start_creating_now') }}</div>
+        <div class="action-buttons">
+            <a href="{{ route('admin.mylinkan') }}" class="action-button">
+                <i class="fas fa-link"></i> {{ __('admin.add_linkan') }}
+            </a>
+            <a href="{{ route('admin.digital-products.create') }}" class="action-button">
+                <i class="fas fa-box"></i> {{ __('admin.digital_product') }}
+            </a>
+            <a href="{{ route('about') }}" class="action-button">
+                <i class="fas fa-info-circle"></i> {{ __('admin.about_us') }}
+            </a>
+        </div>
+    </div>
+
+    <!-- EARNINGS SECTION -->
+    <div class="earnings-section">
+        <div class="earnings-header">
+            <span>{{ __('admin.earnings') }}</span>
+            <a href="{{ route('admin.payout.index') }}" style="color: #ffffff;"><i class="fas fa-cog"></i></a>
+        </div>
+        <div class="earnings-amount">IDR {{ number_format($totalEarnings, 0, ',', '.') }}</div>
+    </div>
+
+    <!-- STATS CHART SECTION -->
+    <div class="stats-section">
+        <div class="stats-header">
+            <h3>{{ __('admin.total_click_views') }}</h3>
+            <div class="date-range-selector">
+                <input type="date" id="startDate" class="date-input" />
+                <span>{{ __('admin.to') }}</span>
+                <input type="date" id="endDate" class="date-input" />
+                <button class="apply-date" onclick="applyDateFilter()">{{ __('admin.apply') }}</button>
+            </div>
+        </div>
+        <div class="stats-numbers">
+            <span>{{ __('admin.views') }} <strong id="totalViews" style="color: #5A5BF1;">{{ $totalViews }}</strong></span>
+            <span>{{ __('admin.clicks') }} <strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
+        </div>
+        <div class="stats-chart">
+            <canvas id="statsChart"></canvas>
+        </div>
+    </div>
 
 </div>
 @endsection
@@ -122,7 +149,7 @@ document.addEventListener('turbo:load', function() {
 
     window.copyToClipboard = function(text) {
         navigator.clipboard.writeText(text).then(() => {
-            alert('Link copied to clipboard!');
+            alert(@json(__('admin.link_copied')));
         }).catch((err) => {
             console.error('Failed to copy text: ', err);
         });
@@ -142,96 +169,83 @@ document.addEventListener('turbo:load', function() {
         .then((response) => response.json())
         .then((data) => {
             const totalViewsEl = document.getElementById('totalViews');
+            const topStatViewsEl = document.getElementById('topStatViews');
             const totalClicksEl = document.getElementById('totalClicks');
-            const startDateEl = document.getElementById('startDate');
-            const endDateEl = document.getElementById('endDate');
 
             if (totalViewsEl && data.views) {
-                totalViewsEl.textContent = data.views.reduce((a, b) => a + b, 0);
+                const sumViews = data.views.reduce((a, b) => a + b, 0);
+                totalViewsEl.textContent = sumViews;
+                if (topStatViewsEl) topStatViewsEl.textContent = sumViews;
             }
             if (totalClicksEl && data.clicks) {
                 totalClicksEl.textContent = data.clicks.reduce((a, b) => a + b, 0);
             }
 
-            if (startDateEl) startDateEl.value = data.start_date;
-            if (endDateEl) endDateEl.value = data.end_date;
-
-            startDate = data.start_date;
-            endDate = data.end_date;
-
             if (myChart) {
-                myChart.destroy();
+                myChart.data.labels = data.labels;
+                myChart.data.datasets[0].data = data.views;
+                myChart.data.datasets[1].data = data.clicks;
+                myChart.update();
+            } else {
+                myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'Views',
+                                data: data.views,
+                                borderColor: '#5A5BF1',
+                                backgroundColor: 'rgba(90, 91, 241, 0.08)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#5A5BF1',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Clicks',
+                                data: data.clicks,
+                                borderColor: '#3B82F6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#3B82F6',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: { family: 'Plus Jakarta Sans', weight: '600' }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0, 0, 0, 0.04)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
             }
-
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.labels,
-                    datasets: [
-                        {
-                            label: 'Views',
-                            data: data.views,
-                            backgroundColor: '#ff4500',
-                            borderRadius: 4,
-                            maxBarThickness: 12,
-                        },
-                        {
-                            label: 'Clicks',
-                            data: data.clicks,
-                            backgroundColor: '#4a90e2',
-                            borderRadius: 4,
-                            maxBarThickness: 12,
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#f0f0f0',
-                            },
-                        },
-                        x: {
-                            grid: {
-                                display: false,
-                            },
-                        },
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            align: 'start',
-                            labels: {
-                                boxWidth: 12,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                            },
-                        },
-                    },
-                },
-            });
         })
-        .catch((err) => {
-            console.error('Error fetching chart data:', err);
-        });
-    }
-
-    const today = new Date();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(today.getDate() - 6);
-
-    const startDateEl = document.getElementById('startDate');
-    const endDateEl = document.getElementById('endDate');
-
-    if (startDateEl && endDateEl) {
-        startDateEl.value = sevenDaysAgo.toISOString().split('T')[0];
-        endDateEl.value = today.toISOString().split('T')[0];
-
-        startDate = startDateEl.value;
-        endDate = endDateEl.value;
+        .catch((error) => console.error('Error fetching chart data:', error));
     }
 
     updateChart();

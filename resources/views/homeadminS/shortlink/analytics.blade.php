@@ -9,7 +9,7 @@
 @section("content")
 <div class="analytics-header-card" style="padding: 24px; margin-bottom: 24px;">
     <h1>{{ __('admin.analytics_shortlink') }}</h1>
-    <p style="color: #FF9040; margin-top: 8px; font-weight: 600;">{{ $shortlink->slug }}</p>
+    <p style="color: #5A5BF1; margin-top: 8px; font-weight: 600;">{{ $shortlink->slug }}</p>
     <h2 style="font-size: 32px; margin-top: 12px; font-weight: 800;">{{ $totalClicks }} <span style="font-size: 16px; color: #666; font-weight: normal;">{{ __('admin.total_clicks') }}</span></h2>
     <div style="margin-top: 15px; color: #555;">
         <strong>{{ __('admin.top_sources') }}</strong>
@@ -107,7 +107,7 @@ let chart;
                     labels: dataArray.map(item => item.label),
                     datasets: [{
                         data: dataArray.map(item => item.total),
-                        backgroundColor: ['#FF9040', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30', '#8e8e93', '#5ac8fa'],
+                        backgroundColor: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30', '#8e8e93', '#5ac8fa'],
                         borderWidth: 0,
                     }],
                 },
@@ -180,7 +180,7 @@ let chart;
                             datasets: [{
                                 label: 'Sources',
                                 data: data.sources.map((item) => item.total),
-                                backgroundColor: ['#FF9040', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30'],
+                                backgroundColor: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30'],
                                 borderWidth: 0,
                             }],
                         },

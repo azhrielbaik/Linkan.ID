@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @stack('styles')
+    @stack('page-styles')
     <style>
         * {
             margin: 0;
@@ -17,19 +19,20 @@
         }
 
         body {
-            background-color: #f4f6fa;
+            background-color: #ffffff;
             color: #333;
         }
 
         .container {
             display: flex;
             min-height: 100vh;
+            background-color: #ffffff;
         }
 
         .main-content {
             flex: 1;
             margin-left: 250px; /* Sidebar width */
-            background-color: #f4f6fa;
+            background-color: #ffffff;
             min-width: 0;
             display: flex;
             flex-direction: column;
@@ -44,23 +47,24 @@
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
-            background: #fff !important;
-            padding: 10px 40px !important;
-            border-bottom: 1px solid #eaeaea !important;
-            min-height: 48px !important;
+            background: #ffffff !important;
+            padding: 16px 40px !important;
+            border-bottom: 1px solid #f0f2f5 !important;
+            min-height: 56px !important;
         }
         
         .content-wrapper {
-            padding: 20px 40px !important;
+            padding: 24px 40px !important;
             flex: 1;
+            background-color: #ffffff;
         }
 
         .header h1 {
-            font-size: 18px !important;
+            font-size: 26px !important;
             font-weight: 800 !important;
-            color: #181818 !important;
-            letter-spacing: 0.5px !important;
-            text-transform: uppercase !important;
+            color: #1E50D8 !important;
+            letter-spacing: -0.5px !important;
+            text-transform: capitalize !important;
             margin: 0 !important;
             line-height: 1.2 !important;
         }
@@ -89,7 +93,7 @@
         }
 
         .action-icon {
-            color: #666;
+            color: #5A5BF1;
             font-size: 20px;
             cursor: pointer;
             transition: color 0.2s;
@@ -97,7 +101,7 @@
         }
 
         .action-icon:hover {
-            color: #FF9040;
+            color: #1E50D8;
         }
 
         .top-profile {
@@ -139,7 +143,7 @@
 
         .top-profile-arrow {
             font-size: 12px;
-            color: #888;
+            color: #5A5BF1;
         }
 
         .hamburger-menu {
@@ -190,12 +194,12 @@
         }
 
         .profile-dropdown a:hover {
-            background: #FFF0E5;
-            color: #FF9040;
+            background: #EEF0FE;
+            color: #5A5BF1;
         }
 
         .profile-dropdown a:hover i {
-            color: #FF9040;
+            color: #5A5BF1;
         }
 
         @media (max-width: 1200px) {

@@ -66,9 +66,9 @@
                             <!-- 🎨 Color Picker -->
 <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
     <label for="colorPicker">{{ __('admin.customize_color') }}</label>
-    <input type="color" id="colorPicker" name="themeColor" value="{{ $appearance ? $appearance->theme_color : '#FF9040' }}">
+    <input type="color" id="colorPicker" name="themeColor" value="{{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">
 
-   <input type="hidden" name="theme_color" id="themeColor" value="{{ $appearance ? $appearance->theme_color : '#FF9040' }}">
+   <input type="hidden" name="theme_color" id="themeColor" value="{{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">
 </div>
 
                         </div>
@@ -165,7 +165,7 @@
 
 <div style="display: flex; justify-content: center; margin-top: 20px;">
     <button type="submit" class="save-button"
-        style="background-color: #FF9040">
+        style="background-color: #5A5BF1">
         {{ __('admin.save_changes') }}
     </button>
 </div>
@@ -211,24 +211,24 @@
                                           <i class="fas fa-user"></i>
                                       @endif
                                   </div>
-                                  <div class="preview-name" id="livePreviewName" style="font-size: 18px; font-weight: 600; margin-bottom: 10px; text-align: center; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance ? $appearance->name : Auth::user()->name }}</div>
-                                  <div class="preview-bio" id="livePreviewBio" style="font-size: 14px; color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}; text-align: center; margin-bottom: 15px; padding: 0 20px; line-height: 1.4;">{!! $appearance ? $appearance->bio : '' !!}</div>
+                                  <div class="preview-name" id="livePreviewName" style="font-size: 18px; font-weight: 600; margin-bottom: 10px; text-align: center; color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">{{ $appearance ? $appearance->name : Auth::user()->name }}</div>
+                                  <div class="preview-bio" id="livePreviewBio" style="font-size: 14px; color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}; text-align: center; margin-bottom: 15px; padding: 0 20px; line-height: 1.4;">{!! $appearance ? $appearance->bio : '' !!}</div>
                                   <div class="preview-social-links" id="livePreviewSocialLinks" style="display: flex; gap: 15px; margin-bottom: 20px;">
                                       @if($appearance && $appearance->instagram)
-                                          <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}"></i></a>
+                                          <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram" style="color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}"></i></a>
                                       @endif
                                       @if($appearance && $appearance->tiktok)
-                                          <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}"></i></a>
+                                          <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok" style="color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}"></i></a>
                                       @endif
                                       @if($appearance && $appearance->whatsapp)
-                                          <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}"></i></a>
+                                          <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp" style="color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}"></i></a>
                                       @endif
                                   </div>
                                   @if($appearance && $appearance->description)
-                                      <div class="preview-bio" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance->description }}</div>
+                                      <div class="preview-bio" style="color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">{{ $appearance->description }}</div>
                                   @endif
                                   @if($appearance && $appearance->link)
-                                      <a href="{{ $appearance->link }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}">{{ $appearance->button_text ?? __('admin.buy') }}</a>
+                                      <a href="{{ $appearance->link }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}">{{ $appearance->button_text ?? __('admin.buy') }}</a>
                                   @endif
                                   @if($digitalProducts && $digitalProducts->count() > 0)
                                       <div class="preview-products" style="width: 100%; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -244,7 +244,7 @@
                                                   <div class="preview-product-info" style="flex: 1; min-width: 0;">
                                                       <div class="preview-product-title" style="font-size: 14px; color: #333; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $product->title }}</div>
                                                   </div>
-                                                  <a href="{{ route('track.click', ['link_id' => Auth::user()->username, 'target' => $product->platform_url ?? '#']) }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#FF9040' }}; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.3s ease; flex-shrink: 0; min-width: 100px; text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none;" target="_blank">{{ str_replace('_', ' ', $product->button_text ?? __('admin.buy')) }}</a>
+                                                  <a href="{{ route('track.click', ['link_id' => Auth::user()->username, 'target' => $product->platform_url ?? '#']) }}" class="preview-product-button" style="background-color: {{ $appearance ? $appearance->theme_color : '#5A5BF1' }}; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.3s ease; flex-shrink: 0; min-width: 100px; text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none;" target="_blank">{{ str_replace('_', ' ', $product->button_text ?? __('admin.buy')) }}</a>
                                               </div>
                                           @endforeach
                                       </div>
@@ -477,7 +477,7 @@ document.addEventListener('turbo:load', function () {
             previewScreen.style.backgroundImage = `url('${bgUrl}')`;
             previewScreen.style.backgroundSize = 'cover';
             previewScreen.style.backgroundPosition = 'center';
-            matchedTheme.style.border = "2px solid #FF9040";
+            matchedTheme.style.border = "2px solid #5A5BF1";
         }
     }
     document.querySelectorAll('.theme-preview').forEach(img => {
@@ -493,7 +493,7 @@ document.addEventListener('turbo:load', function () {
             document.querySelectorAll('.theme-preview').forEach(tp => {
                 tp.style.border = "2px solid transparent";
             });
-            this.style.border = "2px solid #FF9040";
+            this.style.border = "2px solid #5A5BF1";
         });
     });
 

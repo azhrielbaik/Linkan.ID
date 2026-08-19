@@ -13,7 +13,7 @@
         <!-- Card My Linkan URL -->
         <div class="my-linkan-header">
             <div class="my-linkan-url">
-                <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" style="color: #FF9040; text-decoration: none;">
+                <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" style="color: #5A5BF1; text-decoration: none;">
                     {{ url('/linkan.id/' . Auth::user()->username) }}
                 </a>
             </div>

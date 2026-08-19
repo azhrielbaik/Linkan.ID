@@ -114,10 +114,16 @@ class DashboardController extends Controller
         // Ambil data appearance untuk profile
         $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
 
+        // Total shortlinks
+        $totalShortlinks = \App\Models\Shortlink::where('user_id', $user->id)->count();
+        $activeMicrosite = ($appearance && $appearance->is_active) ? 1 : 1;
+
         return view('homeadminS.beranda', compact(
             'totalProducts',
             'totalViews',
             'totalClicks',
+            'totalShortlinks',
+            'activeMicrosite',
             'lifetimeOrders',
             'totalEarnings',
             'appearance'
