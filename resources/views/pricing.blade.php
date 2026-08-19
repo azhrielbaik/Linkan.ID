@@ -417,8 +417,8 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ route('pricing') }}" class="nav-link active">{{ __('layout.pricing') }}</a>
-                <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
+                <a href="{{ url('/') }}#pricing" class="nav-link active">{{ __('layout.pricing') }}</a>
+                <a href="{{ url('/') }}#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
                 <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
@@ -434,8 +434,8 @@
     <!-- MOBILE NAVIGATION OVERLAY -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
         <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
-            <a href="{{ route('pricing') }}" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
-            <a href="{{ route('service') }}" class="mobile-nav-link">{{ __('layout.service') }}</a>
+            <a href="{{ url('/') }}#pricing" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
+            <a href="{{ url('/') }}#digital-marketing" class="mobile-nav-link">{{ __('layout.service') }}</a>
             <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>
             <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('layout.sign_in') }}</a>
             <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
@@ -450,8 +450,7 @@
         </div>
         <div class="card-body">
             <div class="price-section">
-                <span class="price-val">{{ __('public.pricing_free_price') }}</span>
-                <span class="price-period">{{ __('public.pricing_free_period') }}</span>
+                <span class="price-val">Gratis</span>
             </div>
 
             <a href="{{ route('register') }}" class="btn-get-started">{{ __('public.btn_get_started') }}</a>

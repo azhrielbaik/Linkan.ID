@@ -1259,8 +1259,8 @@
                     <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
                     <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
                 </div>
-                <a href="{{ route('pricing') }}" class="nav-link">{{ __('layout.pricing') }}</a>
-                <a href="{{ route('service') }}" class="nav-link">{{ __('layout.service') }}</a>
+                <a href="#pricing" class="nav-link">{{ __('layout.pricing') }}</a>
+                <a href="#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
                 <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
@@ -1280,8 +1280,8 @@
                 <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
                 <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
             </div>
-            <a href="{{ route('pricing') }}" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
-            <a href="{{ route('service') }}" class="mobile-nav-link">{{ __('layout.service') }}</a>
+            <a href="#pricing" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
+            <a href="#digital-marketing" class="mobile-nav-link">{{ __('layout.service') }}</a>
             <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>
             <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('layout.sign_in') }}</a>
             <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
@@ -1333,7 +1333,7 @@
     </section>
 
     <!-- DIGITAL MARKETING SECTION -->
-    <section class="digital-marketing-section reveal">
+    <section class="digital-marketing-section reveal" id="digital-marketing">
         <div class="marketing-container">
             <div class="marketing-content">
                 <h2 class="marketing-title">{!! __('public.marketing_title') !!}</h2>
@@ -1357,7 +1357,7 @@
                     <h3 class="pricing-tier">{{ __('public.pricing_basic_title') }}</h3>
                 </div>
                 <div class="pricing-body">
-                    <div class="pricing-price">$ 0</div>
+                    <div class="pricing-price">Gratis</div>
                     <a href="{{ route('register') }}" class="btn-pricing" style="background: #E8E8FF; color: var(--orange);">{{ __('public.btn_get_started') }}</a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
@@ -1377,7 +1377,7 @@
                     <h3 class="pricing-tier">{{ __('public.pricing_standard_title') }}</h3>
                 </div>
                 <div class="pricing-body">
-                    <div class="pricing-price">$ 6 <span>{{ __('public.pricing_month') }}</span></div>
+                    <div class="pricing-price">Rp 99.000 <span>{{ __('public.pricing_month') }}</span></div>
                     <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
@@ -1400,7 +1400,7 @@
                     <h3 class="pricing-tier">{{ __('public.pricing_unlimited_title') }}</h3>
                 </div>
                 <div class="pricing-body">
-                    <div class="pricing-price">$ 30 <span>{{ __('public.pricing_month') }}</span></div>
+                    <div class="pricing-price">Rp 449.000 <span>{{ __('public.pricing_month') }}</span></div>
                     <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
