@@ -25,7 +25,7 @@
 .dashboard-appearance-page .share-button {
     background: none;
                 border: none;
-                color: #FF9040;
+                color: #5A5BF1;
                 cursor: pointer;
                 padding: 8px;
                 font-size: 16px;
@@ -52,7 +52,7 @@
 
 .dashboard-appearance-page .save-button {
     align-self: center; /* Tombol di tengah */
-        background: #FF9040; /* Warna fallback */
+        background: #5A5BF1; /* Warna fallback */
         color: white;
         border: none;
         padding: 12px 30px;
@@ -191,7 +191,7 @@
 .dashboard-appearance-page .preview-product-image {
     width: 40px;
                 height: 40px;
-                background: #FFE5D3;
+                background: #EEF0FE;
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
@@ -210,7 +210,7 @@
 }
 
 .dashboard-appearance-page .preview-product-button {
-    background: #FF9040;
+    background: #5A5BF1;
                 color: white;
                 padding: 6px 16px;
                 border-radius: 6px;
@@ -269,7 +269,7 @@
 }
 
 .dashboard-appearance-page .upload-button {
-    background: #FF9040;
+    background: #5A5BF1;
                 color: white;
                 border: none;
                 padding: 8px 20px;

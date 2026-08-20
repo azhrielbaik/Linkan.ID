@@ -1,94 +1,113 @@
 .dashboard-mypurchase-page .header h1 {
-    font-size: 18px;
-                color: #333;
-}
-
-.dashboard-mypurchase-page .notification-icon i {
-    color: #333;
-                font-size: 16px;
+    font-size: 24px;
+    color: #1E50D8;
+    font-weight: 800;
 }
 
 .dashboard-mypurchase-page .my-linkan-header {
     background: white;
-                padding: 15px;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .dashboard-mypurchase-page .my-linkan-url {
-    background: #f5f5f5;
-                padding: 8px 15px;
-                border-radius: 5px;
-                flex-grow: 1;
-                color: #666;
-                font-weight: 600;
+    background: #f8faff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    flex-grow: 1;
+    color: #5A5BF1;
+    font-weight: 600;
+    border: 1.5px solid #EEF0FE;
+    font-size: 14px;
 }
 
 .dashboard-mypurchase-page .share-button {
     background: none;
-                border: none;
-                color: #FF9040;
-                cursor: pointer;
-                padding: 5px;
-                font-size: 18px;
+    border: none;
+    color: #5A5BF1;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.dashboard-mypurchase-page .share-button:hover {
+    transform: scale(1.15);
 }
 
 .dashboard-mypurchase-page .filter-sort-bar {
     display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 18px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
 }
 
 .dashboard-mypurchase-page .filter-sort-btn {
     display: flex;
-                align-items: center;
-                gap: 5px;
-                background: #fff;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                padding: 5px 12px;
-                color: #666;
-                font-size: 14px;
-                cursor: pointer;
-                transition: background 0.2s;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: #475569;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .dashboard-mypurchase-page .filter-sort-btn:hover {
-    background: #f5f5f5;
+    background: #EEF0FE;
+    color: #5A5BF1;
+    border-color: #D9DCFB;
 }
 
 .dashboard-mypurchase-page .search-bar {
     flex: 1;
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
 }
 
 .dashboard-mypurchase-page .search-bar input {
-    width: 180px;
-                border-radius: 5px;
-                border: 1px solid #ddd;
-                padding: 5px 10px;
-                font-size: 14px;
+    width: 200px;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+    padding: 8px 12px;
+    font-size: 13.5px;
+    outline: none;
+    font-family: inherit;
+}
+
+.dashboard-mypurchase-page .search-bar input:focus {
+    border-color: #5A5BF1;
 }
 
 .dashboard-mypurchase-page .search-bar button {
-    background: #fff;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                padding: 5px 10px;
-                color: #666;
-                font-size: 14px;
-                cursor: pointer;
+    background: #5A5BF1;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dashboard-mypurchase-page .search-bar button:hover {
+    background: #4849E8;
 }
 
 @media (max-width: 900px) {
     .main-content {
-                    margin-left: 0;
+        margin-left: 0;
+    }
 }

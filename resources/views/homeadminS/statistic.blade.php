@@ -89,13 +89,13 @@ let chart1, chart2;
                             datasets: [{
                                 label: 'Views',
                                 data: data.views,
-                                backgroundColor: '#ff4500',
+                                backgroundColor: '#5A5BF1',
                                 borderRadius: 4,
                                 maxBarThickness: 12
                             }, {
                                 label: 'Clicks',
                                 data: data.clicks,
-                                backgroundColor: '#4a90e2',
+                                backgroundColor: '#38BDF8',
                                 borderRadius: 4,
                                 maxBarThickness: 12
                             }]
@@ -158,8 +158,8 @@ let chart1, chart2;
                             datasets: [{
                                 label: 'Sales',
                                 data: data.sales,
-                                borderColor: '#FF9040',
-                                backgroundColor: 'rgba(255, 144, 64, 0.1)',
+                                borderColor: '#5A5BF1',
+                                backgroundColor: 'rgba(90, 91, 241, 0.1)',
                                 fill: true,
                                 tension: 0.4
                             }]

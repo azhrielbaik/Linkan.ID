@@ -1,135 +1,549 @@
-.dashboard-myaccount-page .header h1 {
-    font-size: 24px;
-                color: #333;
-}
+/* My Account CSS - Royal Blue & White Theme (#5A5BF1) */
 
-.dashboard-myaccount-page .account-detail, .dashboard-myaccount-page .delete-account {
-    background: white;
-                padding: 10px;
-                border-radius: 10px;
-                box-shadow: 0 10px 4px rgba(0, 0, 0, 0.1);
-                margin-bottom: 20px;
-}
-
-.dashboard-myaccount-page .account-detail h2, .dashboard-myaccount-page .delete-account h2 {
-    font-size: 18px;
-                color: #333;
-                margin-bottom: 15px;
-}
-
-.dashboard-myaccount-page .account-detail input {
+.dashboard-account-page {
     width: 100%;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+    max-width: 960px;
 }
 
-.dashboard-myaccount-page .delete-account button {
-    background-color: #ff4d4d;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
+/* ALERTS */
+.account-alert-success {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.dashboard-myaccount-page .delete-account button:hover {
-    background-color: #e60000;
+.account-alert-danger {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    margin-bottom: 20px;
 }
 
-.dashboard-myaccount-page .form-group {
-    margin-bottom: 15px;
+.account-alert-danger ul {
+    margin: 0;
+    padding-left: 20px;
 }
 
-.dashboard-myaccount-page .form-group label {
-    display: block;
-                font-size: 14px;
-                color: #666;
-                margin-bottom: 5px;
+/* BLUE CARDS */
+.account-blue-card {
+    background: #5A5BF1;
+    border-radius: 20px;
+    padding: 32px 36px;
+    color: #ffffff;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(90, 91, 241, 0.22);
 }
 
-.dashboard-myaccount-page .form-group span {
+.account-card-header {
+    margin-bottom: 24px;
+}
+
+.card-hero-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin: 0 0 4px 0;
+}
+
+.card-hero-subtitle {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+/* PROFILE SECTION */
+.account-profile-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.profile-avatar-initials {
+    width: 72px;
+    height: 72px;
+    background: #ffffff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: #5A5BF1;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.profile-info-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.profile-full-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.profile-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-profile-edit {
+    background: #ffffff;
+    color: #5A5BF1;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
     font-size: 12px;
-                color: #999;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.dashboard-myaccount-page .btn-save {
-    background-color: #FF9040; /* Warna oranye */
-                color: white; /* Warna font putih */
-                border: none;
-                padding: 10px 60px;
-                border-radius: 5px;
-                font-size: 14px;
-                font-weight: bold;
-                cursor: pointer;
-                display: block; /* Pastikan tombol berada di baris baru */
-                margin-left: auto; /* Geser tombol ke kanan */
-                margin-top: 20px; /* Tambahkan jarak dari elemen sebelumnya */
+.btn-profile-edit:hover {
+    background: #EEF0FE;
+    transform: translateY(-1px);
 }
 
-.dashboard-myaccount-page .btn-save:hover {
-    background-color: #e67e22; /* Warna oranye lebih gelap saat hover */
+.btn-profile-delete {
+    background: #EF4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
 }
 
-.dashboard-myaccount-page .popup-overlay {
+.btn-profile-delete:hover {
+    background: #DC2626;
+    transform: translateY(-1px);
+}
+
+.profile-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.profile-status-badge i {
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.profile-email-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: #ffffff;
+}
+
+.profile-email-badge i {
+    font-size: 13px;
+    color: #ffffff;
+}
+
+.profile-email-link {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.profile-email-link:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.account-active-since-box {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.active-since-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+}
+
+.active-since-date {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* PREFERENCE SECTION */
+.preference-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.preference-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.preference-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.preference-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #5A5BF1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.preference-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.pref-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 2px 0;
+}
+
+.pref-subtitle {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.pref-dropdown-pill {
+    position: relative;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2px 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+}
+
+.pref-select {
+    background: transparent;
+    border: none;
+    padding: 8px 24px 8px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5A5BF1;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.pill-arrow {
+    position: absolute;
+    right: 10px;
+    color: #5A5BF1;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+/* MODALS */
+.account-modal-overlay {
     position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
 }
 
-.dashboard-myaccount-page .popup-content {
-    position: fixed; /* agar posisinya tetap saat scroll */
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%); /* untuk benar-benar menempatkan di tengah */
-                
-                background: white;
-                padding: 20px;
-                border-radius: 10px;
-                text-align: center;
-                box-shadow: 0 10px 4px rgba(0, 0, 0, 0.1);
-                z-index: 1000; /* pastikan tampil di atas elemen lain */
+.account-modal-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px 32px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: modalScale 0.2s ease-out;
 }
 
-.dashboard-myaccount-page .popup-buttons button {
-    margin: 5px;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
+@keyframes modalScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-.dashboard-myaccount-page .btn-cancel {
-    background-color: #ccc;
-                color: #333;
+.account-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #F1F5F9;
 }
 
-.dashboard-myaccount-page .btn-cancel:hover {
-    background-color: #bbb;
+.account-modal-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1E293B;
+    margin: 0;
 }
 
-.dashboard-myaccount-page .btn-confirm {
-    background-color: #FF9040;
-                color: white;
+.modal-close-icon {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 0 4px;
 }
 
-.dashboard-myaccount-page .btn-confirm:hover {
-    background-color: #e67e22;
+.modal-close-icon:hover {
+    color: #334155;
 }
 
-.dashboard-myaccount-page .header a {
-    color: black !important;
-                text-decoration: none; /* kalau mau hilangkan garis bawah juga */
+.account-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-@media (max-width: 900px) {
-    .main-content {
-                    margin-left: 0;
+.account-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.account-form-group label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.label-optional {
+    font-size: 11.5px;
+    color: #94A3B8;
+    font-weight: 400;
+}
+
+.account-form-input {
+    width: 100%;
+    padding: 11px 16px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1E293B;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.account-form-input:focus {
+    border-color: #5A5BF1;
+    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.12);
+}
+
+.account-form-input.input-readonly {
+    background: #F8FAFC;
+    color: #64748B;
+    cursor: not-allowed;
+}
+
+.account-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #F1F5F9;
+}
+
+.btn-modal-cancel {
+    background: #F1F5F9;
+    color: #475569;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modal-cancel:hover {
+    background: #E2E8F0;
+}
+
+.btn-modal-save {
+    background: #5A5BF1;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(90, 91, 241, 0.25);
+}
+
+.btn-modal-save:hover {
+    background: #4849E8;
+    transform: translateY(-1px);
+}
+
+/* DELETE MODAL */
+.modal-delete-card {
+    text-align: center;
+    max-width: 440px;
+}
+
+.delete-icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #FEE2E2;
+    color: #EF4444;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+.modal-delete-card h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1E293B;
+    margin: 0 0 8px 0;
+}
+
+.delete-warning-text {
+    font-size: 14px;
+    color: #64748B;
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+}
+
+.delete-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-modal-danger {
+    background: #EF4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.btn-modal-danger:hover {
+    background: #DC2626;
+    transform: translateY(-1px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+    .account-blue-card {
+        padding: 24px 20px;
+    }
+
+    .account-profile-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-name-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-status-badge,
+    .profile-email-badge {
+        justify-content: center;
+    }
+
+    .preference-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .preference-right {
+        width: 100%;
+    }
+
+    .pref-dropdown-pill {
+        width: 100%;
+    }
+
+    .pref-select {
+        width: 100%;
+    }
 }

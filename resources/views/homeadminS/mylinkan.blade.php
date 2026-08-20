@@ -15,7 +15,7 @@
     <div class="section-header" style="margin-top: 10px;">
         @if($viewMode == 'gallery')
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
-                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #FF9040;"></i> {{ __('admin.my_microsite_list') }}</h2>
+                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #5A5BF1;"></i> {{ __('admin.my_microsite_list') }}</h2>
                 
                 <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
                 <div class="microsite-actions-bar">
@@ -36,7 +36,7 @@
                 <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <i class="fas fa-sliders-h" style="color: #FF9040; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
+                <i class="fas fa-sliders-h" style="color: #5A5BF1; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
             </h2>
         @endif
     </div>
@@ -199,7 +199,7 @@
                     <!-- EDIT ELEMENT HEADER -->
                     <div id="elementSectionHeader" class="edit-element-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-layer-group" style="color: #FF9040;"></i> Edit Element
+                            <i class="fas fa-layer-group" style="color: #5A5BF1;"></i> Edit Element
                         </h3>
                         <span style="font-size: 11px; color: #6b7280; font-weight: 500;">
                             <i class="fas fa-arrows-alt-v" style="margin-right: 4px;"></i> Drag & Drop untuk mengurutkan
@@ -221,7 +221,7 @@
                                 <div class="block-item-content">
                                     <div class="block-item-title-wrapper">
                                         <span>Profil</span>
-                                        <span style="font-size: 10px; font-weight: 700; background: #FF9040; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
+                                        <span style="font-size: 10px; font-weight: 700; background: #5A5BF1; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
                                     </div>
                                 </div>
                                 <div class="block-item-actions" onclick="event.stopPropagation()">
@@ -236,7 +236,7 @@
                             <div class="profile-form-padding">
                                 <form action="{{ route('admin.appearance.update') }}" method="POST" enctype="multipart/form-data" id="profileBlockForm">
                                     @csrf
-                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#FF9040' }}">
+                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#5A5BF1' }}">
                                     <input type="hidden" name="background_color" value="{{ $appearance->background_color ?? '#FFFFFF' }}">
                                     
                                     <div class="profile-form-group">
@@ -481,7 +481,7 @@
                 <div class="phone-preview-flex-container">
                     
                     <!-- DAISYUI PHONE MOCKUP FRAME (LEFT) -->
-                    <div class="mockup-phone border-[#ff8938]">
+                    <div class="mockup-phone border-[#5A5BF1]">
                         <div class="mockup-phone-camera"></div>
                         <div class="mockup-phone-display">
                             <!-- REALISTIC SMARTPHONE TOP STATUS BAR -->
@@ -626,7 +626,7 @@
                             align-items: center;
                             gap: 4px;
                         ">
-                            <span style="color: #9CA3AF; font-weight: 500;">linkan.id/</span><span style="color: #FF9040;">{{ Auth::user()->username }}</span>
+                            <span style="color: #9CA3AF; font-weight: 500;">linkan.id/</span><span style="color: #5A5BF1;">{{ Auth::user()->username }}</span>
                         </div>
 
                         <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
@@ -635,7 +635,7 @@
                             <button type="button" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')" style="
                                 background: #FFF7ED;
                                 border: 1px solid #FFEDD5;
-                                color: #FF9040;
+                                color: #5A5BF1;
                                 width: 32px;
                                 height: 32px;
                                 border-radius: 10px;
@@ -645,7 +645,7 @@
                                 align-items: center;
                                 justify-content: center;
                                 transition: all 0.2s ease;
-                            " onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#FFF7ED'; this.style.color='#FF9040'; this.style.borderColor='#FFEDD5';" title="Salin Tautan Microsite">
+                            " onmouseover="this.style.background='#5A5BF1'; this.style.color='#ffffff'; this.style.borderColor='#5A5BF1';" onmouseout="this.style.background='#FFF7ED'; this.style.color='#5A5BF1'; this.style.borderColor='#FFEDD5';" title="Salin Tautan Microsite">
                                 <i class="fas fa-copy"></i>
                             </button>
                             

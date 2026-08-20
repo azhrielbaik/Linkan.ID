@@ -2,19 +2,19 @@
     /* Sidebar Styles */
     .sidebar {
         width: 250px;
-        background-color: #fafafa;
+        background-color: #5A5BF1;
         height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
         padding: 24px 20px;
-        overflow-y: visible; /* changed from auto so button can overlap */
+        overflow-y: visible;
         z-index: 1000;
         transition: width 0.3s ease, transform 0.3s ease;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+        box-shadow: 2px 0 16px rgba(90, 91, 241, 0.15);
         display: flex;
         flex-direction: column;
-        border-right: 1px solid #eaeaea;
+        border-right: none;
     }
     .sidebar-inner-scroll {
         overflow-y: auto;
@@ -30,16 +30,16 @@
         right: -15px;
         width: 30px;
         height: 30px;
-        background: #fff;
-        border: 1px solid #eaeaea;
+        background: #ffffff;
+        border: none;
         border-radius: 50%;
         display: none;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         z-index: 1001;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        color: #666;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        color: #5A5BF1;
     }
     
     @media (min-width: 901px) {
@@ -49,7 +49,7 @@
     }
 
     .sidebar-minimize-btn i {
-        transform: rotate(90deg); /* Points left initially */
+        transform: rotate(90deg);
         transition: transform 0.3s ease;
     }
 
@@ -61,7 +61,7 @@
         }
         
         body.mini-sidebar .sidebar-minimize-btn i {
-            transform: rotate(270deg); /* Points right when minimized */
+            transform: rotate(270deg);
         }
 
         body.mini-sidebar .nav-text, 
@@ -70,7 +70,7 @@
         }
 
         body.mini-sidebar .logo {
-            display: none; /* Hide main logo, optionally show small icon */
+            display: none;
         }
         
         body.mini-sidebar .lang-toggle,
@@ -111,47 +111,49 @@
     .sidebar .logo-container {
         display: flex;
         align-items: center;
-        margin-bottom: 35px;
+        margin-bottom: 32px;
         gap: 10px;
         font-weight: 800;
         font-size: 24px;
-        color: #333;
+        color: #ffffff;
     }
 
     .sidebar .logo {
-        width: 32px;
+        width: 105px;
         height: auto;
+        filter: brightness(0) invert(1);
     }
 
     .lang-toggle {
         display: flex;
-        background: #f0f0f0;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 20px;
-        padding: 4px;
+        padding: 2px;
         align-items: center;
         gap: 2px;
     }
     
     .lang-toggle a {
-        padding: 4px 12px !important;
+        padding: 4px 10px !important;
         border-radius: 16px !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 800 !important;
         text-decoration: none !important;
-        color: #888 !important;
+        color: #ffffff !important;
         background: transparent;
-        transition: all 0.3s ease !important;
+        transition: all 0.2s ease !important;
         margin: 0 !important;
     }
     
     .lang-toggle a:hover {
-        background: #e4e4e4;
+        background: rgba(255, 255, 255, 0.3);
     }
     
     .lang-toggle a.active {
-        background: #FF9040 !important;
-        color: #fff !important;
-        box-shadow: 0 2px 6px rgba(255,144,64,0.3) !important;
+        background: #ffffff !important;
+        color: #5A5BF1 !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
     }
 
     .sidebar-nav {
@@ -162,42 +164,47 @@
         display: flex;
         align-items: center;
         text-decoration: none;
-        color: #1a1a1a;
-        padding: 12px 16px;
-        margin: 4px 0;
-        border-radius: 8px;
+        color: #ffffff;
+        padding: 12px 18px;
+        margin: 6px 0;
+        border-radius: 12px;
         transition: all 0.2s ease;
-        font-weight: 500;
-        font-size: 15px;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: -0.2px;
     }
 
     .sidebar a:hover {
-        background-color: #f0f0f0;
+        background-color: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
     }
 
     .sidebar a i {
         margin-right: 14px;
-        width: 22px;
-        font-size: 18px;
+        width: 24px;
+        font-size: 19px;
         text-align: center;
-        color: #1a1a1a;
+        color: #ffffff;
     }
 
     /* Active menu matching reference */
     .sidebar a.active {
-        background-color: #FFF0E5; /* Light peach orange */
-        color: #FF9040; /* Peach Orange */
+        background-color: #ffffff !important;
+        color: #5A5BF1 !important;
+        font-weight: 800;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
+    
     .sidebar a.active i {
-        color: #FF9040;
+        color: #5A5BF1 !important;
     }
 
     /* Badge */
     .badge {
-        background-color: #FF9040;
-        color: #fff;
+        background-color: #ffffff;
+        color: #5A5BF1;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         padding: 2px 8px;
         border-radius: 12px;
         margin-left: auto;
@@ -205,7 +212,7 @@
 
     .sidebar hr {
         border: none;
-        border-top: 1px solid #eaeaea;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
         margin: 20px 0;
     }
 
@@ -213,42 +220,38 @@
     .sidebar .marketing-tools form button {
         background: none;
         border: none;
-        padding: 12px 16px;
+        padding: 12px 18px;
         width: 100%;
         margin: 0;
         display: flex;
         align-items: center;
-        color: #e53935;
+        color: #ffffff;
         cursor: pointer;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-size: 15px;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        font-weight: 700;
+        font-size: 16px;
     }
 
     .sidebar .marketing-tools form button:hover {
-        background-color: #ffebee;
-        color: #d32f2f;
+        background-color: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
     }
     
     .sidebar .marketing-tools form button i {
-        width: 22px;
-        font-size: 18px;
+        width: 24px;
+        font-size: 19px;
         text-align: center;
         margin-right: 14px;
-        color: #e53935;
-        transition: color 0.3s ease;
-    }
-
-    .sidebar .marketing-tools form button:hover i {
-        color: #d32f2f;
+        color: #ffffff;
+        transition: color 0.2s ease;
     }
     
     /* Close button for mobile */
     .sidebar-close {
         display: none;
-        color: #1a1a1a;
-        font-size: 22px; /* Sedikit lebih kecil agar rapi */
+        color: #ffffff;
+        font-size: 22px;
         cursor: pointer;
         padding: 4px;
     }
@@ -267,12 +270,12 @@
     
     <div class="sidebar-inner-scroll">
     <div class="logo-container" style="justify-content: space-between; width: 100%; align-items: center;">
-        <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo" style="width: 90px; height: auto;">
+        <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo">
         
         <div style="display: flex; align-items: center; gap: 8px;">
-            <div class="lang-toggle" style="padding: 2px;">
-                <a href="{{ route('lang.switch', 'id') }}" data-turbo="false" class="{{ App::getLocale() == 'id' ? 'active' : '' }}" style="padding: 4px 8px !important; font-size: 10px !important;">ID</a>
-                <a href="{{ route('lang.switch', 'en') }}" data-turbo="false" class="{{ App::getLocale() == 'en' ? 'active' : '' }}" style="padding: 4px 8px !important; font-size: 10px !important;">EN</a>
+            <div class="lang-toggle">
+                <a href="{{ route('lang.switch', 'id') }}" data-turbo="false" class="{{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+                <a href="{{ route('lang.switch', 'en') }}" data-turbo="false" class="{{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
             </div>
             <i class="fas fa-times sidebar-close" onclick="toggleSidebar()"></i>
         </div>
@@ -280,31 +283,31 @@
 
     <div class="sidebar-nav">
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="fas fa-th-large"></i><span class="nav-text">{{ __('sidebar.dashboard') }}</span>
+            <i class="fas fa-home"></i><span class="nav-text">{{ __('sidebar.dashboard') }}</span>
         </a>
         
-        <a href="{{ route('admin.statistics') }}" class="{{ request()->routeIs('admin.statistics*') ? 'active' : '' }}">
-            <i class="fas fa-chart-pie"></i><span class="nav-text">{{ __('sidebar.analytics') }}</span>
+        <a href="{{ route('admin.mylinkan') }}" class="{{ request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*') ? 'active' : '' }}">
+            <i class="fas fa-user"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
+        </a>
+
+        <a href="{{ route('admin.appearance') }}" class="{{ request()->routeIs('admin.appearance*') ? 'active' : '' }}">
+            <i class="fas fa-paint-brush"></i><span class="nav-text">{{ __('sidebar.appearance') }}</span>
         </a>
 
         <a href="{{ route('admin.shortlinks.index') }}" class="{{ request()->routeIs('admin.shortlinks.*') ? 'active' : '' }}">
             <i class="fas fa-link"></i><span class="nav-text">{{ __('sidebar.shortlink') }}</span>
         </a>
 
-        <a href="{{ route('admin.mylinkan') }}" class="{{ request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*') ? 'active' : '' }}">
-            <i class="fas fa-pager"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
+        <a href="{{ route('admin.statistics') }}" class="{{ request()->routeIs('admin.statistics*') ? 'active' : '' }}">
+            <i class="fas fa-chart-bar"></i><span class="nav-text">{{ __('sidebar.analytics') }}</span>
         </a>
 
         <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
-            <i class="fas fa-store"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
+            <i class="fas fa-clipboard-check"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
         </a>
 
         <a href="{{ route('admin.purchases') }}" class="{{ request()->routeIs('admin.purchases') ? 'active' : '' }}">
-            <i class="fas fa-shopping-bag"></i><span class="nav-text">{{ __('sidebar.mypurchases') }}</span>
-        </a>
-
-        <a href="{{ route('admin.appearance') }}" class="{{ request()->routeIs('admin.appearance*') ? 'active' : '' }}">
-            <i class="fas fa-paint-brush"></i><span class="nav-text">{{ __('sidebar.appearance') }}</span>
+            <i class="fas fa-box-open"></i><span class="nav-text">{{ __('sidebar.mypurchases') }}</span>
         </a>
 
         @php

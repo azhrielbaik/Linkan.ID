@@ -379,10 +379,16 @@
                     </div>
 
                     @error('email')
-                        <div class="error-message">{{ $message }}</div>
+                        <div class="error-message" id="error-message">{{ $message }}</div>
                     @enderror
 
-                    <button type="submit" class="btn-submit">{{ __('auth.login') }}</button>
+                    @if(session('lockout_seconds'))
+                        <div class="error-message" id="lockout-notice" style="margin-bottom:16px;">
+                            Akun sementara dikunci. Coba lagi dalam <span id="lockout-timer">{{ session('lockout_seconds') }}</span> detik.
+                        </div>
+                    @endif
+
+                    <button type="submit" class="btn-submit" id="btn-submit">{{ __('auth.login') }}</button>
                 </form>
 
                 <div class="auth-divider">{{ __('auth.or') }}</div>
@@ -436,6 +442,39 @@
                     const moveY = (e.clientY - window.innerHeight/2) * 0.004;
                     floatingImage.style.transform = `translate(${moveX}px, ${moveY}px)`;
                 });
+            }
+
+            // Lockout countdown timer
+            const timerEl = document.getElementById('lockout-timer');
+            const submitBtn = document.getElementById('btn-submit');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            if (timerEl) {
+                let seconds = parseInt(timerEl.textContent, 10);
+
+                // Disable form inputs during lockout
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.5'; submitBtn.style.cursor = 'not-allowed'; }
+                if (emailInput) { emailInput.disabled = true; }
+                if (passwordInput) { passwordInput.disabled = true; }
+
+                const interval = setInterval(function() {
+                    seconds--;
+                    timerEl.textContent = seconds;
+
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                        // Re-enable form
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
+                        if (emailInput) { emailInput.disabled = false; }
+                        if (passwordInput) { passwordInput.disabled = false; }
+                        // Hide lockout notice
+                        const notice = document.getElementById('lockout-notice');
+                        if (notice) notice.style.display = 'none';
+                        const errMsg = document.getElementById('error-message');
+                        if (errMsg) errMsg.style.display = 'none';
+                    }
+                }, 1000);
             }
         });
     </script>

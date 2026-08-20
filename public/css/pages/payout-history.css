@@ -26,7 +26,7 @@ to {
 }
 
 .dashboard-payout-history-page .header a:hover {
-    color: #FF9040 !important;
+    color: #5A5BF1 !important;
                 text-shadow: none;
 }
 
@@ -37,7 +37,7 @@ to {
                 left: 0;
                 width: 0;
                 height: 2px;
-                background: #FF9040;
+                background: #5A5BF1;
                 transition: width 0.3s ease;
 }
 
@@ -75,7 +75,7 @@ to {
                 margin-bottom: 30px;
                 padding-bottom: 20px;
                 border-bottom: 3px solid;
-                border-image: linear-gradient(90deg, #FF9040, #FF9040, #FF9040) 1;
+                border-image: linear-gradient(90deg, #5A5BF1, #5A5BF1, #5A5BF1) 1;
                 position: relative;
 }
 
@@ -86,7 +86,7 @@ to {
                 left: 0;
                 width: 50px;
                 height: 3px;
-                background: linear-gradient(90deg, #FF9040, #FF9040);
+                background: linear-gradient(90deg, #5A5BF1, #5A5BF1);
                 animation: shimmer 2s infinite;
 }
 
@@ -102,7 +102,7 @@ to {
 
         .history-header i {
     font-size: 28px;
-                background: linear-gradient(135deg, #FF9040, #FF9040);
+                background: linear-gradient(135deg, #5A5BF1, #5A5BF1);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -122,7 +122,7 @@ to {
         .history-header h2 {
     font-size: 24px;
                 font-weight: 700;
-                background: linear-gradient(135deg, #FF9040, #FF9040);
+                background: linear-gradient(135deg, #5A5BF1, #5A5BF1);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -201,7 +201,7 @@ to {
 }
 
 .dashboard-payout-history-page .history-table th {
-    background: linear-gradient(135deg, #FF9040 0%, #FF9040 100%);
+    background: linear-gradient(135deg, #5A5BF1 0%, #5A5BF1 100%);
                 color: white;
                 font-weight: 600;
                 padding: 18px 15px;
@@ -312,7 +312,7 @@ to {
 
 .dashboard-payout-history-page .no-records i {
     font-size: 64px;
-                background: linear-gradient(135deg, #FF9040, #FF9040);
+                background: linear-gradient(135deg, #5A5BF1, #5A5BF1);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -347,7 +347,7 @@ to {
                 right: 30px;
                 width: 60px;
                 height: 60px;
-                background: linear-gradient(135deg, #FF9040, #FF9040);
+                background: linear-gradient(135deg, #5A5BF1, #5A5BF1);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;

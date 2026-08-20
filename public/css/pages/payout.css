@@ -1,131 +1,64 @@
 .dashboard-payout-page .header h1 {
-    font-size: 18px;
-                color: #333;
+    font-size: 24px;
+    color: #1E50D8;
+    font-weight: 800;
 }
 
 .dashboard-payout-page .payout-main-flex {
     display: flex;
-                gap: 32px;
-                align-items: stretch;
-                flex-wrap: wrap;
+    gap: 24px;
+    align-items: stretch;
+    flex-wrap: wrap;
 }
 
 .dashboard-payout-page .earnings-card, .dashboard-payout-page .payment-card {
     flex: 1 1 350px;
-                min-width: 320px;
-                max-width: 600px;
-                box-sizing: border-box;
+    min-width: 320px;
+    max-width: 600px;
+    box-sizing: border-box;
+    background: #5A5BF1;
+    color: white;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(90, 91, 241, 0.2);
 }
 
-@media (max-width: 900px) {
-    .payout-main-flex {
-                    flex-direction: column;
-                    gap: 20px;
-}
-
-.dashboard-payout-page .main-content {
-    margin-left: 0;
-}
-
-}
-
-        .earnings-card, .dashboard-payout-page .payment-card {
-    background: white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-payout-page .earnings-card {
-    background: #FF9040;
-                color: white;
-                position: relative;
-}
-
-.dashboard-payout-page .earnings-card h2 {
+.dashboard-payout-page .earnings-card h2, .dashboard-payout-page .payment-card h2 {
     font-size: 20px;
-                font-weight: bold;
-                margin-bottom: 10px;
-}
-
-.dashboard-payout-page .earnings-card p {
-    font-size: 16px;
-                margin: 5px 0;
-}
-
-.dashboard-payout-page .earnings-card p:last-of-type {
-    font-style: italic;
-                color: #f0f0f0;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: #ffffff;
 }
 
 .dashboard-payout-page .earnings-card .btn {
     display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background: white;
-                color: #FF9040;
-                padding: 10px 20px;
-                border-radius: 5px;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: bold;
-                border: 2px solid #FF9040;
-                cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #5A5BF1;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-payout-page .earnings-card .btn:hover {
-    background: #f0f0f0;
+    background: #EEF0FE;
+    transform: translateY(-1px);
 }
 
-.dashboard-payout-page .earnings-card .btn-withdraw {
-    position: absolute;
-                top: 20px;
-                right: 20px;
-}
+@media (max-width: 900px) {
+    .payout-main-flex {
+        flex-direction: column;
+        gap: 20px;
+    }
 
-.dashboard-payout-page .earnings-card .btn-history {
-    position: absolute;
-                bottom: 20px;
-                right: 20px;
-}
-
-.dashboard-payout-page .payment-card {
-    text-align: center;
-}
-
-.dashboard-payout-page .payment-card h2 {
-    font-size: 20px;
-                font-weight: bold;
-                margin-bottom: 10px;
-}
-
-.dashboard-payout-page .payment-card p {
-    font-size: 14px;
-                color: #666;
-}
-
-.dashboard-payout-page .payment-card .bank-info {
-    margin-top: 15px;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background: #f9f9f9;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-}
-
-.dashboard-payout-page .payment-card .bank-info strong {
-    font-size: 16px;
-                color: #333;
-}
-
-.dashboard-payout-page .payment-card .bank-info img {
-    width: 40px;
-                height: 40px;
-}
-
-.dashboard-payout-page .header a {
-    color: black !important;
-                text-decoration: none; /* kalau mau hilangkan garis bawah juga */
+    .dashboard-payout-page .main-content {
+        margin-left: 0;
+    }
 }

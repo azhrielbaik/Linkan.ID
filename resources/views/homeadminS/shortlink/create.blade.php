@@ -38,7 +38,7 @@
 
                 <div class="stats-row">
                     <div class="stat-box">
-                        <div class="stat-icon" style="background: #FFF3E6; color: #FF9040;"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-icon" style="background: #EEF0FE; color: #5A5BF1;"><i class="fas fa-chart-line"></i></div>
                         <div class="stat-info">
                             <span>{{ __('shortlink.total_clicks') }}</span>
                             <strong>2,280</strong>
@@ -102,7 +102,7 @@
         <!-- RIGHT COLUMN -->
         <div class="right-col mobile-form-collapse">
             <div class="mobile-form-collapse-header" onclick="this.parentElement.classList.toggle('is-open')">
-                <span><i class="fas fa-plus-circle" style="color:#FF9040; margin-right:8px;"></i> {{ __('shortlink.create_new_link') }}</span>
+                <span><i class="fas fa-plus-circle" style="color:#5A5BF1; margin-right:8px;"></i> {{ __('shortlink.create_new_link') }}</span>
                 <i class="fas fa-chevron-down" style="color:#999;"></i>
             </div>
             <div class="mobile-form-collapse-body">
@@ -134,7 +134,7 @@
                         <div class="slug-wrapper">
                             <div class="slug-prefix"><i class="fas fa-link"></i> Linkan.id/</div>
                             <input type="text" name="slug" id="slug" placeholder="custom-slug" required value="{{ old('slug') }}">
-                            <button type="button" onclick="generateRandomSlug()" style="background: transparent; border: none; padding: 0 16px; color: #FF9040; font-weight: bold; cursor: pointer; border-left: 1px solid #e0e0e0;"><i class="fas fa-random"></i></button>
+                            <button type="button" onclick="generateRandomSlug()" style="background: transparent; border: none; padding: 0 16px; color: #5A5BF1; font-weight: bold; cursor: pointer; border-left: 1px solid #e0e0e0;"><i class="fas fa-random"></i></button>
                         </div>
                         <div style="font-size: 12px; color: #888; margin-top: 6px;">{{ __('shortlink.slug_hint') }}</div>
                         @error('slug') <div style="color: red; font-size: 12px; margin-top: 4px;">{{ $message }}</div> @enderror
@@ -191,7 +191,7 @@
 
                         <div class="eng-info">
                             <h4>{{ $link->title ?: __('shortlink.untitled') . ' (' . $link->slug . ')' }}</h4>
-                            <a href="{{ url('/' . $link->slug) }}" target="_blank" style="font-size: 13px; color: #FF9040; font-weight: 700; text-decoration: none; display: block; margin-bottom: 4px;">Linkan.id/{{ $link->slug }}</a>
+                            <a href="{{ url('/' . $link->slug) }}" target="_blank" style="font-size: 13px; color: #5A5BF1; font-weight: 700; text-decoration: none; display: block; margin-bottom: 4px;">Linkan.id/{{ $link->slug }}</a>
                             <p>{{ Str::limit($link->destination, 60) }}</p>
                             @if($link->description)
                             <p style="font-size: 12px; color: #999; margin-top: 4px;">{{ Str::limit($link->description, 60) }}</p>
@@ -252,7 +252,7 @@
                         <h3 id="panel-title">{{ __('shortlink.untitled') }}</h3>
                         <div class="identity-links">
                             <span><i class="far fa-envelope"></i> <span id="panel-desc">{{ __('shortlink.desc_placeholder') }}</span></span>
-                            <span><i class="fas fa-globe"></i> <span id="panel-slug-badge" style="color: #FF9040; font-weight:700;">/slug</span></span>
+                            <span><i class="fas fa-globe"></i> <span id="panel-slug-badge" style="color: #5A5BF1; font-weight:700;">/slug</span></span>
                         </div>
                     </div>
                 </div>
@@ -263,7 +263,7 @@
                 <button type="button" class="action-btn-row" style="flex: 1; justify-content: center; flex-direction: column; gap: 8px; padding: 16px 12px;" onclick="copySlugToClipboard(document.getElementById('panel-url').href, this)">
                     <i class="far fa-copy" style="font-size: 20px; color: #666;"></i> {{ __('shortlink.copy') }}
                 </button>
-                <button type="button" class="action-btn-row" style="flex: 1; justify-content: center; flex-direction: column; gap: 8px; padding: 16px 12px; border-color: #FF9040; color: #FF9040; background: #FFF3E6;" onclick="toggleSection('edit')">
+                <button type="button" class="action-btn-row" style="flex: 1; justify-content: center; flex-direction: column; gap: 8px; padding: 16px 12px; border-color: #5A5BF1; color: #5A5BF1; background: #EEF0FE;" onclick="toggleSection('edit')">
                     <i class="fas fa-edit" style="font-size: 20px;"></i> {{ __('shortlink.btn_edit') }}
                 </button>
                 <a href="#" id="panel-btn-analytics" class="action-btn-row" style="flex: 1; justify-content: center; flex-direction: column; gap: 8px; padding: 16px 12px; text-decoration: none;">
@@ -277,7 +277,7 @@
             <div class="preview-meta-grid">
                 <div class="meta-box">
                     <div class="meta-box-label">{{ __('shortlink.created_by') }}</div>
-                    <div class="meta-box-value"><i class="fas fa-user-circle" style="color: #FF9040;"></i> {{ __('shortlink.sys_admin') }}</div>
+                    <div class="meta-box-value"><i class="fas fa-user-circle" style="color: #5A5BF1;"></i> {{ __('shortlink.sys_admin') }}</div>
                 </div>
                 <div class="meta-box">
                     <div class="meta-box-label">{{ __('shortlink.status') }}</div>
@@ -299,7 +299,7 @@
                 <!-- Tautan Terproteksi -->
                 <div style="margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
                     <div style="display: flex; gap: 16px; align-items: center;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #FFF3E6; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FF9040;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #EEF0FE; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #5A5BF1;">
                             <i class="fas fa-unlock" id="status-password-icon"></i>
                         </div>
                         <div>
@@ -315,7 +315,7 @@
                 <!-- Tautan Berjangka -->
                 <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
                     <div style="display: flex; gap: 16px; align-items: center;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #FFF3E6; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FF9040;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #EEF0FE; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #5A5BF1;">
                             <i class="fas fa-clock"></i>
                         </div>
                         <div>
@@ -334,7 +334,7 @@
                         <div class="note-header-left"><i class="far fa-sticky-note" style="color:#999;"></i> {{ __('shortlink.destination_url') }}</div>
                     </div>
                     <div class="note-body">
-                        <a href="#" id="panel-destination" target="_blank" style="color: #FF9040; text-decoration: none; word-break: break-all;"></a>
+                        <a href="#" id="panel-destination" target="_blank" style="color: #5A5BF1; text-decoration: none; word-break: break-all;"></a>
                     </div>
                 </div>
                 
@@ -343,7 +343,7 @@
                         <div class="note-header-left"><i class="far fa-sticky-note" style="color:#999;"></i> {{ __('shortlink.short_link') }}</div>
                     </div>
                     <div class="note-body">
-                        <a href="#" id="panel-url" target="_blank" style="color: #FF9040; text-decoration: none; word-break: break-all;"></a>
+                        <a href="#" id="panel-url" target="_blank" style="color: #5A5BF1; text-decoration: none; word-break: break-all;"></a>
                     </div>
                 </div>
             </div>
@@ -365,7 +365,7 @@
             </div>
 
             <div style="margin-top: 30px; display: flex; gap: 10px;">
-                <button type="submit" class="preview-btn" style="background: #FF9040; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
+                <button type="submit" class="preview-btn" style="background: #5A5BF1; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
                 <button type="button" class="preview-btn" onclick="toggleSection('view')" style="background: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 12px 24px; font-size: 14px; cursor: pointer;">{{ __('shortlink.cancel') }}</button>
             </div>
         </div>
@@ -377,7 +377,7 @@
                 <input type="text" name="password" id="panel-input-password" placeholder="{{ __('shortlink.password_placeholder') }}" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
             </div>
             <div style="margin-top: 30px; display: flex; gap: 10px;">
-                <button type="submit" class="preview-btn" style="background: #FF9040; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
+                <button type="submit" class="preview-btn" style="background: #5A5BF1; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
                 <button type="button" class="preview-btn" onclick="toggleSection('view')" style="background: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 12px 24px; font-size: 14px; cursor: pointer;">{{ __('shortlink.cancel') }}</button>
             </div>
         </div>
@@ -389,7 +389,7 @@
                 <input type="datetime-local" name="expires_at" id="panel-input-expires" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
             </div>
             <div style="margin-top: 30px; display: flex; gap: 10px;">
-                <button type="submit" class="preview-btn" style="background: #FF9040; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
+                <button type="submit" class="preview-btn" style="background: #5A5BF1; color: #fff; border: none; padding: 12px 24px; font-size: 14px; flex: 1; cursor: pointer;"><i class="fas fa-save" style="margin-right: 8px;"></i> {{ __('shortlink.save_changes') }}</button>
                 <button type="button" class="preview-btn" onclick="toggleSection('view')" style="background: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 12px 24px; font-size: 14px; cursor: pointer;">{{ __('shortlink.cancel') }}</button>
             </div>
         </div>
@@ -449,8 +449,8 @@
         const slugInput = document.getElementById('slug');
         if(slugInput) {
             slugInput.value = result;
-            slugInput.style.backgroundColor = '#FFF3E6';
-            slugInput.style.color = '#FF9040';
+            slugInput.style.backgroundColor = '#EEF0FE';
+            slugInput.style.color = '#5A5BF1';
             setTimeout(() => {
                 slugInput.style.backgroundColor = 'transparent';
                 slugInput.style.color = 'inherit';
@@ -466,8 +466,8 @@
             btn.style.color = '#fff';
             setTimeout(() => {
                 btn.innerHTML = originalHtml;
-                btn.style.background = '#FFF3E6';
-                btn.style.color = '#FF9040';
+                btn.style.background = '#EEF0FE';
+                btn.style.color = '#5A5BF1';
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy: ', err);

@@ -16,7 +16,7 @@
 }
 
 .dashboard-digital-product-page .options-button {
-    background: #FF9040;
+    background: #5A5BF1;
                 color: white;
                 border: none;
                 padding: 8px 15px;
@@ -107,15 +107,15 @@
                 border: none;
                 border-radius: 20px;
                 background: white;
-                color: #FF9040;
+                color: #5A5BF1;
                 cursor: pointer;
                 transition: all 0.3s;
                 font-size: 14px;
-                border: 1px solid #FF9040;
+                border: 1px solid #5A5BF1;
 }
 
 .dashboard-digital-product-page .platform-button.active {
-    background: #FF9040;
+    background: #5A5BF1;
                 color: white;
 }
 
@@ -164,7 +164,7 @@
 }
 
 .dashboard-digital-product-page input:checked + .toggle-slider {
-    background-color: #FF9040;
+    background-color: #5A5BF1;
 }
 
 .dashboard-digital-product-page input:checked + .toggle-slider:before {
@@ -205,7 +205,7 @@
     padding: 10px 20px;
                 border: none;
                 border-radius: 5px;
-                background: #FF9040;
+                background: #5A5BF1;
                 color: white;
                 cursor: pointer;
 }
@@ -229,7 +229,7 @@
                 display: none;
                 text-align: center;
                 cursor: pointer;
-                color: #FF9040;
+                color: #5A5BF1;
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -237,7 +237,7 @@
 
 .dashboard-digital-product-page .select-file-button i {
     margin-right: 8px;
-                color: #FF9040;
+                color: #5A5BF1;
 }
 
 .dashboard-digital-product-page #selected-file-name {
@@ -246,7 +246,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 vertical-align: middle;
-                color: #FF9040;
+                color: #5A5BF1;
 }
 
 .dashboard-digital-product-page .preview-product-item {

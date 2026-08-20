@@ -1,64 +1,81 @@
-.dashboard-statistic-page padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
+.dashboard-statistic-page {
+    width: 100%;
+}
 
-        .stats-header {
+.dashboard-statistic-page .stats-section {
+    background: #ffffff;
+    border: 1.5px solid #5A5BF1;
+    border-radius: 20px;
+    padding: 24px 30px;
+    margin-bottom: 24px;
+    box-shadow: none;
+}
+
+.dashboard-statistic-page .stats-header {
     display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .dashboard-statistic-page .stats-header h3 {
-    font-size: 15px;
-                color: #333;
-                font-weight: 500;
+    font-size: 17px;
+    color: #1E50D8;
+    font-weight: 700;
 }
 
 .dashboard-statistic-page .date-range-selector {
     display: flex;
-                align-items: center;
-                gap: 10px;
+    align-items: center;
+    gap: 10px;
 }
 
 .dashboard-statistic-page .date-input {
-    padding: 7px 12px;
-                border: 1px solid #eee;
-                border-radius: 6px;
-                background: white;
-                font-size: 13px;
-                color: #666;
+    padding: 8px 14px;
+    border: 1px solid #D0D5DD;
+    border-radius: 8px;
+    background: white;
+    font-size: 13.5px;
+    color: #333;
+    outline: none;
+    font-family: inherit;
+}
+
+.dashboard-statistic-page .date-input:focus {
+    border-color: #5A5BF1;
 }
 
 .dashboard-statistic-page .apply-date {
-    padding: 7px 12px;
-                background: #FF9040;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 13px;
+    padding: 8px 18px;
+    background: #5A5BF1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
 .dashboard-statistic-page .apply-date:hover {
-    opacity: 0.9;
+    background: #4849E8;
 }
 
 .dashboard-statistic-page .stats-numbers {
     display: flex;
-                gap: 25px;
-                margin-bottom: 20px;
-                font-size: 14px;
-                color: #666;
+    gap: 25px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #64748B;
 }
 
 .dashboard-statistic-page .stats-chart {
-    height: 300px;
-                margin-top: 15px;
+    height: 320px;
+    margin-top: 15px;
 }
 
 @media (max-width: 900px) {
     .main-content {
-                    margin-left: 0;
+        margin-left: 0;
+    }
 }
