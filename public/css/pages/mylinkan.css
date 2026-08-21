@@ -3034,7 +3034,7 @@ input:checked+.segment-btn {
 .modern-range {
     flex-grow: 1;
     height: 6px;
-    -webkit-appearance: none;
+    appearance: none;
     background: #cbd5e1;
     border-radius: 4px;
     outline: none;
