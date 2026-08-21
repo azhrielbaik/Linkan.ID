@@ -12,31 +12,30 @@
 <div class="microsite-container">
     
     <!-- COMBINED HEADER & MODE SWITCH -->
-    <div class="section-header" style="margin-top: 10px;">
+    <div class="section-header microsite-main-header">
         @if($viewMode == 'gallery')
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
-                <h2 class="gallery-title" style="margin: 0;"><i class="fas fa-layer-group" style="color: #5A5BF1;"></i> {{ __('admin.my_microsite_list') }}</h2>
+            <div class="header-flex-container">
+                <h2 class="gallery-title"><i class="fas fa-layer-group text-brand-orange"></i> {{ __('admin.my_microsite_list') }}</h2>
                 
-                <!-- ACTION BAR: SEARCH, FILTER, BUAT BARU -->
                 <div class="microsite-actions-bar">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Cari microsite...">
                     </div>
-                    <button type="button" class="btn-action-secondary" style="padding: 10px 16px;">
+                    <button type="button" class="btn-action-secondary btn-padded">
                         <i class="fas fa-filter"></i> Filter
                     </button>
-                    <button type="button" class="btn-action-primary" style="padding: 10px 16px;" onclick="openNewMicrositeModal()">
+                    <button type="button" class="btn-action-primary btn-padded" onclick="openNewMicrositeModal()">
                         <i class="fas fa-plus"></i> Buat Baru
                     </button>
                 </div>
             </div>
         @else
-            <h2 style="display: flex; align-items: center; margin: 0;">
-                <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" style="color: #6b7280; text-decoration: none; margin-right: 10px;">
+            <h2 class="editor-mode-title">
+                <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="back-link">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <i class="fas fa-sliders-h" style="color: #5A5BF1; margin-right: 10px;"></i> {{ __('admin.edit_content_blocks') }}
+                <i class="fas fa-sliders-h text-brand-orange"></i> {{ __('admin.edit_content_blocks') }}
             </h2>
         @endif
     </div>
@@ -126,7 +125,7 @@
                             <i class="fa-solid fa-arrow-up-from-ground-water"></i> Kunjungi
                         </a>
                         <a href="{{ route('admin.mylinkan', ['mode' => 'edit']) }}" class="btn-action-primary">
-                            <i class="fas fa-edit"></i> {{ __('admin.edit_block') }}
+                            <i class="fas fa-pen"></i> {{ __('admin.edit_block') }}
                         </a>
                         <a href="{{ route('admin.appearance') }}" class="btn-action-secondary">
                             <i class="fas fa-paint-brush"></i> {{ __('admin.appearance') }}
@@ -165,27 +164,21 @@
                                 <!-- Profile Block is default and cannot be added/removed -->
                                 
                                 <!-- Element Option 1: Gambar -->
-                                <div class="element-option-card card-image" onclick="addGambarElement()">
-                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Gambar</div>
-                                    <div style="font-size: 13px; color: #6b7280;">Upload gambar & link</div>
+                                <div class="element-option-card" onclick="addGambarElement()">
+                                    <div class="option-card-title">Gambar</div>
+                                    <div class="option-card-desc">Upload gambar & link</div>
                                 </div>
 
-                                <!-- Element Option 2: Digital Product Block -->
-                                <div class="element-option-card card-product">
-                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Produk Digital</div>
-                                    <div style="font-size: 13px; color: #6b7280;">Jual file/kursus</div>
+                                <!-- Element Option 2: Pembatas -->
+                                <div class="element-option-card" onclick="addDividerElement()">
+                                    <div class="option-card-title">Pembatas</div>
+                                    <div class="option-card-desc">Garis atau spasi pemisah</div>
                                 </div>
 
-                                <!-- Element Option 3: Shortlink / Custom Link -->
-                                <div class="element-option-card card-link">
-                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Tautan Kustom</div>
-                                    <div style="font-size: 13px; color: #6b7280;">Link eksternal</div>
-                                </div>
-
-                                <!-- Element Option 4: Social Icons -->
-                                <div class="element-option-card card-social">
-                                    <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">Sosial Media</div>
-                                    <div style="font-size: 13px; color: #6b7280;">Hubungkan akun</div>
+                                <!-- Element Option 3: Teks -->
+                                <div class="element-option-card" onclick="addTextElement()">
+                                    <div class="option-card-title">Teks</div>
+                                    <div class="option-card-desc">Tambahkan teks custom</div>
                                 </div>
 
                             </div>
@@ -194,15 +187,13 @@
                 </div>
 
                 <!-- EDIT ELEMENT SECTION CONTAINER (DRAGGABLE BLOCKS) -->
-                <div id="digitalProductsSection" style="margin-bottom: 30px; transition: opacity 0.25s ease, transform 0.25s ease;">
-                    
-                    <!-- EDIT ELEMENT HEADER -->
-                    <div id="elementSectionHeader" class="edit-element-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-layer-group" style="color: #5A5BF1;"></i> Edit Element
+                <div id="digitalProductsSection" class="digital-products-section">
+                    <div id="elementSectionHeader" class="edit-element-header">
+                        <h3 class="element-header-title">
+                            <i class="fas fa-layer-group text-brand-orange"></i> Edit Element
                         </h3>
-                        <span style="font-size: 11px; color: #6b7280; font-weight: 500;">
-                            <i class="fas fa-arrows-alt-v" style="margin-right: 4px;"></i> Drag & Drop untuk mengurutkan
+                        <span class="element-header-subtitle">
+                            <i class="fas fa-arrows-alt-v"></i> Drag & Drop untuk mengurutkan
                         </span>
                     </div>
 
@@ -215,17 +206,17 @@
                             <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
                                 <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
-                                <div style="width: 36px; height: 36px; border-radius: 8px; color: #FF9040; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <div class="profile-block-icon">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
                                 <div class="block-item-content">
                                     <div class="block-item-title-wrapper">
                                         <span>Profil</span>
-                                        <span style="font-size: 10px; font-weight: 700; background: #5A5BF1; color: #ffffff; padding: 2px 8px; border-radius: 4px;">Elemen</span>
+                                        <span class="profile-element-badge">Elemen</span>
                                     </div>
                                 </div>
                                 <div class="block-item-actions" onclick="event.stopPropagation()">
-                                    <button type="button" onclick="toggleProfileEditForm()" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#FF9040'; this.style.color='#ffffff'; this.style.borderColor='#FF9040';" onmouseout="this.style.background='#f3f4f6'; this.style.color='#374151'; this.style.borderColor='#e5e7eb';">
+                                    <button type="button" onclick="toggleProfileEditForm()" class="btn-profile-edit">
                                         <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="profileEditBtnText">Edit</span>
                                     </button>
                                 </div>
@@ -236,7 +227,7 @@
                             <div class="profile-form-padding">
                                 <form action="{{ route('admin.appearance.update') }}" method="POST" enctype="multipart/form-data" id="profileBlockForm">
                                     @csrf
-                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#5A5BF1' }}">
+                                    <input type="hidden" name="theme_color" value="{{ $appearance->theme_color ?? '#FF9040' }}">
                                     <input type="hidden" name="background_color" value="{{ $appearance->background_color ?? '#FFFFFF' }}">
                                     
                                     <div class="profile-form-group">
@@ -250,7 +241,7 @@
                                             <div class="upload-dropzone banner-dropzone">
                                                 <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input" onchange="previewProfileBanner(this)">
                                                 
-                                                <div id="bannerPreviewPlaceholder" class="banner-placeholder" style="display: {{ ($appearance && $appearance->banner) ? 'none' : 'flex' }};">
+                                                <div id="bannerPreviewPlaceholder" class="banner-placeholder {{ ($appearance && $appearance->banner) ? 'd-none' : 'd-flex' }}">
                                                     <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
                                                     <div class="dropzone-text-primary">
                                                         Drop your images here or <span class="dropzone-browse-text">browse</span>
@@ -258,15 +249,15 @@
                                                     <div class="dropzone-text-secondary">supports JPG, JPEG, PNG & GIF</div>
                                                 </div>
 
-                                                <div id="bannerPreviewContainer" class="banner-preview-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
+                                                <div id="bannerPreviewContainer" class="banner-preview-container {{ ($appearance && $appearance->banner) ? 'd-block' : 'd-none' }}">
                                                     @if($appearance && $appearance->banner)
                                                         <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" class="live-phone-banner-img">
                                                     @else
-                                                        <img src="" id="bannerPreviewImg" class="banner-preview-img" style="display: none;">
+                                                        <img src="" id="bannerPreviewImg" class="banner-preview-img d-none">
                                                     @endif
                                                 </div>
                                                 
-                                                <div id="bannerSizeError" class="dropzone-error-msg" style="display: none;">
+                                                <div id="bannerSizeError" class="dropzone-error-msg d-none">
                                                     <i class="fas fa-exclamation-circle error-icon"></i> Gagal: Ukuran maksimal gambar sampul adalah 2MB!
                                                 </div>
                                             </div>
@@ -284,7 +275,7 @@
                                                             <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" class="live-phone-banner-img">
                                                         @else
                                                             <i class="fas fa-user" id="avatarPreviewPlaceholder" class="avatar-placeholder-icon"></i>
-                                                            <img src="" id="avatarPreviewImg" class="banner-preview-img" style="display: none;">
+                                                            <img src="" id="avatarPreviewImg" class="banner-preview-img d-none">
                                                         @endif
                                                     </div>
                                                     
@@ -298,7 +289,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div id="avatarSizeError" class="dropzone-error-msg dropzone-error-sm" style="display: none;">
+                                                <div id="avatarSizeError" class="dropzone-error-msg dropzone-error-sm d-none">
                                                     <i class="fas fa-exclamation-circle error-icon"></i> Gagal: Ukuran maksimal foto profil adalah 2MB!
                                                 </div>
                                             </div>
@@ -306,7 +297,7 @@
 
                                         <!-- 3. BENTUK PROFILE (PROFILE SHAPE) -->
                                         <div>
-                                            <label class="profile-form-label" style="margin-bottom: 8px;">Bentuk Foto Profil</label>
+                                            <label class="profile-form-label mb-2">Bentuk Foto Profil</label>
                                             <div class="shape-options-grid">
                                                 <label class="shape-option-label">
                                                     <input type="radio" name="profile_shape" value="circle" {{ old('profile_shape', $appearance->profile_shape ?? 'circle') == 'circle' ? 'checked' : '' }} onchange="updateProfileShape('circle')">
@@ -464,215 +455,152 @@
                             @endforeach
                         @endif
 
+                        @if(isset($dividerElements))
+                            @foreach($dividerElements as $dividerEl)
+                                @php $elementId = 'dividerBlock_' . $dividerEl->id; @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block divider-block sortable-item" data-element-type="divider" data-db-id="{{ $dividerEl->id }}">
+                                    <div class="block-item-card" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}')">
+                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div class="block-item-icon-wrapper">
+                                            <i class="fas fa-minus"></i>
+                                        </div>
+                                        <div class="block-item-content">
+                                            <div class="block-item-title-wrapper">
+                                                <span>Pembatas</span>
+                                            </div>
+                                        </div>
+                                        <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <button type="button" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}')" class="btn-edit-block">
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                                        <div class="edit-form-content">
+                                            <div class="edit-form-group">
+                                                <label class="profile-form-label">Jenis Pembatas</label>
+                                                <div class="segment-control-wrapper">
+                                                    <label class="segment-control-label">
+                                                        <input type="radio" name="dividerTypeGroup_{{ $elementId }}" value="line" class="hidden-radio" onchange="document.getElementById('dividerType_{{ $elementId }}').value = this.value; updateDividerPreview('{{ $elementId }}'); updateSegmentedControl(this);" {{ $dividerEl->type === 'line' ? 'checked' : '' }}>
+                                                        <div class="segment-btn {{ $dividerEl->type === 'line' ? 'active' : '' }}">
+                                                            <i class="fas fa-minus"></i> Garis
+                                                        </div>
+                                                    </label>
+                                                    <label class="segment-control-label">
+                                                        <input type="radio" name="dividerTypeGroup_{{ $elementId }}" value="space" class="hidden-radio" onchange="document.getElementById('dividerType_{{ $elementId }}').value = this.value; updateDividerPreview('{{ $elementId }}'); updateSegmentedControl(this);" {{ $dividerEl->type === 'space' ? 'checked' : '' }}>
+                                                        <div class="segment-btn {{ $dividerEl->type === 'space' ? 'active' : '' }}">
+                                                            <i class="fas fa-arrows-alt-v"></i> Spasi Kosong
+                                                        </div>
+                                                    </label>
+                                                    <input type="hidden" id="dividerType_{{ $elementId }}" value="{{ $dividerEl->type }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="slider-control-container">
+                                                <label class="profile-form-label slider-control-header">
+                                                    <span class="slider-control-title">Ukuran Jarak</span>
+                                                    <div class="slider-value-badge" id="dividerSizeValue_{{ $elementId }}">{{ $dividerEl->size }}px</div>
+                                                </label>
+                                                <div class="slider-input-wrapper">
+                                                    <button type="button" class="btn-slider-adjust" onclick="adjustDividerSize('{{ $elementId }}', -5)">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                    <input type="range" id="dividerSize_{{ $elementId }}" class="modern-range" min="10" max="100" step="5" value="{{ $dividerEl->size }}" oninput="updateDividerPreview('{{ $elementId }}')">
+                                                    <button type="button" class="btn-slider-adjust" onclick="adjustDividerSize('{{ $elementId }}', 5)">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="element-action-footer">
+                                                <button type="button" onclick="removeDynamicDivider('{{ $elementId }}'); event.stopPropagation();" class="btn-delete-element">
+                                                    <i class="fas fa-trash-alt"></i> Hapus Elemen
+                                                </button>
+                                                <button type="button" onclick="saveDynamicDivider('{{ $elementId }}')" class="btn-save-element">
+                                                    Simpan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        @if(isset($textElements) && $textElements->count() > 0)
+                            @foreach($textElements as $textEl)
+                                @php $elementId = 'textBlock_' . $textEl->id; @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block" data-element-type="text" data-db-id="{{ $textEl->id }}">
+                                    <div class="block-item-card" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}')">
+                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div class="block-item-icon-wrapper">
+                                            <i class="fas fa-font"></i>
+                                        </div>
+                                        <div class="block-item-content">
+                                            <div class="block-item-title-wrapper">
+                                                <span>Teks</span>
+                                            </div>
+                                        </div>
+                                        <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <button type="button" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}')" class="btn-edit-block">
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                                        <div class="edit-form-content">
+                                            <div class="profile-form-header" style="margin-bottom: 16px;">
+                                                Pengaturan Elemen Teks
+                                            </div>
+                                            
+                                            <div class="text-editor-container">
+                                                <div class="text-editor-toolbar">
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                                    <span class="toolbar-divider"></span>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
+                                                    <span class="toolbar-divider"></span>
+                                                    <input type="color" class="toolbar-color-picker" onchange="execCmd('{{ $elementId }}', 'foreColor', this.value)" title="Text Color" value="#000000">
+                                                    <span class="toolbar-divider"></span>
+                                                    <div class="toolbar-dropdown">
+                                                        <select onchange="changeTextSize('{{ $elementId }}', this.value)" class="toolbar-select" id="textSizeSelect_{{ $elementId }}">
+                                                            <option value="12px">Kecil (12px)</option>
+                                                            <option value="16px" selected>Normal (16px)</option>
+                                                            <option value="24px">Besar (24px)</option>
+                                                            <option value="custom">Custom...</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div id="customSizeWrapper_{{ $elementId }}" class="custom-size-wrapper" style="display: none;">
+                                                    <input type="number" id="customSizeInput_{{ $elementId }}" class="toolbar-input" placeholder="Ukuran (px)" onchange="applyCustomSize('{{ $elementId }}')">
+                                                    <button type="button" class="toolbar-btn-text" onclick="applyCustomSize('{{ $elementId }}')">Terapkan</button>
+                                                </div>
+                                                <div id="editorContent_{{ $elementId }}" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('{{ $elementId }}')">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
+                                            </div>
+
+                                            <div class="element-action-footer" style="margin-top: 15px;">
+                                                <button type="button" onclick="removeDynamicText('{{ $elementId }}'); event.stopPropagation();" class="btn-delete-element">
+                                                    <i class="fas fa-trash-alt"></i> Hapus Elemen
+                                                </button>
+                                                <button type="button" onclick="saveDynamicText('{{ $elementId }}')" class="btn-save-element" id="btnSaveText_{{ $elementId }}">
+                                                    Simpan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div> <!-- Closes elementBlocksList -->
                 </div> <!-- Closes digitalProductsSection -->
             </div> <!-- Closes editor-left-panel -->
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
-            <div class="editor-sticky-preview clean-sticky-preview">
-                <!-- SECTION TITLE -->
-                <div class="phone-preview-header">
-                    <h3 class="phone-preview-title">
-                        <i class="fas fa-mobile-alt phone-preview-icon"></i> {{ __('admin.live_phone_preview') }}
-                    </h3>
-                </div>
-
-                <!-- SIDE-BY-SIDE FLEX CONTAINER: PHONE MOCKUP (LEFT) + VERTICAL URL BAR (RIGHT) -->
-                <div class="phone-preview-flex-container">
-                    
-                    <!-- DAISYUI PHONE MOCKUP FRAME (LEFT) -->
-                    <div class="mockup-phone border-[#5A5BF1]">
-                        <div class="mockup-phone-camera"></div>
-                        <div class="mockup-phone-display">
-                            <!-- REALISTIC SMARTPHONE TOP STATUS BAR -->
-                            <div class="mockup-phone-status-bar">
-                                <span>09:41</span>
-                                <div class="mockup-phone-status-icons">
-                                    <i class="fas fa-signal"></i>
-                                    <i class="fas fa-wifi"></i>
-                                    <i class="fas fa-battery-full"></i>
-                                </div>
-                            </div>
-
-                            <!-- MAIN SCROLLABLE PHONE CONTENT -->
-                            <div class="phone-content" id="phonePreviewContent" style="background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');">
-                                
-                                <!-- EMPTY STATE PLACEHOLDER (SHOWN WHEN NO ELEMENTS ARE ADDED IN LEFT PANEL) -->
-                                <div id="phoneEmptyState" class="phone-empty-state">
-                                    <div class="empty-state-icon-wrapper">
-                                        <i class="fas fa-layer-group"></i>
-                                    </div>
-                                    <div class="empty-state-title">Belum Ada Elemen</div>
-                                    <p class="empty-state-desc">Klik "Tambah Element" di sebelah kiri untuk menambahkan profil atau komponen ke microsite ini.</p>
-                                </div>
-
-                                <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
-                                <div id="liveProfileSection" class="live-profile-section" style="display: none;">
-                                    <div id="livePhoneBannerContainer" class="live-phone-banner-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
-                                        <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" class="live-phone-banner-img">
-                                    </div>
-
-                                    @php
-                                        $shapeRadius = '50%';
-                                        if (isset($appearance->profile_shape)) {
-                                            if ($appearance->profile_shape === 'rounded') $shapeRadius = '14px';
-                                            if ($appearance->profile_shape === 'square') $shapeRadius = '0px';
-                                        }
-                                    @endphp
-                                    <div id="livePhoneAvatarContainer" class="live-phone-avatar-container" style="border-radius: {{ $shapeRadius }};">
-                                        @if($appearance && $appearance->profile_image)
-                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="livePhoneAvatarImg" class="live-phone-banner-img">
-                                        @else
-                                            <i class="fas fa-user" id="livePhoneAvatarPlaceholder" class="live-phone-avatar-placeholder"></i>
-                                        @endif
-                                    </div>
-
-                                    <div id="livePhoneName" class="live-phone-name" style="color: {{ $appearance ? $appearance->theme_color : '#FF9040' }};">
-                                        {!! $appearance ? $appearance->name : Auth::user()->name !!}
-                                    </div>
-
-                                    <div id="livePhoneBio" class="live-phone-bio" style="color: {{ $appearance ? $appearance->theme_color : '#666' }};">
-                                        {!! $appearance ? $appearance->bio : '' !!}
-                                    </div>
-                                    
-                                    <div class="preview-social-links" id="livePreviewSocialLinks">
-                                        @if($appearance && $appearance->instagram)
-                                            <a href="{{ $appearance->instagram }}" target="_blank" class="social-link-item"><i class="fab fa-instagram"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->tiktok)
-                                            <a href="{{ $appearance->tiktok }}" target="_blank" class="social-link-item"><i class="fab fa-tiktok"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->whatsapp)
-                                            <a href="{{ $appearance->whatsapp }}" target="_blank" class="social-link-item"><i class="fab fa-whatsapp"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->linkedin)
-                                            <a href="{{ $appearance->linkedin }}" target="_blank" class="social-link-item"><i class="fab fa-linkedin"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->facebook)
-                                            <a href="{{ $appearance->facebook }}" target="_blank" class="social-link-item"><i class="fab fa-facebook"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->website)
-                                            <a href="{{ $appearance->website }}" target="_blank" class="social-link-item"><i class="fas fa-globe"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->twitter)
-                                            <a href="{{ $appearance->twitter }}" target="_blank" class="social-link-item"><i class="fab fa-twitter"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->youtube)
-                                            <a href="{{ $appearance->youtube }}" target="_blank" class="social-link-item"><i class="fab fa-youtube"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->telegram)
-                                            <a href="{{ $appearance->telegram }}" target="_blank" class="social-link-item"><i class="fab fa-telegram"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->email)
-                                            <a href="mailto:{{ $appearance->email }}" class="social-link-item"><i class="fas fa-envelope"></i></a>
-                                        @endif
-                                        @if($appearance && $appearance->discord)
-                                            <a href="{{ $appearance->discord }}" target="_blank" class="social-link-item"><i class="fab fa-discord"></i></a>
-                                        @endif
-                                    </div>
-                                    
-
-                                </div>
-
-                                @if(isset($imageElements))
-                                    @foreach($imageElements as $imageEl)
-                                        @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
-                                        <div id="live_{{ $elementId }}" class="live-image-element">
-                                            <a href="{{ $imageEl->link_url ?? '#' }}" id="liveLink_{{ $elementId }}" target="_blank" class="live-image-link">
-                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" class="live-image-img">
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                @endif
-
-                            </div>
-
-                            <!-- REALISTIC SMARTPHONE BOTTOM HOME GESTURE INDICATOR -->
-                            <div class="mockup-home-gesture-wrapper">
-                                <div class="mockup-home-gesture-bar"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SLEEK REDESIGNED VERTICAL BROWSER URL PILL (RIGHT SIDE OF PHONE) -->
-                    <div class="preview-url-browser-bar">
-                        <!-- TOP: HTTPS GREEN LOCK BADGE -->
-                        <div style="
-                            width: 32px;
-                            height: 32px;
-                            border-radius: 50%;
-                            background: #ECFDF5;
-                            color: #10B981;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 12px;
-                            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.15);
-                        " title="Akses Aman HTTPS (SSL Active)">
-                            <i class="fas fa-lock"></i>
-                        </div>
-
-                        <!-- CENTER: ELEGANT VERTICAL DOMAIN PATH -->
-                        <div style="
-                            writing-mode: vertical-rl;
-                            transform: rotate(180deg);
-                            font-size: 12px;
-                            font-weight: 700;
-                            color: #374151;
-                            letter-spacing: 0.6px;
-                            white-space: nowrap;
-                            user-select: none;
-                            display: flex;
-                            align-items: center;
-                            gap: 4px;
-                        ">
-                            <span style="color: #9CA3AF; font-weight: 500;">linkan.id/</span><span style="color: #5A5BF1;">{{ Auth::user()->username }}</span>
-                        </div>
-
-                        <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <!-- Copy Button -->
-                            <button type="button" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')" style="
-                                background: #FFF7ED;
-                                border: 1px solid #FFEDD5;
-                                color: #5A5BF1;
-                                width: 32px;
-                                height: 32px;
-                                border-radius: 10px;
-                                font-size: 12px;
-                                cursor: pointer;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                transition: all 0.2s ease;
-                            " onmouseover="this.style.background='#5A5BF1'; this.style.color='#ffffff'; this.style.borderColor='#5A5BF1';" onmouseout="this.style.background='#FFF7ED'; this.style.color='#5A5BF1'; this.style.borderColor='#FFEDD5';" title="Salin Tautan Microsite">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            
-                            <!-- Open External Link Button -->
-                            <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" target="_blank" style="
-                                background: #F3F4F6;
-                                border: 1px solid #E5E7EB;
-                                color: #4B5563;
-                                width: 32px;
-                                height: 32px;
-                                border-radius: 10px;
-                                font-size: 12px;
-                                cursor: pointer;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                text-decoration: none;
-                                transition: all 0.2s ease;
-                            " onmouseover="this.style.background='#374151'; this.style.color='#ffffff'; this.style.borderColor='#374151';" onmouseout="this.style.background='#F3F4F6'; this.style.color='#4B5563'; this.style.borderColor='#E5E7EB';" title="Buka Microsite di Tab Baru">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            </div>
+            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" />
         </div>
     @endif
 
@@ -751,10 +679,85 @@
     </template>
 
     <template id="image-live-template">
-        <div id="live___ELEMENT_ID__" class="microsite-live-element" style="display: none;">
-            <a id="liveLink___ELEMENT_ID__" href="#" target="_blank" class="live-element-link">
+        <div id="live___ELEMENT_ID__" class="microsite-live-element" style="display: none; cursor: pointer;" onclick="if(typeof toggleImageEditForm === 'function') toggleImageEditForm('__ELEMENT_ID__', true);">
+            <a id="liveLink___ELEMENT_ID__" class="live-element-link" style="pointer-events: none;">
                 <img id="liveImg___ELEMENT_ID__" src="" class="live-element-img">
             </a>
+        </div>
+    </template>
+
+    <template id="divider-block-template">
+        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="divider">
+            <div class="block-item-card" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('__ELEMENT_ID__')">
+                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <div class="block-item-icon-wrapper">
+                    <i class="fas fa-minus"></i>
+                </div>
+                <div class="block-item-content">
+                    <div class="block-item-title-wrapper">
+                        <span>Pembatas</span>
+                    </div>
+                </div>
+                <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <button type="button" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('__ELEMENT_ID__')" class="btn-edit-block">
+                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                <div class="edit-form-content">
+                    <div class="edit-form-group">
+                        <label class="profile-form-label">Jenis Pembatas</label>
+                        <div class="segment-control-wrapper">
+                            <label class="segment-control-label">
+                                <input type="radio" name="dividerTypeGroup___ELEMENT_ID__" value="line" class="hidden-radio" onchange="document.getElementById('dividerType___ELEMENT_ID__').value = this.value; updateDividerPreview('__ELEMENT_ID__'); updateSegmentedControl(this);" checked>
+                                <div class="segment-btn active">
+                                    <i class="fas fa-minus"></i> Garis
+                                </div>
+                            </label>
+                            <label class="segment-control-label">
+                                <input type="radio" name="dividerTypeGroup___ELEMENT_ID__" value="space" class="hidden-radio" onchange="document.getElementById('dividerType___ELEMENT_ID__').value = this.value; updateDividerPreview('__ELEMENT_ID__'); updateSegmentedControl(this);">
+                                <div class="segment-btn">
+                                    <i class="fas fa-arrows-alt-v"></i> Spasi Kosong
+                                </div>
+                            </label>
+                            <input type="hidden" id="dividerType___ELEMENT_ID__" value="line">
+                        </div>
+                    </div>
+
+                    <div class="slider-control-container">
+                        <label class="profile-form-label slider-control-header">
+                            <span class="slider-control-title">Ukuran Jarak</span>
+                            <div class="slider-value-badge" id="dividerSizeValue___ELEMENT_ID__">20px</div>
+                        </label>
+                        <div class="slider-input-wrapper">
+                            <button type="button" class="btn-slider-adjust" onclick="adjustDividerSize('__ELEMENT_ID__', -5)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="range" id="dividerSize___ELEMENT_ID__" class="modern-range" min="10" max="100" step="5" value="20" oninput="updateDividerPreview('__ELEMENT_ID__')">
+                            <button type="button" class="btn-slider-adjust" onclick="adjustDividerSize('__ELEMENT_ID__', 5)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="element-action-footer">
+                        <button type="button" onclick="removeDynamicDivider('__ELEMENT_ID__'); event.stopPropagation();" class="btn-delete-element">
+                            <i class="fas fa-trash-alt"></i> Hapus Elemen
+                        </button>
+                        <button type="button" onclick="saveDynamicDivider('__ELEMENT_ID__')" class="btn-save-element">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="divider-live-template">
+        <div id="live___ELEMENT_ID__" class="microsite-live-element live-divider-wrapper" style="padding: 10px 0;" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('__ELEMENT_ID__', true);">
+            <div id="liveDivider___ELEMENT_ID__" class="live-divider-inner" style="border-top: 2px solid #cbd5e1;"></div>
         </div>
     </template>
 
@@ -780,6 +783,8 @@
 <div id="micrositeEditorUrls" style="display: none;"
     data-route-image-delete="{{ url('/admin/elements/image') }}"
     data-route-image-store="{{ route('admin.elements.image.store') }}"
+    data-route-divider-delete="{{ url('/admin/elements/divider') }}"
+    data-route-divider-store="{{ route('admin.elements.divider.store') }}"
     data-route-order-update="{{ route('admin.elements.order.update') }}"
     data-route-appearance-update="{{ route('admin.appearance.update') }}"
     data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}">

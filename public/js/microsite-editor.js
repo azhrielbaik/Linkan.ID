@@ -140,6 +140,33 @@ function toggleAddElementPanel() {
     }
 }
 
+function closeAllEditForms(exceptId = null) {
+    if (exceptId !== 'profile') {
+        const profileForm = document.getElementById('profileEditFormBody');
+        const profileBtnText = document.getElementById('profileEditBtnText');
+        if (profileForm && profileForm.classList.contains('open')) {
+            profileForm.style.maxHeight = '0px';
+            profileForm.style.opacity = '0';
+            profileForm.style.marginTop = '0px';
+            profileForm.classList.remove('open');
+            if (profileBtnText) profileBtnText.innerText = 'Edit';
+        }
+    }
+
+    const allImageForms = document.querySelectorAll('.edit-form-body.open');
+    allImageForms.forEach(form => {
+        const idStr = form.id.replace('formBody_', '');
+        if (exceptId !== idStr) {
+            form.style.maxHeight = '0px';
+            form.style.opacity = '0';
+            form.style.marginTop = '0px';
+            form.classList.remove('open');
+            const btnText = document.getElementById('btnText_' + idStr);
+            if (btnText) btnText.innerText = 'Edit';
+        }
+    });
+}
+
 function toggleProfileEditForm(forceOpen = false) {
     const formBody = document.getElementById('profileEditFormBody');
     const btnText = document.getElementById('profileEditBtnText');
@@ -155,6 +182,7 @@ function toggleProfileEditForm(forceOpen = false) {
         formBody.classList.remove('open');
         if (btnText) btnText.innerText = 'Edit';
     } else {
+        if (typeof closeAllEditForms === 'function') closeAllEditForms('profile');
         formBody.classList.add('open');
         formBody.style.marginTop = '8px';
         formBody.style.maxHeight = (formBody.scrollHeight + 600) + 'px';
@@ -304,12 +332,20 @@ function previewDynamicImage(input, elementId, maxMb = 2) {
 
 
 function removeDynamicElement(elementId) {
-    if(confirm('Hapus elemen gambar ini?')) {
-        const block = document.getElementById(elementId);
-        const dbId = block ? block.getAttribute('data-db-id') : null;
+    const block = document.getElementById(elementId);
+    if (!block) return;
+    
+    const type = block.getAttribute('data-element-type');
+    const label = type === 'divider' ? 'pembatas' : 'gambar';
+    
+    if(confirm(`Hapus elemen ${label} ini?`)) {
+        const dbId = block.getAttribute('data-db-id');
         
         if (dbId) {
-            fetch(`${document.getElementById('micrositeEditorUrls').dataset.routeImageDelete}/${dbId}`, {
+            const urls = document.getElementById('micrositeEditorUrls').dataset;
+            const routeDelete = type === 'divider' ? urls.routeDividerDelete : urls.routeImageDelete;
+            
+            fetch(`${routeDelete}/${dbId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -330,7 +366,7 @@ function removeDynamicElement(elementId) {
                 alert('Terjadi kesalahan saat menghapus.');
             });
         } else {
-            if (block) block.remove();
+            block.remove();
             const liveEl = document.getElementById('live_' + elementId);
             if (liveEl) liveEl.remove();
             syncPhonePreviewOrder();
@@ -408,6 +444,12 @@ function saveElementsOrder() {
         } else if (type === 'image') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('image_' + dbId);
+        } else if (type === 'divider') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('divider_' + dbId);
+        } else if (type === 'text') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('text_' + dbId);
         }
     });
 
@@ -447,7 +489,13 @@ function initPageEvents() {
                 el = document.getElementById('profileBlockCard');
             } else if (blockId.startsWith('image_')) {
                 const dbId = blockId.split('_')[1];
-                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"]`);
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="image"]`);
+            } else if (blockId.startsWith('divider_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="divider"]`);
+            } else if (blockId.startsWith('text_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="text"]`);
             }
             if (el) {
                 list.appendChild(el);
@@ -611,10 +659,10 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image') {
-            const liveEl = document.getElementById('live_' + block.id);
-            if (liveEl) {
-                phoneContent.appendChild(liveEl);
+        } else if (type === 'image' || type === 'divider') {
+            const liveElement = document.getElementById('live_' + block.id);
+            if (liveElement) {
+                phoneContent.appendChild(liveElement);
             }
         }
     });
@@ -735,18 +783,19 @@ function addGambarElement() {
     setTimeout(() => toggleImageEditForm(elementId), 50);
 }
 
-function toggleImageEditForm(elementId) {
+function toggleImageEditForm(elementId, forceOpen = false) {
     const formBody = document.getElementById('formBody_' + elementId);
     const btnText = document.getElementById('btnText_' + elementId);
     if (!formBody) return;
 
-    if (formBody.classList.contains('open')) {
+    if (formBody.classList.contains('open') && !forceOpen) {
         formBody.style.maxHeight = '0px';
         formBody.style.opacity = '0';
         formBody.style.marginTop = '0px';
         formBody.classList.remove('open');
         if (btnText) btnText.innerText = 'Edit';
     } else {
+        if (typeof closeAllEditForms === 'function') closeAllEditForms(elementId);
         formBody.classList.add('open');
         formBody.style.marginTop = '8px';
         formBody.style.maxHeight = (formBody.scrollHeight + 500) + 'px';
@@ -757,16 +806,428 @@ function toggleImageEditForm(elementId) {
 
 
 function updateDynamicImageLink(elementId, url) {
-    const liveLink = document.getElementById('liveLink_' + elementId);
-    if (liveLink) {
-        liveLink.href = url || '#';
-        if (url && url.length > 0) {
-            liveLink.style.pointerEvents = 'auto';
-            liveLink.style.cursor = 'pointer';
-        } else {
-            liveLink.style.pointerEvents = 'none';
-            liveLink.style.cursor = 'default';
-            liveLink.removeAttribute('href');
+    // Di preview, elemen gambar tidak boleh bisa di klik untuk navigasi (agar bisa di klik untuk membuka form edit).
+    // Oleh karena itu, kita biarkan saja tanpa href dan pointer-events tetap none di `a` tag-nya.
+}
+// DIVIDER ELEMENT LOGIC
+function addDividerElement() {
+    if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    const tempId = 'temp_' + Date.now();
+    const list = document.getElementById('elementBlocksList');
+    
+    let blockTemplate = document.getElementById('divider-block-template').innerHTML;
+    blockTemplate = blockTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    
+    let liveTemplate = document.getElementById('divider-live-template').innerHTML;
+    liveTemplate = liveTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = blockTemplate;
+    const newBlock = wrapper.firstElementChild;
+    list.appendChild(newBlock);
+    
+    const liveWrapper = document.createElement('div');
+    liveWrapper.innerHTML = liveTemplate;
+    const newLive = liveWrapper.firstElementChild;
+    
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        phoneContent.appendChild(newLive);
+    }
+    
+    toggleDividerEditForm(tempId, true);
+    
+    // Auto-save the default divider to the database
+    const formData = new FormData();
+    formData.append('type', 'line');
+    formData.append('size', '20');
+    
+    const url = document.getElementById('micrositeEditorUrls').dataset.routeDividerStore;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            newBlock.setAttribute('data-db-id', data.id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
         }
+    })
+    .catch(err => console.error(err));
+}
+
+function toggleDividerEditForm(id, forceOpen = false) {
+    const formBody = document.getElementById('formBody_' + id);
+    const btnText = document.getElementById('btnText_' + id);
+    if (!formBody) return;
+    
+    const isOpen = formBody.classList.contains('open');
+    if (isOpen && !forceOpen) {
+        formBody.style.maxHeight = '0px';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0px';
+        formBody.classList.remove('open');
+        if (btnText) {
+            btnText.innerText = 'Edit';
+        }
+    } else {
+        if (typeof closeAllEditForms === 'function') closeAllEditForms(id);
+        formBody.classList.add('open');
+        formBody.style.marginTop = '8px';
+        formBody.style.maxHeight = (formBody.scrollHeight + 100) + 'px';
+        formBody.style.opacity = '1';
+        if (btnText) {
+            btnText.innerText = 'Tutup';
+        }
+    }
+}
+
+function adjustDividerSize(id, change) {
+    const input = document.getElementById('dividerSize_' + id);
+    if (input) {
+        let val = parseInt(input.value) + change;
+        if (val < parseInt(input.min)) val = parseInt(input.min);
+        if (val > parseInt(input.max)) val = parseInt(input.max);
+        input.value = val;
+        updateDividerPreview(id);
+    }
+}
+
+function updateDividerPreview(id) {
+    const typeSelect = document.getElementById('dividerType_' + id);
+    const sizeInput = document.getElementById('dividerSize_' + id);
+    const sizeLabel = document.getElementById('dividerSizeValue_' + id);
+    const liveDivider = document.getElementById('liveDivider_' + id);
+    
+    if (typeSelect && sizeInput && sizeLabel && liveDivider) {
+        const type = typeSelect.value;
+        const size = sizeInput.value;
+        sizeLabel.innerText = size + 'px';
+        
+        if (type === 'line') {
+            liveDivider.style.borderTop = '2px solid #cbd5e1';
+            liveDivider.style.height = '0';
+            document.getElementById('live_' + id).style.padding = (size / 2) + 'px 0';
+        } else {
+            liveDivider.style.borderTop = 'none';
+            liveDivider.style.height = size + 'px';
+            document.getElementById('live_' + id).style.padding = '0';
+        }
+    }
+}
+
+function updateSegmentedControl(radio) {
+    const group = radio.closest('div');
+    const labels = group.querySelectorAll('label');
+    labels.forEach(label => {
+        const input = label.querySelector('input');
+        const btn = label.querySelector('.segment-btn');
+        if (input.checked) {
+            btn.classList.add('active');
+            btn.style.color = '#1e293b';
+            btn.style.background = '#ffffff';
+            btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+        } else {
+            btn.classList.remove('active');
+            btn.style.color = '#64748b';
+            btn.style.background = 'transparent';
+            btn.style.boxShadow = 'none';
+        }
+    });
+}
+
+function saveDynamicDivider(id) {
+    const typeVal = document.getElementById('dividerType_' + id).value;
+    const sizeVal = document.getElementById('dividerSize_' + id).value;
+    const block = document.getElementById(id);
+    const dbId = block.getAttribute('data-db-id');
+    
+    const formData = new FormData();
+    formData.append('type', typeVal);
+    formData.append('size', sizeVal);
+    if (dbId) {
+        formData.append('element_id', dbId);
+    }
+    
+    const url = document.getElementById('micrositeEditorUrls').dataset.routeDividerStore;
+    
+    const btn = document.querySelector(`#formBody_${id} .btn-save-element`);
+    if(btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        btn.disabled = true;
+    }
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        if (data.success) {
+            block.setAttribute('data-db-id', data.id);
+            updateDividerPreview(id);
+            toggleDividerEditForm(id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            if (typeof showSuccessToast === 'function') showSuccessToast('Pembatas berhasil disimpan!');
+        } else {
+            alert('Gagal menyimpan pembatas.');
+        }
+    })
+    .catch(err => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        console.error(err);
+        alert('Terjadi kesalahan saat menyimpan.');
+    });
+}
+
+function removeDynamicDivider(id) {
+    if (!confirm('Yakin ingin menghapus pembatas ini?')) return;
+    
+    const block = document.getElementById(id);
+    const liveBlock = document.getElementById('live_' + id);
+    const dbId = block.getAttribute('data-db-id');
+    
+    if (dbId) {
+        const url = document.getElementById('micrositeEditorUrls').dataset.routeDividerDelete + '/' + dbId;
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                block.remove();
+                if (liveBlock) liveBlock.remove();
+                if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            }
+        });
+    } else {
+        block.remove();
+        if (liveBlock) liveBlock.remove();
+        if (typeof saveElementsOrder === 'function') saveElementsOrder();
+    }
+}
+
+// TEXT ELEMENT LOGIC
+function addTextElement() {
+    if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    const tempId = 'textBlock_' + Date.now();
+    const list = document.getElementById('elementBlocksList');
+    
+    let blockTemplate = document.getElementById('text-block-template').innerHTML;
+    blockTemplate = blockTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = blockTemplate;
+    const newBlock = wrapper.firstElementChild;
+    list.appendChild(newBlock);
+    
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        const liveDiv = document.createElement('div');
+        liveDiv.id = 'live_' + tempId;
+        liveDiv.className = 'live-text-element';
+        liveDiv.innerHTML = 'Teks Anda di sini...';
+        phoneContent.appendChild(liveDiv);
+    }
+    
+    toggleTextEditForm(tempId, true);
+    
+    const formData = new FormData();
+    formData.append('content', 'Teks Anda di sini...');
+    
+    // Auto-save the default text to the database
+    const url = document.getElementById('micrositeEditorUrls').dataset.routeTextStore || '/admin/elements/text';
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            newBlock.setAttribute('data-db-id', data.id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+function toggleTextEditForm(id, forceOpen = false) {
+    const formBody = document.getElementById('formBody_' + id);
+    const btnText = document.getElementById('btnText_' + id);
+    if (!formBody) return;
+    
+    const isOpen = formBody.classList.contains('open');
+    if (isOpen && !forceOpen) {
+        formBody.style.maxHeight = '0px';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0px';
+        formBody.classList.remove('open');
+        if (btnText) btnText.innerText = 'Edit';
+    } else {
+        if (typeof closeAllEditForms === 'function') closeAllEditForms(id);
+        formBody.classList.add('open');
+        formBody.style.marginTop = '8px';
+        formBody.style.maxHeight = (formBody.scrollHeight + 300) + 'px'; // +300 for editor flexibility
+        formBody.style.opacity = '1';
+        if (btnText) btnText.innerText = 'Tutup';
+    }
+}
+
+function execCmd(id, command, value = null) {
+    const editor = document.getElementById('editorContent_' + id);
+    if (editor) {
+        editor.focus();
+        document.execCommand(command, false, value);
+        updateTextPreview(id);
+    }
+}
+
+function changeTextSize(id, value) {
+    const customWrapper = document.getElementById('customSizeWrapper_' + id);
+    if (value === 'custom') {
+        customWrapper.style.display = 'flex';
+        // adjust max-height
+        const formBody = document.getElementById('formBody_' + id);
+        if (formBody) formBody.style.maxHeight = (formBody.scrollHeight + 50) + 'px';
+    } else {
+        customWrapper.style.display = 'none';
+        execCmd(id, 'fontSize', 7); // Use a dummy font size 7
+        // Then replace it with exact px
+        replaceFontSize(id, value);
+    }
+}
+
+function applyCustomSize(id) {
+    const input = document.getElementById('customSizeInput_' + id);
+    if (input && input.value) {
+        execCmd(id, 'fontSize', 7);
+        replaceFontSize(id, input.value + 'px');
+    }
+}
+
+function replaceFontSize(id, sizePx) {
+    const editor = document.getElementById('editorContent_' + id);
+    if (editor) {
+        const fonts = editor.querySelectorAll('font[size="7"]');
+        fonts.forEach(f => {
+            f.removeAttribute('size');
+            f.style.fontSize = sizePx;
+        });
+        updateTextPreview(id);
+    }
+}
+
+function updateTextPreview(id) {
+    const editor = document.getElementById('editorContent_' + id);
+    const liveDiv = document.getElementById('live_' + id);
+    if (editor && liveDiv) {
+        liveDiv.innerHTML = editor.innerHTML;
+    }
+    // Update max height if content grows
+    const formBody = document.getElementById('formBody_' + id);
+    if (formBody && formBody.classList.contains('open')) {
+        formBody.style.maxHeight = (formBody.scrollHeight + 50) + 'px';
+    }
+}
+
+function saveDynamicText(id) {
+    const block = document.getElementById(id);
+    const dbId = block.getAttribute('data-db-id');
+    const editor = document.getElementById('editorContent_' + id);
+    
+    if (!editor) return;
+    
+    const formData = new FormData();
+    formData.append('content', editor.innerHTML);
+    if (dbId) {
+        formData.append('element_id', dbId);
+    }
+    
+    const url = document.getElementById('micrositeEditorUrls').dataset.routeTextStore || '/admin/elements/text';
+    const btn = document.getElementById('btnSaveText_' + id);
+    if(btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        btn.disabled = true;
+    }
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        if (data.success) {
+            block.setAttribute('data-db-id', data.id);
+            updateTextPreview(id);
+            toggleTextEditForm(id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            if (typeof showSuccessToast === 'function') showSuccessToast('Teks berhasil disimpan!');
+        } else {
+            alert('Gagal menyimpan teks.');
+        }
+    })
+    .catch(err => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        console.error(err);
+        alert('Terjadi kesalahan saat menyimpan.');
+    });
+}
+
+function removeDynamicText(id) {
+    if (!confirm('Yakin ingin menghapus teks ini?')) return;
+    
+    const block = document.getElementById(id);
+    const liveBlock = document.getElementById('live_' + id);
+    const dbId = block.getAttribute('data-db-id');
+    
+    if (dbId) {
+        const url = (document.getElementById('micrositeEditorUrls').dataset.routeTextStore || '/admin/elements/text') + '/' + dbId;
+        // The store url doesn't have ID, so we use string manipulation or assume /text/{id}
+        const deleteUrl = url.replace('/text', '/text/' + dbId);
+        
+        fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                block.remove();
+                if (liveBlock) liveBlock.remove();
+                if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            }
+        });
+    } else {
+        block.remove();
+        if (liveBlock) liveBlock.remove();
+        if (typeof saveElementsOrder === 'function') saveElementsOrder();
     }
 }

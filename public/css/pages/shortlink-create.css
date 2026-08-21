@@ -1130,3 +1130,384 @@
             margin-top: 0 !important;
         }
     }
+
+/* Slide Panel Styles */
+.sl-panel-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+}
+
+.sl-header-spacer {
+    flex: 1;
+}
+
+.sl-panel-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.sl-header-actions {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.preview-identity-borderless {
+    border-bottom: none;
+    padding-bottom: 20px;
+}
+
+.identity-left-full {
+    width: 100%;
+}
+
+.panel-slug-badge {
+    color: #FF9040;
+    font-weight: 700;
+}
+
+.panel-action-buttons-container {
+    padding: 0 30px 30px 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.action-btn-stacked {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 12px;
+    text-decoration: none;
+}
+
+.action-btn-icon {
+    font-size: 20px;
+    color: #666;
+}
+
+.action-btn-orange {
+    border-color: #FF9040;
+    color: #FF9040;
+    background: #FFF3E6;
+}
+
+.action-btn-orange .action-btn-icon {
+    color: #FF9040;
+}
+
+.icon-orange {
+    color: #FF9040;
+}
+
+.text-success {
+    color: #2ecc40;
+}
+
+.icon-gray {
+    color: #999;
+}
+
+.preview-section-flex {
+    flex: 1;
+}
+
+.config-section-title {
+    margin-top: 0;
+}
+
+.info-section-title {
+    margin-top: 30px;
+}
+
+.panel-edit-title {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.config-status-card {
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+}
+
+.config-status-card.last {
+    margin-bottom: 24px;
+}
+
+.config-status-left {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.config-status-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #FFF3E6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #FF9040;
+}
+
+.config-status-title {
+    font-weight: 800;
+    color: #181818;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.config-status-desc {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 400px;
+}
+
+.config-action-btn {
+    flex-shrink: 0;
+}
+
+.panel-link-text {
+    color: #FF9040;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.hidden-link {
+    display: none;
+}
+
+.panel-content-section {
+    display: none;
+    flex: 1;
+    padding: 30px;
+}
+
+.panel-form-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #181818;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.panel-form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.panel-form-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+}
+
+.panel-btn-primary {
+    background: #FF9040;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    flex: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-mr-8 {
+    margin-right: 8px;
+}
+
+.panel-btn-secondary {
+    background: #f1f1f1;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 12px 24px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+/* Performance Card Styles */
+.card-subtitle {
+    font-size: 13px;
+    color: #888;
+}
+
+.stat-icon-orange {
+    background: #FFF3E6;
+    color: #FF9040;
+}
+
+.stat-icon-blue {
+    background: #E6F6FF;
+    color: #0088FF;
+}
+
+/* Search & Filter Card Styles */
+.search-filter-card {
+    margin-bottom: 0 !important;
+}
+
+.search-filter-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    position: relative;
+    min-width: 200px;
+}
+
+.search-icon-left {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.search-input-field {
+    width: 100%;
+    padding: 12px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.search-clear-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    text-decoration: none;
+}
+
+.desktop-sort-wrapper {
+    width: 180px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.sort-select-field {
+    width: 100%;
+    padding: 12px 32px 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    appearance: none;
+    color: #181818;
+    box-sizing: border-box;
+}
+
+.sort-dropdown-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+    font-size: 12px;
+}
+
+
+/* Create Form Styles */
+.error-msg-top {
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.error-msg-standard {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.btn-random-slug {
+    background: transparent;
+    border: none;
+    padding: 0 16px;
+    color: #FF9040;
+    font-weight: bold;
+    cursor: pointer;
+    border-left: 1px solid #e0e0e0;
+}
+
+.icon-ml-8 {
+    margin-left: 8px;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+
+/* Engagement List Styles */
+.eng-link {
+    font-size: 13px;
+    color: #FF9040;
+    font-weight: 700;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.eng-desc {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.empty-state-container {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+.empty-state-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}

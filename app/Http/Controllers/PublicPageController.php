@@ -50,7 +50,9 @@ class PublicPageController extends Controller
 
         // Ambil data image elements
         $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
+        $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
+        $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
 
-        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements'));
+        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements'));
     }
 }

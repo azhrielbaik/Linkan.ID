@@ -103,9 +103,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
 
     // Microsite Elements
-    Route::post('/elements/image', [ImageElementController::class, 'store'])->name('elements.image.store');
-    Route::delete('/elements/image/{id}', [ImageElementController::class, 'destroy'])->name('elements.image.destroy');
-    Route::post('/elements/order', [ImageElementController::class, 'updateOrder'])->name('elements.order.update');
+    Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');
+    Route::delete('/elements/image/{id}', [\App\Http\Controllers\ImageElementController::class, 'destroy'])->name('elements.image.destroy');
+    
+    // Text Element Routes
+    Route::post('/elements/text', [\App\Http\Controllers\TextElementController::class, 'store'])->name('elements.text.store');
+    Route::delete('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'destroy'])->name('elements.text.destroy');
+    
+    // Divider Element Routes
+    Route::post('/elements/divider', [\App\Http\Controllers\DividerElementController::class, 'store'])->name('elements.divider.store');
+    Route::delete('/elements/divider/{id}', [\App\Http\Controllers\DividerElementController::class, 'destroy'])->name('elements.divider.destroy');
+    
+    Route::post('/elements/order', [\App\Http\Controllers\ImageElementController::class, 'updateOrder'])->name('elements.order.update');
 
     // Settings (general)
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');

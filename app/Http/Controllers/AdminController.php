@@ -21,6 +21,8 @@ class AdminController extends Controller
             ->latest()
             ->paginate(6, ['*'], 'links_page');
         $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
+        $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
+        $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
 
         // Total page views for user's microsite
         $totalViews = \Illuminate\Support\Facades\DB::table('link_views')
@@ -37,6 +39,8 @@ class AdminController extends Controller
             'appearance',
             'shortlinks',
             'imageElements',
+            'dividerElements',
+            'textElements',
             'totalViews',
             'totalProducts',
             'totalShortlinks',

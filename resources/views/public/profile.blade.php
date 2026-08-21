@@ -201,6 +201,11 @@
                         $blocksOrder[] = 'image_' . $el->id;
                     }
                 }
+                if (isset($dividerElements)) {
+                    foreach($dividerElements as $el) {
+                        $blocksOrder[] = 'divider_' . $el->id;
+                    }
+                }
             }
         @endphp
 
@@ -265,9 +270,38 @@
                 @endphp
                 @if($imageEl && $imageEl->image_path)
                     <div style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
-                        <a href="{{ $imageEl->link_url ?? '#' }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
+                        @if(!empty($imageEl->link_url))
+                            <a href="{{ $imageEl->link_url }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
+                        @else
+                            <a style="display: block; width: 100%; text-decoration: none; pointer-events: none; cursor: default;">
+                        @endif
                             <img src="{{ asset('storage/' . $imageEl->image_path) }}" style="width: 100%; display: block; object-fit: cover;">
                         </a>
+                    </div>
+                @endif
+            @elseif(str_starts_with($blockId, 'divider_'))
+                @php
+                    $elId = str_replace('divider_', '', $blockId);
+                    $dividerEl = isset($dividerElements) ? $dividerElements->firstWhere('id', $elId) : null;
+                @endphp
+                @if($dividerEl)
+                    @php 
+                        $padding = $dividerEl->type === 'line' ? ($dividerEl->size / 2) . 'px 0' : '0';
+                        $height = $dividerEl->type === 'line' ? '0' : $dividerEl->size . 'px';
+                        $border = $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none';
+                    @endphp
+                    <div style="width: 100%; padding: {{ $padding }};">
+                        <div style="width: 100%; border-top: {{ $border }}; height: {{ $height }};"></div>
+                    </div>
+                @endif
+            @elseif(str_starts_with($blockId, 'text_'))
+                @php
+                    $elId = str_replace('text_', '', $blockId);
+                    $textEl = isset($textElements) ? $textElements->firstWhere('id', $elId) : null;
+                @endphp
+                @if($textEl)
+                    <div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0;">
+                        {!! $textEl->content !!}
                     </div>
                 @endif
             @endif
