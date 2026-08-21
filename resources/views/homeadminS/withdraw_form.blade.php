@@ -34,6 +34,9 @@
                         autocomplete="off">
                     <input type="hidden" id="amount_raw" name="amount_raw" value="{{ old('amount_raw') }}">
                 </div>
+                <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                    * Minimum penarikan: <strong>Rp {{ number_format($minWithdraw ?? 10000, 0, ',', '.') }}</strong> | Potongan komisi platform: <strong>{{ $commissionPercent ?? 5 }}%</strong>
+                </small>
             </div>
             
 

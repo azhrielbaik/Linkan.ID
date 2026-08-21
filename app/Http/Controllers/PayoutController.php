@@ -118,10 +118,10 @@ class PayoutController extends Controller
         // Ambil saldo saat ini dari kolom 'balance' untuk validasi
         $currentEarnings = $user->balance ?? 0; // Menggunakan kolom 'balance' yang baru
 
-        // Ambil detail pembayaran user yang sudah disimpan
-        $payoutDetail = UserPayoutDetail::where('user_id', $user->id)->first();
+        $minWithdraw = (float) \App\Models\PlatformSetting::get('min_withdraw_amount', 10000);
+        $commissionPercent = (float) \App\Models\PlatformSetting::get('platform_commission_percent', 5);
 
-        return view('homeadminS.withdraw_form', compact('currentEarnings', 'payoutDetail'));
+        return view('homeadminS.withdraw_form', compact('currentEarnings', 'payoutDetail', 'minWithdraw', 'commissionPercent'));
     }
 
     /**
@@ -195,14 +195,17 @@ class PayoutController extends Controller
         $totalWithdrawn = (float)DB::table('payout_transactions')
             ->where('user_id', $user->id)
             ->sum('amount');
-        $currentBalance = $totalEarnings - $totalWithdrawn;
+        // Ambil batas minimum withdraw & persentase komisi secara dinamis dari platform_settings
+        $minWithdraw = (float) \App\Models\PlatformSetting::get('min_withdraw_amount', 10000);
+        $commissionPercent = (float) \App\Models\PlatformSetting::get('platform_commission_percent', 5);
 
         $request->validate([
-            'amount_raw' => ['required', 'numeric', 'min:10000', 'max:' . $currentBalance],
+            'amount_raw' => ['required', 'numeric', 'min:' . $minWithdraw, 'max:' . $currentBalance],
             'method' => 'required|string|in:Bank,DANA,ShopeePay',
             'account_detail' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
         ], [
+            'amount_raw.min' => 'Jumlah penarikan minimal Rp ' . number_format($minWithdraw, 0, ',', '.') . '.',
             'amount_raw.max' => 'Jumlah penarikan melebihi saldo yang tersedia.',
             'method.required' => 'Metode penarikan wajib diisi.',
             'method.in' => 'Metode penarikan tidak valid.',
@@ -219,45 +222,29 @@ class PayoutController extends Controller
         $accountDetail = $request->input('account_detail');
         $accountName = $request->input('account_name'); // Ambil account_name
 
-        // --- Logika Bisnis Penarikan ---
-
-        // Hitung komisi 5% untuk platform
-        $commission = $amount * 0.05;
+        // Hitung komisi platform secara dinamis
+        $commission = $amount * ($commissionPercent / 100);
         $amountAfterCommission = $amount - $commission;
-        $adminPlatformId = 1; // Ganti sesuai id admin platform Anda
 
-        // 1. Catat transaksi penarikan di database (amount yang masuk ke seller adalah setelah dipotong komisi)
+        // 1. Catat transaksi penarikan di database dengan status pending
         DB::table('payout_transactions')->insert([
             'user_id' => $user->id,
             'amount' => $amountAfterCommission,
+            'gross_amount' => $amount,
+            'commission' => $commission,
             'method' => $method,
+            'account_name' => $accountName,
+            'account_number' => $accountDetail,
+            'bank_name' => $request->input('bank_name'),
+            'status' => 'pending',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         
-        // 2. Kurangi saldo pengguna yang dapat ditarik di database (langsung ke DB, total amount)
+        // 2. Kurangi saldo pengguna di database (di-hold/dikurangi selama proses request)
         \DB::table('users')->where('id', $user->id)->decrement('balance', $amount);
 
-        // 3. Tambahkan komisi ke saldo admin platform
-        \DB::table('users')->where('id', $adminPlatformId)->increment('balance', $commission);
-
-        // 4. Catat ke tabel platform_commissions
-        DB::table('platform_commissions')->insert([
-            'seller_id' => $user->id,
-            'platform_admin_id' => $adminPlatformId,
-            'amount' => $amount,
-            'commission' => $commission,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // 5. Integrasi dengan Gateway Pembayaran Eksternal (Placeholder)
-        //    Di sini Anda akan memanggil API dari penyedia pembayaran (misalnya, Midtrans, Xendit, atau API bank)
-        //    untuk memulai transfer dana.
-        //    Pastikan Anda memiliki detail bank/e-wallet pengguna yang tersimpan dengan aman.
-        //    $payoutService->initiatePayout($amount, $user->bank_details);
-
-        return redirect()->route('admin.payout.index')->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $method . '. Status akan diperbarui segera.');
+        return redirect()->route('admin.payout.index')->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $method . '. Menunggu verifikasi admin platform.');
     }
 
     /**
@@ -269,11 +256,11 @@ class PayoutController extends Controller
 
         // Ambil data riwayat penarikan dari database untuk user yang login
         $history = DB::table('payout_transactions')
-        ->select('user_id', 'amount', 'method')
-        ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
         
         return view('homeadminS.payout_history', compact('history'));
     }
-} 
+}
+ 

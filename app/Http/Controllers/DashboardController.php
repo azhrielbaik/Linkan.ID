@@ -118,6 +118,12 @@ class DashboardController extends Controller
         $totalShortlinks = \App\Models\Shortlink::where('user_id', $user->id)->count();
         $activeMicrosite = ($appearance && $appearance->is_active) ? 1 : 1;
 
+        // Ambil pengumuman broadcast aktif dari platform admin
+        $announcements = \App\Models\BroadcastAnnouncement::where('is_active', true)->latest()->get();
+
+        // Ambil permohonan banding aktif dari user
+        $activeAppeal = \App\Models\SuspensionAppeal::where('user_id', $user->id)->latest()->first();
+
         return view('homeadminS.beranda', compact(
             'totalProducts',
             'totalViews',
@@ -126,8 +132,47 @@ class DashboardController extends Controller
             'activeMicrosite',
             'lifetimeOrders',
             'totalEarnings',
-            'appearance'
+            'appearance',
+            'announcements',
+            'activeAppeal'
         ));
+    }
+
+    /**
+     * Mengajukan surat banding suspensi dari seller ke Admin Platform.
+     */
+    public function submitAppeal(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->isSuspended()) {
+            return back()->with('info', 'Akun Anda saat ini dalam status aktif dan tidak ditangguhkan.');
+        }
+
+        $request->validate([
+            'appeal_reason' => ['required', 'string', 'min:10', 'max:1500'],
+        ], [
+            'appeal_reason.required' => 'Mohon jelaskan alasan atau klarifikasi banding Anda.',
+            'appeal_reason.min'      => 'Penjelasan banding minimal 10 karakter.',
+            'appeal_reason.max'      => 'Penjelasan banding maksimal 1500 karakter.',
+        ]);
+
+        // Cek apakah sudah ada permohonan banding yang berstatus pending
+        $pendingAppeal = \App\Models\SuspensionAppeal::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($pendingAppeal) {
+            return back()->with('error', 'Anda sudah memiliki permohonan banding yang sedang dalam proses peninjauan oleh Admin Platform.');
+        }
+
+        \App\Models\SuspensionAppeal::create([
+            'user_id'       => $user->id,
+            'appeal_reason' => strip_tags($request->appeal_reason),
+            'status'        => 'pending',
+        ]);
+
+        return back()->with('success', 'Permohonan banding Anda berhasil dikirimkan. Tim Platform Admin akan segera meninjau permohonan Anda.');
     }
 
     public function getChartData(Request $request)

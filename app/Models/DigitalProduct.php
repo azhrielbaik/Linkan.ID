@@ -24,6 +24,9 @@ class DigitalProduct extends Model
         'sale_price',
         'has_quantity_limit',
         'quantity',
+        'is_active',
+        'takedown_reason',
+        'takedown_at',
         'button_text',
         'verification_status',
         'rejection_reason'

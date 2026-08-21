@@ -1,262 +1,210 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ App::getLocale() }}">
 <head>
     <meta charset="UTF-8" />
-    <title>{{ __('admin.commission_history_title') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ __('platform.dashboard') }} — Platform Admin</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        /* --- Styles dari beranda dan styling umum --- */
-        body {
-            background: #f9f9f9;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-        }
-        .main {
-            padding: 40px;
-            flex-grow: 1;
-        }
-        .title {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        .card-earning {
-            background: #ff7f2a;
-            color: #fff;
-            border-radius: 16px;
-            padding: 30px 30px 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            position: relative;
-        }
-        .card-earning .total {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .card-earning .amount {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 10px 0 20px 0;
-        }
-        .card-earning .actions {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            display: flex;
-            gap: 10px;
-        }
-        .card-earning .actions button {
-            background: #fff;
-            color: #ff7f2a;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-        .card-earning .actions button i {
-            font-size: 1.1em;
-        }
-        .card-earning .history {
-            margin-top: 30px;
-            color: #ffd6b3;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .list-komisi {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            padding: 20px;
-        }
-        .komisi-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            border: 2px solid #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
-            padding: 16px 20px;
-            transition: border 0.2s;
-        }
-        .komisi-item.selected {
-            border: 2px solid #1a73e8;
-        }
-        .komisi-item .icon {
-            background: orange;
-            color: #fff;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3em;
-        }
-        .komisi-item .info {
-            margin-left: 12px;
-        }
-        .komisi-item .email {
-            font-size: 0.95em;
-            color: #888;
-        }
-        .komisi-item .nama {
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        .komisi-item .tanggal {
-            color: #888;
-            font-size: 0.95em;
-            min-width: 110px;
-            text-align: center;
-        }
-        .komisi-item .nominal {
-            font-weight: bold;
-            font-size: 1.1em;
-            min-width: 110px;
-            text-align: right;
-        }
-
-        @media (max-width: 700px) {
-            body {
-                flex-direction: column;
-            }
-            .main {
-                padding: 10px;
-                margin-left: 0;
-            }
-            .komisi-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-                padding: 10px;
-            }
-            .komisi-item .tanggal,
-            .komisi-item .nominal {
-                min-width: unset;
-                text-align: left;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/platform/berandaplatform.css') }}">
 </head>
 <body>
 
-    {{-- Include sidebar --}}
+    {{-- Sidebar --}}
     @include('platformadmin.sidebar.sidebarplatform')
 
-    <div class="main">
-        <!-- Judul -->
-        <div class="title">{{ __('admin.commission_history') }}</div>
-
-        <!-- Card Total Earnings -->
-        <div class="card-earning">
-            <div class="total">{{ __('admin.total_earnings') }}</div>
-            <div class="amount">IDR 0</div>
-            <div class="actions">
-                <button><i class="fa fa-paper-plane"></i> {{ __('admin.withdraw') }}</button>
-                <button onclick="printCommissionReport()">
-                    <i class="fa fa-print"></i> {{ __('admin.print') }}
-                </button>
+    <div class="platform-main">
+        {{-- Header Bar --}}
+        <div class="platform-header">
+            <div class="platform-header-left">
+                <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1>{{ __('platform.dashboard') }}</h1>
             </div>
-            <div class="history"><i class="fa fa-paperclip"></i> {{ __('admin.history') }}</div>
+            <div class="header-right">
+                <div class="header-user">
+                    <div class="header-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
+                    <span>{{ Auth::user()->name }}</span>
+                </div>
+            </div>
         </div>
 
-        <!-- List Komisi Seller -->
-        <div class="list-komisi"></div>
+        <div class="content-wrapper">
+
+            {{-- 1. Dashboard Ringkasan (4 Stats Cards) --}}
+            <div class="stats-grid">
+                <div class="stat-card users">
+                    <div class="stat-icon-wrap"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <div class="label">{{ __('platform.total_users') }}</div>
+                        <div class="value">{{ number_format($totalUsers, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card tx">
+                    <div class="stat-icon-wrap"><i class="fas fa-receipt"></i></div>
+                    <div class="stat-info">
+                        <div class="label">{{ __('platform.total_transactions') }}</div>
+                        <div class="value">{{ number_format($totalTransactions, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card comm">
+                    <div class="stat-icon-wrap"><i class="fas fa-coins"></i></div>
+                    <div class="stat-info">
+                        <div class="label">{{ __('platform.total_commission') }}</div>
+                        <div class="value">Rp {{ number_format($totalCommission, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card prod">
+                    <div class="stat-icon-wrap"><i class="fas fa-box-open"></i></div>
+                    <div class="stat-info">
+                        <div class="label">{{ __('platform.total_products') }}</div>
+                        <div class="value">{{ number_format($totalProducts, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Toolbar Export --}}
+            <div class="dashboard-toolbar">
+                <div class="toolbar-title">{{ __('platform.platform_earnings_chart') }}</div>
+                <div class="export-actions">
+                    <a href="{{ route('platform-admin.export.excel') }}" class="btn-export">
+                        <i class="fas fa-file-excel" style="color: #16a34a;"></i> {{ __('platform.export_excel') }}
+                    </a>
+                    <button class="btn-export btn-primary" onclick="printCommissionReport()">
+                        <i class="fas fa-print"></i> {{ __('platform.export_pdf') }}
+                    </button>
+                </div>
+            </div>
+
+            {{-- 2. Grafik Pendapatan Platform --}}
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Trend Komisi Platform</div>
+                        <h3>Total Komisi Masuk</h3>
+                    </div>
+                    <div class="chart-period-tabs">
+                        <button type="button" class="chart-tab-btn active" id="btnMonthly" onclick="switchChartPeriod('monthly')">
+                            {{ __('platform.monthly') }}
+                        </button>
+                        <button type="button" class="chart-tab-btn" id="btnWeekly" onclick="switchChartPeriod('weekly')">
+                            {{ __('platform.weekly') }}
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-canvas-wrapper">
+                    <canvas id="earningsChart"></canvas>
+                </div>
+            </div>
+
+            {{-- 3 & 4. Top Seller & Riwayat Komisi Terkini --}}
+            <div class="two-col-grid">
+                
+                {{-- Top Seller Ranking --}}
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3><i class="fas fa-trophy" style="color: #eab308; margin-right: 6px;"></i>{{ __('platform.top_sellers') }}</h3>
+                        <span style="font-size: 12px; color: #94a3b8;">Top 5 Seller</span>
+                    </div>
+                    <ul class="seller-list">
+                        @forelse($topSellers as $idx => $seller)
+                        <li class="seller-list-item">
+                            <div class="seller-left-info">
+                                @php
+                                    $rankClass = 'rank-other';
+                                    if ($idx === 0) $rankClass = 'rank-1';
+                                    elseif ($idx === 1) $rankClass = 'rank-2';
+                                    elseif ($idx === 2) $rankClass = 'rank-3';
+                                @endphp
+                                <div class="rank-badge {{ $rankClass }}">
+                                    {{ $idx + 1 }}
+                                </div>
+                                <div class="seller-avatar-small">
+                                    {{ strtoupper(substr($seller->name, 0, 2)) }}
+                                </div>
+                                <div class="seller-text">
+                                    <div class="name">{{ $seller->name }}</div>
+                                    <div class="sub">{{ $seller->total_products }} Produk &bull; {{ $seller->total_sales_count }} Penjualan</div>
+                                </div>
+                            </div>
+                            <div class="seller-stats-right">
+                                <div class="seller-commission-earned">Rp {{ number_format($seller->total_commission_earned, 0, ',', '.') }}</div>
+                                <div class="seller-sales-count">Komisi Platform</div>
+                            </div>
+                        </li>
+                        @empty
+                        <li class="empty-state">
+                            <i class="fas fa-trophy"></i>
+                            <p>{{ __('platform.no_top_sellers') }}</p>
+                        </li>
+                        @endforelse
+                    </ul>
+                </div>
+
+                {{-- Riwayat Komisi Terkini --}}
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3><i class="fas fa-history" style="color: #5A5BF1; margin-right: 6px;"></i>{{ __('platform.recent_commissions') }}</h3>
+                        <span style="font-size: 12px; color: #94a3b8;">Live Feed</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{{ __('platform.seller') }}</th>
+                                    <th>{{ __('platform.date') }}</th>
+                                    <th>{{ __('platform.commission') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="commissionTableBody">
+                                @forelse($commissions as $c)
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 700; color: #1e293b;">{{ $c->seller_name }}</div>
+                                        <div style="font-size: 11px; color: #94a3b8;">{{ $c->seller_email }}</div>
+                                    </td>
+                                    <td style="color: #64748b; font-size: 12px; white-space: nowrap;">
+                                        {{ \Carbon\Carbon::parse($c->created_at)->format('d M Y') }}
+                                    </td>
+                                    <td>
+                                        <span class="amount-chip">Rp {{ number_format($c->commission, 0, ',', '.') }}</span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="empty-state">
+                                            <i class="fas fa-inbox"></i>
+                                            <p>{{ __('platform.no_commission_data') }}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
     </div>
 
     <script>
-        let lastFetchedCommissions = [];
-        let lastFetchedTotalEarnings = 0;
-
-        function printCommissionReport() {
-            // Buat form untuk mengirim data
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("platformadmin.print.post") }}';
-            form.target = '_blank';
-
-            // Tambahkan CSRF token
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            form.appendChild(csrfToken);
-
-            // Siapkan data yang akan dikirim
-            const data = {
-                total_earnings: 'IDR ' + Number(lastFetchedTotalEarnings).toLocaleString('id-ID'),
-                commission_details: lastFetchedCommissions.map(commission => ({
-                    name: commission.seller_name,
-                    email: commission.seller_email,
-                    date: new Date(commission.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
-                    amount: 'Rp ' + Number(commission.commission).toLocaleString('id-ID')
-                }))
-            };
-
-            // Tambahkan data ke form
-            const dataInput = document.createElement('input');
-            dataInput.type = 'hidden';
-            dataInput.name = 'data';
-            dataInput.value = JSON.stringify(data);
-            form.appendChild(dataInput);
-
-            // Submit form
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-        }
-
-        function fetchCommissions() {
-            fetch('{{ route('platformadmin.commissions') }}')
-                .then(response => response.json())
-                .then(data => {
-                    // Simpan ke variabel global
-                    lastFetchedCommissions = data.commissions;
-                    lastFetchedTotalEarnings = data.total_earnings;
-
-                    // Update total earnings
-                    const totalEarnings = document.querySelector('.card-earning .amount');
-                    totalEarnings.textContent = 'IDR ' + Number(data.total_earnings).toLocaleString('id-ID');
-
-                    // Update list komisi
-                    const list = document.querySelector('.list-komisi');
-                    list.innerHTML = '';
-                    data.commissions.forEach(commission => {
-                        const date = new Date(commission.created_at);
-                        const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                        const nominal = 'Rp ' + Number(commission.commission).toLocaleString('id-ID');
-                        list.innerHTML += `
-                            <div class="komisi-item">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="icon"><i class="fa fa-arrow-down"></i></div>
-                                    <div class="info">
-                                        <div class="email">${commission.seller_email}</div>
-                                        <div class="nama">${commission.seller_name}</div>
-                                    </div>
-                                </div>
-                                <div class="tanggal">${formattedDate}</div>
-                                <div class="nominal">${nominal}</div>
-                            </div>
-                        `;
-                    });
-                });
-        }
-
-        // Panggil pertama kali dan setiap 10 detik
-        fetchCommissions();
-        setInterval(fetchCommissions, 10000);
+        window.PlatformDashboardData = {
+            monthlyLabels: @json($monthlyLabels),
+            monthlyData: @json($monthlyData),
+            weeklyLabels: @json($weeklyLabels),
+            weeklyData: @json($weeklyData),
+            commissionsUrl: '{{ route('platform-admin.commissions') }}',
+            printUrl: '{{ route("platform-admin.print") }}',
+            csrfToken: '{{ csrf_token() }}'
+        };
     </script>
+    <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
 </body>
 </html>

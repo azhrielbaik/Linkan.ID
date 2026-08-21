@@ -54,11 +54,12 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
             // Login berhasil — reset rate limiter
             RateLimiter::clear($key);
             $request->session()->regenerate();
 
-            $user = Auth::user();
             if ($user->role === 'admin_seller') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'admin_platform') {
