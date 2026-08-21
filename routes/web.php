@@ -93,6 +93,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
     // Dashboard / Beranda
     Route::get('/dashboard', [DashboardController::class, 'beranda'])->name('dashboard');
+    Route::get('/get-chart-data', [DashboardController::class, 'getChartData'])->name('chart-data');
+    Route::post('/appeal', [DashboardController::class, 'submitAppeal'])->name('appeal.store');
 
     // My Linkan (microsite builder)
     Route::get('/mylinkan', [AdminController::class, 'myLinkan'])->name('mylinkan');
@@ -184,7 +186,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 | Naming convention: platform-admin.<resource>.<action>
 */
 
-Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth'])->group(function () {
+Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform'])->group(function () {
 
     Route::get('/dashboard', [PlatformAdminController::class, 'beranda'])->name('dashboard');
 
@@ -192,18 +194,48 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth'])->
     Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi');
     Route::post('/verifikasi/{id}', [VerifikasiController::class, 'verify'])->name('verifikasi.verify');
 
-    // Print / laporan
+    // Print / laporan & Export
     Route::match(['get', 'post'], '/print', [PlatformAdminController::class, 'print'])->name('print');
+    Route::get('/export/excel', [PlatformAdminController::class, 'exportExcel'])->name('export.excel');
 
     // Komisi (API endpoint realtime)
     Route::get('/commissions', [PlatformAdminController::class, 'getCommissions'])->name('commissions');
-});
 
-// Role-gated verification (separate middleware stack)
-Route::middleware(['auth', 'role:platform_admin'])->prefix('platform-admin')->name('platform-admin.')->group(function () {
+    // Verifikasi (role-gated, sudah dalam group ini)
     Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
     Route::post('/verification/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+
+    // Manajemen User & Banding Suspend
+    Route::get('/users', [PlatformAdminController::class, 'users'])->name('users');
+    Route::get('/users/appeals', [PlatformAdminController::class, 'appeals'])->name('users.appeals');
+    Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
+    Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->name('users.suspend');
+    Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->name('users.activate');
+    Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->name('users.appeals.approve');
+    Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->name('users.appeals.reject');
+
+    // Manajemen Payout (Request Withdraw & Riwayat Global)
+    Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');
+    Route::post('/payouts/{id}/approve', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'approve'])->name('payouts.approve');
+    Route::post('/payouts/{id}/reject', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'reject'])->name('payouts.reject');
+
+    // Manajemen Produk (Semua Produk, Takedown, Restore)
+    Route::get('/products', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'index'])->name('products.index');
+    Route::post('/products/{id}/takedown', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'takedown'])->name('products.takedown');
+    Route::post('/products/{id}/restore', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'restore'])->name('products.restore');
+
+    // Log & Audit
+    Route::get('/logs/activity', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activityLogs'])->name('logs.activity');
+    Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
+
+    // Pengaturan Platform & Broadcast
+    Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->name('settings.broadcast.store');
+    Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->name('settings.broadcast.toggle');
+    Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->name('settings.broadcast.delete');
 });
+
 
 /*
 |--------------------------------------------------------------------------

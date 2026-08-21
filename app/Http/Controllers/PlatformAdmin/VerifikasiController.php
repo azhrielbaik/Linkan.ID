@@ -35,6 +35,20 @@ class VerifikasiController extends Controller
         
         $product->save();
 
+        // Catat Log Aktivitas
+        $action = $request->status === 'approved' ? 'approve_product' : 'reject_product';
+        $desc = $request->status === 'approved' 
+            ? "Menyetujui verifikasi produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")"
+            : "Menolak verifikasi produk: {$product->title} (Alasan: {$request->rejection_reason})";
+
+        \App\Services\ActivityLogger::log($action, $desc, [
+            'product_id' => $product->id,
+            'product_title' => $product->title,
+            'seller_id' => $product->user_id,
+            'status' => $request->status,
+            'rejection_reason' => $request->rejection_reason
+        ]);
+
         return redirect()->back()->with('success', 'Status verifikasi produk berhasil diperbarui');
     }
 }
