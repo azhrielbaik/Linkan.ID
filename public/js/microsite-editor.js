@@ -659,7 +659,7 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image' || type === 'divider') {
+        } else if (type === 'image' || type === 'divider' || type === 'text') {
             const liveElement = document.getElementById('live_' + block.id);
             if (liveElement) {
                 phoneContent.appendChild(liveElement);
@@ -1095,6 +1095,12 @@ function execCmd(id, command, value = null) {
     const editor = document.getElementById('editorContent_' + id);
     if (editor) {
         editor.focus();
+        
+        const selection = window.getSelection();
+        if (selection.toString().length === 0) {
+            document.execCommand('selectAll', false, null);
+        }
+        
         document.execCommand(command, false, value);
         updateTextPreview(id);
     }
@@ -1118,8 +1124,16 @@ function changeTextSize(id, value) {
 function applyCustomSize(id) {
     const input = document.getElementById('customSizeInput_' + id);
     if (input && input.value) {
+        let size = parseInt(input.value);
+        if (size > 99) {
+            size = 99;
+            input.value = 99;
+        } else if (size < 1) {
+            size = 1;
+            input.value = 1;
+        }
         execCmd(id, 'fontSize', 7);
-        replaceFontSize(id, input.value + 'px');
+        replaceFontSize(id, size + 'px');
     }
 }
 

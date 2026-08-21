@@ -600,8 +600,8 @@ input[type="file"]::file-selector-button {
 /* EDITOR STYLES (WHEN MODE IS EDIT) */
 .editor-layout {
     display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 24px;
+    grid-template-columns: 1fr 440px;
+    gap: 40px;
 }
 
 @media (max-width: 1024px) {
@@ -1976,7 +1976,7 @@ font[face="Verdana"] {
     border: none;
     padding: 0;
     width: 100%;
-    max-width: 360px;
+    max-width: 100%;
 }
 
 .phone-preview-header {
@@ -2411,86 +2411,6 @@ font[face="Verdana"] {
 /* Text Editor & Toolbar Styles */
 .text-editor-container {
     border: 1px solid #d1d5db;
-    border-radius: 10px;
-    background: #ffffff;
-    overflow: hidden;
-    transition: border-color 0.2s ease;
-}
-
-.text-editor-container:focus-within {
-    border-color: #FF9040;
-    box-shadow: 0 0 0 2px rgba(255, 144, 64, 0.1);
-}
-
-.text-editor-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.toolbar-btn {
-    background: none;
-    border: none;
-    font-size: 12px;
-    color: #4b5563;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.toolbar-btn:hover {
-    color: #FF9040;
-    background: #e5e7eb;
-}
-
-.toolbar-btn-bold {
-    font-weight: 700;
-}
-
-.toolbar-btn-italic {
-    font-style: italic;
-}
-
-.toolbar-btn-underline {
-    text-decoration: underline;
-}
-
-.toolbar-separator {
-    height: 16px;
-    width: 1px;
-    background: #d1d5db;
-    margin: 0 4px;
-}
-
-.toolbar-select {
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    padding: 2px 4px;
-    font-size: 11px;
-    color: #4b5563;
-    outline: none;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.toolbar-select:hover,
-.toolbar-select:focus {
-    border-color: #d1d5db;
-}
-
-.toolbar-color-picker {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    color: #4b5563;
     border-radius: 4px;
     transition: all 0.2s ease;
 }
@@ -2771,7 +2691,7 @@ font[face="Verdana"] {
 }
 
 .vertical-domain-path {
-    writing-mode: veical-rl;
+    writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-size: 12px;
     font-weight: 700;
@@ -3282,10 +3202,14 @@ input:checked+.segment-btn {
     min-height: 120px;
     max-height: 400px;
     overflow-y: auto;
-    font-size: 16px;
+    font-size: 14px !important;
     color: #1e293b;
     outline: none;
     line-height: 1.5;
+}
+
+.text-editor-area * {
+    font-size: 14px !important;
 }
 
 .text-editor-area[contenteditable="true"]:empty:before {

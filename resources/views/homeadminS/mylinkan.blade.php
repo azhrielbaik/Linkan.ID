@@ -575,7 +575,7 @@
                                                     </div>
                                                 </div>
                                                 <div id="customSizeWrapper_{{ $elementId }}" class="custom-size-wrapper" style="display: none;">
-                                                    <input type="number" id="customSizeInput_{{ $elementId }}" class="toolbar-input" placeholder="Ukuran (px)" onchange="applyCustomSize('{{ $elementId }}')">
+                                                    <input type="number" id="customSizeInput_{{ $elementId }}" class="toolbar-input" placeholder="Ukuran (px)" min="1" max="99" onchange="applyCustomSize('{{ $elementId }}')">
                                                     <button type="button" class="toolbar-btn-text" onclick="applyCustomSize('{{ $elementId }}')">Terapkan</button>
                                                 </div>
                                                 <div id="editorContent_{{ $elementId }}" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('{{ $elementId }}')">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
@@ -600,7 +600,7 @@
             </div> <!-- Closes editor-left-panel -->
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
-            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" />
+            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" />
         </div>
     @endif
 
@@ -761,6 +761,71 @@
         </div>
     </template>
 
+    <template id="text-block-template">
+        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="text">
+            <div class="block-item-card" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('__ELEMENT_ID__')">
+                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <div class="block-item-icon-wrapper">
+                    <i class="fas fa-font"></i>
+                </div>
+                <div class="block-item-content">
+                    <div class="block-item-title-wrapper">
+                        <span>Teks</span>
+                    </div>
+                </div>
+                <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <button type="button" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('__ELEMENT_ID__')" class="btn-edit-block">
+                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                <div class="edit-form-content">
+                    <div class="profile-form-header" style="margin-bottom: 16px;">
+                        Pengaturan Elemen Teks
+                    </div>
+                    
+                    <div class="text-editor-container">
+                        <div class="text-editor-toolbar">
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                            <span class="toolbar-divider"></span>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
+                            <span class="toolbar-divider"></span>
+                            <input type="color" class="toolbar-color-picker" onchange="execCmd('__ELEMENT_ID__', 'foreColor', this.value)" title="Text Color" value="#000000">
+                            <span class="toolbar-divider"></span>
+                            <div class="toolbar-dropdown">
+                                <select onchange="changeTextSize('__ELEMENT_ID__', this.value)" class="toolbar-select" id="textSizeSelect___ELEMENT_ID__">
+                                    <option value="12px">Kecil (12px)</option>
+                                    <option value="16px" selected>Normal (16px)</option>
+                                    <option value="24px">Besar (24px)</option>
+                                    <option value="custom">Custom...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="customSizeWrapper___ELEMENT_ID__" class="custom-size-wrapper" style="display: none;">
+                            <input type="number" id="customSizeInput___ELEMENT_ID__" class="toolbar-input" placeholder="Ukuran (px)" min="1" max="99" onchange="applyCustomSize('__ELEMENT_ID__')">
+                            <button type="button" class="toolbar-btn-text" onclick="applyCustomSize('__ELEMENT_ID__')">Terapkan</button>
+                        </div>
+                        <div id="editorContent___ELEMENT_ID__" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('__ELEMENT_ID__')">Teks Anda di sini...</div>
+                    </div>
+
+                    <div class="element-action-footer" style="margin-top: 15px;">
+                        <button type="button" onclick="removeDynamicText('__ELEMENT_ID__'); event.stopPropagation();" class="btn-delete-element">
+                            <i class="fas fa-trash-alt"></i> Hapus Elemen
+                        </button>
+                        <button type="button" onclick="saveDynamicText('__ELEMENT_ID__')" class="btn-save-element" id="btnSaveText___ELEMENT_ID__">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
 </div>
 @endsection
 
@@ -785,6 +850,8 @@
     data-route-image-store="{{ route('admin.elements.image.store') }}"
     data-route-divider-delete="{{ url('/admin/elements/divider') }}"
     data-route-divider-store="{{ route('admin.elements.divider.store') }}"
+    data-route-text-delete="{{ url('/admin/elements/text') }}"
+    data-route-text-store="{{ route('admin.elements.text.store') }}"
     data-route-order-update="{{ route('admin.elements.order.update') }}"
     data-route-appearance-update="{{ route('admin.appearance.update') }}"
     data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}">

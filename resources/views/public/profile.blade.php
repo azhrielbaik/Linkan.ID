@@ -23,33 +23,32 @@
         font[face="Georgia"] { font-family: 'Georgia', serif !important; }
         font[face="Verdana"] { font-family: 'Verdana', sans-serif !important; }
         body {
-            background: #f8f9fa;
+            background-color: #f8f9fa;
+            background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            padding: 30px;
             min-height: 100vh;
             margin: 0;
         }
 
         .content-wrapper {
             width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 20px;
-            padding: 20px 20px !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
-            background-size: cover;
-            background-position: center;
+            max-width: 480px;
+            background: transparent;
+            padding: 0 0 40px 0 !important;
             display: flex;
-            flex-direction: column; /* Membuat semua elemen tampil vertikal */
-            align-items: center; /* Memastikan elemen di tengah */
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         @media (max-width: 768px) {
             .content-wrapper {
-                padding: 20px 40px !important;
+                max-width: 100%;
             }
         }
 
@@ -57,9 +56,8 @@
             width: 100%;
             aspect-ratio: 3 / 1;
             background: #ddd;
-            border-radius: 10px;
-            margin-bottom: 20px;
             overflow: hidden;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
         }
 
         .preview-banner img {
@@ -69,15 +67,19 @@
         }
 
         .preview-profile {
-            width: 80px;
-            height: 80px;
+            width: 96px;
+            height: 96px;
             border-radius: {{ $shapeRadius }};
             background: #ddd;
-            margin: 0 auto 15px;
+            margin: -48px auto 15px; /* Negative top margin to overlap banner */
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            border: 4px solid #ffffff;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .preview-profile img {
@@ -122,13 +124,14 @@
         }
 
        .preview-products {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center; /* Memastikan produk berada di tengah */
-}
+            width: 100%;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
 .product-info {
     flex: 1;
     overflow: hidden; /* jika teks panjang */
@@ -206,6 +209,11 @@
                         $blocksOrder[] = 'divider_' . $el->id;
                     }
                 }
+                if (isset($textElements)) {
+                    foreach($textElements as $el) {
+                        $blocksOrder[] = 'text_' . $el->id;
+                    }
+                }
             }
         @endphp
 
@@ -269,6 +277,7 @@
                     $imageEl = isset($imageElements) ? $imageElements->firstWhere('id', $elId) : null;
                 @endphp
                 @if($imageEl && $imageEl->image_path)
+                    <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
                         @if(!empty($imageEl->link_url))
                             <a href="{{ $imageEl->link_url }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
@@ -277,6 +286,7 @@
                         @endif
                             <img src="{{ asset('storage/' . $imageEl->image_path) }}" style="width: 100%; display: block; object-fit: cover;">
                         </a>
+                    </div>
                     </div>
                 @endif
             @elseif(str_starts_with($blockId, 'divider_'))
@@ -290,8 +300,10 @@
                         $height = $dividerEl->type === 'line' ? '0' : $dividerEl->size . 'px';
                         $border = $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none';
                     @endphp
+                    <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="width: 100%; padding: {{ $padding }};">
                         <div style="width: 100%; border-top: {{ $border }}; height: {{ $height }};"></div>
+                    </div>
                     </div>
                 @endif
             @elseif(str_starts_with($blockId, 'text_'))
@@ -300,8 +312,10 @@
                     $textEl = isset($textElements) ? $textElements->firstWhere('id', $elId) : null;
                 @endphp
                 @if($textEl)
+                    <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0;">
                         {!! $textEl->content !!}
+                    </div>
                     </div>
                 @endif
             @endif
