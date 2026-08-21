@@ -2771,7 +2771,7 @@ font[face="Verdana"] {
 }
 
 .vertical-domain-path {
-    writing-mode: vertical-rl;
+    writing-mode: veical-rl;
     transform: rotate(180deg);
     font-size: 12px;
     font-weight: 700;
@@ -2853,6 +2853,7 @@ font[face="Verdana"] {
 .gallery-title {
     margin: 0;
 }
+
 .gallery-title i {
     margin-right: 10px;
 }
@@ -2870,6 +2871,7 @@ font[face="Verdana"] {
     align-items: center;
     margin: 0;
 }
+
 .editor-mode-title i.fa-sliders-h {
     margin-right: 10px;
 }
@@ -2925,6 +2927,7 @@ font[face="Verdana"] {
 .element-header-subtitle i {
     margin-right: 4px;
 }
+
 /* Modern Divider Form Styles */
 .edit-form-group {
     margin-bottom: 20px;
@@ -2961,10 +2964,10 @@ font[face="Verdana"] {
     margin-right: 6px;
 }
 
-input:checked + .segment-btn {
+input:checked+.segment-btn {
     color: #1e293b !important;
     background: #ffffff !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 .slider-control-container {
@@ -3009,7 +3012,7 @@ input:checked + .segment-btn {
     flex-shrink: 0;
     border: none;
     background: #ffffff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
     cursor: pointer;
     color: #64748b;
@@ -3046,7 +3049,7 @@ input:checked + .segment-btn {
     border-radius: 50%;
     background: #4f46e5;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     border: 2px solid #fff;
     margin-top: -5px;
 }
@@ -3065,7 +3068,7 @@ input:checked + .segment-btn {
     border-radius: 50%;
     background: #4f46e5;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     border: 2px solid #fff;
 }
 
@@ -3086,10 +3089,21 @@ input:checked + .segment-btn {
 }
 
 /* Display Utilities */
-.d-none { display: none; }
-.d-flex { display: flex; }
-.d-block { display: block; }
-.mb-2 { margin-bottom: 8px; }
+.d-none {
+    display: none;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-block {
+    display: block;
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
 
 /* Profile Block Extras & Hidden Radio */
 .hidden-radio {
