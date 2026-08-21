@@ -145,6 +145,74 @@ class PlatformAdminController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // Menampilkan halaman print laporan komisi
+    public function print(Request $request)
+    {
+        $data = [];
+
+        if ($request->isMethod('post') && $request->has('data')) {
+            $inputData = $request->input('data');
+            $data = is_string($inputData) ? json_decode($inputData, true) : $inputData;
+        }
+
+        // Fallback jika dibuka via GET atau data kosong: Ambil data dari database langsung
+        if (empty($data) || empty($data['commission_details'])) {
+            $totalEarnings = DB::table('platform_commissions')->sum('commission') ?? 0;
+            $commissions = DB::table('platform_commissions')
+                ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
+                ->select(
+                    'platform_commissions.commission',
+                    'platform_commissions.amount',
+                    'platform_commissions.created_at',
+                    'sellers.name as seller_name',
+                    'sellers.email as seller_email'
+                )
+                ->orderBy('platform_commissions.created_at', 'desc')
+                ->get();
+
+            $data = [
+                'total_earnings' => 'Rp ' . number_format($totalEarnings, 0, ',', '.'),
+                'total_records' => $commissions->count(),
+                'commission_details' => $commissions->map(function ($c) {
+                    return [
+                        'name'   => $c->seller_name,
+                        'email'  => $c->seller_email,
+                        'date'   => \Carbon\Carbon::parse($c->created_at)->translatedFormat('d M Y, H:i'),
+                        'turnover' => 'Rp ' . number_format($c->amount, 0, ',', '.'),
+                        'amount' => 'Rp ' . number_format($c->commission, 0, ',', '.')
+                    ];
+                })->toArray()
+            ];
+        }
+
+        return view('platformadmin.print', compact('data'));
+    }
+
+    // Endpoint JSON untuk realtime komisi
+    public function getCommissions(Request $request)
+    {
+        $totalEarnings = DB::table('platform_commissions')->sum('commission') ?? 0;
+        $commissions = DB::table('platform_commissions')
+            ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
+            ->select(
+                'platform_commissions.id',
+                'platform_commissions.seller_id',
+                'platform_commissions.commission',
+                'platform_commissions.amount',
+                'platform_commissions.created_at',
+                'sellers.name as seller_name',
+                'sellers.email as seller_email'
+            )
+            ->orderBy('platform_commissions.created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'total_earnings' => $totalEarnings,
+            'commissions' => $commissions
+        ]);
+    }
+
     // Menampilkan halaman manajemen user
     public function users(Request $request)
     {
