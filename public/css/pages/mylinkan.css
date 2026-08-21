@@ -2771,7 +2771,7 @@ font[face="Verdana"] {
 }
 
 .vertical-domain-path {
-    writing-mode: vertical-rl;
+    writing-mode: veical-rl;
     transform: rotate(180deg);
     font-size: 12px;
     font-weight: 700;
