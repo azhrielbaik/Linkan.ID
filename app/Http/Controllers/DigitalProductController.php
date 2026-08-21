@@ -23,6 +23,15 @@ public function show($id)
 {
     $product = DigitalProduct::findOrFail($id);
     $user = $product->user; // relasi user() di model DigitalProduct
+
+    if ($product->is_active === false || $product->is_active === 0) {
+        abort(403, 'Produk ini tidak tersedia karena telah dinonaktifkan oleh Admin.');
+    }
+
+    if ($user && $user->isSuspended()) {
+        abort(403, 'Produk ini tidak tersedia karena akun penjual sedang ditangguhkan.');
+    }
+
     $appearance = $user->appearance;
      // Reset qty jadi 1 setiap buka halaman
     session(["cart.qty.$id" => 1]);
@@ -180,6 +189,14 @@ public function show($id)
 public function checkout(Request $request, $id)
 {
     $product = DigitalProduct::findOrFail($id);
+
+    if ($product->is_active === false || $product->is_active === 0) {
+        return back()->with('error', 'Produk tidak dapat dibeli karena telah dinonaktifkan oleh Admin.');
+    }
+
+    if ($product->user && $product->user->isSuspended()) {
+        return back()->with('error', 'Produk tidak dapat dibeli karena akun penjual sedang ditangguhkan.');
+    }
 
     // Ambil qty dari session jika tidak ada permintaan POST
     $qty = $request->isMethod('post')

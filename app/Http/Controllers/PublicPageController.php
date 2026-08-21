@@ -12,6 +12,10 @@ class PublicPageController extends Controller
     {
         $user = User::where('username', $username)->firstOrFail();
 
+        if ($user->isSuspended()) {
+            abort(403, 'Profil atau tautan ini sedang ditangguhkan.');
+        }
+
         // Dapatkan IP dan User Agent
         $ipAddress = request()->ip();
         $userAgent = request()->header('User-Agent');

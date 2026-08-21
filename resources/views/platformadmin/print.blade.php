@@ -211,7 +211,7 @@
             // Buat form untuk mengirim data
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("platformadmin.print.post") }}';
+            form.action = '{{ route("platform-admin.print") }}';
             form.target = '_blank';
 
             // Tambahkan CSRF token

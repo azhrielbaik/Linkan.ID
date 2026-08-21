@@ -80,17 +80,32 @@
     position: relative;
 }
 
+.profile-image,
 .dashboard-beranda-page .profile-image {
     width: 54px;
     height: 54px;
+    min-width: 54px;
+    min-height: 54px;
+    max-width: 54px;
+    max-height: 54px;
     border-radius: 50%;
     margin-right: 16px;
-    background-color: #0067D5;
+    background-color: #5A5BF1;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.profile-image img,
+.dashboard-beranda-page .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .dashboard-beranda-page .profile-image i {

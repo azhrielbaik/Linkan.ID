@@ -30,6 +30,9 @@ class User extends Authenticatable
         'avatar',
         'google_id',
         'role',
+        'suspended_at',
+        'suspended_until',
+        'suspend_reason',
     ];
 
     /**
@@ -51,9 +54,26 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_link_active' => 'boolean',
+            'password'          => 'hashed',
+            'is_link_active'    => 'boolean',
+            'suspended_at'      => 'datetime',
+            'suspended_until'   => 'datetime',
         ];
+    }
+
+    /** Cek apakah akun sedang di-suspend */
+    public function isSuspended(): bool
+    {
+        if (is_null($this->suspended_at)) {
+            return false;
+        }
+
+        // Jika memiliki batas waktu dan waktu sekarang sudah melewati batas, masa suspend selesai
+        if ($this->suspended_until && now()->greaterThan($this->suspended_until)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function shortlinks(): HasMany
@@ -64,5 +84,15 @@ class User extends Authenticatable
     public function shortlinkClicks(): HasMany
     {
         return $this->hasMany(ShortlinkClick::class);
+    }
+
+    public function digitalProducts(): HasMany
+    {
+        return $this->hasMany(DigitalProduct::class);
+    }
+
+    public function suspensionAppeals(): HasMany
+    {
+        return $this->hasMany(SuspensionAppeal::class);
     }
 }
