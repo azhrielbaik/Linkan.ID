@@ -100,7 +100,14 @@ $appearance->discord = $request->discord;
             if ($appearance->banner) {
                 Storage::delete('public/' . $appearance->banner);
             }
-            $bannerPath = $request->file('banner')->store('appearances/banners', 'public');
+            $file = $request->file('banner');
+            $bannerPath = 'appearances/banners/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
+            
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+                ->scaleDown(width: 1200);
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($bannerPath, (string) $encoded);
             $appearance->banner = $bannerPath;
         }
 
@@ -109,7 +116,14 @@ $appearance->discord = $request->discord;
             if ($appearance->profile_image) {
                 Storage::delete('public/' . $appearance->profile_image);
             }
-            $profilePath = $request->file('profile_image')->store('appearances/profiles', 'public');
+            $file = $request->file('profile_image');
+            $profilePath = 'appearances/profiles/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
+            
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+                ->scaleDown(width: 500);
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($profilePath, (string) $encoded);
             $appearance->profile_image = $profilePath;
         }
 

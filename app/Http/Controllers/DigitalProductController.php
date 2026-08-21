@@ -64,9 +64,15 @@ public function show($id)
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('product_images', $filename, 'public');
-            $data['image'] = $imagePath;
+            $filename = 'product_images/' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
+            
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+                ->scaleDown(width: 1200);
+            
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($filename, (string) $encoded);
+            $data['image'] = $filename;
         }
 
         if ($request->platform_type === 'upload' && $request->hasFile('platform_file')) {
@@ -141,9 +147,15 @@ public function show($id)
                 Storage::disk('public')->delete($product->image);
             }
             $file = $request->file('image');
-            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('product_images', $filename, 'public');
-            $data['image'] = $imagePath;
+            $filename = 'product_images/' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
+            
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+                ->scaleDown(width: 1200);
+            
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($filename, (string) $encoded);
+            $data['image'] = $filename;
         }
 
         // Jika produk sebelumnya ditolak, ubah status menjadi pending

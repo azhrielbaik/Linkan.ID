@@ -35,8 +35,19 @@ class ImageElementController extends Controller
             if ($imageElement->image_path) {
                 Storage::disk('public')->delete($imageElement->image_path);
             }
-            $path = $request->file('image')->store('elements/images', 'public');
-            $imageElement->image_path = $path;
+            
+            $file = $request->file('image');
+            $filename = 'elements/images/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
+            
+            // Sintaks Intervention Image v4
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+                ->scaleDown(width: 1200);
+            
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($filename, (string) $encoded);
+            
+            $imageElement->image_path = $filename;
         }
 
         $imageElement->link_url = $request->link_url;

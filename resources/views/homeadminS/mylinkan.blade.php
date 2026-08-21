@@ -558,6 +558,8 @@
                                                 <div class="text-editor-toolbar">
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'strikeThrough')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
                                                     <span class="toolbar-divider"></span>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
@@ -790,6 +792,8 @@
                         <div class="text-editor-toolbar">
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'strikeThrough')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
                             <span class="toolbar-divider"></span>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
