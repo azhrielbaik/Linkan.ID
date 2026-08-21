@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PlatformAdminController extends Controller
 {
@@ -213,10 +215,227 @@ class PlatformAdminController extends Controller
         ]);
     }
 
+    /**
+     * Mengambil payload array notifikasi untuk Platform Admin.
+     */
+    private function fetchNotificationsData(): array
+    {
+        $notifications = [];
+
+        // 1. Pending Digital Products (Verifikasi Produk Baru)
+        $pendingProducts = DB::table('digital_products')
+            ->join('users', 'digital_products.user_id', '=', 'users.id')
+            ->where('digital_products.verification_status', 'pending')
+            ->select(
+                'digital_products.id',
+                'digital_products.title as product_name',
+                'digital_products.created_at',
+                'users.name as seller_name',
+                'users.email as seller_email'
+            )
+            ->orderBy('digital_products.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        foreach ($pendingProducts as $prod) {
+            $timeAgo = \Carbon\Carbon::parse($prod->created_at)->diffForHumans();
+            $notifications[] = [
+                'id'          => 'prod_' . $prod->id,
+                'type'        => 'product',
+                'title'       => 'Verifikasi Produk Baru',
+                'message'     => 'Seller <strong>' . e($prod->seller_name) . '</strong> mengajukan produk <em>"' . e($prod->product_name) . '"</em>.',
+                'badge'       => 'Verifikasi',
+                'badge_class' => 'badge-product',
+                'icon'        => 'fas fa-box-open',
+                'icon_bg'     => '#EEF0FE',
+                'icon_color'  => '#5A5BF1',
+                'url'         => route('platform-admin.verifikasi'),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($prod->created_at),
+            ];
+        }
+
+        // 2. Pending Payout Requests
+        $pendingPayouts = DB::table('payout_transactions')
+            ->join('users', 'payout_transactions.user_id', '=', 'users.id')
+            ->where('payout_transactions.status', 'pending')
+            ->select(
+                'payout_transactions.id',
+                'payout_transactions.amount',
+                'payout_transactions.method',
+                'payout_transactions.bank_name',
+                'payout_transactions.created_at',
+                'users.name as seller_name'
+            )
+            ->orderBy('payout_transactions.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        foreach ($pendingPayouts as $payout) {
+            $timeAgo = \Carbon\Carbon::parse($payout->created_at)->diffForHumans();
+            $bank = $payout->bank_name ?? strtoupper($payout->method);
+            $notifications[] = [
+                'id'          => 'payout_' . $payout->id,
+                'type'        => 'payout',
+                'title'       => 'Permintaan Payout Baru',
+                'message'     => 'Seller <strong>' . e($payout->seller_name) . '</strong> mengajukan withdraw <strong>Rp ' . number_format($payout->amount, 0, ',', '.') . '</strong> via ' . e($bank) . '.',
+                'badge'       => 'Payout',
+                'badge_class' => 'badge-payout',
+                'icon'        => 'fas fa-money-bill-wave',
+                'icon_bg'     => '#fef3c7',
+                'icon_color'  => '#d97706',
+                'url'         => route('platform-admin.payouts.index'),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($payout->created_at),
+            ];
+        }
+
+        // 3. Pending Suspension Appeals
+        $pendingAppeals = DB::table('suspension_appeals')
+            ->join('users', 'suspension_appeals.user_id', '=', 'users.id')
+            ->where('suspension_appeals.status', 'pending')
+            ->select(
+                'suspension_appeals.id',
+                'suspension_appeals.appeal_reason',
+                'suspension_appeals.created_at',
+                'users.name as seller_name'
+            )
+            ->orderBy('suspension_appeals.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        foreach ($pendingAppeals as $appeal) {
+            $timeAgo = \Carbon\Carbon::parse($appeal->created_at)->diffForHumans();
+            $notifications[] = [
+                'id'          => 'appeal_' . $appeal->id,
+                'type'        => 'appeal',
+                'title'       => 'Permohonan Banding Akun',
+                'message'     => 'Seller <strong>' . e($appeal->seller_name) . '</strong> mengajukan banding penangguhan akun.',
+                'badge'       => 'Banding',
+                'badge_class' => 'badge-appeal',
+                'icon'        => 'fas fa-shield-alt',
+                'icon_bg'     => '#fee2e2',
+                'icon_color'  => '#dc2626',
+                'url'         => route('platform-admin.users', ['view' => 'appeals']),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($appeal->created_at),
+            ];
+        }
+
+        // 4. Pending Password Reset Requests
+        $pendingResetReqs = DB::table('password_reset_requests')
+            ->leftJoin('users', 'password_reset_requests.user_id', '=', 'users.id')
+            ->where('password_reset_requests.status', 'pending')
+            ->select(
+                'password_reset_requests.id',
+                'password_reset_requests.email',
+                'password_reset_requests.reason',
+                'password_reset_requests.created_at',
+                DB::raw('COALESCE(users.name, password_reset_requests.email) as seller_name')
+            )
+            ->orderBy('password_reset_requests.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        foreach ($pendingResetReqs as $resetReq) {
+            $timeAgo = \Carbon\Carbon::parse($resetReq->created_at)->diffForHumans();
+            $notifications[] = [
+                'id'          => 'reset_req_' . $resetReq->id,
+                'type'        => 'reset_request',
+                'title'       => 'Permintaan Reset Password',
+                'message'     => 'Seller <strong>' . e($resetReq->seller_name) . '</strong> meminta Kode OTP Reset Password.',
+                'badge'       => 'Reset PW',
+                'badge_class' => 'badge-appeal',
+                'icon'        => 'fas fa-key',
+                'icon_bg'     => '#fef3c7',
+                'icon_color'  => '#d97706',
+                'url'         => route('platform-admin.users', ['view' => 'reset_requests']),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($resetReq->created_at),
+            ];
+        }
+
+        // Urutkan notifikasi berdasarkan waktu terbaru
+        usort($notifications, function ($a, $b) {
+            return $b['timestamp'] - $a['timestamp'];
+        });
+
+        $unreadCount = count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals) + count($pendingResetReqs);
+
+        return [
+            'status'        => 'success',
+            'unread_count'  => $unreadCount,
+            'counts'        => [
+                'products' => count($pendingProducts),
+                'payouts'  => count($pendingPayouts),
+                'appeals'  => count($pendingAppeals),
+                'resets'   => count($pendingResetReqs),
+            ],
+            'notifications' => array_slice($notifications, 0, 20)
+        ];
+    }
+
+    // Endpoint JSON notifikasi standar untuk Platform Admin
+    public function getNotifications(Request $request)
+    {
+        return response()->json($this->fetchNotificationsData());
+    }
+
+    /**
+     * Server-Sent Events (SSE) Stream endpoint untuk Platform Admin.
+     */
+    public function streamNotifications(Request $request)
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
+        return response()->stream(function () {
+            @set_time_limit(0);
+            @ini_set('implicit_flush', 1);
+            if (ob_get_level()) {
+                @ob_end_flush();
+            }
+            flush();
+
+            $maxCycles = 10;
+            $lastHash = null;
+
+            for ($i = 0; $i < $maxCycles; $i++) {
+                if (connection_aborted()) {
+                    break;
+                }
+
+                $data = $this->fetchNotificationsData();
+                $currentHash = md5(json_encode($data));
+
+                if ($lastHash !== $currentHash || $i === 0) {
+                    echo "event: notifications\n";
+                    echo "data: " . json_encode($data) . "\n\n";
+                    $lastHash = $currentHash;
+                } else {
+                    echo ": ping\n\n";
+                }
+
+                if (ob_get_level()) {
+                    @ob_flush();
+                }
+                flush();
+
+                sleep(3);
+            }
+        }, 200, [
+            'Content-Type'      => 'text/event-stream',
+            'Cache-Control'     => 'no-cache, no-store, must-revalidate',
+            'Connection'        => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
+        ]);
+    }
+
     // Menampilkan halaman manajemen user
     public function users(Request $request)
     {
-        $viewType = $request->input('view', 'users'); // 'users' or 'appeals'
+        $viewType = $request->input('view', 'users'); // 'users', 'appeals', or 'reset_requests'
 
         $query = User::query()->where('role', '!=', 'admin_platform');
 
@@ -266,6 +485,14 @@ class PlatformAdminController extends Controller
         $appeals = $appealsQuery->paginate(15, ['*'], 'appeals_page')->withQueryString();
         $pendingAppealsCount = \App\Models\SuspensionAppeal::where('status', 'pending')->count();
 
+        // Data Permintaan Reset Password
+        $resetRequestsQuery = \App\Models\PasswordResetRequest::with('user')->latest();
+        if ($resetStatus = $request->input('reset_status')) {
+            $resetRequestsQuery->where('status', $resetStatus);
+        }
+        $resetRequests = $resetRequestsQuery->paginate(15, ['*'], 'resets_page')->withQueryString();
+        $pendingResetRequestsCount = \App\Models\PasswordResetRequest::where('status', 'pending')->count();
+
         return view('platformadmin.users', compact(
             'users',
             'totalUsers',
@@ -275,7 +502,9 @@ class PlatformAdminController extends Controller
             'search',
             'viewType',
             'appeals',
-            'pendingAppealsCount'
+            'pendingAppealsCount',
+            'resetRequests',
+            'pendingResetRequestsCount'
         ));
     }
 
@@ -375,6 +604,59 @@ class PlatformAdminController extends Controller
         return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali.");
     }
 
+    /**
+     * Reset Password User/Seller secara manual oleh Platform Admin.
+     */
+    public function resetUserPassword(Request $request, int $id)
+    {
+        $user = User::where('role', '!=', 'admin_platform')->findOrFail($id);
+
+        $mode = $request->input('mode', 'auto'); // 'auto' or 'manual'
+        $newPassword = null;
+
+        if ($mode === 'manual') {
+            $request->validate([
+                'new_password' => ['required', 'string', 'min:8', 'max:50'],
+            ], [
+                'new_password.required' => 'Password baru wajib diisi.',
+                'new_password.min'      => 'Password baru minimal 8 karakter.',
+            ]);
+            $newPassword = $request->input('new_password');
+        } else {
+            // Generate password sementara acak yang aman dan mudah dibaca
+            $randomString = Str::lower(Str::random(6));
+            $randomDigits = rand(10, 99);
+            $newPassword = 'Lk#' . $randomString . $randomDigits;
+        }
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        // Catat Log Aktivitas
+        \App\Services\ActivityLogger::log(
+            'reset_user_password',
+            "Mereset password user: {$user->name} ({$user->email}) melalui mode {$mode}",
+            ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email, 'mode' => $mode]
+        );
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status'        => 'success',
+                'message'       => "Password untuk {$user->name} berhasil direset.",
+                'user_name'     => $user->name,
+                'user_email'    => $user->email,
+                'temp_password' => $newPassword,
+            ]);
+        }
+
+        return back()->with('password_reset_result', [
+            'user_name'     => $user->name,
+            'user_email'    => $user->email,
+            'temp_password' => $newPassword,
+        ]);
+    }
+
     // Setujui Permohonan Banding
     public function approveAppeal(int $id)
     {
@@ -432,6 +714,87 @@ class PlatformAdminController extends Controller
         );
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} telah ditolak.");
+    }
+
+    /**
+     * Setujui Permintaan Reset Password dan Buat Kode OTP 6 Digit.
+     */
+    public function approveResetRequest(Request $request, int $id)
+    {
+        $resetReq = \App\Models\PasswordResetRequest::with('user')->findOrFail($id);
+
+        if ($resetReq->status !== 'pending') {
+            return back()->with('error', 'Permintaan ini sudah diproses sebelumnya.');
+        }
+
+        // Generate 4-digit OTP (sesuai desain UI mockup)
+        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
+
+        $resetReq->update([
+            'status'      => 'approved',
+            'otp_code'    => $otp,
+            'expires_at'  => now()->addMinutes(60),
+            'resolved_at' => now(),
+        ]);
+
+        // Catat Log Aktivitas
+        \App\Services\ActivityLogger::log(
+            'approve_password_reset_request',
+            "Menyetujui permintaan reset password untuk: {$resetReq->email} (OTP: {$otp})",
+            ['request_id' => $resetReq->id, 'email' => $resetReq->email, 'otp_code' => $otp]
+        );
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status'    => 'success',
+                'message'   => "Permintaan reset untuk {$resetReq->email} disetujui.",
+                'otp_code'  => $otp,
+                'email'     => $resetReq->email,
+            ]);
+        }
+
+        return back()->with('otp_approved_result', [
+            'email'    => $resetReq->email,
+            'otp_code' => $otp,
+        ]);
+    }
+
+    /**
+     * Tolak Permintaan Reset Password.
+     */
+    public function rejectResetRequest(Request $request, int $id)
+    {
+        $resetReq = \App\Models\PasswordResetRequest::with('user')->findOrFail($id);
+
+        $request->validate([
+            'admin_notes' => ['required', 'string', 'max:1000'],
+        ], [
+            'admin_notes.required' => 'Wajib memberikan catatan alasan penolakan.',
+        ]);
+
+        $adminNotes = strip_tags($request->admin_notes);
+
+        $resetReq->update([
+            'status'      => 'rejected',
+            'admin_notes' => $adminNotes,
+            'resolved_at' => now(),
+        ]);
+
+        // Catat Log Aktivitas
+        \App\Services\ActivityLogger::log(
+            'reject_password_reset_request',
+            "Menolak permintaan reset password untuk: {$resetReq->email}. Alasan: {$adminNotes}",
+            ['request_id' => $resetReq->id, 'email' => $resetReq->email, 'admin_notes' => $adminNotes]
+        );
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => "Permintaan reset untuk {$resetReq->email} telah ditolak.",
+            ]);
+        }
+
+        return back()->with('success', "Permintaan reset password untuk {$resetReq->email} telah ditolak.");
     }
 
     /**

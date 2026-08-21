@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
     @stack('styles')
     @stack('page-styles')
     <style>
@@ -297,8 +298,46 @@
                 
                 <div class="header-right">
                     <div class="header-actions">
-                        <a href="{{ route('admin.settings') }}" class="action-icon"><i class="fas fa-cog"></i></a>
-                        <a href="#" class="action-icon"><i class="far fa-bell"></i></a>
+                        <a href="{{ route('admin.settings') }}" class="action-icon" title="Pengaturan"><i class="fas fa-cog"></i></a>
+                        
+                        {{-- Seller Notification Bell & Dropdown --}}
+                        <div class="seller-notif-wrapper">
+                            <button type="button" class="action-icon seller-notif-btn" id="sellerNotifBtn" onclick="toggleSellerNotif(event)" title="Notifikasi" aria-label="Notifikasi">
+                                <i class="far fa-bell"></i>
+                                <span class="seller-notif-badge" id="sellerNotifBadge" style="display: none;">0</span>
+                            </button>
+
+                            <!-- Notification Dropdown Panel -->
+                            <div class="seller-notif-dropdown" id="sellerNotifDropdown">
+                                <div class="seller-notif-header">
+                                    <div class="seller-notif-title">
+                                        <i class="fas fa-bell"></i> Notifikasi
+                                    </div>
+                                    <span class="seller-notif-pill" id="sellerNotifTotal">0 Baru</span>
+                                </div>
+
+                                <div class="seller-notif-filter-tabs">
+                                    <button type="button" class="seller-notif-tab active" onclick="filterSellerNotif('all', this)">Semua</button>
+                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('order', this)">Pesanan</button>
+                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('product', this)">Produk</button>
+                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('payout', this)">Payout</button>
+                                </div>
+
+                                <div class="seller-notif-scroll" id="sellerNotifList">
+                                    <div class="seller-notif-loading">
+                                        <i class="fas fa-spinner fa-spin"></i> Memuat notifikasi...
+                                    </div>
+                                </div>
+
+                                <div class="seller-notif-footer">
+                                    <a href="{{ route('admin.orders') }}"><i class="fas fa-receipt"></i> Pesanan</a>
+                                    <span class="dot">&bull;</span>
+                                    <a href="{{ route('admin.digital-products.index') }}"><i class="fas fa-box-open"></i> Produk</a>
+                                    <span class="dot">&bull;</span>
+                                    <a href="{{ route('admin.payout.history') }}"><i class="fas fa-wallet"></i> Payout</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="top-profile" onclick="toggleProfileDropdown()">
@@ -340,6 +379,11 @@
         </div>
     </div>
 
+    <script>
+        window.SellerNotifEndpoint = "{{ route('admin.notifications') }}";
+        window.SellerNotifSSEEndpoint = "{{ route('admin.notifications.stream') }}";
+    </script>
+    <script src="{{ asset('js/seller-notifications.js') }}?v={{ time() }}"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');

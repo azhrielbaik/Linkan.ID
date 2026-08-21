@@ -261,3 +261,208 @@ function confirmApproveAppeal(form, userName) {
         }
     }
 }
+
+// --- Reset Password Modal Functions ---
+
+let activeResetUserId = null;
+
+function openResetPasswordModal(userId, userName, userEmail) {
+    activeResetUserId = userId;
+    const modal = document.getElementById('resetPasswordModal');
+    const targetIdInput = document.getElementById('resetUserId');
+    const targetName = document.getElementById('resetTargetName');
+    const targetEmail = document.getElementById('resetTargetEmail');
+    const manualPwInput = document.getElementById('manualNewPassword');
+
+    if (targetIdInput) targetIdInput.value = userId;
+    if (targetName) targetName.textContent = userName;
+    if (targetEmail) targetEmail.textContent = userEmail;
+    if (manualPwInput) manualPwInput.value = '';
+
+    selectResetMode('auto');
+
+    if (modal) modal.classList.add('show');
+}
+
+function closeResetPasswordModal() {
+    const modal = document.getElementById('resetPasswordModal');
+    if (modal) modal.classList.remove('show');
+}
+
+function selectResetMode(mode) {
+    const modeAuto = document.getElementById('modeAuto');
+    const modeManual = document.getElementById('modeManual');
+    const manualGroup = document.getElementById('manualPasswordGroup');
+    const manualPwInput = document.getElementById('manualNewPassword');
+
+    if (mode === 'manual') {
+        if (modeManual) modeManual.checked = true;
+        if (manualGroup) manualGroup.style.display = 'block';
+        if (manualPwInput) manualPwInput.focus();
+    } else {
+        if (modeAuto) modeAuto.checked = true;
+        if (manualGroup) manualGroup.style.display = 'none';
+    }
+}
+
+function togglePasswordVisibility(inputId, btnElem) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (btnElem) btnElem.innerHTML = '<i class="far fa-eye-slash"></i>';
+    } else {
+        input.type = 'password';
+        if (btnElem) btnElem.innerHTML = '<i class="far fa-eye"></i>';
+    }
+}
+
+function submitResetPassword(event) {
+    if (event) event.preventDefault();
+
+    const userId = document.getElementById('resetUserId')?.value || activeResetUserId;
+    const mode = document.querySelector('input[name="reset_mode"]:checked')?.value || 'auto';
+    const manualPw = document.getElementById('manualNewPassword')?.value;
+    const btnSubmit = document.getElementById('btnSubmitReset');
+    const csrfToken = (window.PlatformUsersConfig && window.PlatformUsersConfig.csrfToken) || '';
+    const baseUrl = (window.PlatformUsersConfig && window.PlatformUsersConfig.userBaseUrl) || '/platform-admin/users';
+
+    if (mode === 'manual') {
+        if (!manualPw || manualPw.length < 8) {
+            alert('Password baru minimal 8 karakter.');
+            return;
+        }
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    }
+
+    fetch(`${baseUrl}/${userId}/reset-password`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            mode: mode,
+            new_password: manualPw
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(data => { throw new Error(data.message || 'Gagal mereset password.'); });
+        }
+        return res.json();
+    })
+    .then(data => {
+        closeResetPasswordModal();
+        openResetResultModal(data.user_name, data.user_email, data.temp_password);
+    })
+    .catch(err => {
+        alert(err.message || 'Terjadi kesalahan saat mereset password.');
+    })
+    .finally(() => {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-key"></i> Reset Password';
+        }
+    });
+}
+
+function openResetResultModal(userName, userEmail, tempPassword) {
+    const modal = document.getElementById('resetResultModal');
+    const nameEl = document.getElementById('resultUserName');
+    const emailEl = document.getElementById('resultUserEmail');
+    const pwEl = document.getElementById('resultTempPassword');
+    const copyBtn = document.getElementById('btnCopyResultModal');
+
+    if (nameEl) nameEl.textContent = userName;
+    if (emailEl) emailEl.textContent = userEmail;
+    if (pwEl) pwEl.textContent = tempPassword;
+    if (copyBtn) {
+        copyBtn.className = 'btn-copy-pw';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Salin Password';
+    }
+
+    if (modal) modal.classList.add('show');
+}
+
+function closeResetResultModal() {
+    const modal = document.getElementById('resetResultModal');
+    if (modal) modal.classList.remove('show');
+}
+
+function copyResultPassword(btnElem) {
+    const pwEl = document.getElementById('resultTempPassword');
+    if (!pwEl) return;
+    const text = pwEl.textContent.trim();
+
+    navigator.clipboard.writeText(text).then(() => {
+        if (btnElem) {
+            btnElem.className = 'btn-copy-pw copied';
+            btnElem.innerHTML = '<i class="fas fa-check"></i> Tersalin ke Clipboard!';
+            setTimeout(() => {
+                btnElem.className = 'btn-copy-pw';
+                btnElem.innerHTML = '<i class="fas fa-copy"></i> Salin Password';
+            }, 3000);
+        }
+    }).catch(() => {
+        prompt('Salin password ini secara manual:', text);
+    });
+}
+
+function copyPasswordDirect(text, btnElem) {
+    navigator.clipboard.writeText(text).then(() => {
+        if (btnElem) {
+            btnElem.className = 'btn-copy-pw copied';
+            btnElem.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+            setTimeout(() => {
+                btnElem.className = 'btn-copy-pw';
+                btnElem.innerHTML = '<i class="fas fa-copy"></i> Salin Password';
+            }, 3000);
+        }
+    }).catch(() => {
+        prompt('Salin password ini:', text);
+    });
+}
+
+// --- Password Reset Request Approval / Rejection Functions ---
+
+function confirmApproveResetReq(form, userName) {
+    if (typeof showConfirmModal === 'function') {
+        showConfirmModal({
+            title: 'Setujui & Buat Kode OTP?',
+            text: `Sistem akan membuat 6-digit Kode OTP baru untuk akun ${userName} yang berlaku selama 60 menit.`,
+            icon: 'question',
+            confirmText: '<i class="fas fa-key"></i> Ya, Setujui & Buat OTP',
+            onConfirm: () => {
+                form.submit();
+            }
+        });
+    } else {
+        if (confirm(`Setujui permintaan reset password untuk ${userName} dan buatkan kode OTP baru?`)) {
+            form.submit();
+        }
+    }
+}
+
+function openRejectResetReqModal(reqId, userName) {
+    const target = document.getElementById('rejectResetTargetName');
+    const form = document.getElementById('rejectResetReqForm');
+    const modal = document.getElementById('rejectResetReqModal');
+
+    if (target) target.textContent = userName;
+    if (form) form.action = `/platform-admin/reset-requests/${reqId}/reject`;
+    if (modal) modal.classList.add('show');
+}
+
+function closeRejectResetReqModal() {
+    const modal = document.getElementById('rejectResetReqModal');
+    if (modal) modal.classList.remove('show');
+}
+

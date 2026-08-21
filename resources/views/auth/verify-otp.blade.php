@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - Linkan.ID</title>
+    <title>Verify Your Email - Linkan.ID</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -56,31 +56,43 @@
             font-weight: 500;
             color: #64748b;
             text-align: center;
-            margin-bottom: 36px;
+            margin-bottom: 32px;
             line-height: 1.4;
             max-width: 300px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .form-group {
-            margin-bottom: 22px;
+        .auth-subtitle .user-email {
+            color: #0f172a;
+            font-weight: 600;
+            display: block;
+            margin-top: 2px;
         }
 
-        .auth-pill-input {
-            width: 100%;
-            height: 52px;
+        /* 4-Digit OTP Boxes */
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .otp-box {
+            width: 58px;
+            height: 58px;
             border: 1.5px solid #4a5568;
-            border-radius: 50px;
-            padding: 0 24px;
-            font-size: 15px;
-            color: #1e293b;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            color: #0f172a;
             background: #ffffff;
             outline: none;
             transition: all 0.2s ease;
         }
 
-        .auth-pill-input:focus {
+        .otp-box:focus {
             border-color: #DE6C20;
             box-shadow: 0 0 0 3px rgba(222, 108, 32, 0.15);
         }
@@ -176,6 +188,7 @@
         @media (max-width: 900px) {
             .mockup-side { display: none; }
             .form-side { padding: 30px 20px; }
+            .otp-box { width: 50px; height: 50px; font-size: 20px; }
         }
     </style>
 </head>
@@ -184,8 +197,11 @@
         <!-- Left Side: Form -->
         <div class="form-side">
             <div class="form-wrapper">
-                <h1 class="auth-title">Forgot Password</h1>
-                <p class="auth-subtitle">Please enter You email adress to recieve a verification card</p>
+                <h1 class="auth-title">Verify Your Email</h1>
+                <p class="auth-subtitle">
+                    Please enter the 4 digit code sent to<br>
+                    <span class="user-email">{{ $email }}</span>
+                </p>
 
                 @if (isset($errors) && $errors->any())
                     <div class="error-box">
@@ -193,17 +209,23 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.request-otp') }}">
+                <form method="POST" action="{{ route('password.verify-otp.submit') }}" id="otpForm">
                     @csrf
-                    <div class="form-group">
-                        <input type="email" name="email" class="auth-pill-input" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                    <input type="hidden" name="email" value="{{ $email }}">
+                    <input type="hidden" name="otp_code" id="fullOtpInput" value="">
+
+                    <div class="otp-container">
+                        <input type="text" maxlength="1" class="otp-box" id="digit-1" data-index="0" autofocus autocomplete="off" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" id="digit-2" data-index="1" autocomplete="off" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" id="digit-3" data-index="2" autocomplete="off" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" id="digit-4" data-index="3" autocomplete="off" inputmode="numeric">
                     </div>
 
-                    <button type="submit" class="auth-pill-btn">Send</button>
+                    <button type="submit" class="auth-pill-btn">Verify</button>
                 </form>
 
                 <div class="auth-bottom-wrap">
-                    <a href="{{ route('login') }}" class="auth-bottom-link">Try another way</a>
+                    <a href="{{ route('password.request') }}" class="auth-bottom-link">Resend code</a>
                 </div>
             </div>
         </div>
@@ -215,5 +237,81 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const digits = [
+            document.getElementById('digit-1'),
+            document.getElementById('digit-2'),
+            document.getElementById('digit-3'),
+            document.getElementById('digit-4')
+        ];
+        const fullOtpInput = document.getElementById('fullOtpInput');
+        const checkStatusUrl = "{{ route('password.otp.status') }}";
+        const userEmail = "{{ $email }}";
+        let isApproved = false;
+
+        function updateFullOtp() {
+            const val = digits.map(d => d.value).join('');
+            fullOtpInput.value = val;
+        }
+
+        digits.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (val.length === 1) {
+                    if (index < digits.length - 1) {
+                        digits[index + 1].focus();
+                    }
+                }
+                updateFullOtp();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    digits[index - 1].focus();
+                }
+            });
+
+            // Handle paste
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+                if (/^\d{4}$/.test(pasteData)) {
+                    pasteData.split('').forEach((char, i) => {
+                        if (digits[i]) digits[i].value = char;
+                    });
+                    updateFullOtp();
+                    digits[3].focus();
+                }
+            });
+        });
+
+        // Polling approval from Admin Platform to auto-fill the 4 digits
+        function checkAdminApproval() {
+            if (isApproved) return;
+
+            fetch(`${checkStatusUrl}?email=${encodeURIComponent(userEmail)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'approved' && data.otp_code && data.otp_code.length === 4) {
+                        isApproved = true;
+                        data.otp_code.split('').forEach((char, i) => {
+                            if (digits[i]) digits[i].value = char;
+                        });
+                        updateFullOtp();
+                    }
+                })
+                .catch(err => console.warn('Polling status error:', err));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminApproval();
+            setInterval(checkAdminApproval, 2500);
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', (e) => {
+            updateFullOtp();
+        });
+    </script>
 </body>
 </html>

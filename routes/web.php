@@ -53,11 +53,21 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
-// Password Reset
+// Password Reset via Admin Platform OTP (4-Step Flow)
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
-Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
-Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->name('password.request-otp');
+Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verify-otp');
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify-otp.submit');
+Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->name('password.otp.status');
+Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
+Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
+Route::get('/password-reset-success', [ForgotPasswordController::class, 'showSuccessPage'])->name('password.success');
+
+// Legacy route fallback
+Route::get('/reset-password-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.otp');
+Route::post('/reset-password-otp/submit', [ForgotPasswordController::class, 'verifyOtp'])->name('password.otp.submit');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.update');
 
 // Contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.form');
@@ -94,6 +104,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Dashboard / Beranda
     Route::get('/dashboard', [DashboardController::class, 'beranda'])->name('dashboard');
     Route::get('/get-chart-data', [DashboardController::class, 'getChartData'])->name('chart-data');
+    Route::get('/notifications', [DashboardController::class, 'getNotifications'])->name('notifications');
+    Route::get('/notifications/stream', [DashboardController::class, 'streamNotifications'])->name('notifications.stream');
     Route::post('/appeal', [DashboardController::class, 'submitAppeal'])->name('appeal.store');
 
     // My Linkan (microsite builder)
@@ -198,8 +210,10 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::match(['get', 'post'], '/print', [PlatformAdminController::class, 'print'])->name('print');
     Route::get('/export/excel', [PlatformAdminController::class, 'exportExcel'])->name('export.excel');
 
-    // Komisi (API endpoint realtime)
+    // Komisi & Notifikasi (API endpoint realtime & SSE stream)
     Route::get('/commissions', [PlatformAdminController::class, 'getCommissions'])->name('commissions');
+    Route::get('/notifications', [PlatformAdminController::class, 'getNotifications'])->name('notifications');
+    Route::get('/notifications/stream', [PlatformAdminController::class, 'streamNotifications'])->name('notifications.stream');
 
     // Verifikasi (role-gated, sudah dalam group ini)
     Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
@@ -211,8 +225,11 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
     Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->name('users.suspend');
     Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->name('users.activate');
+    Route::post('/users/{id}/reset-password', [PlatformAdminController::class, 'resetUserPassword'])->name('users.reset-password');
     Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->name('users.appeals.approve');
     Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->name('users.appeals.reject');
+    Route::post('/reset-requests/{id}/approve', [PlatformAdminController::class, 'approveResetRequest'])->name('reset-requests.approve');
+    Route::post('/reset-requests/{id}/reject', [PlatformAdminController::class, 'rejectResetRequest'])->name('reset-requests.reject');
 
     // Manajemen Payout (Request Withdraw & Riwayat Global)
     Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');

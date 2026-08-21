@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - Linkan.ID</title>
+    <title>Create New Password - Linkan.ID</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -64,7 +64,7 @@
         }
 
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 18px;
         }
 
         .auth-pill-input {
@@ -100,6 +100,7 @@
             justify-content: center;
             transition: all 0.2s ease;
             text-decoration: none;
+            margin-top: 10px;
         }
 
         .auth-pill-btn:hover {
@@ -184,8 +185,8 @@
         <!-- Left Side: Form -->
         <div class="form-side">
             <div class="form-wrapper">
-                <h1 class="auth-title">Forgot Password</h1>
-                <p class="auth-subtitle">Please enter You email adress to recieve a verification card</p>
+                <h1 class="auth-title">Create New Password</h1>
+                <p class="auth-subtitle">Your new password must be different from previoslu used password</p>
 
                 @if (isset($errors) && $errors->any())
                     <div class="error-box">
@@ -193,17 +194,23 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.request-otp') }}">
+                <form method="POST" action="{{ route('password.create-new.submit') }}">
                     @csrf
+                    <input type="hidden" name="email" value="{{ $email }}">
+
                     <div class="form-group">
-                        <input type="email" name="email" class="auth-pill-input" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                        <input type="password" name="password" class="auth-pill-input" placeholder="New Password" required autofocus>
                     </div>
 
-                    <button type="submit" class="auth-pill-btn">Send</button>
+                    <div class="form-group">
+                        <input type="password" name="password_confirmation" class="auth-pill-input" placeholder="New Password" required>
+                    </div>
+
+                    <button type="submit" class="auth-pill-btn">Confirm</button>
                 </form>
 
                 <div class="auth-bottom-wrap">
-                    <a href="{{ route('login') }}" class="auth-bottom-link">Try another way</a>
+                    <span class="auth-bottom-link">Change Password</span>
                 </div>
             </div>
         </div>
