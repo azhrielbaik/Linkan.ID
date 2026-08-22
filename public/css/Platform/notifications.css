@@ -35,10 +35,10 @@
 
 .action-icon.notif-bell-btn:hover,
 .action-icon.notif-bell-btn.active {
-    color: #5A5BF1;
-    border-color: #5A5BF1;
-    background: #f8f9ff;
-    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.12);
+    color: #ED842C;
+    border-color: #ED842C;
+    background: #fff8f2;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.15);
 }
 
 .notif-badge {
@@ -119,13 +119,13 @@
 }
 
 .notif-dropdown-title i {
-    color: #5A5BF1;
+    color: #ED842C;
     font-size: 16px;
 }
 
 .notif-total-pill {
-    background: #EEF0FE;
-    color: #5A5BF1;
+    background: #fff0e2;
+    color: #ED842C;
     font-size: 11px;
     font-weight: 800;
     padding: 3px 10px;
@@ -158,12 +158,12 @@
 }
 
 .notif-tab:hover {
-    color: #5A5BF1;
-    background: #eef0fe;
+    color: #ED842C;
+    background: #fff0e2;
 }
 
 .notif-tab.active {
-    background: #5A5BF1;
+    background: #ED842C;
     color: #ffffff;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .notif-item:hover {
-    background: #f8faff;
+    background: #fff8f2;
 }
 
 .notif-icon-box {
@@ -244,7 +244,7 @@
     letter-spacing: 0.04em;
 }
 
-.badge-product { background: #EEF0FE; color: #5A5BF1; }
+.badge-product { background: #fff0e2; color: #ED842C; }
 .badge-payout  { background: #fef3c7; color: #d97706; }
 .badge-appeal  { background: #fee2e2; color: #dc2626; }
 
@@ -298,7 +298,7 @@
 }
 
 .notif-dropdown-footer a {
-    color: #5A5BF1;
+    color: #ED842C;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -307,7 +307,7 @@
 }
 
 .notif-dropdown-footer a:hover {
-    color: #4748d0;
+    color: #d9701a;
     text-decoration: underline;
 }
 
@@ -318,7 +318,31 @@
 /* Mobile Responsiveness */
 @media (max-width: 600px) {
     .notif-dropdown {
-        width: 320px;
-        right: -50px;
+        position: fixed;
+        top: 64px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: calc(100vw - 24px);
+        max-height: 80vh;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .notif-dropdown-footer {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 14px;
+    }
+
+    .notif-dropdown-footer .dot {
+        display: none;
+    }
+
+    .notif-dropdown-footer a {
+        font-size: 11px;
+        background: #fff8f2;
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(237, 132, 44, 0.15);
     }
 }

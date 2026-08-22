@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/products.css') }}">
 </head>
@@ -345,13 +347,13 @@
     <div id="platformModal" class="modal">
         <div class="modal-card">
             <div class="modal-header">
-                <h3><i class="fas fa-info-circle" style="color: #5A5BF1; margin-right: 6px;"></i>{{ __('platform.platform_details') }}</h3>
+                <h3><i class="fas fa-info-circle" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.platform_details') }}</h3>
                 <button class="modal-close" onclick="closePlatformModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group-custom">
                     <label>{{ __('platform.platform_type') }}</label>
-                    <p id="platformType" style="font-weight: 700; color: #5A5BF1; font-size: 15px;"></p>
+                    <p id="platformType" style="font-weight: 700; color: #ED842C; font-size: 15px;"></p>
                 </div>
                 <div class="form-group-custom" id="platformUrlGroup">
                     <label>{{ __('platform.platform_url') }}</label>

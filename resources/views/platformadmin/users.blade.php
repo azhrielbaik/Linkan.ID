@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}">
 </head>
@@ -301,7 +303,7 @@
                                             @endphp
                                             <div class="user-name" style="display: flex; align-items: center; gap: 6px;">
                                                 <span>{{ $appeal->user->name ?? 'User Telah Dihapus' }}</span>
-                                                <span style="font-size: 10px; font-weight: 800; background: #EEF0FE; color: #5A5BF1; padding: 1px 6px; border-radius: 4px;">Ke-{{ $userAppealAttempt }}/3</span>
+                                                <span style="font-size: 10px; font-weight: 800; background: #fff0e2; color: #ED842C; padding: 1px 6px; border-radius: 4px;">Ke-{{ $userAppealAttempt }}/3</span>
                                             </div>
                                             <div class="user-email">{{ $appeal->user->email ?? '-' }}</div>
                                         </div>
@@ -312,7 +314,7 @@
                                         {{ $appeal->appeal_reason }}
                                     </div>
                                     @if($appeal->admin_notes)
-                                        <div style="font-size: 11px; color: #64748b; margin-top: 6px; background: #f8fafc; padding: 4px 8px; border-radius: 6px; border-left: 3px solid #5A5BF1;">
+                                        <div style="font-size: 11px; color: #64748b; margin-top: 6px; background: #f8fafc; padding: 4px 8px; border-radius: 6px; border-left: 3px solid #ED842C;">
                                             <strong>{{ __('platform.admin_notes') }}:</strong> {{ $appeal->admin_notes }}
                                         </div>
                                     @endif
@@ -440,7 +442,7 @@
                                 </td>
                                 <td>
                                     @if($req->otp_code && in_array($req->status, ['approved', 'completed']))
-                                        <span style="display: inline-flex; align-items: center; background: #f8f9ff; border: 1.5px solid #e0e7ff; padding: 4px 12px; border-radius: 6px; font-family: monospace; font-size: 15px; font-weight: 800; color: #5A5BF1; letter-spacing: 2px;" title="Kode OTP Terenkripsi (Tersinkronisasi Otomatis ke Seller)">
+                                        <span style="display: inline-flex; align-items: center; background: #fff8f2; border: 1.5px solid rgba(237, 132, 44, 0.25); padding: 4px 12px; border-radius: 6px; font-family: monospace; font-size: 15px; font-weight: 800; color: #ED842C; letter-spacing: 2px;" title="Kode OTP Terenkripsi (Tersinkronisasi Otomatis ke Seller)">
                                             ******
                                         </span>
                                     @else
@@ -600,7 +602,7 @@
     <div id="sellerModal" class="modal">
         <div class="modal-container modal-container-large">
             <div class="modal-header">
-                <h3><i class="fas fa-user-shield" style="color: #5A5BF1;"></i> {{ __('platform.seller_profile_inspection') }}</h3>
+                <h3><i class="fas fa-user-shield" style="color: #ED842C;"></i> {{ __('platform.seller_profile_inspection') }}</h3>
                 <button type="button" class="modal-close" onclick="closeSellerModal()">&times;</button>
             </div>
             <div class="modal-body" id="sellerModalBody">
@@ -627,7 +629,7 @@
                 <input type="hidden" id="resetUserId" value="">
                 <div class="modal-body">
                     <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                        Reset password akun <strong id="resetTargetName" style="color: #1e293b;"></strong> (<span id="resetTargetEmail" style="color: #5A5BF1;"></span>):
+                        Reset password akun <strong id="resetTargetName" style="color: #1e293b;"></strong> (<span id="resetTargetEmail" style="color: #ED842C;"></span>):
                     </p>
 
                     <div class="form-group">
@@ -636,7 +638,7 @@
                             <label class="mode-card" onclick="selectResetMode('auto')">
                                 <input type="radio" name="reset_mode" value="auto" id="modeAuto" checked>
                                 <div>
-                                    <div class="mode-card-title"><i class="fas fa-magic" style="color: #5A5BF1;"></i> Buat Acak</div>
+                                    <div class="mode-card-title"><i class="fas fa-magic" style="color: #ED842C;"></i> Buat Acak</div>
                                     <div class="mode-card-desc">Generate password sementara acak otomatis.</div>
                                 </div>
                             </label>

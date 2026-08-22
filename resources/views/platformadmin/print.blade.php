@@ -40,7 +40,7 @@
 
         {{-- Rincian Transaksi Komisi --}}
         <div class="section-title">
-            <i class="fas fa-list-check" style="color: #5A5BF1;"></i> Rincian Transaksi Komisi
+            <i class="fas fa-list-check" style="color: #ED842C;"></i> Rincian Transaksi Komisi
         </div>
 
         <div class="table-wrapper">
