@@ -8,8 +8,8 @@ function initEarningsChart(labels, data) {
     const ctx = chartElem.getContext('2d');
     
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(90, 91, 241, 0.28)');
-    gradient.addColorStop(1, 'rgba(90, 91, 241, 0.00)');
+    gradient.addColorStop(0, 'rgba(237, 132, 44, 0.25)');
+    gradient.addColorStop(1, 'rgba(237, 132, 44, 0.00)');
 
     if (earningsChartInstance) {
         earningsChartInstance.destroy();
@@ -22,17 +22,17 @@ function initEarningsChart(labels, data) {
             datasets: [{
                 label: 'Komisi Platform (Rp)',
                 data: data,
-                borderColor: '#5A5BF1',
+                borderColor: '#ED842C',
                 borderWidth: 2.5,
                 backgroundColor: gradient,
                 fill: true,
                 tension: 0.35,
                 pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#5A5BF1',
+                pointBorderColor: '#ED842C',
                 pointBorderWidth: 2.5,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#5A5BF1',
+                pointHoverBackgroundColor: '#ED842C',
                 pointHoverBorderColor: '#ffffff',
             }]
         },
@@ -59,14 +59,14 @@ function initEarningsChart(labels, data) {
                     grid: { display: false },
                     ticks: {
                         font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' },
-                        color: '#94a3b8'
+                        color: '#64748b'
                     }
                 },
                 y: {
                     grid: { color: '#f1f5f9' },
                     ticks: {
                         font: { family: 'Plus Jakarta Sans', size: 11 },
-                        color: '#94a3b8',
+                        color: '#64748b',
                         callback: function(value) {
                             return 'Rp ' + Number(value).toLocaleString('id-ID');
                         }

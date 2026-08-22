@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}">
 </head>
@@ -205,7 +207,7 @@
     <div id="adminPasswordModal" class="modal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3><i class="fas fa-shield-alt" style="color: #5A5BF1;"></i> {{ __('platform.confirm_admin_password_title') }}</h3>
+                <h3><i class="fas fa-shield-alt" style="color: #ED842C;"></i> {{ __('platform.confirm_admin_password_title') }}</h3>
                 <button type="button" class="modal-close" onclick="closePasswordConfirmationModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -213,9 +215,9 @@
                     {{ __('platform.confirm_admin_password_desc') }}
                 </p>
 
-                <div style="background: #f8f9ff; border: 1px solid #eef0fe; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px;">
+                <div style="background: #fff8f2; border: 1px solid rgba(237, 132, 44, 0.2); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px;">
                     <div style="margin-bottom: 6px; color: #475569;">
-                        <strong>{{ __('platform.platform_commission_percent') }}:</strong> <span id="summary_commission" style="font-weight: 800; color: #5A5BF1;"></span>
+                        <strong>{{ __('platform.platform_commission_percent') }}:</strong> <span id="summary_commission" style="font-weight: 800; color: #ED842C;"></span>
                     </div>
                     <div style="color: #475569;">
                         <strong>{{ __('platform.min_withdraw_amount') }}:</strong> <span id="summary_min_withdraw" style="font-weight: 800; color: #16a34a;"></span>
@@ -224,7 +226,7 @@
 
                 <div class="form-group" style="margin-bottom: 0;">
                     <label for="modal_admin_password" style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block;">
-                        <i class="fas fa-key" style="color: #5A5BF1;"></i> {{ __('platform.admin_password_label') }}
+                        <i class="fas fa-key" style="color: #ED842C;"></i> {{ __('platform.admin_password_label') }}
                     </label>
                     <div style="position: relative;">
                         <input type="password" id="modal_admin_password" class="form-control" 
