@@ -1,0 +1,324 @@
+/* Platform Admin Notifications Stylesheet */
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notif-wrapper {
+    position: relative;
+}
+
+.action-icon.notif-bell-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    outline: none;
+}
+
+.action-icon.notif-bell-btn:hover,
+.action-icon.notif-bell-btn.active {
+    color: #5A5BF1;
+    border-color: #5A5BF1;
+    background: #f8f9ff;
+    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.12);
+}
+
+.notif-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+    animation: notifPulse 2s infinite;
+}
+
+@keyframes notifPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Dropdown Panel */
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 380px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+    border: 1px solid #eef0fe;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+    animation: notifFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.notif-dropdown.show {
+    display: flex;
+}
+
+@keyframes notifFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Dropdown Header */
+.notif-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+
+.notif-dropdown-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notif-dropdown-title i {
+    color: #5A5BF1;
+    font-size: 16px;
+}
+
+.notif-total-pill {
+    background: #EEF0FE;
+    color: #5A5BF1;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+/* Filter Tabs */
+.notif-filter-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+    overflow-x: auto;
+}
+
+.notif-tab {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.notif-tab:hover {
+    color: #5A5BF1;
+    background: #eef0fe;
+}
+
+.notif-tab.active {
+    background: #5A5BF1;
+    color: #ffffff;
+}
+
+/* Scroll Area */
+.notif-scroll-area {
+    max-height: 380px;
+    overflow-y: auto;
+    background: #ffffff;
+}
+
+.notif-scroll-area::-webkit-scrollbar {
+    width: 5px;
+}
+
+.notif-scroll-area::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* Notification Item */
+.notif-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f8fafc;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s ease;
+    position: relative;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: #f8faff;
+}
+
+.notif-icon-box {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.notif-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.notif-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notif-tag {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.badge-product { background: #EEF0FE; color: #5A5BF1; }
+.badge-payout  { background: #fef3c7; color: #d97706; }
+.badge-appeal  { background: #fee2e2; color: #dc2626; }
+
+.notif-item-msg {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.notif-item-msg strong {
+    color: #1e293b;
+}
+
+.notif-item-time {
+    font-size: 11px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Loading & Empty States */
+.notif-loading,
+.notif-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.notif-empty i {
+    font-size: 36px;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Dropdown Footer */
+.notif-dropdown-footer {
+    padding: 12px 18px;
+    background: #fafbfc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.notif-dropdown-footer a {
+    color: #5A5BF1;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s ease;
+}
+
+.notif-dropdown-footer a:hover {
+    color: #4748d0;
+    text-decoration: underline;
+}
+
+.notif-dropdown-footer .dot {
+    color: #cbd5e1;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .notif-dropdown {
+        width: 320px;
+        right: -50px;
+    }
+}

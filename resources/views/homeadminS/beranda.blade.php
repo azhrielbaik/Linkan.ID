@@ -47,41 +47,84 @@
             @if(isset($activeAppeal) && $activeAppeal->status === 'pending')
                 <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 14px;">
                     <i class="fas fa-hourglass-half" style="font-size: 24px; color: #16a34a;"></i>
-                    <div>
-                        <div style="font-weight: 800; color: #166534; font-size: 14px; margin-bottom: 2px;">Permohonan Banding Sedang Ditinjau</div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                            <div style="font-weight: 800; color: #166534; font-size: 14px;">Permohonan Banding Sedang Ditinjau</div>
+                            <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 6px;">Banding {{ $totalAppealsCount ?? 1 }}/{{ $maxAppeals ?? 3 }}</span>
+                        </div>
                         <div style="font-size: 13px; color: #15803d; line-height: 1.4;">
                             Surat banding Anda yang diajukan pada <strong>{{ $activeAppeal->created_at->format('d M Y, H:i') }}</strong> sedang dalam proses evaluasi oleh tim Platform Admin.
                         </div>
                     </div>
                 </div>
+            @elseif(isset($totalAppealsCount) && $totalAppealsCount >= ($maxAppeals ?? 3) && isset($activeAppeal) && $activeAppeal->status === 'rejected')
+                <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 18px 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <div style="font-weight: 800; color: #be123c; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-ban"></i> Batas Pengajuan Banding Telah Habis
+                        </div>
+                        <span style="font-size: 11px; font-weight: 800; background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 6px;">3/3 Percobaan Habis</span>
+                    </div>
+                    <div style="font-size: 13px; color: #4c0519; line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Catatan Admin Terakhir:</strong> {{ $activeAppeal->admin_notes ?? 'Tidak memenuhi syarat pemulihan akun.' }}
+                    </div>
+                    <div style="font-size: 12px; color: #64748b; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #f1f5f9; line-height: 1.5;">
+                        <i class="fas fa-info-circle" style="color: #64748b;"></i> Anda telah mencapai kuota maksimal pengajuan banding (3 kali). Akun Anda tetap dalam penangguhan. Jika Anda membutuhkan bantuan lebih lanjut, silakan hubungi tim dukungan kami melalui menu <a href="{{ route('contact.form') }}" style="color: #5A5BF1; font-weight: 700; text-decoration: underline;">Hubungi Kami</a>.
+                    </div>
+                </div>
             @elseif(isset($activeAppeal) && $activeAppeal->status === 'rejected')
-                <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 16px 20px; margin-bottom: 18px;">
-                    <div style="font-weight: 800; color: #be123c; font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-times-circle"></i> Permohonan Banding Sebelumnya Ditolak
+                <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 16px 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div style="font-weight: 800; color: #be123c; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-times-circle"></i> Permohonan Banding Sebelumnya Ditolak
+                        </div>
+                        <span style="font-size: 11px; font-weight: 800; background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 6px;">Banding {{ $totalAppealsCount }}/{{ $maxAppeals ?? 3 }}</span>
                     </div>
                     <div style="font-size: 13px; color: #4c0519; line-height: 1.4; margin-bottom: 12px;">
                         <strong>Catatan Admin:</strong> {{ $activeAppeal->admin_notes ?? 'Tidak memenuhi syarat pemulihan akun.' }}
                     </div>
-                    <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Anda dapat mengirimkan klarifikasi atau penjelasan baru di bawah ini:</p>
-                    
-                    <form action="{{ route('admin.appeal.store') }}" method="POST">
-                        @csrf
-                        <div style="margin-bottom: 12px;">
-                            <textarea name="appeal_reason" rows="3" placeholder="Jelaskan alasan atau klarifikasi tambahan Anda secara jelas dan lengkap..." style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;" required></textarea>
+
+                    @if(isset($canSubmitAppeal) && !$canSubmitAppeal)
+                        {{-- Cooldown 1 Hari Aktif --}}
+                        <div style="background: #fefce8; border: 1.5px solid #fef08a; border-radius: 10px; padding: 12px 16px; margin-top: 10px;">
+                            <div style="font-weight: 700; color: #854d0e; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <i class="fas fa-clock"></i> Jeda Waktu Pengajuan Banding (Cooldown 1 Hari)
+                            </div>
+                            <div style="font-size: 12px; color: #a16207; line-height: 1.5;">
+                                Anda baru dapat mengajukan permohonan banding berikutnya dalam <strong>{{ $remainingCooldownText }}</strong> (tersedia pada {{ $cooldownUntil ? $cooldownUntil->format('d M Y, H:i') : '-' }} WIB).
+                            </div>
+                            <div style="font-size: 11px; color: #a16207; margin-top: 6px;">
+                                <i class="fas fa-shield-alt"></i> Sisa kesempatan pengajuan banding: <strong>{{ $remainingAttempts ?? 1 }} kali</strong> lagi.
+                            </div>
                         </div>
-                        <button type="submit" style="background: #5A5BF1; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-paper-plane"></i> Ajukan Banding Ulang
-                        </button>
-                    </form>
+                    @else
+                        {{-- Form Banding Ulang --}}
+                        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">
+                            Anda memiliki sisa <strong>{{ $remainingAttempts ?? 1 }} kali kesempatan</strong> pengajuan banding. Silakan kirimkan klarifikasi atau penjelasan baru:
+                        </p>
+                        
+                        <form action="{{ route('admin.appeal.store') }}" method="POST">
+                            @csrf
+                            <div style="margin-bottom: 12px;">
+                                <textarea name="appeal_reason" rows="3" placeholder="Jelaskan alasan atau klarifikasi tambahan Anda secara jelas dan lengkap..." style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;" required></textarea>
+                            </div>
+                            <button type="submit" style="background: #5A5BF1; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-paper-plane"></i> Ajukan Banding Ulang (Percobaan ke-{{ ($totalAppealsCount ?? 0) + 1 }} dari 3)
+                            </button>
+                        </form>
+                    @endif
                 </div>
             @else
                 <!-- Initial Appeal Form -->
                 <div style="border-top: 1px solid #f1f5f9; padding-top: 18px;">
-                    <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
-                        <i class="fas fa-file-signature" style="color: #5A5BF1;"></i> Ajukan Banding Penangguhan Akun
-                    </h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0;">
+                            <i class="fas fa-file-signature" style="color: #5A5BF1;"></i> Ajukan Banding Penangguhan Akun
+                        </h3>
+                        <span style="font-size: 11px; font-weight: 800; background: #EEF0FE; color: #5A5BF1; padding: 2px 8px; border-radius: 6px;">Kesempatan 1/3</span>
+                    </div>
                     <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-                        Jika Anda merasa penangguhan ini adalah kekeliruan atau telah menyelesaikan masalah terkait, silakan kirimkan surat permohonan banding ke Admin Platform:
+                        Jika Anda merasa penangguhan ini adalah kekeliruan atau telah menyelesaikan masalah terkait, silakan kirimkan surat permohonan banding ke Admin Platform (Maksimal 3 kali pengajuan):
                     </p>
                     <form action="{{ route('admin.appeal.store') }}" method="POST">
                         @csrf

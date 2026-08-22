@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/berandaplatform.css') }}">
 </head>
 <body>
@@ -23,6 +24,7 @@
                 <h1>{{ __('platform.dashboard') }}</h1>
             </div>
             <div class="header-right">
+                @include('platformadmin.partials.notifications')
                 <div class="header-user">
                     <div class="header-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
                     <span>{{ Auth::user()->name }}</span>
@@ -205,6 +207,7 @@
             csrfToken: '{{ csrf_token() }}'
         };
     </script>
+    <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
 </body>
 </html>
