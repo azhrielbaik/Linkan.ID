@@ -188,7 +188,13 @@ function toggleProfileEditForm(forceOpen = false) {
         formBody.style.maxHeight = (formBody.scrollHeight + 600) + 'px';
         formBody.style.opacity = '1';
         if (btnText) btnText.innerText = 'Tutup';
-    }
+        setTimeout(() => {
+            const block = formBody.closest('.draggable-element-block') || formBody.closest('.profile-block-wrapper') || formBody;
+            if (block) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
+}
 }
 
 
@@ -801,7 +807,13 @@ function toggleImageEditForm(elementId, forceOpen = false) {
         formBody.style.maxHeight = (formBody.scrollHeight + 500) + 'px';
         formBody.style.opacity = '1';
         if (btnText) btnText.innerText = 'Tutup';
-    }
+        setTimeout(() => {
+            const block = formBody.closest('.draggable-element-block') || formBody.closest('.profile-block-wrapper') || formBody;
+            if (block) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
+}
 }
 
 
@@ -883,6 +895,12 @@ function toggleDividerEditForm(id, forceOpen = false) {
         if (btnText) {
             btnText.innerText = 'Tutup';
         }
+        setTimeout(() => {
+            const block = formBody.closest('.draggable-element-block') || formBody.closest('.profile-block-wrapper') || formBody;
+            if (block) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
     }
 }
 
@@ -1088,7 +1106,13 @@ function toggleTextEditForm(id, forceOpen = false) {
         formBody.style.maxHeight = (formBody.scrollHeight + 300) + 'px'; // +300 for editor flexibility
         formBody.style.opacity = '1';
         if (btnText) btnText.innerText = 'Tutup';
-    }
+        setTimeout(() => {
+            const block = formBody.closest('.draggable-element-block') || formBody.closest('.profile-block-wrapper') || formBody;
+            if (block) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
+}
 }
 
 function execCmd(id, command, value = null) {
