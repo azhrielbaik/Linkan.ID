@@ -147,6 +147,18 @@
             text-align: center;
         }
 
+        .status-box {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
         /* Right Side: Orange Mockup */
         .mockup-side {
             flex: 1;
@@ -203,6 +215,12 @@
                     <span class="user-email">{{ $email }}</span>
                 </p>
 
+                @if (session('status'))
+                    <div class="status-box">
+                        <i class="fas fa-check-circle" style="margin-right: 4px;"></i> {{ session('status') }}
+                    </div>
+                @endif
+
                 @if (isset($errors) && $errors->any())
                     <div class="error-box">
                         {{ $errors->first() }}
@@ -246,9 +264,6 @@
             document.getElementById('digit-4')
         ];
         const fullOtpInput = document.getElementById('fullOtpInput');
-        const checkStatusUrl = "{{ route('password.otp.status') }}";
-        const userEmail = "{{ $email }}";
-        let isApproved = false;
 
         function updateFullOtp() {
             const val = digits.map(d => d.value).join('');
@@ -272,7 +287,7 @@
                 }
             });
 
-            // Handle paste
+            // Handle paste 4-digit code
             input.addEventListener('paste', (e) => {
                 e.preventDefault();
                 const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
@@ -284,29 +299,6 @@
                     digits[3].focus();
                 }
             });
-        });
-
-        // Polling approval from Admin Platform to auto-fill the 4 digits
-        function checkAdminApproval() {
-            if (isApproved) return;
-
-            fetch(`${checkStatusUrl}?email=${encodeURIComponent(userEmail)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'approved' && data.otp_code && data.otp_code.length === 4) {
-                        isApproved = true;
-                        data.otp_code.split('').forEach((char, i) => {
-                            if (digits[i]) digits[i].value = char;
-                        });
-                        updateFullOtp();
-                    }
-                })
-                .catch(err => console.warn('Polling status error:', err));
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAdminApproval();
-            setInterval(checkAdminApproval, 2500);
         });
 
         document.getElementById('otpForm').addEventListener('submit', (e) => {

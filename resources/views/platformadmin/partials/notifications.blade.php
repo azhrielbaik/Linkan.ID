@@ -20,7 +20,6 @@
                 <button type="button" class="notif-tab" onclick="filterPlatformNotif('product', this)">Produk</button>
                 <button type="button" class="notif-tab" onclick="filterPlatformNotif('payout', this)">Payout</button>
                 <button type="button" class="notif-tab" onclick="filterPlatformNotif('appeal', this)">Banding</button>
-                <button type="button" class="notif-tab" onclick="filterPlatformNotif('reset_request', this)">Reset PW</button>
             </div>
 
             <div class="notif-scroll-area" id="platformNotifList">
@@ -40,10 +39,6 @@
                 <span class="dot">&bull;</span>
                 <a href="{{ route('platform-admin.users', ['view' => 'appeals']) }}">
                     <i class="fas fa-shield-alt"></i> Banding
-                </a>
-                <span class="dot">&bull;</span>
-                <a href="{{ route('platform-admin.users', ['view' => 'reset_requests']) }}">
-                    <i class="fas fa-key"></i> Reset PW
                 </a>
             </div>
         </div>

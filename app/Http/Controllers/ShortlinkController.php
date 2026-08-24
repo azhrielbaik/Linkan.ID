@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Shortlink;
 use App\Models\ShortlinkClick;
+use App\Services\ActivityLogger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -122,13 +123,21 @@ class ShortlinkController extends Controller
             'destination' => 'required|url',
         ]);
 
-        Shortlink::create([
+        $createdShortlink = Shortlink::create([
             'user_id' => $user->getKey(),
             'title' => $request->title,
             'description' => $request->description,
             'slug' => $request->slug,
             'destination' => $request->destination,
         ]);
+
+        // Catat Log Pembuatan Shortlink
+        ActivityLogger::log(
+            'create_shortlink',
+            "Seller {$user->name} membuat shortlink baru: '{$createdShortlink->slug}' diarahkan ke {$createdShortlink->destination}",
+            ['slug' => $createdShortlink->slug, 'destination' => $createdShortlink->destination],
+            $user->id
+        );
 
         // return back()->with('success', 'Shortlink berhasil dibuat: https://Linkan.id/' . $request->slug);
 
@@ -142,6 +151,7 @@ class ShortlinkController extends Controller
     public function update(Request $request, Shortlink $shortlink)
     {
         $shortlink = $this->ownedShortlink($request, $shortlink);
+        $user = $request->user();
 
         $request->validate([
             'title' => 'nullable|string|max:255',
@@ -156,6 +166,14 @@ class ShortlinkController extends Controller
             'password' => $request->password,
             'expires_at' => $request->expires_at,
         ]);
+
+        // Catat Log Update Shortlink
+        ActivityLogger::log(
+            'update_shortlink',
+            "Seller " . ($user->name ?? 'Seller') . " memperbarui shortlink: '{$shortlink->slug}'",
+            ['slug' => $shortlink->slug, 'shortlink_id' => $shortlink->id],
+            $user->id ?? null
+        );
 
         return back()->with('success', 'Shortlink berhasil diperbarui.');
     }

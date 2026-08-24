@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreDigitalProductRequest;
 use App\Http\Requests\UpdateDigitalProductRequest;
-use App\Models\DigitalProduct;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Midtrans\Snap;
-use App\Models\Transaction;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\SendDigitalProductMail;
+use App\Models\DigitalProduct;
+use App\Models\Transaction;
+use App\Services\ActivityLogger;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Midtrans\Snap;
 
 class DigitalProductController extends Controller
 {
@@ -84,7 +85,14 @@ public function show($id)
 
         $data['has_quantity_limit'] = $request->has('has_quantity_limit');
 
-        DigitalProduct::create($data);
+        $createdProduct = DigitalProduct::create($data);
+
+        // Catat Log Aktivitas Tambah Produk
+        ActivityLogger::log(
+            'create_product',
+            "Seller " . (Auth::user()->name ?? 'Seller') . " menambahkan produk digital baru: '{$createdProduct->title}'.",
+            ['product_id' => $createdProduct->id, 'title' => $createdProduct->title, 'price' => $createdProduct->price]
+        );
 
         return redirect()->route('mylinkan')->with('success', 'Digital product added successfully!');
     }
@@ -166,6 +174,13 @@ public function show($id)
 
         $product->update($data);
 
+        // Catat Log Aktivitas Update Produk
+        ActivityLogger::log(
+            'update_product',
+            "Seller " . (Auth::user()->name ?? 'Seller') . " memperbarui informasi produk digital: '{$product->title}'.",
+            ['product_id' => $product->id, 'title' => $product->title]
+        );
+
         return redirect()->route('mylinkan')->with('success', 'Produk berhasil diperbarui!');
     }
     
@@ -173,17 +188,28 @@ public function show($id)
     public function destroy($id)
     {
         $product = DigitalProduct::findOrFail($id);
+        $productTitle = $product->title;
+        $productId = $product->id;
         
         // Periksa apakah produk memiliki transaksi
         if ($product->transactions()->exists()) {
             // Jika ada transaksi, lakukan soft delete
             $product->delete();
-            return redirect()->back()->with('success', 'Produk berhasil dihapus (soft delete).');
+            $msg = 'Produk berhasil dihapus (soft delete).';
         } else {
             // Jika tidak ada transaksi, lakukan hard delete
             $product->forceDelete();
-            return redirect()->back()->with('success', 'Produk berhasil dihapus secara permanen.');
+            $msg = 'Produk berhasil dihapus secara permanen.';
         }
+
+        // Catat Log Aktivitas Hapus Produk
+        ActivityLogger::log(
+            'delete_product',
+            "Seller " . (Auth::user()->name ?? 'Seller') . " menghapus produk digital: '{$productTitle}'.",
+            ['product_id' => $productId, 'title' => $productTitle]
+        );
+
+        return redirect()->back()->with('success', $msg);
     }
 
     public function updateQty(Request $request)

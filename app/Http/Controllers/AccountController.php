@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -33,6 +34,14 @@ class AccountController extends Controller
         }
 
         $user->save();
+
+        // Catat Log Update Akun
+        ActivityLogger::log(
+            'update_account',
+            "User {$user->name} memperbarui informasi akun" . ($request->filled('password') ? " dan kata sandi" : "") . ".",
+            ['username' => $user->username, 'password_changed' => $request->filled('password')],
+            $user->id
+        );
 
         // Redirect kembali dengan pesan sukses
         return redirect()->route('admin.account')->with('success', 'Account updated successfully.');

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
-use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -60,6 +61,14 @@ class LoginController extends Controller
             RateLimiter::clear($key);
             $request->session()->regenerate();
 
+            // Catat Log Aktivitas Login
+            ActivityLogger::log(
+                'user_login',
+                "User {$user->name} ({$user->email}) berhasil login.",
+                ['role' => $user->role, 'login_type' => 'email_password'],
+                $user->id
+            );
+
             if ($user->role === 'admin_seller') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'admin_platform') {
@@ -88,6 +97,15 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if ($user = Auth::user()) {
+            ActivityLogger::log(
+                'user_logout',
+                "User {$user->name} ({$user->email}) telah logout dari sesi aktif.",
+                ['role' => $user->role],
+                $user->id
+            );
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -136,6 +154,14 @@ class LoginController extends Controller
 
             Auth::login($user);
             
+            // Catat Log Aktivitas Login Google
+            ActivityLogger::log(
+                'user_login',
+                "User {$user->name} ({$user->email}) berhasil login melalui Google OAuth.",
+                ['role' => $user->role, 'login_type' => 'google_oauth'],
+                $user->id
+            );
+
             // Redirect berdasarkan role
             if ($user->role === 'admin_seller') {
                 return redirect()->route('admin.dashboard');

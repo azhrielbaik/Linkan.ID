@@ -431,7 +431,29 @@ tbody td {
 .badge-activate { background: #dcfce7; color: #16a34a; }
 .badge-approve { background: #dcfce7; color: #15803d; }
 .badge-reject { background: #fee2e2; color: #b91c1c; }
+.badge-login { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-logout { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.badge-register { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.badge-reset-otp { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.badge-product-create { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
+.badge-product-update { background: #fae8ff; color: #86198f; border: 1px solid #f5d0fe; }
+.badge-product-delete { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-payout-req { background: #fef9c3; color: #a16207; border: 1px solid #fef08a; }
+.badge-shortlink { background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+.badge-account { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
 .badge-default { background: #fff0e2; color: #ED842C; border: 1px solid rgba(237, 132, 44, 0.2); }
+
+.user-role-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 6px;
+    text-transform: uppercase;
+}
+.role-admin { background: #fee2e2; color: #b91c1c; }
+.role-seller { background: #e0f2fe; color: #0369a1; }
 
 .desc-text {
     font-size: 13px;

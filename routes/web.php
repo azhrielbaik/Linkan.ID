@@ -225,11 +225,8 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
     Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->name('users.suspend');
     Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->name('users.activate');
-    Route::post('/users/{id}/reset-password', [PlatformAdminController::class, 'resetUserPassword'])->name('users.reset-password');
     Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->name('users.appeals.approve');
     Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->name('users.appeals.reject');
-    Route::post('/reset-requests/{id}/approve', [PlatformAdminController::class, 'approveResetRequest'])->name('reset-requests.approve');
-    Route::post('/reset-requests/{id}/reject', [PlatformAdminController::class, 'rejectResetRequest'])->name('reset-requests.reject');
 
     // Manajemen Payout (Request Withdraw & Riwayat Global)
     Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');
