@@ -643,6 +643,7 @@ function initElementDragAndDrop() {
     elementSortable = new Sortable(list, {
         animation: 150,
         handle: '.drag-handle', // Dragging is only allowed when clicking the handle icon
+        filter: '#profileBlockCard', // Prevent dragging the profile block entirely
         ghostClass: 'sortable-ghost', // Styling for drop placeholder
         onEnd: function (evt) {
             // Trigger visual sync and database save on drop
@@ -1247,9 +1248,7 @@ function removeDynamicText(id) {
     const dbId = block.getAttribute('data-db-id');
     
     if (dbId) {
-        const url = (document.getElementById('micrositeEditorUrls').dataset.routeTextStore || '/admin/elements/text') + '/' + dbId;
-        // The store url doesn't have ID, so we use string manipulation or assume /text/{id}
-        const deleteUrl = url.replace('/text', '/text/' + dbId);
+        const deleteUrl = (document.getElementById('micrositeEditorUrls').dataset.routeTextDelete || '/admin/elements/text') + '/' + dbId;
         
         fetch(deleteUrl, {
             method: 'DELETE',
@@ -1267,5 +1266,90 @@ function removeDynamicText(id) {
         block.remove();
         if (liveBlock) liveBlock.remove();
         if (typeof saveElementsOrder === 'function') saveElementsOrder();
+    }
+}
+
+// VISIBILITY TOGGLE FUNCTION
+function toggleElementVisibility(elementId, checkboxElement) {
+    const block = document.getElementById(elementId);
+    if (!block) return;
+    
+    const statusText = block.querySelector('.visibility-status-text');
+    const isActive = checkboxElement.checked;
+    
+    let liveElId = 'live_' + elementId;
+    if (block.getAttribute('data-element-type') === 'profile') {
+        liveElId = 'liveProfileSection'; // Profile has a different ID
+    }
+    const liveEl = document.getElementById(liveElId);
+    
+    // Save to database
+    if (elementId && elementId.includes('_')) {
+        const parts = elementId.split('_');
+        let elementType = parts[0]; // e.g., imageBlock, dividerBlock, textBlock
+        elementType = elementType.replace('Block', ''); // becomes image, divider, text
+        const dbId = parts[1];
+        
+        fetch('/admin/elements/toggle-visibility', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                element_type: elementType,
+                element_id: parseInt(dbId),
+                is_active: isActive
+            })
+        }).then(async response => {
+            if (!response.ok) {
+                console.error('Failed to save visibility:', await response.text());
+            }
+        }).catch(err => console.error('Error saving visibility:', err));
+    }
+    
+    if (isActive) {
+        // Change text
+        if (statusText) {
+            statusText.innerText = 'Aktif';
+            statusText.classList.remove('status-inactive');
+            statusText.classList.add('status-active');
+        }
+        
+        // Remove inactive style from block
+        block.classList.remove('block-inactive');
+        
+        // Show live element
+        if (liveEl) {
+            liveEl.style.display = 'block';
+            if (liveElId === 'liveProfileSection') {
+                liveEl.style.display = 'flex'; // Profile usually uses flex
+            }
+            setTimeout(() => { 
+                liveEl.style.transition = 'opacity 0.3s ease';
+                liveEl.style.opacity = '1'; 
+            }, 10);
+        }
+    } else {
+        // Change text
+        if (statusText) {
+            statusText.innerText = 'Tidak Aktif';
+            statusText.classList.remove('status-active');
+            statusText.classList.add('status-inactive');
+        }
+        
+        // Add inactive style to block
+        block.classList.add('block-inactive');
+        
+        // Hide live element
+        if (liveEl) {
+            liveEl.style.transition = 'opacity 0.3s ease';
+            liveEl.style.opacity = '0';
+            setTimeout(() => { 
+                if (!checkboxElement.checked) {
+                    liveEl.style.display = 'none'; 
+                }
+            }, 300);
+        }
     }
 }

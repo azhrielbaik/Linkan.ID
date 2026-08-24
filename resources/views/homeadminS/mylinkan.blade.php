@@ -198,14 +198,14 @@
                     </div>
 
                     <!-- DRAGGABLE ELEMENT BLOCKS LIST CONTAINER -->
-                    <div id="elementBlocksList" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div id="elementBlocksList" style="display: flex; flex-direction: column;">
                         
                         <!-- 1. PROFILE BLOCK CARD (DRAGGABLE, VISIBLE BY DEFAULT IN EDIT MODE) -->
                         <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile" class="draggable-element-block-inner">
                             
                             <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
-                                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+
                                 <div class="profile-block-icon">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
@@ -390,8 +390,11 @@
 
                         @if(isset($imageElements))
                             @foreach($imageElements as $imageEl)
-                                @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
-                                <div id="{{ $elementId }}" class="draggable-element-block existing-image-element" data-element-type="image" data-db-id="{{ $imageEl->id }}" class="draggable-element-block-inner">
+                                @php 
+                                    $elementId = 'imageBlock_' . $imageEl->id; 
+                                    $isActive = $imageEl->is_active ?? true;
+                                @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="image" data-db-id="{{ $imageEl->id }}">
                                     <div class="block-item-card" onclick="toggleImageEditForm('{{ $elementId }}')">
                                         <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
@@ -403,6 +406,16 @@
                                             </div>
                                         </div>
                                         <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <div class="element-visibility-container">
+                                                <span class="visibility-status-text {{ $isActive ? 'status-active' : 'status-inactive' }}" id="statusText_{{ $elementId }}">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="visibilitySwitch_{{ $elementId }}" onchange="toggleElementVisibility('{{ $elementId }}', this)" {{ $isActive ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicElement('{{ $elementId }}'); event.stopPropagation();" title="Hapus Elemen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                             <button type="button" onclick="toggleImageEditForm('{{ $elementId }}')" class="btn-edit-block">
                                                 <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
                                             </button>
@@ -457,8 +470,11 @@
 
                         @if(isset($dividerElements))
                             @foreach($dividerElements as $dividerEl)
-                                @php $elementId = 'dividerBlock_' . $dividerEl->id; @endphp
-                                <div id="{{ $elementId }}" class="draggable-element-block divider-block sortable-item" data-element-type="divider" data-db-id="{{ $dividerEl->id }}">
+                                @php 
+                                    $elementId = 'dividerBlock_' . $dividerEl->id; 
+                                    $isActive = $dividerEl->is_active ?? true;
+                                @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="divider" data-db-id="{{ $dividerEl->id }}">
                                     <div class="block-item-card" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}')">
                                         <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
@@ -470,6 +486,16 @@
                                             </div>
                                         </div>
                                         <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <div class="element-visibility-container">
+                                                <span class="visibility-status-text {{ $isActive ? 'status-active' : 'status-inactive' }}" id="statusText_{{ $elementId }}">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="visibilitySwitch_{{ $elementId }}" onchange="toggleElementVisibility('{{ $elementId }}', this)" {{ $isActive ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicDivider('{{ $elementId }}'); event.stopPropagation();" title="Hapus Elemen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                             <button type="button" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}')" class="btn-edit-block">
                                                 <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
                                             </button>
@@ -529,8 +555,11 @@
 
                         @if(isset($textElements) && $textElements->count() > 0)
                             @foreach($textElements as $textEl)
-                                @php $elementId = 'textBlock_' . $textEl->id; @endphp
-                                <div id="{{ $elementId }}" class="draggable-element-block" data-element-type="text" data-db-id="{{ $textEl->id }}">
+                                @php 
+                                    $elementId = 'textBlock_' . $textEl->id; 
+                                    $isActive = $textEl->is_active ?? true;
+                                @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="text" data-db-id="{{ $textEl->id }}">
                                     <div class="block-item-card" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}')">
                                         <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
@@ -542,6 +571,16 @@
                                             </div>
                                         </div>
                                         <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <div class="element-visibility-container">
+                                                <span class="visibility-status-text {{ $isActive ? 'status-active' : 'status-inactive' }}" id="statusText_{{ $elementId }}">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="visibilitySwitch_{{ $elementId }}" onchange="toggleElementVisibility('{{ $elementId }}', this)" {{ $isActive ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicText('{{ $elementId }}'); event.stopPropagation();" title="Hapus Elemen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                             <button type="button" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}')" class="btn-edit-block">
                                                 <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
                                             </button>
@@ -629,6 +668,16 @@
                     </div>
                 </div>
                 <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <div class="element-visibility-container">
+                        <span class="visibility-status-text status-active" id="statusText___ELEMENT_ID__">Aktif</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visibilitySwitch___ELEMENT_ID__" onchange="toggleElementVisibility('__ELEMENT_ID__', this)" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicElement('__ELEMENT_ID__'); event.stopPropagation();" title="Hapus Elemen">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                     <button type="button" onclick="toggleImageEditForm('__ELEMENT_ID__')" class="btn-edit-block">
                         <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
                     </button>
@@ -701,6 +750,16 @@
                     </div>
                 </div>
                 <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <div class="element-visibility-container">
+                        <span class="visibility-status-text status-active" id="statusText___ELEMENT_ID__">Aktif</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visibilitySwitch___ELEMENT_ID__" onchange="toggleElementVisibility('__ELEMENT_ID__', this)" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicDivider('__ELEMENT_ID__'); event.stopPropagation();" title="Hapus Elemen">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                     <button type="button" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('__ELEMENT_ID__')" class="btn-edit-block">
                         <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
                     </button>
@@ -776,6 +835,16 @@
                     </div>
                 </div>
                 <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <div class="element-visibility-container">
+                        <span class="visibility-status-text status-active" id="statusText___ELEMENT_ID__">Aktif</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visibilitySwitch___ELEMENT_ID__" onchange="toggleElementVisibility('__ELEMENT_ID__', this)" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicText('__ELEMENT_ID__'); event.stopPropagation();" title="Hapus Elemen">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                     <button type="button" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('__ELEMENT_ID__')" class="btn-edit-block">
                         <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
                     </button>

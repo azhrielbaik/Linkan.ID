@@ -412,7 +412,7 @@
         <!-- Right side: Image Showcase -->
         <div class="mockup-side">
             <div class="mockup-wrapper">
-                <img src="{{ asset('images/login/Group 18.png') }}" alt="Login Showcase" class="mockup-image floating-animation">
+                <img src="{{ asset('images/Login/Group 18.png') }}" alt="Login Showcase" class="mockup-image floating-animation">
             </div>
         </div>
     </div>

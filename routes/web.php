@@ -128,6 +128,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/elements/divider', [\App\Http\Controllers\DividerElementController::class, 'store'])->name('elements.divider.store');
     Route::delete('/elements/divider/{id}', [\App\Http\Controllers\DividerElementController::class, 'destroy'])->name('elements.divider.destroy');
     
+    // Visibility Toggle Route
+    Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');
+
     Route::post('/elements/order', [\App\Http\Controllers\ImageElementController::class, 'updateOrder'])->name('elements.order.update');
 
     // Settings (general)

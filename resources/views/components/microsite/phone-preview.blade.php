@@ -107,8 +107,11 @@
 
                                 @if(isset($imageElements))
                                     @foreach($imageElements as $imageEl)
-                                        @php $elementId = 'imageBlock_' . $imageEl->id; @endphp
-                                        <div id="live_{{ $elementId }}" class="live-image-element" style="cursor: pointer;" onclick="if(typeof toggleImageEditForm === 'function') toggleImageEditForm('{{ $elementId }}', true);">
+                                        @php 
+                                            $elementId = 'imageBlock_' . $imageEl->id; 
+                                            $isActive = $imageEl->is_active ?? true;
+                                        @endphp
+                                        <div id="live_{{ $elementId }}" class="live-image-element" style="cursor: pointer; display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleImageEditForm === 'function') toggleImageEditForm('{{ $elementId }}', true);">
                                             <a id="liveLink_{{ $elementId }}" class="live-image-link" style="pointer-events: none;">
                                                 <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" class="live-image-img">
                                             </a>
@@ -123,8 +126,9 @@
                                             $padding = $dividerEl->type === 'line' ? ($dividerEl->size / 2) . 'px 0' : '0';
                                             $height = $dividerEl->type === 'line' ? '0' : $dividerEl->size . 'px';
                                             $border = $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none';
+                                            $isActive = $dividerEl->is_active ?? true;
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-divider-wrapper" style="padding: {{ $padding }};" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}', true);">
+                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-divider-wrapper" style="padding: {{ $padding }}; display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}', true);">
                                             <div id="liveDivider_{{ $elementId }}" class="live-divider-inner" style="border-top: {{ $border }}; height: {{ $height }};"></div>
                                         </div>
                                     @endforeach
@@ -132,8 +136,11 @@
 
                                 @if(isset($textElements))
                                     @foreach($textElements as $textEl)
-                                        @php $elementId = 'textBlock_' . $textEl->id; @endphp
-                                        <div id="live_{{ $elementId }}" class="live-text-element" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}', true);">
+                                        @php 
+                                            $elementId = 'textBlock_' . $textEl->id; 
+                                            $isActive = $textEl->is_active ?? true;
+                                        @endphp
+                                        <div id="live_{{ $elementId }}" class="live-text-element" style="display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}', true);">
                                             {!! $textEl->content !!}
                                         </div>
                                     @endforeach

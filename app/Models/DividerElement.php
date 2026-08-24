@@ -9,11 +9,13 @@ class DividerElement extends Model
 {
     use HasFactory;
 
+    protected $casts = ['is_active' => 'boolean'];
+
     protected $fillable = [
         'user_id',
         'type',
         'size',
-        'order_position'
+        'order_position', 'is_active'
     ];
 
     public function user()

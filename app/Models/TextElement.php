@@ -9,10 +9,12 @@ class TextElement extends Model
 {
     use HasFactory;
 
+    protected $casts = ['is_active' => 'boolean'];
+
     protected $fillable = [
         'user_id',
         'content',
-        'order_position'
+        'order_position', 'is_active'
     ];
 
     public function user()

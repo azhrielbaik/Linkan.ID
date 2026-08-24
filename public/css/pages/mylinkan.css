@@ -2562,6 +2562,118 @@ font[face="Verdana"] {
     font-size: 10px;
 }
 
+/* Custom Element Action Buttons (Toggle & Delete) */
+.btn-element-action {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    color: #9ca3af;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.btn-element-action:hover {
+    background: transparent;
+    color: #4b5563;
+}
+
+/* Custom Visibility Switch */
+.element-visibility-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 8px;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 12px;
+}
+
+.visibility-status-text {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+.visibility-status-text.status-active {
+    background-color: #ffffff;
+    color: #0f766e; /* Teal dark text */
+    border: 1px solid #ccfbf1; /* Very light teal border */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.visibility-status-text.status-inactive {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 18px;
+    margin: 0;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #d1d5db;
+    transition: .3s;
+    border-radius: 18px;
+}
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #10B981;
+}
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(14px);
+}
+
+.draggable-element-block.block-inactive {
+    opacity: 0.5;
+    background-color: #f9fafb;
+    transition: all 0.3s ease;
+}
+
+.btn-element-action.btn-delete-icon {
+    background: transparent;
+    border: none;
+}
+
+.btn-element-action.btn-delete-icon:hover {
+    background: transparent;
+    color: #B91C1C;
+    border: none;
+}
+
+
 .edit-form-body {
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3224,4 +3336,30 @@ input:checked+.segment-btn {
     word-break: break-word;
     color: #1e293b;
     font-size: 16px;
+}
+/* Responsive adjustments for element actions */
+@media (max-width: 768px) {
+    /* Hide active/inactive text on mobile to save space */
+    .element-visibility-container .visibility-status-text {
+        display: none !important;
+    }
+    
+    /* Remove padding/margin separating text from switch if any */
+    .element-visibility-container {
+        padding-right: 8px;
+        margin-right: 4px;
+        gap: 0;
+    }
+    
+    /* Hide "Edit" text inside edit buttons on mobile, leaving only the icon */
+    .block-item-actions .btn-edit-block span,
+    .block-item-actions .btn-profile-edit span {
+        display: none !important;
+    }
+    
+    /* Adjust edit button padding if needed for icon-only look on mobile */
+    .block-item-actions .btn-edit-block,
+    .block-item-actions .btn-profile-edit {
+        padding: 4px 8px; /* Or whatever makes it look good as an icon button */
+    }
 }
