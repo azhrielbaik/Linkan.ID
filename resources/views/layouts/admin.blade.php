@@ -358,6 +358,9 @@
                             <a href="{{ route('admin.account') }}">
                                 <i class="fas fa-user-circle"></i> Profile
                             </a>
+                            <a href="{{ route('admin.tickets.index') }}">
+                                <i class="fas fa-headset" style="color: #DE6C20;"></i> Pusat Bantuan
+                            </a>
                             <a href="{{ route('admin.settings') }}">
                                 <i class="fas fa-cog"></i> Settings
                             </a>

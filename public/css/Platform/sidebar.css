@@ -204,7 +204,7 @@
     border-radius: 12px;
     transition: all 0.2s ease;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     letter-spacing: -0.2px;
 }
 
@@ -220,7 +220,7 @@
 .sidebar a i {
     margin-right: 14px;
     width: 24px;
-    font-size: 18px;
+    font-size: 19px;
     text-align: center;
     color: #000000;
     transition: color 0.2s ease;
@@ -258,7 +258,7 @@
     border-radius: 12px;
     transition: all 0.2s ease;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -269,7 +269,7 @@
 
 .sidebar .marketing-tools form button i {
     width: 24px;
-    font-size: 18px;
+    font-size: 19px;
     text-align: center;
     margin-right: 14px;
     color: #000000;

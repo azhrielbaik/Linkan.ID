@@ -188,6 +188,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::get('/{shortlink}/analytics', [ShortlinkController::class, 'analytics'])->name('analytics');
         Route::get('/{shortlink}/analytics/chart', [ShortlinkController::class, 'analyticsChart'])->name('analytics.chart');
     });
+
+    // Support Tickets (Seller Helpdesk)
+    Route::prefix('tickets')->name('tickets.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SupportTicketController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\SupportTicketController::class, 'store'])->name('store');
+        Route::get('/{id}', [\App\Http\Controllers\SupportTicketController::class, 'show'])->name('show');
+        Route::post('/{id}/reply', [\App\Http\Controllers\SupportTicketController::class, 'reply'])->name('reply');
+    });
 });
 
 /*
@@ -227,6 +235,14 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->name('users.activate');
     Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->name('users.appeals.approve');
     Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->name('users.appeals.reject');
+
+    // Pusat Bantuan / Support Tickets (Platform Admin)
+    Route::prefix('tickets')->name('tickets.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'show'])->name('show');
+        Route::post('/{id}/reply', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'reply'])->name('reply');
+        Route::post('/{id}/status', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'updateStatus'])->name('status');
+    });
 
     // Manajemen Payout (Request Withdraw & Riwayat Global)
     Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');

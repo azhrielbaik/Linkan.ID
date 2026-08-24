@@ -120,6 +120,8 @@
                             <option value="request_payout" {{ ($action ?? '') === 'request_payout' ? 'selected' : '' }}>Pengajuan Payout / Withdraw</option>
                             <option value="create_shortlink" {{ ($action ?? '') === 'create_shortlink' ? 'selected' : '' }}>Buat Shortlink</option>
                             <option value="update_shortlink" {{ ($action ?? '') === 'update_shortlink' ? 'selected' : '' }}>Update Shortlink</option>
+                            <option value="create_support_ticket" {{ ($action ?? '') === 'create_support_ticket' ? 'selected' : '' }}>Buat Tiket Bantuan</option>
+                            <option value="reply_support_ticket" {{ ($action ?? '') === 'reply_support_ticket' ? 'selected' : '' }}>Balas Tiket (Seller)</option>
                         </optgroup>
                         <optgroup label="Aksi Admin Platform">
                             <option value="suspend_user" {{ ($action ?? '') === 'suspend_user' ? 'selected' : '' }}>Suspend User</option>
@@ -128,6 +130,8 @@
                             <option value="reject_product" {{ ($action ?? '') === 'reject_product' ? 'selected' : '' }}>Reject Produk</option>
                             <option value="approve_payout" {{ ($action ?? '') === 'approve_payout' ? 'selected' : '' }}>Approve Payout</option>
                             <option value="reject_payout" {{ ($action ?? '') === 'reject_payout' ? 'selected' : '' }}>Reject Payout</option>
+                            <option value="admin_reply_ticket" {{ ($action ?? '') === 'admin_reply_ticket' ? 'selected' : '' }}>Balas Tiket (Admin)</option>
+                            <option value="update_ticket_status" {{ ($action ?? '') === 'update_ticket_status' ? 'selected' : '' }}>Update Status Tiket</option>
                             <option value="update_platform_settings" {{ ($action ?? '') === 'update_platform_settings' ? 'selected' : '' }}>Update Setting Platform</option>
                             <option value="create_broadcast" {{ ($action ?? '') === 'create_broadcast' ? 'selected' : '' }}>Kirim Broadcast</option>
                         </optgroup>
@@ -288,6 +292,26 @@
                                                 $badgeClass = 'badge-reject';
                                                 $icon = 'times-circle';
                                                 $label = 'Reject Payout';
+                                                break;
+                                            case 'create_support_ticket':
+                                                $badgeClass = 'badge-reset-otp';
+                                                $icon = 'headset';
+                                                $label = 'Buat Tiket';
+                                                break;
+                                            case 'reply_support_ticket':
+                                                $badgeClass = 'badge-shortlink';
+                                                $icon = 'comment-dots';
+                                                $label = 'Balas Tiket';
+                                                break;
+                                            case 'admin_reply_ticket':
+                                                $badgeClass = 'badge-approve';
+                                                $icon = 'reply';
+                                                $label = 'Balas Tiket';
+                                                break;
+                                            case 'update_ticket_status':
+                                                $badgeClass = 'badge-activate';
+                                                $icon = 'tasks';
+                                                $label = 'Status Tiket';
                                                 break;
                                             case 'update_platform_settings':
                                                 $badgeClass = 'badge-default';
