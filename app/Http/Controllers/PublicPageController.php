@@ -57,7 +57,8 @@ class PublicPageController extends Controller
         $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->where('is_active', true)->get();
         $textElements = \App\Models\TextElement::where('user_id', $user->id)->where('is_active', true)->get();
         $videoElements = \App\Models\VideoElement::where('user_id', $user->id)->where('is_active', true)->get();
+        $socialMediaElements = \App\Models\SocialMediaElement::where('user_id', $user->id)->where('is_active', true)->get();
 
-        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements', 'videoElements'));
+        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements'));
     }
 }

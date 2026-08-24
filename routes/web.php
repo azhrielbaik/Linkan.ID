@@ -132,6 +132,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/elements/video', [\App\Http\Controllers\VideoElementController::class, 'store'])->name('elements.video.store');
     Route::put('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'update'])->name('elements.video.update');
     Route::delete('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'destroy'])->name('elements.video.destroy');
+
+    // Social Media Element
+    Route::post('/elements/social', [\App\Http\Controllers\SocialMediaElementController::class, 'store'])->name('elements.social.store');
+    Route::put('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'update'])->name('elements.social.update');
+    Route::delete('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'destroy'])->name('elements.social.destroy');
     
     // Visibility Toggle Route
     Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');

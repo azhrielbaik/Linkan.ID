@@ -24,6 +24,7 @@ class AdminController extends Controller
         $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
         $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
         $videoElements = \App\Models\VideoElement::where('user_id', $user->id)->get();
+        $socialMediaElements = \App\Models\SocialMediaElement::where('user_id', $user->id)->get();
 
         // Total page views for user's microsite
         $totalViews = \Illuminate\Support\Facades\DB::table('link_views')
@@ -43,6 +44,7 @@ class AdminController extends Controller
             'dividerElements',
             'textElements',
             'videoElements',
+            'socialMediaElements',
             'totalViews',
             'totalProducts',
             'totalShortlinks',

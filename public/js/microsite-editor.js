@@ -458,6 +458,9 @@ function saveElementsOrder() {
         } else if (type === 'video') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('video_' + dbId);
+        } else if (type === 'social') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('social_' + dbId);
         }
     });
 
@@ -508,6 +511,9 @@ function initPageEvents() {
             } else if (blockId.startsWith('video_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="video"]`);
+            } else if (blockId.startsWith('social_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
             }
             if (el) {
                 list.appendChild(el);
@@ -677,7 +683,7 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video') {
+        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video' || type === 'social') {
             const liveElement = document.getElementById('live_' + block.id);
             if (liveElement) {
                 phoneContent.appendChild(liveElement);
@@ -1599,5 +1605,334 @@ function toggleElementVisibility(elementId, checkboxElement) {
                 }
             }, 300);
         }
+    }
+}
+
+// SOCIAL MEDIA ELEMENT LOGIC
+function addSocialMediaElement() {
+    if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    const tempId = 'socialBlock_' + Date.now();
+    const list = document.getElementById('elementBlocksList');
+    
+    let blockTemplate = document.getElementById('social-block-template').innerHTML;
+    blockTemplate = blockTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    list.insertAdjacentHTML('beforeend', blockTemplate);
+    
+    let liveTemplate = document.getElementById('social-live-template').innerHTML;
+    liveTemplate = liveTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    
+    // Insert live template before the preview-url-browser-bar or at end of container
+    const previewContainer = document.querySelector('.mockup-phone-display');
+    if (previewContainer) {
+        const gestureBar = previewContainer.querySelector('.mockup-home-gesture-wrapper');
+        if (gestureBar) {
+            gestureBar.insertAdjacentHTML('beforebegin', liveTemplate);
+        } else {
+            previewContainer.insertAdjacentHTML('beforeend', liveTemplate);
+        }
+    }
+
+    saveElementsOrder();
+    
+    setTimeout(() => {
+        toggleSocialEditForm(tempId);
+    }, 100);
+}
+
+function toggleSocialEditForm(elementId, isFromPreview = false) {
+    // Determine the actual elementId if prefix varies
+    let blockId = elementId;
+    if(elementId.startsWith('live_')) blockId = elementId.substring(5);
+
+    // If coming from preview click, smoothly scroll the edit panel into view
+    if(isFromPreview) {
+        const blockEl = document.getElementById(blockId);
+        if(blockEl) {
+            blockEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    const formBody = document.getElementById('formBody_' + blockId);
+    const formElement = document.getElementById('socialForm_' + blockId);
+    if (!formBody) return;
+
+    if (formBody.style.maxHeight === '0px' || formBody.style.maxHeight === '0' || formBody.style.maxHeight === '') {
+        // Expand
+        formBody.style.maxHeight = (formBody.scrollHeight + 500) + 'px';
+        formBody.style.opacity = '1';
+        formBody.style.marginTop = '12px';
+        
+        // Highlight active card
+        document.querySelectorAll('.block-item-card.active').forEach(el => {
+            el.classList.remove('active');
+        });
+        const card = document.getElementById(blockId).querySelector('.block-item-card');
+        if (card) card.classList.add('active');
+
+        // Populate form if data-db-id exists
+        const blockEl = document.getElementById(blockId);
+        const dbId = blockEl.getAttribute('data-db-id');
+        if (dbId) {
+            // Already saved in DB, logic to populate inputs from live preview DOM if needed
+            // Currently values are set in HTML template directly during page load
+        }
+    } else {
+        // Collapse
+        formBody.style.maxHeight = '0';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0';
+        
+        const card = document.getElementById(blockId).querySelector('.block-item-card');
+        if (card) card.classList.remove('active');
+    }
+}
+
+function toggleSocialInput(elementId, platform) {
+    const isChecked = document.getElementById('toggle_' + platform + '_' + elementId).checked;
+    const inputContainer = document.getElementById('input_container_' + platform + '_' + elementId);
+    
+    if (isChecked) {
+        inputContainer.style.display = 'block';
+    } else {
+        inputContainer.style.display = 'none';
+        document.getElementById('input_' + platform + '_' + elementId).value = '';
+    }
+    
+    updateSocialPreview(elementId);
+}
+
+function updateSocialPreview(elementId) {
+    const liveContainer = document.getElementById('liveSocialContainer_' + elementId);
+    if (!liveContainer) return;
+    
+    const availableIcons = {
+        'instagram': {icon: 'fab fa-instagram', color: '#E1306C'},
+        'facebook': {icon: 'fab fa-facebook', color: '#1877F2'},
+        'youtube': {icon: 'fab fa-youtube', color: '#FF0000'},
+        'whatsapp': {icon: 'fab fa-whatsapp', color: '#25D366'},
+        'telegram': {icon: 'fab fa-telegram', color: '#0088cc'},
+        'tiktok': {icon: 'fab fa-tiktok', color: '#000000'},
+        'twitter': {icon: 'fab fa-x-twitter', color: '#000000'},
+        'email': {icon: 'fas fa-envelope', color: '#ea4335'}
+    };
+    
+    let html = '';
+    const inputs = document.querySelectorAll(`#social_platforms_list_${elementId} .platform-input-trigger`);
+    
+    inputs.forEach(input => {
+        const plat = input.getAttribute('data-platform');
+        
+        if (availableIcons[plat]) {
+            let url = input.value.trim();
+            if (url === '') {
+                url = 'javascript:void(0)';
+            } else {
+                if (plat === 'email' && !url.startsWith('mailto:')) {
+                    url = 'mailto:' + url;
+                } else if (plat === 'whatsapp') {
+                    url = 'https://wa.me/' + url.replace(/[^0-9]/g, '');
+                }
+            }
+            
+            html += `<a href="${url}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: ${availableIcons[plat].color}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                        <i class="${availableIcons[plat].icon}" style="font-size: 32px;"></i>
+                     </a>`;
+        }
+    });
+    
+    liveContainer.innerHTML = html;
+    
+    const liveWrapper = document.getElementById('live_' + elementId);
+    if (liveWrapper) {
+        liveWrapper.style.display = html !== '' ? 'block' : 'none';
+    }
+}
+
+function saveDynamicSocialMedia(elementId) {
+    const blockEl = document.getElementById(elementId);
+    const dbId = blockEl.getAttribute('data-db-id');
+    const urls = document.getElementById('micrositeEditorUrls');
+    const storeUrl = urls.getAttribute('data-route-social-store');
+    
+    const platformsData = {};
+    const inputs = document.querySelectorAll(`#social_platforms_list_${elementId} .platform-input-trigger`);
+    
+    inputs.forEach(input => {
+        const plat = input.getAttribute('data-platform');
+        if (input.value.trim() !== '') {
+            platformsData[plat] = input.value.trim();
+        }
+    });
+
+    const btnSubmit = blockEl.querySelector('.btn-submit');
+    const originalText = btnSubmit.innerHTML;
+    btnSubmit.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Menyimpan...';
+    btnSubmit.disabled = true;
+
+    fetch(storeUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            element_id: dbId,
+            platforms: platformsData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        btnSubmit.innerHTML = originalText;
+        btnSubmit.disabled = false;
+        
+        if (data.success) {
+            if (!dbId && data.id) {
+                blockEl.setAttribute('data-db-id', data.id);
+            }
+            
+            toggleSocialEditForm(elementId);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: 'Media sosial berhasil disimpan',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
+            updateSocialPreview(elementId);
+            saveElementsOrder();
+        } else {
+            Swal.fire('Error', 'Gagal menyimpan media sosial', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        btnSubmit.innerHTML = originalText;
+        btnSubmit.disabled = false;
+        Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+    });
+}
+
+function removeDynamicSocialMedia(elementId) {
+    const blockEl = document.getElementById(elementId);
+    const dbId = blockEl.getAttribute('data-db-id');
+    const urls = document.getElementById('micrositeEditorUrls');
+    const deleteUrl = urls.getAttribute('data-route-social-delete');
+
+    if (!dbId) {
+        blockEl.remove();
+        const liveEl = document.getElementById('live_' + elementId);
+        if(liveEl) liveEl.remove();
+        saveElementsOrder();
+        return;
+    }
+
+    // Show delete confirmation
+    window.confirmDeleteCallback = function() {
+        const icon = blockEl.querySelector('.btn-delete-icon');
+        const oldHtml = icon.innerHTML;
+        icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        icon.disabled = true;
+
+        fetch(`${deleteUrl}/${dbId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                blockEl.remove();
+                const liveEl = document.getElementById('live_' + elementId);
+                if(liveEl) liveEl.remove();
+                saveElementsOrder();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Dihapus',
+                    text: 'Elemen media sosial berhasil dihapus',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                icon.innerHTML = oldHtml;
+                icon.disabled = false;
+                Swal.fire('Error', 'Gagal menghapus elemen', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            icon.innerHTML = oldHtml;
+            icon.disabled = false;
+            Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+        });
+    };
+
+    const modal = document.getElementById('customDeleteConfirmModal');
+    const title = document.getElementById('customDeleteConfirmTitle');
+    title.textContent = "Apakah Anda yakin ingin menghapus elemen media sosial ini?";
+    modal.classList.add('active');
+}
+// NEW SOCIAL MEDIA LOGIC
+function openSocialPlatformSelector(elementId) {
+    window.currentSocialElementId = elementId;
+    const modal = document.getElementById('socialPlatformModal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeSocialPlatformSelector() {
+    const modal = document.getElementById('socialPlatformModal');
+    if (modal) modal.classList.remove('active');
+    window.currentSocialElementId = null;
+}
+
+function addSocialPlatformToForm(elementId, platform) {
+    // Check if it already exists
+    if (document.getElementById('platform_item_' + platform + '_' + elementId)) {
+        closeSocialPlatformSelector();
+        return; // Already added
+    }
+
+    const availablePlatforms = {
+        'instagram': {icon: 'fab fa-instagram', color: '#E1306C', name: 'Instagram', label: 'URL atau Username Instagram', placeholder: 'contoh: https://instagram.com/username'},
+        'facebook': {icon: 'fab fa-facebook', color: '#1877F2', name: 'Facebook', label: 'URL Facebook', placeholder: 'contoh: https://facebook.com/username'},
+        'youtube': {icon: 'fab fa-youtube', color: '#FF0000', name: 'YouTube', label: 'URL Channel YouTube', placeholder: 'contoh: https://youtube.com/c/username'},
+        'whatsapp': {icon: 'fab fa-whatsapp', color: '#25D366', name: 'WhatsApp', label: 'Nomor WhatsApp (dengan kode negara)', placeholder: 'contoh: 628123456789'},
+        'telegram': {icon: 'fab fa-telegram', color: '#0088cc', name: 'Telegram', label: 'Username Telegram (tanpa @)', placeholder: 'contoh: username_anda'},
+        'tiktok': {icon: 'fab fa-tiktok', color: '#000000', name: 'TikTok', label: 'Username atau URL TikTok', placeholder: 'contoh: https://tiktok.com/@username'},
+        'twitter': {icon: 'fab fa-x-twitter', color: '#000000', name: 'X (Twitter)', label: 'URL atau Username X (Twitter)', placeholder: 'contoh: https://x.com/username'},
+        'email': {icon: 'fas fa-envelope', color: '#ea4335', name: 'Email', label: 'Alamat Email', placeholder: 'contoh: email@anda.com'},
+    };
+
+    const plat = availablePlatforms[platform];
+    if (!plat) return;
+
+    let template = document.getElementById('social-platform-item-template').innerHTML;
+    template = template.replace(/__ELEMENT_ID__/g, elementId);
+    template = template.replace(/__PLATFORM__/g, platform);
+    template = template.replace(/__ICON_CLASS__/g, plat.icon);
+    template = template.replace(/__COLOR__/g, plat.color);
+    template = template.replace(/__PLATFORM_NAME__/g, plat.name);
+    template = template.replace(/__LABEL__/g, plat.label);
+    template = template.replace(/__PLACEHOLDER__/g, plat.placeholder);
+
+    const list = document.getElementById('social_platforms_list_' + elementId);
+    if (list) {
+        list.insertAdjacentHTML('beforeend', template);
+    }
+    
+    closeSocialPlatformSelector();
+    
+    // update preview container immediately (even though empty, it sets up layout)
+    updateSocialPreview(elementId);
+}
+
+function removeSocialPlatformFromForm(elementId, platform) {
+    const item = document.getElementById('platform_item_' + platform + '_' + elementId);
+    if (item) {
+        item.remove();
+        updateSocialPreview(elementId);
     }
 }

@@ -14,7 +14,7 @@ class ElementVisibilityController extends Controller
     public function toggle(Request $request)
     {
         $request->validate([
-            'element_type' => 'required|string|in:image,divider,text,video',
+            'element_type' => 'required|string|in:image,divider,text,video,social',
             'element_id' => 'required|integer',
             'is_active' => 'required|boolean'
         ]);
@@ -33,6 +33,8 @@ class ElementVisibilityController extends Controller
             $element = TextElement::where('user_id', $userId)->find($id);
         } elseif ($type === 'video') {
             $element = VideoElement::where('user_id', $userId)->find($id);
+        } elseif ($type === 'social') {
+            $element = \App\Models\SocialMediaElement::where('user_id', $userId)->find($id);
         }
 
         if (!$element) {

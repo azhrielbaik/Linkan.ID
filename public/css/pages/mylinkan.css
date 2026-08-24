@@ -3488,3 +3488,67 @@ input:checked+.segment-btn {
 .edit-form-content {
     padding: 20px;
 }
+/* Social Media Element Styles */
+.social-edit-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.social-platforms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.social-platform-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+.social-platform-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.platform-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.platform-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.platform-name {
+    font-weight: 600;
+    color: #334155;
+    font-size: 14px;
+}
+.platform-input-container {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #cbd5e1;
+}
+.btn-remove-platform {
+    background: #fee2e2;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-remove-platform:hover {
+    background: #fecaca;
+    transform: scale(1.05);
+}
+.social-platform-item {
+    margin-bottom: 12px;
+}
+.platform-input-container {
+    display: block !important;
+}

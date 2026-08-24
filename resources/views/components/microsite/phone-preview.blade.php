@@ -1,4 +1,4 @@
-@props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements'])
+@props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements'])
 
 <div class="editor-sticky-preview clean-sticky-preview">
                 <!-- SECTION TITLE -->
@@ -179,6 +179,38 @@
                                                         Masukkan URL YouTube
                                                     </div>
                                                 @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+
+                                @if(isset($socialMediaElements))
+                                    @foreach($socialMediaElements as $socialEl)
+                                        @php 
+                                            $elementId = 'socialBlock_' . $socialEl->id; 
+                                            $isActive = $socialEl->is_active ?? true;
+                                            $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
+                                            
+                                            $availableIcons = [
+                                                'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C'],
+                                                'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2'],
+                                                'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000'],
+                                                'whatsapp' => ['icon' => 'fab fa-whatsapp', 'color' => '#25D366'],
+                                                'telegram' => ['icon' => 'fab fa-telegram', 'color' => '#0088cc'],
+                                                'tiktok' => ['icon' => 'fab fa-tiktok', 'color' => '#000000'],
+                                                'twitter' => ['icon' => 'fab fa-x-twitter', 'color' => '#000000'],
+                                                'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335'],
+                                            ];
+                                        @endphp
+                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-social-wrapper" style="display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('{{ $elementId }}', true);">
+                                            <div id="liveSocialContainer_{{ $elementId }}" class="live-social-container" style="display: flex; justify-content: center; gap: 12px; padding: 10px 0;">
+                                                @foreach($platforms as $plat => $url)
+                                                    @if(!empty($url) && isset($availableIcons[$plat]))
+                                                        <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: {{ $availableIcons[$plat]['color'] }}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 32px;"></i>
+                                                        </a>
+                                                    @endif
+                                                @endforeach
                                             </div>
                                         </div>
                                     @endforeach

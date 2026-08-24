@@ -32,7 +32,7 @@
            class="{{ (request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*')) ? 'active' : '' }}"
            style="{{ $lockStyle }}"
            @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-user' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
+            <i class="fa-solid {{ $isSuspended ? 'fa-lock' : 'fa-pager' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
         </a>
 
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.appearance') }}" 

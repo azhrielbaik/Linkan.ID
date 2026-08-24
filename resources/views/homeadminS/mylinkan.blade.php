@@ -178,13 +178,19 @@
                                 <!-- Element Option 3: Teks -->
                                 <div class="element-option-card" onclick="addTextElement()">
                                     <div class="option-card-title">Teks</div>
-                                    <div class="option-card-desc">Tambahkan teks custom</div>
+                                    <div class="option-card-desc">Tambahkan paragraf</div>
                                 </div>
 
                                 <!-- Element Option 4: Video -->
                                 <div class="element-option-card" onclick="addVideoElement()">
                                     <div class="option-card-title">Embed Video</div>
-                                    <div class="option-card-desc">Embed video dari YouTube</div>
+                                    <div class="option-card-desc">Embed video Youtube</div>
+                                </div>
+
+                                <!-- Element Option 5: Social Media -->
+                                <div class="element-option-card" onclick="addSocialMediaElement()">
+                                    <div class="option-card-title">Media Sosial</div>
+                                    <div class="option-card-desc">Tautkan akun sosial media</div>
                                 </div>
 
                             </div>
@@ -723,6 +729,107 @@
                             @endforeach
                         @endif
 
+                        @if(isset($socialMediaElements) && $socialMediaElements->count() > 0)
+                            @foreach($socialMediaElements as $socialEl)
+                                @php 
+                                    $elementId = 'socialBlock_' . $socialEl->id; 
+                                    $isActive = $socialEl->is_active ?? true;
+                                    $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
+                                @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="social" data-db-id="{{ $socialEl->id }}">
+                                    <div class="block-item-card" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('{{ $elementId }}')">
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div class="block-item-icon-wrapper">
+                                            <i class="fas fa-share-alt"></i>
+                                        </div>
+                                        <div class="block-item-content">
+                                            <div class="block-item-title-wrapper">
+                                                <span>Media Sosial</span>
+                                            </div>
+                                        </div>
+                                        <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <div class="element-visibility-container">
+                                                <span class="visibility-status-text {{ $isActive ? 'status-active' : 'status-inactive' }}" id="statusText_{{ $elementId }}">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="visibilitySwitch_{{ $elementId }}" onchange="toggleElementVisibility('{{ $elementId }}', this)" {{ $isActive ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicSocialMedia('{{ $elementId }}'); event.stopPropagation();" title="Hapus Elemen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            <button type="button" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('{{ $elementId }}')" class="btn-edit-block">
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Edit untuk Media Sosial -->
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                                        <div class="edit-form-content">
+                                            <form id="socialForm_{{ $elementId }}">
+                                                <div class="social-edit-header">
+                                                    <h4 class="form-section-title" style="margin-bottom: 5px;"><i class="fas fa-share-alt"></i> Pengaturan Media Sosial</h4>
+                                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Aktifkan platform yang ingin Anda tampilkan.</p>
+                                                </div>
+
+                                                <div class="social-platforms-list" id="social_platforms_list_{{ $elementId }}">
+                                                    @php
+                                                        $availablePlatforms = [
+                                                            'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C', 'label' => 'Instagram', 'placeholder' => 'contoh: https://instagram.com/username'],
+                                                            'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2', 'label' => 'Facebook', 'placeholder' => 'contoh: https://facebook.com/username'],
+                                                            'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000', 'label' => 'YouTube', 'placeholder' => 'contoh: https://youtube.com/c/username'],
+                                                            'whatsapp' => ['icon' => 'fab fa-whatsapp', 'color' => '#25D366', 'label' => 'WhatsApp', 'placeholder' => 'contoh: 628123456789'],
+                                                            'telegram' => ['icon' => 'fab fa-telegram', 'color' => '#0088cc', 'label' => 'Telegram', 'placeholder' => 'contoh: username_anda'],
+                                                            'tiktok' => ['icon' => 'fab fa-tiktok', 'color' => '#000000', 'label' => 'TikTok', 'placeholder' => 'contoh: https://tiktok.com/@username'],
+                                                            'twitter' => ['icon' => 'fab fa-x-twitter', 'color' => '#000000', 'label' => 'X (Twitter)', 'placeholder' => 'contoh: https://x.com/username'],
+                                                            'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335', 'label' => 'Email', 'placeholder' => 'contoh: email@anda.com'],
+                                                        ];
+                                                    @endphp
+
+                                                    @foreach($availablePlatforms as $platKey => $platInfo)
+                                                        @if(array_key_exists($platKey, $platforms) && !empty($platforms[$platKey]))
+                                                            <div class="social-platform-item" id="platform_item_{{ $platKey }}_{{ $elementId }}">
+                                                                <div class="platform-header">
+                                                                    <div class="platform-info">
+                                                                        <i class="{{ $platInfo['icon'] }}" style="color: {{ $platInfo['color'] }}; font-size: 20px; width: 24px; text-align: center;"></i>
+                                                                        <span class="platform-name">{{ $platInfo['label'] }}</span>
+                                                                    </div>
+                                                                    <button type="button" class="btn-remove-platform" onclick="removeSocialPlatformFromForm('{{ $elementId }}', '{{ $platKey }}')" title="Hapus Platform">
+                                                                        <i class="fas fa-trash-alt" style="color: #ef4444;"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="platform-input-container">
+                                                                    <label class="form-label" style="margin-top: 10px;">URL atau Username {{ $platInfo['label'] }}</label>
+                                                                    <input type="text" id="input_{{ $platKey }}_{{ $elementId }}" class="form-input platform-input-trigger" data-platform="{{ $platKey }}" data-element="{{ $elementId }}" value="{{ $platforms[$platKey] }}" placeholder="{{ $platInfo['placeholder'] }}" onkeyup="updateSocialPreview('{{ $elementId }}')" onchange="updateSocialPreview('{{ $elementId }}')">
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- ADD PLATFORM BUTTON -->
+                                                <div style="margin-top: 16px; text-align: center;">
+                                                    <button type="button" class="btn btn-outline btn-primary btn-sm" onclick="openSocialPlatformSelector('{{ $elementId }}')" style="border-radius: 8px; width: 100%; border: 1px dashed #cbd5e1; color: #64748b; background: white; padding: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.color='#64748b';">
+                                                        <i class="fas fa-plus"></i> Tambah Platform Media Sosial
+                                                    </button>
+                                                </div>
+
+                                                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                                                    <button type="button" class="btn-cancel" onclick="toggleSocialEditForm('{{ $elementId }}')">
+                                                        Batal
+                                                    </button>
+                                                    <button type="button" class="btn-submit" onclick="saveDynamicSocialMedia('{{ $elementId }}')">
+                                                        <i class="fas fa-save" style="margin-right: 6px;"></i> Simpan
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div> <!-- Closes elementBlocksList -->
                 </div> <!-- Closes digitalProductsSection -->
             </div> <!-- Closes editor-left-panel -->
@@ -1073,6 +1180,141 @@
     </template>
 
     <!-- CUSTOM DELETE CONFIRMATION MODAL -->
+
+    <template id="social-live-template">
+        <div id="live___ELEMENT_ID__" class="microsite-live-element live-social-wrapper" style="display: none;" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('__ELEMENT_ID__', true);">
+            <div id="liveSocialContainer___ELEMENT_ID__" class="live-social-container" style="display: flex; justify-content: center; gap: 12px; padding: 10px 0;">
+                <!-- Social media icons will be rendered here dynamically -->
+            </div>
+        </div>
+    </template>
+
+    <template id="social-platform-item-template">
+        <div class="social-platform-item" id="platform_item___PLATFORM_____ELEMENT_ID__">
+            <div class="platform-header">
+                <div class="platform-info">
+                    <i class="__ICON_CLASS__" style="color: __COLOR__; font-size: 20px; width: 24px; text-align: center;"></i>
+                    <span class="platform-name">__PLATFORM_NAME__</span>
+                </div>
+                <button type="button" class="btn-remove-platform" onclick="removeSocialPlatformFromForm('__ELEMENT_ID__', '__PLATFORM__')" title="Hapus Platform">
+                    <i class="fas fa-trash-alt" style="color: #ef4444;"></i>
+                </button>
+            </div>
+            <div class="platform-input-container">
+                <label class="form-label">__LABEL__</label>
+                <input type="text" id="input___PLATFORM_____ELEMENT_ID__" class="form-input platform-input-trigger" data-platform="__PLATFORM__" data-element="__ELEMENT_ID__" placeholder="__PLACEHOLDER__" onkeyup="updateSocialPreview('__ELEMENT_ID__')" onchange="updateSocialPreview('__ELEMENT_ID__')">
+            </div>
+        </div>
+    </template>
+    <template id="social-block-template">
+        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="social">
+            <div class="block-item-card" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('__ELEMENT_ID__')">
+                <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <div class="block-item-icon-wrapper">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <div class="block-item-content">
+                    <div class="block-item-title-wrapper">
+                        <span>Media Sosial</span>
+                    </div>
+                </div>
+                <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <div class="element-visibility-container">
+                        <span class="visibility-status-text status-active" id="statusText___ELEMENT_ID__">Aktif</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visibilitySwitch___ELEMENT_ID__" onchange="toggleElementVisibility('__ELEMENT_ID__', this)" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicElement('__ELEMENT_ID__'); event.stopPropagation();" title="Hapus Elemen">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button type="button" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('__ELEMENT_ID__')" class="btn-edit-block">
+                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form Edit untuk Media Sosial -->
+            <div id="editForm___ELEMENT_ID__" class="edit-form-body">
+                <div class="edit-form-content">
+                    <form id="socialForm___ELEMENT_ID__">
+                        <div class="social-edit-header">
+                            <h4 class="form-section-title" style="margin-bottom: 5px;"><i class="fas fa-share-alt"></i> Pengaturan Media Sosial</h4>
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Aktifkan platform yang ingin Anda tampilkan.</p>
+                        </div>
+
+                        <!-- PLATFORM LIST CONTAINER -->
+                        <div class="social-platforms-list" id="social_platforms_list___ELEMENT_ID__">
+                            <!-- Selected platforms will be appended here via JS -->
+                        </div>
+
+                        <!-- ADD PLATFORM BUTTON -->
+                        <div style="margin-top: 16px; text-align: center;">
+                            <button type="button" class="btn btn-outline btn-primary btn-sm" onclick="openSocialPlatformSelector('__ELEMENT_ID__')" style="border-radius: 8px; width: 100%; border: 1px dashed #cbd5e1; color: #64748b; background: white; padding: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.color='#64748b';">
+                                <i class="fas fa-plus"></i> Tambah Platform Media Sosial
+                            </button>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                            <button type="button" class="btn-cancel" onclick="toggleSocialEditForm('__ELEMENT_ID__')">
+                                Batal
+                            </button>
+                            <button type="button" class="btn-submit" onclick="saveDynamicSocialMedia('__ELEMENT_ID__')">
+                                <i class="fas fa-save" style="margin-right: 6px;"></i> Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- Social Platform Selection Modal -->
+    <div id="socialPlatformModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-box" style="max-width: 400px;">
+            <h3 class="custom-confirm-modal-title">Pilih Platform</h3>
+            <p class="custom-confirm-modal-text" style="margin-bottom: 20px;">Pilih media sosial yang ingin ditambahkan</p>
+            
+            <div class="social-platform-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'instagram')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-instagram" style="color: #E1306C; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">Instagram</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'facebook')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-facebook" style="color: #1877F2; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">Facebook</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'youtube')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-youtube" style="color: #FF0000; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">YouTube</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'whatsapp')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-whatsapp" style="color: #25D366; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">WhatsApp</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'telegram')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-telegram" style="color: #0088cc; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">Telegram</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'tiktok')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-tiktok" style="color: #000000; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">TikTok</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'twitter')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fab fa-x-twitter" style="color: #000000; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">X (Twitter)</span>
+                </button>
+                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'email')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-envelope" style="color: #ea4335; font-size: 28px;"></i>
+                    <span style="font-size: 13px; font-weight: 500;">Email</span>
+                </button>
+            </div>
+            
+            <div class="custom-confirm-modal-actions">
+                <button type="button" class="custom-confirm-btn-cancel" onclick="closeSocialPlatformSelector()">Batal</button>
+            </div>
+        </div>
+    </div>
     <div id="customDeleteConfirmModal" class="custom-confirm-modal-overlay">
         <div class="custom-confirm-modal-box">
             <button class="custom-confirm-close-btn" onclick="closeDeleteConfirmModal()">
@@ -1115,6 +1357,10 @@
     data-route-divider-store="{{ route('admin.elements.divider.store') }}"
     data-route-text-delete="{{ url('/admin/elements/text') }}"
     data-route-text-store="{{ route('admin.elements.text.store') }}"
+    data-route-video-delete="{{ url('/admin/elements/video') }}"
+    data-route-video-store="{{ route('admin.elements.video.store') }}"
+    data-route-social-delete="{{ url('/admin/elements/social') }}"
+    data-route-social-store="{{ route('admin.elements.social.store') }}"
     data-route-order-update="{{ route('admin.elements.order.update') }}"
     data-route-appearance-update="{{ route('admin.appearance.update') }}"
     data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}">
