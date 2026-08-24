@@ -1,4 +1,6 @@
-/* Platform Settings Page Styles */
+/* =========================================================
+   PLATFORM ADMIN — SETTINGS COMPLETE STYLES
+   ========================================================= */
 
 * {
     margin: 0;
@@ -8,7 +10,7 @@
 }
 
 body {
-    background-color: #f5f6fa;
+    background-color: #F6F6F6;
     color: #334155;
     display: flex;
     min-height: 100vh;
@@ -22,6 +24,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     min-width: 0;
+    background: #F6F6F6;
     transition: margin-left 0.3s ease;
 }
 
@@ -30,9 +33,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #ffffff;
+    background: #F6F6F6;
     padding: 14px 24px;
-    border-bottom: 1px solid #f0f2f5;
+    border-bottom: 1px solid #e5e5e5;
     min-height: 60px;
     position: sticky;
     top: 0;
@@ -48,7 +51,7 @@ body {
 .hamburger-btn {
     display: none;
     font-size: 22px;
-    color: #5A5BF1;
+    color: #ED842C;
     cursor: pointer;
     background: none;
     border: none;
@@ -58,7 +61,7 @@ body {
 .platform-header h1 {
     font-size: 22px;
     font-weight: 800;
-    color: #5A5BF1;
+    color: #0f172a;
     letter-spacing: -0.5px;
     margin: 0;
 }
@@ -73,8 +76,8 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #f8f9ff;
-    border: 1px solid #eef0fe;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 30px;
     padding: 5px 14px 5px 5px;
 }
@@ -83,7 +86,7 @@ body {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: #5A5BF1;
+    background: #ED842C;
     color: #fff;
     display: flex;
     align-items: center;
@@ -94,14 +97,15 @@ body {
 
 .header-user span {
     font-size: 14px;
-    font-weight: 600;
-    color: #1e293b;
+    font-weight: 700;
+    color: #0f172a;
 }
 
 /* ---- Content Wrapper ---- */
 .content-wrapper {
     padding: 20px 24px;
     flex: 1;
+    background: #F6F6F6;
 }
 
 /* ---- Alerts ---- */
@@ -131,9 +135,9 @@ body {
 .setting-card {
     background: #ffffff;
     border-radius: 14px;
-    padding: 16px 20px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f0f2f5;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
+    border: 1px solid rgba(237, 132, 44, 0.25);
 }
 
 .setting-card-header {
@@ -145,13 +149,13 @@ body {
 .setting-card-header h2 {
     font-size: 16px;
     font-weight: 800;
-    color: #1e293b;
+    color: #0f172a;
     margin-bottom: 4px;
 }
 
 .setting-card-header p {
     font-size: 12px;
-    color: #94a3b8;
+    color: #64748b;
 }
 
 /* Form Controls */
@@ -178,12 +182,13 @@ body {
     outline: none;
     transition: all 0.2s ease;
     color: #1e293b;
+    box-sizing: border-box;
 }
 
 .form-control:focus {
-    border-color: #5A5BF1;
+    border-color: #ED842C;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.1);
 }
 
 .input-group {
@@ -220,7 +225,7 @@ body {
 
 .btn-save-settings {
     width: 100%;
-    background: #5A5BF1;
+    background: #ED842C;
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -237,8 +242,8 @@ body {
 }
 
 .btn-save-settings:hover {
-    background: #4748d0;
-    box-shadow: 0 4px 14px rgba(90, 91, 241, 0.25);
+    background: #d9701a;
+    box-shadow: 0 4px 14px rgba(237, 132, 44, 0.25);
 }
 
 /* Broadcast Form */
@@ -279,14 +284,14 @@ table {
 }
 
 thead th {
-    background: #f8f9ff;
+    background: #fafafa;
     padding: 12px 16px;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #64748b;
-    border-bottom: 1px solid #eef0fe;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
     white-space: nowrap;
 }
 
@@ -296,7 +301,7 @@ tbody tr {
 }
 
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: #f8faff; }
+tbody tr:hover { background: #fff8f2; }
 
 tbody td {
     padding: 14px 16px;
@@ -307,7 +312,7 @@ tbody td {
 
 .ann-title {
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a;
     margin-bottom: 2px;
 }
 
@@ -384,7 +389,7 @@ tbody td {
 }
 .modal-header {
     padding: 20px 24px;
-    background: #f8f9ff;
+    background: #fafafa;
     border-bottom: 1px solid #eef0fe;
     display: flex;
     align-items: center;
@@ -393,7 +398,7 @@ tbody td {
 .modal-header h3 {
     font-size: 16px;
     font-weight: 800;
-    color: #1e293b;
+    color: #0f172a;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -412,11 +417,11 @@ tbody td {
     font-weight: 700; font-size: 13px; border: none; cursor: pointer; font-family: inherit;
 }
 .btn-modal-submit-primary {
-    background: #5A5BF1; color: #ffffff; padding: 10px 22px; border-radius: 10px;
+    background: #ED842C; color: #ffffff; padding: 10px 22px; border-radius: 10px;
     font-weight: 700; font-size: 13px; border: none; cursor: pointer; font-family: inherit;
     display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;
 }
-.btn-modal-submit-primary:hover { background: #4748d0; }
+.btn-modal-submit-primary:hover { background: #d9701a; }
 
 /* Responsive */
 @media (max-width: 1100px) {

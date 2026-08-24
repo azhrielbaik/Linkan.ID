@@ -1,4 +1,6 @@
-/* Transaction Logs Page Styles */
+/* =========================================================
+   PLATFORM ADMIN — GLOBAL TRANSACTIONS LOGS COMPLETE STYLES
+   ========================================================= */
 
 * {
     margin: 0;
@@ -8,7 +10,7 @@
 }
 
 body {
-    background-color: #f5f6fa;
+    background-color: #F6F6F6;
     color: #334155;
     display: flex;
     min-height: 100vh;
@@ -22,6 +24,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     min-width: 0;
+    background: #F6F6F6;
     transition: margin-left 0.3s ease;
 }
 
@@ -30,9 +33,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #ffffff;
+    background: #F6F6F6;
     padding: 14px 24px;
-    border-bottom: 1px solid #f0f2f5;
+    border-bottom: 1px solid #e5e5e5;
     min-height: 60px;
     position: sticky;
     top: 0;
@@ -48,7 +51,7 @@ body {
 .hamburger-btn {
     display: none;
     font-size: 22px;
-    color: #5A5BF1;
+    color: #ED842C;
     cursor: pointer;
     background: none;
     border: none;
@@ -58,7 +61,7 @@ body {
 .platform-header h1 {
     font-size: 22px;
     font-weight: 800;
-    color: #5A5BF1;
+    color: #0f172a;
     letter-spacing: -0.5px;
     margin: 0;
 }
@@ -73,8 +76,8 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #f8f9ff;
-    border: 1px solid #eef0fe;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 30px;
     padding: 5px 14px 5px 5px;
 }
@@ -83,7 +86,7 @@ body {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: #5A5BF1;
+    background: #ED842C;
     color: #fff;
     display: flex;
     align-items: center;
@@ -94,14 +97,15 @@ body {
 
 .header-user span {
     font-size: 14px;
-    font-weight: 600;
-    color: #1e293b;
+    font-weight: 700;
+    color: #0f172a;
 }
 
 /* ---- Content Wrapper ---- */
 .content-wrapper {
     padding: 20px 24px;
     flex: 1;
+    background: #F6F6F6;
 }
 
 /* ---- Stats Grid ---- */
@@ -116,11 +120,17 @@ body {
     background: #ffffff;
     border-radius: 14px;
     padding: 14px 18px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
     display: flex;
     align-items: center;
     gap: 14px;
-    border: 1px solid #f0f2f5;
+    border: 1px solid rgba(237, 132, 44, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(237, 132, 44, 0.12);
 }
 
 .stat-icon-wrapper {
@@ -134,7 +144,7 @@ body {
     flex-shrink: 0;
 }
 
-.stat-card.volume .stat-icon-wrapper { background: #EEF0FE; color: #5A5BF1; }
+.stat-card.volume .stat-icon-wrapper { background: #fff0e2; color: #ED842C; }
 .stat-card.success .stat-icon-wrapper { background: #dcfce7; color: #16a34a; }
 .stat-card.pending .stat-icon-wrapper { background: #fef3c7; color: #d97706; }
 .stat-card.failed .stat-icon-wrapper { background: #fee2e2; color: #dc2626; }
@@ -151,7 +161,7 @@ body {
 .stat-info .stat-val {
     font-size: 20px;
     font-weight: 800;
-    color: #1e293b;
+    color: #0f172a;
     line-height: 1.2;
 }
 
@@ -184,10 +194,10 @@ body {
     gap: 8px;
 }
 
-.tab-link:hover { color: #5A5BF1; }
+.tab-link:hover { color: #ED842C; }
 
 .tab-link.active {
-    color: #5A5BF1;
+    color: #ED842C;
 }
 
 .tab-link.active::after {
@@ -197,7 +207,7 @@ body {
     left: 0;
     width: 100%;
     height: 3px;
-    background: #5A5BF1;
+    background: #ED842C;
     border-radius: 3px 3px 0 0;
 }
 
@@ -207,13 +217,13 @@ body {
     border-radius: 14px;
     padding: 12px 18px;
     margin-bottom: 20px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid #f0f2f5;
+    border: 1px solid rgba(237, 132, 44, 0.25);
 }
 
 .search-form {
@@ -236,6 +246,7 @@ body {
     transform: translateY(-50%);
     color: #94a3b8;
     font-size: 14px;
+    pointer-events: none;
 }
 
 .search-box input {
@@ -246,14 +257,16 @@ body {
     font-size: 13px;
     font-family: inherit;
     background: #f8fafc;
+    color: #1e293b;
     outline: none;
     transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .search-box input:focus {
-    border-color: #5A5BF1;
+    border-color: #ED842C;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.1);
 }
 
 .date-input {
@@ -265,12 +278,13 @@ body {
     font-family: inherit;
     color: #334155;
     outline: none;
+    box-sizing: border-box;
 }
 
-.date-input:focus { border-color: #5A5BF1; background: #fff; }
+.date-input:focus { border-color: #ED842C; background: #fff; }
 
 .btn-filter {
-    background: #5A5BF1;
+    background: #ED842C;
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -285,7 +299,7 @@ body {
     transition: background 0.2s;
 }
 
-.btn-filter:hover { background: #4748d0; }
+.btn-filter:hover { background: #d9701a; }
 
 .btn-reset {
     background: #e2e8f0;
@@ -299,7 +313,9 @@ body {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     font-family: inherit;
+    transition: background 0.2s;
 }
 
 .btn-reset:hover { background: #cbd5e1; }
@@ -308,9 +324,9 @@ body {
 .table-card {
     background: #ffffff;
     border-radius: 14px;
-    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
     overflow: hidden;
-    border: 1px solid #f0f2f5;
+    border: 1px solid rgba(237, 132, 44, 0.25);
 }
 
 .table-responsive {
@@ -320,19 +336,20 @@ body {
 
 table {
     width: 100%;
+    min-width: 850px;
     border-collapse: collapse;
     text-align: left;
 }
 
 thead th {
-    background: #f8f9ff;
-    padding: 10px 16px;
+    background: #fafafa;
+    padding: 11px 16px;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #64748b;
-    border-bottom: 1px solid #eef0fe;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
     white-space: nowrap;
 }
 
@@ -342,10 +359,10 @@ tbody tr {
 }
 
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: #f8faff; }
+tbody tr:hover { background: #fff8f2; }
 
 tbody td {
-    padding: 10px 16px;
+    padding: 11px 16px;
     font-size: 13px;
     vertical-align: middle;
     color: #334155;
@@ -354,7 +371,7 @@ tbody td {
 .order-code {
     font-family: monospace;
     background: #f1f5f9;
-    color: #5A5BF1;
+    color: #ED842C;
     font-weight: 800;
     padding: 4px 8px;
     border-radius: 6px;
@@ -364,7 +381,7 @@ tbody td {
 
 .product-title {
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a;
     font-size: 13px;
 }
 
@@ -376,7 +393,7 @@ tbody td {
 
 .buyer-name {
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a;
 }
 
 .buyer-email {
@@ -432,11 +449,17 @@ tbody td {
     justify-content: center;
 }
 
-/* Override Laravel pagination */
+nav[role="navigation"] svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
 nav[role="navigation"] span[aria-current="page"] span {
-    background: #5A5BF1 !important;
+    background: #ED842C !important;
     color: #fff !important;
-    border-color: #5A5BF1 !important;
+    border-color: #ED842C !important;
     border-radius: 8px !important;
     font-weight: 700;
     padding: 6px 12px;
@@ -444,10 +467,14 @@ nav[role="navigation"] span[aria-current="page"] span {
 nav[role="navigation"] a {
     border-radius: 8px !important;
     font-weight: 600;
-    color: #5A5BF1 !important;
+    color: #475569 !important;
     padding: 6px 12px;
 }
-nav[role="navigation"] a:hover { background: #EEF0FE !important; }
+nav[role="navigation"] a:hover {
+    background: #fff8f2 !important;
+    color: #ED842C !important;
+    border-color: #ED842C !important;
+}
 
 /* Responsive */
 @media (max-width: 1100px) {

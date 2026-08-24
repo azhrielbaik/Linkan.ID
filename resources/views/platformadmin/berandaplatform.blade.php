@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/berandaplatform.css') }}">
 </head>
@@ -34,41 +36,6 @@
 
         <div class="content-wrapper">
 
-            {{-- 1. Dashboard Ringkasan (4 Stats Cards) --}}
-            <div class="stats-grid">
-                <div class="stat-card users">
-                    <div class="stat-icon-wrap"><i class="fas fa-users"></i></div>
-                    <div class="stat-info">
-                        <div class="label">{{ __('platform.total_users') }}</div>
-                        <div class="value">{{ number_format($totalUsers, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-
-                <div class="stat-card tx">
-                    <div class="stat-icon-wrap"><i class="fas fa-receipt"></i></div>
-                    <div class="stat-info">
-                        <div class="label">{{ __('platform.total_transactions') }}</div>
-                        <div class="value">{{ number_format($totalTransactions, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-
-                <div class="stat-card comm">
-                    <div class="stat-icon-wrap"><i class="fas fa-coins"></i></div>
-                    <div class="stat-info">
-                        <div class="label">{{ __('platform.total_commission') }}</div>
-                        <div class="value">Rp {{ number_format($totalCommission, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-
-                <div class="stat-card prod">
-                    <div class="stat-icon-wrap"><i class="fas fa-box-open"></i></div>
-                    <div class="stat-info">
-                        <div class="label">{{ __('platform.total_products') }}</div>
-                        <div class="value">{{ number_format($totalProducts, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-            </div>
-
             {{-- Toolbar Export --}}
             <div class="dashboard-toolbar">
                 <div class="toolbar-title">{{ __('platform.platform_earnings_chart') }}</div>
@@ -86,7 +53,7 @@
             <div class="chart-card">
                 <div class="chart-header">
                     <div>
-                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Trend Komisi Platform</div>
+                        <div class="chart-header-sub">Trend Komisi Platform</div>
                         <h3>Total Komisi Masuk</h3>
                     </div>
                     <div class="chart-period-tabs">
@@ -109,8 +76,8 @@
                 {{-- Top Seller Ranking --}}
                 <div class="section-card">
                     <div class="section-card-header">
-                        <h3><i class="fas fa-trophy" style="color: #eab308; margin-right: 6px;"></i>{{ __('platform.top_sellers') }}</h3>
-                        <span style="font-size: 12px; color: #94a3b8;">Top 5 Seller</span>
+                        <h3><i class="fas fa-trophy" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.top_sellers') }}</h3>
+                        <span class="section-card-subtitle">Top 5 Seller</span>
                     </div>
                     <ul class="seller-list">
                         @forelse($topSellers as $idx => $seller)
@@ -150,8 +117,8 @@
                 {{-- Riwayat Komisi Terkini --}}
                 <div class="section-card">
                     <div class="section-card-header">
-                        <h3><i class="fas fa-history" style="color: #5A5BF1; margin-right: 6px;"></i>{{ __('platform.recent_commissions') }}</h3>
-                        <span style="font-size: 12px; color: #94a3b8;">Live Feed</span>
+                        <h3><i class="fas fa-history" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.recent_commissions') }}</h3>
+                        <span class="section-card-subtitle">Live Feed</span>
                     </div>
                     <div class="table-responsive">
                         <table>
@@ -166,10 +133,10 @@
                                 @forelse($commissions as $c)
                                 <tr>
                                     <td>
-                                        <div style="font-weight: 700; color: #1e293b;">{{ $c->seller_name }}</div>
-                                        <div style="font-size: 11px; color: #94a3b8;">{{ $c->seller_email }}</div>
+                                        <div class="table-seller-name">{{ $c->seller_name }}</div>
+                                        <div class="table-seller-email">{{ $c->seller_email }}</div>
                                     </td>
-                                    <td style="color: #64748b; font-size: 12px; white-space: nowrap;">
+                                    <td class="table-date">
                                         {{ \Carbon\Carbon::parse($c->created_at)->format('d M Y') }}
                                     </td>
                                     <td>
