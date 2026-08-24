@@ -207,14 +207,13 @@
                     <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile">
                         <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
-
+                                <i class="fas fa-grip-vertical drag-handle-icon" style="visibility: hidden; cursor: default;"></i>
                                 <div class="profile-block-icon">
                                     <i class="fas fa-user-circle"></i>
                                 </div>
                                 <div class="block-item-content">
                                     <div class="block-item-title-wrapper">
                                         <span>Profil</span>
-                                        <span class="profile-element-badge">Elemen</span>
                                     </div>
                                 </div>
                                 <div class="block-item-actions" onclick="event.stopPropagation()">

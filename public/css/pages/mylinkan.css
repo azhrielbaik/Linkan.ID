@@ -647,6 +647,7 @@ input[type="file"]::file-selector-button {
 
 .dashboard-mylinkan-page .editor-sticky-preview {
     position: sticky;
+    align-self: start;
     top: 20px;
     background: #f8f9fa;
     border-radius: 20px;
@@ -3168,15 +3169,6 @@ input:checked+.segment-btn {
     flex-shrink: 0;
 }
 
-.profile-element-badge {
-    font-size: 10px;
-    font-weight: 700;
-    background: #FF9040;
-    color: #ffffff;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
 .btn-profile-edit {
     background: #f3f4f6;
     border: 1px solid #e5e7eb;
@@ -3492,6 +3484,7 @@ input:checked+.segment-btn {
 .btn-custom-confirm-submit:hover {
     background: #b91c1c;
 }
+
 .edit-form-content {
     padding: 20px;
 }
