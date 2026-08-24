@@ -214,6 +214,11 @@
                         $blocksOrder[] = 'text_' . $el->id;
                     }
                 }
+                if (isset($videoElements)) {
+                    foreach($videoElements as $el) {
+                        $blocksOrder[] = 'video_' . $el->id;
+                    }
+                }
             }
         @endphp
 
@@ -317,6 +322,26 @@
                         {!! $textEl->content !!}
                     </div>
                     </div>
+                @endif
+            @elseif(str_starts_with($blockId, 'video_'))
+                @php
+                    $elId = str_replace('video_', '', $blockId);
+                    $videoEl = isset($videoElements) ? $videoElements->firstWhere('id', $elId) : null;
+                @endphp
+                @if($videoEl && $videoEl->video_url)
+                    @php
+                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $videoEl->video_url, $match);
+                        $videoId = $match[1] ?? '';
+                        $autoplay = $videoEl->is_autoplay ? '&autoplay=1&mute=1' : '';
+                        $embedUrl = $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0{$autoplay}" : '';
+                    @endphp
+                    @if($embedUrl)
+                        <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
+                            <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <iframe src="{{ $embedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    @endif
                 @endif
             @endif
         @endforeach

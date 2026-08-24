@@ -8,15 +8,15 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #ffffff;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    border: 1px solid #e2e8f0;
+    border: none;
     transition: all 0.2s ease;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
     position: relative;
     outline: none;
 }
@@ -24,9 +24,7 @@
 .action-icon.seller-notif-btn:hover,
 .action-icon.seller-notif-btn.active {
     color: #5A5BF1;
-    border-color: #5A5BF1;
-    background: #f8f9ff;
-    box-shadow: 0 0 0 3px rgba(90, 91, 241, 0.12);
+    background: transparent;
 }
 
 .seller-notif-badge {
@@ -50,9 +48,17 @@
 }
 
 @keyframes sellerNotifPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Dropdown Panel */
@@ -81,6 +87,7 @@
         opacity: 0;
         transform: translateY(-8px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -232,14 +239,45 @@
     letter-spacing: 0.04em;
 }
 
-.badge-order             { background: #dcfce7; color: #16a34a; }
-.badge-product-approved  { background: #EEF0FE; color: #5A5BF1; }
-.badge-product-rejected  { background: #fee2e2; color: #dc2626; }
-.badge-payout-approved   { background: #dcfce7; color: #16a34a; }
-.badge-payout-rejected   { background: #fee2e2; color: #dc2626; }
-.badge-appeal-approved   { background: #dcfce7; color: #16a34a; }
-.badge-appeal-rejected   { background: #fee2e2; color: #dc2626; }
-.badge-broadcast         { background: #EEF0FE; color: #5A5BF1; }
+.badge-order {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-product-approved {
+    background: #EEF0FE;
+    color: #5A5BF1;
+}
+
+.badge-product-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-payout-approved {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-payout-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-appeal-approved {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-appeal-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-broadcast {
+    background: #EEF0FE;
+    color: #5A5BF1;
+}
 
 .seller-notif-item-msg {
     font-size: 12px;

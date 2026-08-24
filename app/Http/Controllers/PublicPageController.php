@@ -52,11 +52,12 @@ class PublicPageController extends Controller
             ->latest()
             ->get();
 
-        // Ambil data image elements
-        $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
-        $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
-        $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
+        // Ambil data image, divider, dan text elements yang aktif
+        $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->where('is_active', true)->get();
+        $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->where('is_active', true)->get();
+        $textElements = \App\Models\TextElement::where('user_id', $user->id)->where('is_active', true)->get();
+        $videoElements = \App\Models\VideoElement::where('user_id', $user->id)->where('is_active', true)->get();
 
-        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements'));
+        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements', 'videoElements'));
     }
 }

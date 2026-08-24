@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ImageElement;
 use App\Models\DividerElement;
 use App\Models\TextElement;
+use App\Models\VideoElement;
 use Illuminate\Support\Facades\Auth;
 
 class ElementVisibilityController extends Controller
@@ -13,7 +14,7 @@ class ElementVisibilityController extends Controller
     public function toggle(Request $request)
     {
         $request->validate([
-            'element_type' => 'required|string|in:image,divider,text',
+            'element_type' => 'required|string|in:image,divider,text,video',
             'element_id' => 'required|integer',
             'is_active' => 'required|boolean'
         ]);
@@ -30,6 +31,8 @@ class ElementVisibilityController extends Controller
             $element = DividerElement::where('user_id', $userId)->find($id);
         } elseif ($type === 'text') {
             $element = TextElement::where('user_id', $userId)->find($id);
+        } elseif ($type === 'video') {
+            $element = VideoElement::where('user_id', $userId)->find($id);
         }
 
         if (!$element) {

@@ -181,6 +181,12 @@
                                     <div class="option-card-desc">Tambahkan teks custom</div>
                                 </div>
 
+                                <!-- Element Option 4: Video -->
+                                <div class="element-option-card" onclick="addVideoElement()">
+                                    <div class="option-card-title">Embed Video</div>
+                                    <div class="option-card-desc">Embed video dari YouTube</div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -197,13 +203,9 @@
                         </span>
                     </div>
 
-                    <!-- DRAGGABLE ELEMENT BLOCKS LIST CONTAINER -->
-                    <div id="elementBlocksList" style="display: flex; flex-direction: column;">
-                        
-                        <!-- 1. PROFILE BLOCK CARD (DRAGGABLE, VISIBLE BY DEFAULT IN EDIT MODE) -->
-                        <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile" class="draggable-element-block-inner">
-                            
-                            <!-- COLLAPSED BLOCK HEADER CARD -->
+                    <!-- 1. PROFILE BLOCK CARD (STATIC, NOT DRAGGABLE, PINNED AT TOP) -->
+                    <div id="profileBlockCard" class="draggable-element-block" data-element-type="profile">
+                        <!-- COLLAPSED BLOCK HEADER CARD -->
                             <div class="block-item-card" onclick="toggleProfileEditForm()">
 
                                 <div class="profile-block-icon">
@@ -388,6 +390,9 @@
                             </div>
                         </div>
 
+                        <!-- DRAGGABLE ELEMENT BLOCKS LIST CONTAINER -->
+                        <div id="elementBlocksList" style="display: flex; flex-direction: column;">
+
                         @if(isset($imageElements))
                             @foreach($imageElements as $imageEl)
                                 @php 
@@ -396,7 +401,7 @@
                                 @endphp
                                 <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="image" data-db-id="{{ $imageEl->id }}">
                                     <div class="block-item-card" onclick="toggleImageEditForm('{{ $elementId }}')">
-                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
                                             <i class="fas fa-image"></i>
                                         </div>
@@ -476,7 +481,7 @@
                                 @endphp
                                 <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="divider" data-db-id="{{ $dividerEl->id }}">
                                     <div class="block-item-card" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}')">
-                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
                                             <i class="fas fa-minus"></i>
                                         </div>
@@ -561,7 +566,7 @@
                                 @endphp
                                 <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="text" data-db-id="{{ $textEl->id }}">
                                     <div class="block-item-card" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}')">
-                                        <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                                         <div class="block-item-icon-wrapper">
                                             <i class="fas fa-font"></i>
                                         </div>
@@ -589,12 +594,13 @@
 
                                     <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
                                         <div class="edit-form-content">
-                                            <div class="profile-form-header" style="margin-bottom: 16px;">
-                                                Pengaturan Elemen Teks
+                                            <div class="profile-form-header" style="margin-bottom: 20px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                                                <i class="fas fa-font" style="color: #3b82f6; margin-right: 8px;"></i> Pengaturan Teks
                                             </div>
-                                            
-                                            <div class="text-editor-container">
-                                                <div class="text-editor-toolbar">
+                                            <div class="profile-form-group" style="margin-bottom: 24px;">
+                                                <label class="profile-form-label" style="font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Isi Teks Konten</label>
+                                                <div class="text-editor-container" style="box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                                                    <div class="text-editor-toolbar" style="background: #f8fafc; padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #e2e8f0; align-items: center;">
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
@@ -619,7 +625,8 @@
                                                     <input type="number" id="customSizeInput_{{ $elementId }}" class="toolbar-input" placeholder="Ukuran (px)" min="1" max="99" onchange="applyCustomSize('{{ $elementId }}')">
                                                     <button type="button" class="toolbar-btn-text" onclick="applyCustomSize('{{ $elementId }}')">Terapkan</button>
                                                 </div>
-                                                <div id="editorContent_{{ $elementId }}" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('{{ $elementId }}')">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
+                                                <div id="editorContent_{{ $elementId }}" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('{{ $elementId }}')" style="padding: 16px; min-height: 120px; font-size: 16px; line-height: 1.5; outline: none;">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
+                                            </div>
                                             </div>
 
                                             <div class="element-action-footer" style="margin-top: 15px;">
@@ -636,12 +643,93 @@
                             @endforeach
                         @endif
 
+                        @if(isset($videoElements) && $videoElements->count() > 0)
+                            @foreach($videoElements as $videoEl)
+                                @php 
+                                    $elementId = 'videoBlock_' . $videoEl->id; 
+                                    $isActive = $videoEl->is_active ?? true;
+                                    $isAutoplay = $videoEl->is_autoplay ?? false;
+                                @endphp
+                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="video" data-db-id="{{ $videoEl->id }}">
+                                    <div class="block-item-card" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('{{ $elementId }}')">
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <div class="block-item-icon-wrapper">
+                                            <i class="fab fa-youtube"></i>
+                                        </div>
+                                        <div class="block-item-content">
+                                            <div class="block-item-title-wrapper">
+                                                <span>Video</span>
+                                            </div>
+                                        </div>
+                                        <div class="block-item-actions" onclick="event.stopPropagation()">
+                                            <div class="element-visibility-container">
+                                                <span class="visibility-status-text {{ $isActive ? 'status-active' : 'status-inactive' }}" id="statusText_{{ $elementId }}">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="visibilitySwitch_{{ $elementId }}" onchange="toggleElementVisibility('{{ $elementId }}', this)" {{ $isActive ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicVideo('{{ $elementId }}'); event.stopPropagation();" title="Hapus Elemen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            <button type="button" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('{{ $elementId }}')" class="btn-edit-block">
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                                        <div class="edit-form-content">
+                                            <div class="profile-form-header" style="margin-bottom: 20px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                                                <i class="fab fa-youtube" style="color: #ef4444; margin-right: 8px;"></i> Pengaturan Video
+                                            </div>
+                                            
+                                            <div class="profile-form-group">
+                                                <label class="profile-form-label" style="font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Tautan Video YouTube</label>
+                                                <div style="position: relative;">
+                                                    <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #ef4444; font-size: 18px; pointer-events: none;">
+                                                        <i class="fab fa-youtube"></i>
+                                                    </div>
+                                                    <input type="text" id="videoUrl_{{ $elementId }}" class="form-control-input" value="{{ $videoEl->video_url }}" placeholder="Tempel URL YouTube di sini..." oninput="updateVideoPreview('{{ $elementId }}')" style="padding-left: 42px; border-radius: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;">
+                                                </div>
+                                            </div>
+                                            
+                                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+                                                <div style="display: flex; align-items: center; gap: 12px;">
+                                                    <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-play" style="font-size: 14px;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <label class="profile-form-label" style="margin-bottom: 2px; font-weight: 600; color: #334155;">Putar Otomatis (Autoplay)</label>
+                                                        <span style="font-size: 12px; color: #64748b; line-height: 1.4; display: block;">Video akan otomatis diputar saat diakses.</span>
+                                                    </div>
+                                                </div>
+                                                <label class="toggle-switch" style="margin: 0; flex-shrink: 0;">
+                                                    <input type="checkbox" id="videoAutoplay_{{ $elementId }}" onchange="updateVideoPreview('{{ $elementId }}')" {{ $isAutoplay ? 'checked' : '' }}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div class="element-action-footer">
+                                                <button type="button" onclick="removeDynamicVideo('{{ $elementId }}'); event.stopPropagation();" class="btn-delete-element">
+                                                    <i class="fas fa-trash-alt"></i> Hapus Elemen
+                                                </button>
+                                                <button type="button" onclick="saveDynamicVideo('{{ $elementId }}')" class="btn-save-element" id="btnSaveVideo_{{ $elementId }}">
+                                                    Simpan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div> <!-- Closes elementBlocksList -->
                 </div> <!-- Closes digitalProductsSection -->
             </div> <!-- Closes editor-left-panel -->
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
-            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" />
+            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" :video-elements="$videoElements ?? null" />
         </div>
     @endif
 
@@ -658,7 +746,7 @@
     <template id="image-block-template">
         <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="image" class="draggable-element-block-inner">
             <div class="block-item-card" onclick="toggleImageEditForm('__ELEMENT_ID__')">
-                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                 <div class="block-item-icon-wrapper">
                     <i class="fas fa-image"></i>
                 </div>
@@ -740,7 +828,7 @@
     <template id="divider-block-template">
         <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="divider">
             <div class="block-item-card" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('__ELEMENT_ID__')">
-                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                 <div class="block-item-icon-wrapper">
                     <i class="fas fa-minus"></i>
                 </div>
@@ -825,7 +913,7 @@
     <template id="text-block-template">
         <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="text">
             <div class="block-item-card" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('__ELEMENT_ID__')">
-                <i class="fas fa-grip-vertical drag-handle" class="drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
                 <div class="block-item-icon-wrapper">
                     <i class="fas fa-font"></i>
                 </div>
@@ -853,12 +941,13 @@
 
             <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
                 <div class="edit-form-content">
-                    <div class="profile-form-header" style="margin-bottom: 16px;">
-                        Pengaturan Elemen Teks
+                    <div class="profile-form-header" style="margin-bottom: 20px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                        <i class="fas fa-font" style="color: #3b82f6; margin-right: 8px;"></i> Pengaturan Teks
                     </div>
-                    
-                    <div class="text-editor-container">
-                        <div class="text-editor-toolbar">
+                    <div class="profile-form-group" style="margin-bottom: 24px;">
+                        <label class="profile-form-label" style="font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Isi Teks Konten</label>
+                        <div class="text-editor-container" style="box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                            <div class="text-editor-toolbar" style="background: #f8fafc; padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #e2e8f0; align-items: center;">
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
@@ -883,7 +972,8 @@
                             <input type="number" id="customSizeInput___ELEMENT_ID__" class="toolbar-input" placeholder="Ukuran (px)" min="1" max="99" onchange="applyCustomSize('__ELEMENT_ID__')">
                             <button type="button" class="toolbar-btn-text" onclick="applyCustomSize('__ELEMENT_ID__')">Terapkan</button>
                         </div>
-                        <div id="editorContent___ELEMENT_ID__" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('__ELEMENT_ID__')">Teks Anda di sini...</div>
+                        <div id="editorContent___ELEMENT_ID__" class="text-editor-area" contenteditable="true" oninput="updateTextPreview('__ELEMENT_ID__')" style="padding: 16px; min-height: 120px; font-size: 16px; line-height: 1.5; outline: none;">Teks Anda di sini...</div>
+                    </div>
                     </div>
 
                     <div class="element-action-footer" style="margin-top: 15px;">
@@ -898,6 +988,107 @@
             </div>
         </div>
     </template>
+
+    <template id="video-live-template">
+        <div class="video-container" id="liveVideoContainer___ELEMENT_ID__">
+            <!-- iframe will be generated here -->
+            <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
+                <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                Masukkan URL YouTube
+            </div>
+        </div>
+    </template>
+
+    <template id="video-block-template">
+        <div id="__ELEMENT_ID__" class="draggable-element-block" data-element-type="video">
+            <div class="block-item-card" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('__ELEMENT_ID__')">
+                <i class="fas fa-grip-vertical drag-handle drag-handle-icon" onclick="event.stopPropagation()" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                <div class="block-item-icon-wrapper">
+                    <i class="fab fa-youtube"></i>
+                </div>
+                <div class="block-item-content">
+                    <div class="block-item-title-wrapper">
+                        <span>Video</span>
+                    </div>
+                </div>
+                <div class="block-item-actions" onclick="event.stopPropagation()">
+                    <div class="element-visibility-container">
+                        <span class="visibility-status-text status-active" id="statusText___ELEMENT_ID__">Aktif</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visibilitySwitch___ELEMENT_ID__" onchange="toggleElementVisibility('__ELEMENT_ID__', this)" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-element-action btn-delete-icon" onclick="removeDynamicVideo('__ELEMENT_ID__'); event.stopPropagation();" title="Hapus Elemen">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button type="button" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('__ELEMENT_ID__')" class="btn-edit-block">
+                        <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText___ELEMENT_ID__">Edit</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
+                <div class="edit-form-content">
+                    <div class="profile-form-header" style="margin-bottom: 20px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                        <i class="fab fa-youtube" style="color: #ef4444; margin-right: 8px;"></i> Pengaturan Video
+                    </div>
+                    
+                    <div class="profile-form-group">
+                        <label class="profile-form-label" style="font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Tautan Video YouTube</label>
+                        <div style="position: relative;">
+                            <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #ef4444; font-size: 18px; pointer-events: none;">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+                            <input type="text" id="videoUrl___ELEMENT_ID__" class="form-control-input" value="" placeholder="Tempel URL YouTube di sini..." oninput="updateVideoPreview('__ELEMENT_ID__')" style="padding-left: 42px; border-radius: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;">
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-play" style="font-size: 14px;"></i>
+                            </div>
+                            <div>
+                                <label class="profile-form-label" style="margin-bottom: 2px; font-weight: 600; color: #334155;">Putar Otomatis (Autoplay)</label>
+                                <span style="font-size: 12px; color: #64748b; line-height: 1.4; display: block;">Video akan otomatis diputar saat diakses.</span>
+                            </div>
+                        </div>
+                        <label class="toggle-switch" style="margin: 0; flex-shrink: 0;">
+                            <input type="checkbox" id="videoAutoplay___ELEMENT_ID__" onchange="updateVideoPreview('__ELEMENT_ID__')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="element-action-footer">
+                        <button type="button" onclick="removeDynamicVideo('__ELEMENT_ID__'); event.stopPropagation();" class="btn-delete-element">
+                            <i class="fas fa-trash-alt"></i> Hapus Elemen
+                        </button>
+                        <button type="button" onclick="saveDynamicVideo('__ELEMENT_ID__')" class="btn-save-element" id="btnSaveVideo___ELEMENT_ID__">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- CUSTOM DELETE CONFIRMATION MODAL -->
+    <div id="customDeleteConfirmModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-box">
+            <button class="custom-confirm-close-btn" onclick="closeDeleteConfirmModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="custom-confirm-icon-wrapper">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3 class="custom-confirm-title" id="customDeleteConfirmTitle">Are you sure you want to delete this product?</h3>
+            <div class="custom-confirm-actions">
+                <button class="btn-custom-confirm-cancel" onclick="closeDeleteConfirmModal()">Batal</button>
+                <button class="btn-custom-confirm-submit" id="btnConfirmDelete" onclick="if(typeof window.confirmDeleteCallback === 'function') { window.confirmDeleteCallback(); } closeDeleteConfirmModal();">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 @endsection

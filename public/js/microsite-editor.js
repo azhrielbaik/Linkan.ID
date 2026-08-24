@@ -344,7 +344,7 @@ function removeDynamicElement(elementId) {
     const type = block.getAttribute('data-element-type');
     const label = type === 'divider' ? 'pembatas' : 'gambar';
     
-    if(confirm(`Hapus elemen ${label} ini?`)) {
+    showDeleteConfirmModal(`Yakin ingin menghapus elemen ${label} ini?`, function() {
         const dbId = block.getAttribute('data-db-id');
         
         if (dbId) {
@@ -378,7 +378,7 @@ function removeDynamicElement(elementId) {
             syncPhonePreviewOrder();
             saveElementsOrder();
         }
-    }
+    });
 }
 
 function saveDynamicElement(elementId) {
@@ -440,14 +440,13 @@ function saveDynamicElement(elementId) {
 
 function saveElementsOrder() {
     const list = document.getElementById('elementBlocksList');
-    if(!list) return;
+    if (!list) return;
+
     const blocks = list.querySelectorAll('.draggable-element-block');
-    let order = [];
+    const order = ['profile']; // Profile is strictly always the first element in DB
     blocks.forEach(block => {
         const type = block.getAttribute('data-element-type');
-        if (type === 'profile') {
-            order.push('profile');
-        } else if (type === 'image') {
+        if (type === 'image') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('image_' + dbId);
         } else if (type === 'divider') {
@@ -456,6 +455,9 @@ function saveElementsOrder() {
         } else if (type === 'text') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('text_' + dbId);
+        } else if (type === 'video') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('video_' + dbId);
         }
     });
 
@@ -492,7 +494,8 @@ function initPageEvents() {
         dbOrder.forEach(blockId => {
             let el = null;
             if (blockId === 'profile') {
-                el = document.getElementById('profileBlockCard');
+                // Profile is statically positioned outside the list, do nothing
+                return;
             } else if (blockId.startsWith('image_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="image"]`);
@@ -502,6 +505,9 @@ function initPageEvents() {
             } else if (blockId.startsWith('text_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="text"]`);
+            } else if (blockId.startsWith('video_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="video"]`);
             }
             if (el) {
                 list.appendChild(el);
@@ -512,6 +518,11 @@ function initPageEvents() {
     initElementDragAndDrop();
     syncPhonePreviewOrder();
     updatePhonePreviewVisibility();
+    
+    // Initialize video previews
+    document.querySelectorAll('.draggable-element-block[data-element-type="video"]').forEach(block => {
+        updateVideoPreview(block.id);
+    });
 
     // Initialize drag and drop visual states for upload zones
     const dropzones = document.querySelectorAll('.upload-dropzone');
@@ -666,7 +677,7 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image' || type === 'divider' || type === 'text') {
+        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video') {
             const liveElement = document.getElementById('live_' + block.id);
             if (liveElement) {
                 phoneContent.appendChild(liveElement);
@@ -745,6 +756,33 @@ function syncProfileBio() {
     const input = document.getElementById('inputProfileBio');
     if (editor && input) input.value = editor.innerHTML;
 }
+
+// Wait for DOM to add modal listeners
+window.confirmDeleteCallback = null;
+
+function showDeleteConfirmModal(title, callback) {
+    const modal = document.getElementById('customDeleteConfirmModal');
+    const titleEl = document.getElementById('customDeleteConfirmTitle');
+    if (modal && titleEl) {
+        titleEl.textContent = title;
+        window.confirmDeleteCallback = callback;
+        modal.classList.add('active');
+    } else {
+        if (confirm(title)) callback();
+    }
+}
+
+function closeDeleteConfirmModal() {
+    const modal = document.getElementById('customDeleteConfirmModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+    window.confirmDeleteCallback = null;
+}
+
+// ==========================================
+// DRAG AND DROP (SortableJS) INITIALIZATION
+// ==========================================
 
 // DRAG AND DROP REORDERING SYSTEM FOR MICROSITE ELEMENTS
 let elementSortable = null;
@@ -1014,31 +1052,31 @@ function saveDynamicDivider(id) {
 }
 
 function removeDynamicDivider(id) {
-    if (!confirm('Yakin ingin menghapus pembatas ini?')) return;
-    
-    const block = document.getElementById(id);
-    const liveBlock = document.getElementById('live_' + id);
-    const dbId = block.getAttribute('data-db-id');
-    
-    if (dbId) {
-        const url = document.getElementById('micrositeEditorUrls').dataset.routeDividerDelete + '/' + dbId;
-        fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        }).then(res => res.json()).then(data => {
-            if (data.success) {
-                block.remove();
-                if (liveBlock) liveBlock.remove();
-                if (typeof saveElementsOrder === 'function') saveElementsOrder();
-            }
-        });
-    } else {
-        block.remove();
-        if (liveBlock) liveBlock.remove();
-        if (typeof saveElementsOrder === 'function') saveElementsOrder();
-    }
+    showDeleteConfirmModal('Yakin ingin menghapus pembatas ini?', function() {
+        const block = document.getElementById(id);
+        const liveBlock = document.getElementById('live_' + id);
+        const dbId = block.getAttribute('data-db-id');
+        
+        if (dbId) {
+            const url = document.getElementById('micrositeEditorUrls').dataset.routeDividerDelete + '/' + dbId;
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    block.remove();
+                    if (liveBlock) liveBlock.remove();
+                    if (typeof saveElementsOrder === 'function') saveElementsOrder();
+                }
+            });
+        } else {
+            block.remove();
+            if (liveBlock) liveBlock.remove();
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        }
+    });
 }
 
 // TEXT ELEMENT LOGIC
@@ -1241,32 +1279,242 @@ function saveDynamicText(id) {
 }
 
 function removeDynamicText(id) {
-    if (!confirm('Yakin ingin menghapus teks ini?')) return;
+    showDeleteConfirmModal('Yakin ingin menghapus teks ini?', function() {
+        const block = document.getElementById(id);
+        const liveBlock = document.getElementById('live_' + id);
+        const dbId = block.getAttribute('data-db-id');
+        
+        if (dbId) {
+            const deleteUrl = (document.getElementById('micrositeEditorUrls').dataset.routeTextDelete || '/admin/elements/text') + '/' + dbId;
+            
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    block.remove();
+                    if (liveBlock) liveBlock.remove();
+                    if (typeof saveElementsOrder === 'function') saveElementsOrder();
+                }
+            }).catch(err => console.error('Error delete text', err));
+        } else {
+            block.remove();
+            if (liveBlock) liveBlock.remove();
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        }
+    });
+}
+
+// VIDEO ELEMENT LOGIC
+function addVideoElement() {
+    if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    const tempId = 'videoBlock_' + Date.now();
+    const list = document.getElementById('elementBlocksList');
     
+    let blockTemplate = document.getElementById('video-block-template').innerHTML;
+    blockTemplate = blockTemplate.replace(/__ELEMENT_ID__/g, tempId);
+    
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = blockTemplate;
+    const newBlock = wrapper.firstElementChild;
+    list.appendChild(newBlock);
+    
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        const liveDiv = document.createElement('div');
+        liveDiv.id = 'live_' + tempId;
+        liveDiv.className = 'live-video-wrapper';
+        liveDiv.style.cursor = 'pointer';
+        liveDiv.setAttribute('onclick', `if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('${tempId}', true);`);
+        
+        let liveTemplate = document.getElementById('video-live-template').innerHTML;
+        liveTemplate = liveTemplate.replace(/__ELEMENT_ID__/g, tempId);
+        liveDiv.innerHTML = liveTemplate;
+        
+        phoneContent.appendChild(liveDiv);
+    }
+    
+    toggleVideoEditForm(tempId, true);
+    
+    const formData = new FormData();
+    formData.append('video_url', '');
+    formData.append('is_autoplay', '0');
+    
+    const url = '/admin/elements/video';
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            newBlock.setAttribute('data-db-id', data.id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+function toggleVideoEditForm(id, forceOpen = false) {
+    const formBody = document.getElementById('formBody_' + id);
+    const btnText = document.getElementById('btnText_' + id);
+    if (!formBody) return;
+    
+    const isOpen = formBody.classList.contains('open');
+    if (isOpen && !forceOpen) {
+        formBody.style.maxHeight = '0px';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0px';
+        formBody.classList.remove('open');
+        if (btnText) btnText.innerText = 'Edit';
+    } else {
+        if (typeof closeAllEditForms === 'function') closeAllEditForms(id);
+        formBody.classList.add('open');
+        formBody.style.marginTop = '8px';
+        formBody.style.maxHeight = (formBody.scrollHeight + 300) + 'px';
+        formBody.style.opacity = '1';
+        if (btnText) btnText.innerText = 'Tutup';
+        setTimeout(() => {
+            const block = formBody.closest('.draggable-element-block');
+            if (block) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
+    }
+}
+
+function updateVideoPreview(id) {
+    const urlInput = document.getElementById('videoUrl_' + id);
+    const autoplayToggle = document.getElementById('videoAutoplay_' + id);
+    const container = document.getElementById('liveVideoContainer_' + id);
+    
+    if (!urlInput || !container) return;
+    
+    const videoUrl = urlInput.value.trim();
+    let isAutoplay = false;
+    if (autoplayToggle) {
+        isAutoplay = autoplayToggle.checked;
+    }
+    
+    if (videoUrl) {
+        // Enhanced regex to match youtube video IDs from various formats including shorts
+        const match = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+        if (match && match[1]) {
+            const videoId = match[1];
+            const autoplayParam = isAutoplay ? '&autoplay=1&mute=1' : '';
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0${autoplayParam}`;
+            
+            container.innerHTML = `
+                <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; pointer-events: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
+                    <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    URL YouTube Tidak Valid
+                </div>
+            `;
+        }
+    } else {
+        container.innerHTML = `
+            <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
+                <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                Masukkan URL YouTube
+            </div>
+        `;
+    }
+}
+
+function saveDynamicVideo(id) {
     const block = document.getElementById(id);
-    const liveBlock = document.getElementById('live_' + id);
     const dbId = block.getAttribute('data-db-id');
+    const urlInput = document.getElementById('videoUrl_' + id);
+    const autoplayToggle = document.getElementById('videoAutoplay_' + id);
+    
+    if (!urlInput) return;
+    
+    const formData = new FormData();
+    formData.append('video_url', urlInput.value.trim());
+    formData.append('is_autoplay', autoplayToggle && autoplayToggle.checked ? '1' : '0');
     
     if (dbId) {
-        const deleteUrl = (document.getElementById('micrositeEditorUrls').dataset.routeTextDelete || '/admin/elements/text') + '/' + dbId;
-        
-        fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        }).then(res => res.json()).then(data => {
-            if (data.success) {
-                block.remove();
-                if (liveBlock) liveBlock.remove();
-                if (typeof saveElementsOrder === 'function') saveElementsOrder();
-            }
-        });
-    } else {
-        block.remove();
-        if (liveBlock) liveBlock.remove();
-        if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        formData.append('element_id', dbId);
     }
+    
+    const url = '/admin/elements/video';
+    const btn = document.getElementById('btnSaveVideo_' + id);
+    if(btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        btn.disabled = true;
+    }
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        if (data.success) {
+            block.setAttribute('data-db-id', data.id);
+            updateVideoPreview(id);
+            toggleVideoEditForm(id);
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+            if (typeof showSuccessToast === 'function') showSuccessToast('Video berhasil disimpan!');
+        } else {
+            alert('Gagal menyimpan video.');
+        }
+    })
+    .catch(err => {
+        if(btn) {
+            btn.innerHTML = 'Simpan';
+            btn.disabled = false;
+        }
+        console.error(err);
+        alert('Terjadi kesalahan saat menyimpan.');
+    });
+}
+
+function removeDynamicVideo(id) {
+    showDeleteConfirmModal('Yakin ingin menghapus video ini?', function() {
+        const block = document.getElementById(id);
+        const liveBlock = document.getElementById('live_' + id);
+        const dbId = block.getAttribute('data-db-id');
+        
+        if (dbId) {
+            const deleteUrl = '/admin/elements/video/' + dbId;
+            
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    block.remove();
+                    if (liveBlock) liveBlock.remove();
+                    if (typeof saveElementsOrder === 'function') saveElementsOrder();
+                }
+            }).catch(err => console.error('Error delete video', err));
+        } else {
+            block.remove();
+            if (liveBlock) liveBlock.remove();
+            if (typeof saveElementsOrder === 'function') saveElementsOrder();
+        }
+    });
 }
 
 // VISIBILITY TOGGLE FUNCTION

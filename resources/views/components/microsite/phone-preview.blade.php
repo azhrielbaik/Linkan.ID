@@ -1,4 +1,4 @@
-@props(['appearance', 'imageElements', 'dividerElements', 'textElements'])
+@props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements'])
 
 <div class="editor-sticky-preview clean-sticky-preview">
                 <!-- SECTION TITLE -->
@@ -142,6 +142,44 @@
                                         @endphp
                                         <div id="live_{{ $elementId }}" class="live-text-element" style="display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}', true);">
                                             {!! $textEl->content !!}
+                                        </div>
+                                    @endforeach
+                                @endif
+
+                                @if(isset($videoElements))
+                                    @foreach($videoElements as $videoEl)
+                                        @php 
+                                            $elementId = 'videoBlock_' . $videoEl->id; 
+                                            $isActive = $videoEl->is_active ?? true;
+                                        @endphp
+                                        <div id="live_{{ $elementId }}" class="live-video-wrapper" style="display: {{ $isActive ? 'block' : 'none' }}; cursor: pointer;" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('{{ $elementId }}', true);">
+                                            <div class="video-container" id="liveVideoContainer_{{ $elementId }}">
+                                                @if($videoEl->video_url)
+                                                    @php
+                                                        // Extract YouTube Video ID
+                                                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $videoEl->video_url, $match);
+                                                        $videoId = $match[1] ?? '';
+                                                        $autoplay = $videoEl->is_autoplay ? '&autoplay=1&mute=1' : '';
+                                                        $embedUrl = $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0{$autoplay}" : '';
+                                                    @endphp
+                                                    @if($embedUrl)
+                                                        <!-- pointer-events: none to allow clicking through to edit form -->
+                                                        <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; pointer-events: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                            <iframe src="{{ $embedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                        </div>
+                                                    @else
+                                                        <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
+                                                            <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                                                            URL YouTube Tidak Valid
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
+                                                        <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                                                        Masukkan URL YouTube
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endif
