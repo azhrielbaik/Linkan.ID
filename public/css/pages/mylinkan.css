@@ -2074,7 +2074,8 @@ font[face="Verdana"] {
     aspect-ratio: 3 / 1;
     border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 0;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
 }
 
 .live-phone-banner-img {
@@ -2087,14 +2088,16 @@ font[face="Verdana"] {
     width: 68px;
     height: 68px;
     overflow: hidden;
-    margin: 0 auto 10px;
+    margin: -34px auto 10px;
     background: #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 3px solid #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: border-radius 0.25s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .live-phone-avatar-img {
@@ -3551,4 +3554,27 @@ input:checked+.segment-btn {
 }
 .platform-input-container {
     display: block !important;
+}
+
+/* Edit Image Overlay styling */
+.banner-preview-container, .dynamic-preview-container, div[id^="previewCont_"] {
+    position: relative;
+}
+
+.edit-image-overlay {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #4b5563;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 10;
+    pointer-events: none;
+    font-size: 16px;
 }

@@ -262,6 +262,9 @@
                                                     @else
                                                         <img src="" id="bannerPreviewImg" class="banner-preview-img d-none">
                                                     @endif
+                                                    <div class="edit-image-overlay">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </div>
                                                 </div>
                                                 
                                                 <div id="bannerSizeError" class="dropzone-error-msg d-none">
@@ -451,6 +454,9 @@
 
                                                     <div id="previewCont_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'block' : 'none' }}; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
                                                         <img src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" id="previewImg_{{ $elementId }}" style="width: 100%; object-fit: contain;">
+                                                        <div class="edit-image-overlay">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </div>
                                                     </div>
                                                     
                                                     <div id="error_{{ $elementId }}" style="display: none; width: 100%; margin-top: 12px; color: #EF4444; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; z-index: 5; text-align: center; border: 1px solid #FCA5A5; background: #FEE2E2;">
@@ -896,8 +902,11 @@
                             </div>
 
                             <div id="previewCont___ELEMENT_ID__" class="dynamic-preview-container" style="display: none;">
-                                <img src="" id="previewImg___ELEMENT_ID__" class="preview-img-contain">
-                            </div>
+                                                        <img src="" id="previewImg___ELEMENT_ID__" class="preview-img-contain">
+                                                        <div class="edit-image-overlay">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </div>
+                                                    </div>
                             
                             <div id="error___ELEMENT_ID__" class="upload-size-error" style="display: none;">
                                 <i class="fas fa-exclamation-circle" class="wizard-icon-back"></i> Gagal: Ukuran maksimal gambar adalah 2MB!
