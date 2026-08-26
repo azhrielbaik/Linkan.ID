@@ -835,7 +835,7 @@
             </div> <!-- Closes editor-left-panel -->
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
-            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" :video-elements="$videoElements ?? null" />
+            <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" :video-elements="$videoElements ?? null" :social-media-elements="$socialMediaElements ?? null" />
         </div>
     @endif
 
