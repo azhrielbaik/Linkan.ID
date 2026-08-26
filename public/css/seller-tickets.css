@@ -49,6 +49,89 @@
     box-shadow: 0 6px 16px rgba(222, 108, 32, 0.3);
 }
 
+.btn-create-ticket.btn-disabled {
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    border: 1px solid #e2e8f0;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+}
+
+.btn-create-ticket.btn-disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Active Ticket Notice Banner */
+.ticket-active-alert-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: 0 2px 10px rgba(217, 119, 6, 0.08);
+}
+
+.ticket-active-alert-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ticket-active-alert-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #f59e0b;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+}
+
+.ticket-active-alert-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: #92400e;
+    margin-bottom: 2px;
+}
+
+.ticket-active-alert-desc {
+    font-size: 12.5px;
+    color: #b45309;
+    line-height: 1.4;
+}
+
+.btn-view-active-ticket {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #DE6C20;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(222, 108, 32, 0.25);
+    white-space: nowrap;
+}
+
+.btn-view-active-ticket:hover {
+    background: #c45712;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(222, 108, 32, 0.35);
+}
+
 /* Stats Cards */
 .tickets-stats-grid {
     display: grid;
