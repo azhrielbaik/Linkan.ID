@@ -1657,7 +1657,11 @@ function toggleSocialEditForm(elementId, isFromPreview = false) {
     if (!formBody) return;
 
     if (formBody.style.maxHeight === '0px' || formBody.style.maxHeight === '0' || formBody.style.maxHeight === '') {
+        // CLOSE OTHERS FIRST
+        if (typeof closeAllEditForms === 'function') closeAllEditForms(blockId);
+        
         // Expand
+        formBody.classList.add('open');
         formBody.style.maxHeight = (formBody.scrollHeight + 500) + 'px';
         formBody.style.opacity = '1';
         formBody.style.marginTop = '12px';
@@ -1678,9 +1682,10 @@ function toggleSocialEditForm(elementId, isFromPreview = false) {
         }
     } else {
         // Collapse
-        formBody.style.maxHeight = '0';
+        formBody.classList.remove('open');
+        formBody.style.maxHeight = '0px';
         formBody.style.opacity = '0';
-        formBody.style.marginTop = '0';
+        formBody.style.marginTop = '0px';
         
         const card = document.getElementById(blockId).querySelector('.block-item-card');
         if (card) card.classList.remove('active');
@@ -1879,7 +1884,23 @@ function removeDynamicSocialMedia(elementId) {
 function openSocialPlatformSelector(elementId) {
     window.currentSocialElementId = elementId;
     const modal = document.getElementById('socialPlatformModal');
-    if (modal) modal.classList.add('active');
+    
+    if (modal) {
+        const buttons = modal.querySelectorAll('.btn-select-platform');
+        buttons.forEach(btn => {
+            const platform = btn.getAttribute('data-platform');
+            const exists = document.getElementById('platform_item_' + platform + '_' + elementId);
+            if (exists) {
+                btn.classList.add('selected');
+                btn.setAttribute('data-originally-selected', 'true');
+            } else {
+                btn.classList.remove('selected');
+                btn.removeAttribute('data-originally-selected');
+            }
+        });
+        
+        modal.classList.add('active');
+    }
 }
 
 function closeSocialPlatformSelector() {
@@ -1935,4 +1956,39 @@ function removeSocialPlatformFromForm(elementId, platform) {
         item.remove();
         updateSocialPreview(elementId);
     }
+}
+
+// Redesigned Social Platform Modal logic
+function toggleSocialPlatformSelection(button) {
+    button.classList.toggle('selected');
+}
+
+function finishSocialPlatformSelection() {
+    const buttons = document.querySelectorAll('#socialPlatformModal .btn-select-platform');
+    const elementId = window.currentSocialElementId;
+    
+    if (!elementId) {
+        closeSocialPlatformSelector();
+        return;
+    }
+    
+    buttons.forEach(btn => {
+        const platform = btn.getAttribute('data-platform');
+        const isSelected = btn.classList.contains('selected');
+        const wasSelected = btn.getAttribute('data-originally-selected') === 'true';
+        
+        if (isSelected && !wasSelected) {
+            // Newly selected, add it
+            addSocialPlatformToForm(elementId, platform);
+        } else if (!isSelected && wasSelected) {
+            // Deselected, remove it
+            removeSocialPlatformFromForm(elementId, platform);
+        }
+        
+        // Cleanup classes and attributes
+        btn.classList.remove('selected');
+        btn.removeAttribute('data-originally-selected');
+    });
+    
+    closeSocialPlatformSelector();
 }

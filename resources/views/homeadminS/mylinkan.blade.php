@@ -3,7 +3,7 @@
 @section("page_title", __('admin.microsite_management'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/mylinkan.css') }}?v={{ filemtime(public_path('css/pages/mylinkan.css')) }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/mylinkan.css') }}?v={{ filemtime(public_path('css/pages/mylinkan.css')) }}">
 @endpush
 
 @section("content")
@@ -802,12 +802,12 @@
                                                                         <span class="platform-name">{{ $platInfo['label'] }}</span>
                                                                     </div>
                                                                     <button type="button" class="btn-remove-platform" onclick="removeSocialPlatformFromForm('{{ $elementId }}', '{{ $platKey }}')" title="Hapus Platform">
-                                                                        <i class="fas fa-trash-alt" style="color: #ef4444;"></i>
+                                                                        <i class="fas fa-trash-alt"></i>
                                                                     </button>
                                                                 </div>
                                                                 <div class="platform-input-container">
-                                                                    <label class="form-label" style="margin-top: 10px;">URL atau Username {{ $platInfo['label'] }}</label>
-                                                                    <input type="text" id="input_{{ $platKey }}_{{ $elementId }}" class="form-input platform-input-trigger" data-platform="{{ $platKey }}" data-element="{{ $elementId }}" value="{{ $platforms[$platKey] }}" placeholder="{{ $platInfo['placeholder'] }}" onkeyup="updateSocialPreview('{{ $elementId }}')" onchange="updateSocialPreview('{{ $elementId }}')">
+                                                                    <label class="form-label-custom">URL atau Username {{ $platInfo['label'] }}</label>
+                                                                    <input type="text" id="input_{{ $platKey }}_{{ $elementId }}" class="form-input-custom platform-input-trigger" data-platform="{{ $platKey }}" data-element="{{ $elementId }}" value="{{ $platforms[$platKey] }}" placeholder="{{ $platInfo['placeholder'] }}" onkeyup="updateSocialPreview('{{ $elementId }}')" onchange="updateSocialPreview('{{ $elementId }}')">
                                                                 </div>
                                                             </div>
                                                         @endif
@@ -821,12 +821,12 @@
                                                     </button>
                                                 </div>
 
-                                                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                                                    <button type="button" class="btn-cancel" onclick="toggleSocialEditForm('{{ $elementId }}')">
+                                                <div class="form-actions-wrapper">
+                                                    <button type="button" class="btn-secondary" onclick="toggleSocialEditForm('{{ $elementId }}')">
                                                         Batal
                                                     </button>
-                                                    <button type="button" class="btn-submit" onclick="saveDynamicSocialMedia('{{ $elementId }}')">
-                                                        <i class="fas fa-save" style="margin-right: 6px;"></i> Simpan
+                                                    <button type="button" class="btn-primary" onclick="saveDynamicSocialMedia('{{ $elementId }}')">
+                                                    Simpan
                                                     </button>
                                                 </div>
                                             </form>
@@ -1205,13 +1205,13 @@
                     <i class="__ICON_CLASS__" style="color: __COLOR__; font-size: 20px; width: 24px; text-align: center;"></i>
                     <span class="platform-name">__PLATFORM_NAME__</span>
                 </div>
-                <button type="button" class="btn-remove-platform" onclick="removeSocialPlatformFromForm('__ELEMENT_ID__', '__PLATFORM__')" title="Hapus Platform">
-                    <i class="fas fa-trash-alt" style="color: #ef4444;"></i>
+                        <button type="button" class="btn-remove-platform" onclick="removeSocialPlatformFromForm('__ELEMENT_ID__', '__PLATFORM__')" title="Hapus Platform">
+                    <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
             <div class="platform-input-container">
-                <label class="form-label">__LABEL__</label>
-                <input type="text" id="input___PLATFORM_____ELEMENT_ID__" class="form-input platform-input-trigger" data-platform="__PLATFORM__" data-element="__ELEMENT_ID__" placeholder="__PLACEHOLDER__" onkeyup="updateSocialPreview('__ELEMENT_ID__')" onchange="updateSocialPreview('__ELEMENT_ID__')">
+                <label class="form-label-custom">URL atau Username __PLATFORM_NAME__</label>
+                <input type="text" id="input___PLATFORM_____ELEMENT_ID__" class="form-input-custom platform-input-trigger" data-platform="__PLATFORM__" data-element="__ELEMENT_ID__" placeholder="__PLACEHOLDER__" onkeyup="updateSocialPreview('__ELEMENT_ID__')" onchange="updateSocialPreview('__ELEMENT_ID__')">
             </div>
         </div>
     </template>
@@ -1265,11 +1265,11 @@
                             </button>
                         </div>
 
-                        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                            <button type="button" class="btn-cancel" onclick="toggleSocialEditForm('__ELEMENT_ID__')">
+                        <div class="form-actions-wrapper">
+                            <button type="button" class="btn-secondary" onclick="toggleSocialEditForm('__ELEMENT_ID__')">
                                 Batal
                             </button>
-                            <button type="button" class="btn-submit" onclick="saveDynamicSocialMedia('__ELEMENT_ID__')">
+                            <button type="button" class="btn-primary" onclick="saveDynamicSocialMedia('__ELEMENT_ID__')">
                                 <i class="fas fa-save" style="margin-right: 6px;"></i> Simpan
                             </button>
                         </div>
@@ -1280,47 +1280,79 @@
     </template>
     <!-- Social Platform Selection Modal -->
     <div id="socialPlatformModal" class="custom-confirm-modal-overlay">
-        <div class="custom-confirm-modal-box" style="max-width: 400px;">
-            <h3 class="custom-confirm-modal-title">Pilih Platform</h3>
-            <p class="custom-confirm-modal-text" style="margin-bottom: 20px;">Pilih media sosial yang ingin ditambahkan</p>
+        <div class="custom-confirm-modal-box platform-modal">
+            <h3 class="platform-modal-title">Choose your platforms</h3>
             
-            <div class="social-platform-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'instagram')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-instagram" style="color: #E1306C; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">Instagram</span>
+            <div class="social-platform-grid">
+                <button type="button" class="btn-select-platform" data-platform="linkedin" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-linkedin platform-icon" style="color: #0077b5;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">Linkedin</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'facebook')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-facebook" style="color: #1877F2; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">Facebook</span>
+                <button type="button" class="btn-select-platform" data-platform="twitter" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-x-twitter platform-icon" style="color: #000000;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">X (Twitter)</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'youtube')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-youtube" style="color: #FF0000; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">YouTube</span>
+                <button type="button" class="btn-select-platform" data-platform="facebook" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-facebook platform-icon" style="color: #1877F2;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">Facebook</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'whatsapp')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-whatsapp" style="color: #25D366; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">WhatsApp</span>
+                <button type="button" class="btn-select-platform" data-platform="instagram" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-instagram platform-icon" style="color: #E1306C;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">Instagram</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'telegram')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-telegram" style="color: #0088cc; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">Telegram</span>
+                <button type="button" class="btn-select-platform" data-platform="reddit" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-reddit platform-icon" style="color: #FF4500;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">Reddit</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'tiktok')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-tiktok" style="color: #000000; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">TikTok</span>
+                <button type="button" class="btn-select-platform" data-platform="youtube" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-youtube platform-icon" style="color: #FF0000;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">YouTube</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'twitter')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fab fa-x-twitter" style="color: #000000; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">X (Twitter)</span>
+                <button type="button" class="btn-select-platform" data-platform="whatsapp" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-whatsapp platform-icon" style="color: #25D366;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">WhatsApp</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
-                <button type="button" class="btn-select-platform" onclick="addSocialPlatformToForm(window.currentSocialElementId, 'email')" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s;">
-                    <i class="fas fa-envelope" style="color: #ea4335; font-size: 28px;"></i>
-                    <span style="font-size: 13px; font-weight: 500;">Email</span>
+                <button type="button" class="btn-select-platform" data-platform="tiktok" onclick="toggleSocialPlatformSelection(this)">
+                    <i class="fab fa-tiktok platform-icon" style="color: #000000;"></i>
+                    <div class="platform-info">
+                        <div class="platform-name">TikTok</div>
+                        <div class="platform-desc">Good for B2B businesses</div>
+                    </div>
+                    <div class="platform-checkbox"></div>
                 </button>
             </div>
             
-            <div class="custom-confirm-modal-actions">
-                <button type="button" class="custom-confirm-btn-cancel" onclick="closeSocialPlatformSelector()">Batal</button>
+            <div class="platform-modal-actions">
+                <button type="button" class="btn-platform-back" onclick="closeSocialPlatformSelector()">Back to Previous</button>
+                <button type="button" class="btn-platform-finish" onclick="finishSocialPlatformSelection()">Finish Steps</button>
             </div>
         </div>
     </div>

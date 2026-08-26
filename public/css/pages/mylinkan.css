@@ -3534,20 +3534,26 @@ input:checked+.segment-btn {
     border-top: 1px dashed #cbd5e1;
 }
 .btn-remove-platform {
-    background: #fee2e2;
+    background: transparent;
     border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    padding: 0;
+    font-size: 14px;
+    color: #9ca3af;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s ease;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
 }
 .btn-remove-platform:hover {
-    background: #fecaca;
-    transform: scale(1.05);
+    background: transparent;
+    color: #B91C1C;
+}
+.btn-remove-platform i {
+    color: inherit;
 }
 .social-platform-item {
     margin-bottom: 12px;
@@ -3577,4 +3583,151 @@ input:checked+.segment-btn {
     z-index: 10;
     pointer-events: none;
     font-size: 16px;
+}
+
+/* Redesigned Social Platform Modal */
+.social-platform-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.btn-select-platform {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.btn-select-platform:hover {
+    border-color: #6a11cb;
+    box-shadow: 0 2px 8px rgba(106, 17, 203, 0.1);
+}
+
+.btn-select-platform.selected {
+    border-color: #6a11cb;
+    background-color: #f5f3ff;
+}
+
+.btn-select-platform .platform-icon {
+    font-size: 28px;
+    margin-right: 12px;
+    width: 32px;
+    text-align: center;
+}
+
+.btn-select-platform .platform-info {
+    flex: 1;
+}
+
+.btn-select-platform .platform-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.btn-select-platform .platform-desc {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.platform-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-select-platform.selected .platform-checkbox {
+    background-color: #6a11cb;
+    border-color: #6a11cb;
+}
+
+.platform-checkbox::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: white;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.btn-select-platform.selected .platform-checkbox::after {
+    opacity: 1;
+}
+
+.custom-confirm-modal-box.platform-modal {
+    max-width: 600px !important;
+    width: 90%;
+    padding: 24px;
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.platform-modal-title {
+    text-align: left;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 16px;
+    margin-top: 0;
+}
+
+.platform-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.platform-modal-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-platform-back {
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-platform-back:hover {
+    background: #f8fafc;
+}
+
+.btn-platform-finish {
+    background: #6200ea;
+    border: none;
+    color: white;
+}
+
+.btn-platform-finish:hover {
+    background: #5000c0;
+}
+
+@media (max-width: 480px) {
+    .social-platform-grid {
+        grid-template-columns: 1fr;
+    }
 }
