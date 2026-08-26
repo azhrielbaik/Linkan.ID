@@ -132,6 +132,21 @@
                             <textarea id="ann_message" name="message" rows="3" class="form-control" placeholder="{{ __('platform.announcement_message_placeholder') }}" required></textarea>
                         </div>
 
+                        {{-- Opsi Kirim Email Massal --}}
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 12px 16px; border-radius: 10px; transition: border-color 0.2s;">
+                                <input type="checkbox" name="send_email" value="1" style="width: 18px; height: 18px; accent-color: #ED842C; cursor: pointer;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #0f172a;">
+                                        <i class="fas fa-envelope" style="color: #ED842C;"></i> Kirim Notifikasi via Email ke Semua Seller
+                                    </div>
+                                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                                        Opsi ini akan mengirimkan email pengumuman resmi ke seluruh seller aktif melalui SMTP Gmail. Cocok untuk pengumuman mendesak.
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
                         <button type="submit" class="btn-save-settings" style="width: auto; padding: 10px 22px;">
                             <i class="fas fa-bullhorn"></i> {{ __('platform.send_broadcast') }}
                         </button>
@@ -144,6 +159,7 @@
                                 <tr>
                                     <th>{{ __('platform.announcement') }}</th>
                                     <th>{{ __('platform.announcement_type') }}</th>
+                                    <th>Pengiriman</th>
                                     <th>{{ __('platform.time') }}</th>
                                     <th>{{ __('platform.status') }}</th>
                                     <th style="text-align: center;">{{ __('platform.delete') }}</th>
@@ -160,6 +176,17 @@
                                         <span class="badge-type type-{{ $ann->type }}">
                                             {{ $ann->type }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        @if($ann->send_email)
+                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                                                <i class="fas fa-paper-plane"></i> Email ({{ $ann->emails_sent_count }})
+                                            </span>
+                                        @else
+                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                                                <i class="fas fa-desktop"></i> Banner
+                                            </span>
+                                        @endif
                                     </td>
                                     <td style="font-size: 12px; color: #64748b; white-space: nowrap;">
                                         {{ $ann->created_at->format('d M Y, H:i') }}

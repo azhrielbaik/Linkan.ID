@@ -244,6 +244,14 @@ class PayoutController extends Controller
         // 2. Kurangi saldo pengguna di database (di-hold/dikurangi selama proses request)
         \DB::table('users')->where('id', $user->id)->decrement('balance', $amount);
 
+        // Catat Log Aktivitas Pengajuan Payout
+        \App\Services\ActivityLogger::log(
+            'request_payout',
+            "Seller {$user->name} mengajukan penarikan dana sebesar Rp " . number_format($amount, 0, ',', '.') . " via {$method}.",
+            ['amount' => $amount, 'net_amount' => $amountAfterCommission, 'method' => $method, 'account_name' => $accountName],
+            $user->id
+        );
+
         return redirect()->route('admin.payout.index')->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $method . '. Menunggu verifikasi admin platform.');
     }
 

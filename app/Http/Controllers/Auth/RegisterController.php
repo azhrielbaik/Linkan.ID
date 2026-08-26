@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
@@ -41,7 +42,15 @@ class RegisterController extends Controller
             $userData['google_id'] = $request->google_id;
         }
 
-        User::create($userData);
+        $newUser = User::create($userData);
+
+        // Catat Log Registrasi Pengguna Baru
+        ActivityLogger::log(
+            'user_register',
+            "Pengguna baru {$newUser->name} ({$newUser->email}) berhasil mendaftar akun seller.",
+            ['username' => $newUser->username, 'role' => $newUser->role],
+            $newUser->id
+        );
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }

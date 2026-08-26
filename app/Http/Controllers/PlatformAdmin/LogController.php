@@ -17,23 +17,33 @@ class LogController extends Controller
     {
         $query = ActivityLog::with('user')->latest();
 
-        // Filter Aksi
+        // Filter Aksi Spesifik
         if ($action = $request->input('action')) {
             $query->where('action', $action);
         }
 
         // Filter Kategori Aksi
-        if ($category = $request->input('category')) {
-            if ($category === 'user') {
-                $query->whereIn('action', ['suspend_user', 'activate_user']);
-            } elseif ($category === 'product') {
-                $query->whereIn('action', ['approve_product', 'reject_product']);
-            } elseif ($category === 'payout') {
-                $query->whereIn('action', ['approve_payout', 'reject_payout']);
-            }
+        $category = $request->input('category', 'all');
+        if ($category === 'admin') {
+            $query->whereIn('action', [
+                'suspend_user', 'activate_user',
+                'approve_product', 'reject_product',
+                'approve_payout', 'reject_payout',
+                'update_platform_settings', 'create_broadcast', 'delete_broadcast'
+            ]);
+        } elseif ($category === 'auth') {
+            $query->whereIn('action', [
+                'user_register', 'user_login', 'user_logout',
+                'password_reset_otp_sent', 'password_reset_success'
+            ]);
+        } elseif ($category === 'seller') {
+            $query->whereIn('action', [
+                'create_product', 'update_product', 'delete_product',
+                'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
+            ]);
         }
 
-        // Search Deskripsi / IP / Nama Admin
+        // Search Deskripsi / IP / Nama / Email Pengguna
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
@@ -41,7 +51,8 @@ class LogController extends Controller
                   ->orWhere('ip_address', 'like', "%{$search}%")
                   ->orWhereHas('user', function ($uq) use ($search) {
                       $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
+                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('username', 'like', "%{$search}%");
                   });
             });
         }
@@ -58,9 +69,20 @@ class LogController extends Controller
 
         // Stats
         $totalLogsCount = ActivityLog::count();
-        $userActionCount = ActivityLog::whereIn('action', ['suspend_user', 'activate_user'])->count();
-        $productActionCount = ActivityLog::whereIn('action', ['approve_product', 'reject_product'])->count();
-        $payoutActionCount = ActivityLog::whereIn('action', ['approve_payout', 'reject_payout'])->count();
+        $adminActionCount = ActivityLog::whereIn('action', [
+            'suspend_user', 'activate_user',
+            'approve_product', 'reject_product',
+            'approve_payout', 'reject_payout',
+            'update_platform_settings', 'create_broadcast', 'delete_broadcast'
+        ])->count();
+        $authActionCount = ActivityLog::whereIn('action', [
+            'user_register', 'user_login', 'user_logout',
+            'password_reset_otp_sent', 'password_reset_success'
+        ])->count();
+        $sellerActionCount = ActivityLog::whereIn('action', [
+            'create_product', 'update_product', 'delete_product',
+            'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
+        ])->count();
 
         return view('platformadmin.logs.activity', compact(
             'logs',
@@ -70,9 +92,9 @@ class LogController extends Controller
             'startDate',
             'endDate',
             'totalLogsCount',
-            'userActionCount',
-            'productActionCount',
-            'payoutActionCount'
+            'adminActionCount',
+            'authActionCount',
+            'sellerActionCount'
         ));
     }
 

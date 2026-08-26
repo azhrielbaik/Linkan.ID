@@ -34,7 +34,6 @@
         </div>
 
         <div class="content-wrapper">
-
             {{-- Stats Grid --}}
             <div class="stats-grid">
                 <div class="stat-card total">
@@ -49,27 +48,27 @@
                 <div class="stat-card users">
                     <div class="stat-icon-wrapper"><i class="fas fa-user-shield"></i></div>
                     <div class="stat-info">
-                        <div class="stat-label">{{ __('platform.user_management') }}</div>
-                        <div class="stat-val">{{ $userActionCount }} {{ __('platform.actions') }}</div>
-                        <div class="stat-sub">Suspend / {{ __('platform.activate') }}</div>
+                        <div class="stat-label">Aksi Admin</div>
+                        <div class="stat-val">{{ $adminActionCount }} Aksi</div>
+                        <div class="stat-sub">Suspend / Verifikasi / Approval</div>
                     </div>
                 </div>
 
                 <div class="stat-card products">
-                    <div class="stat-icon-wrapper"><i class="fas fa-check-double"></i></div>
+                    <div class="stat-icon-wrapper"><i class="fas fa-key"></i></div>
                     <div class="stat-info">
-                        <div class="stat-label">{{ __('platform.product_verification') }}</div>
-                        <div class="stat-val">{{ $productActionCount }} {{ __('platform.actions') }}</div>
-                        <div class="stat-sub">{{ __('platform.approve') }} / {{ __('platform.reject') }}</div>
+                        <div class="stat-label">Autentikasi User</div>
+                        <div class="stat-val">{{ $authActionCount }} Aksi</div>
+                        <div class="stat-sub">Login / Daftar / Reset PW</div>
                     </div>
                 </div>
 
                 <div class="stat-card payouts">
-                    <div class="stat-icon-wrapper"><i class="fas fa-money-check-alt"></i></div>
+                    <div class="stat-icon-wrapper"><i class="fas fa-store"></i></div>
                     <div class="stat-info">
-                        <div class="stat-label">{{ __('platform.payout_management') }}</div>
-                        <div class="stat-val">{{ $payoutActionCount }} {{ __('platform.actions') }}</div>
-                        <div class="stat-sub">{{ __('platform.approve') }} / {{ __('platform.reject') }}</div>
+                        <div class="stat-label">Aktivitas Seller</div>
+                        <div class="stat-val">{{ $sellerActionCount }} Aksi</div>
+                        <div class="stat-sub">Produk / Payout / Shortlink</div>
                     </div>
                 </div>
             </div>
@@ -78,19 +77,19 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'all'])) }}"
                    class="tab-link {{ ($category ?? 'all') === 'all' ? 'active' : '' }}">
-                    {{ __('platform.all_activities') }}
+                    <i class="fas fa-th-list"></i> {{ __('platform.all_activities') }}
                 </a>
-                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'user'])) }}"
-                   class="tab-link {{ ($category ?? '') === 'user' ? 'active' : '' }}">
-                    {{ __('platform.user_management') }}
+                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'admin'])) }}"
+                   class="tab-link {{ ($category ?? '') === 'admin' ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> Aksi Admin Platform
                 </a>
-                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'product'])) }}"
-                   class="tab-link {{ ($category ?? '') === 'product' ? 'active' : '' }}">
-                    {{ __('platform.product_verification') }}
+                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'auth'])) }}"
+                   class="tab-link {{ ($category ?? '') === 'auth' ? 'active' : '' }}">
+                    <i class="fas fa-fingerprint"></i> Autentikasi Pengguna
                 </a>
-                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'payout'])) }}"
-                   class="tab-link {{ ($category ?? '') === 'payout' ? 'active' : '' }}">
-                    {{ __('platform.payout_management') }}
+                <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'seller'])) }}"
+                   class="tab-link {{ ($category ?? '') === 'seller' ? 'active' : '' }}">
+                    <i class="fas fa-store"></i> Aktivitas Seller
                 </a>
             </div>
 
@@ -106,12 +105,36 @@
 
                     <select name="action" class="filter-select">
                         <option value="">{{ __('platform.all_action_types') }}</option>
-                        <option value="suspend_user" {{ ($action ?? '') === 'suspend_user' ? 'selected' : '' }}>Suspend User</option>
-                        <option value="activate_user" {{ ($action ?? '') === 'activate_user' ? 'selected' : '' }}>{{ __('platform.activate') }} User</option>
-                        <option value="approve_product" {{ ($action ?? '') === 'approve_product' ? 'selected' : '' }}>Approve Produk</option>
-                        <option value="reject_product" {{ ($action ?? '') === 'reject_product' ? 'selected' : '' }}>Reject Produk</option>
-                        <option value="approve_payout" {{ ($action ?? '') === 'approve_payout' ? 'selected' : '' }}>Approve Payout</option>
-                        <option value="reject_payout" {{ ($action ?? '') === 'reject_payout' ? 'selected' : '' }}>Reject Payout</option>
+                        <optgroup label="Autentikasi & Akun">
+                            <option value="user_login" {{ ($action ?? '') === 'user_login' ? 'selected' : '' }}>User Login</option>
+                            <option value="user_logout" {{ ($action ?? '') === 'user_logout' ? 'selected' : '' }}>User Logout</option>
+                            <option value="user_register" {{ ($action ?? '') === 'user_register' ? 'selected' : '' }}>User Register (Buat Akun)</option>
+                            <option value="password_reset_otp_sent" {{ ($action ?? '') === 'password_reset_otp_sent' ? 'selected' : '' }}>Request OTP Reset Password</option>
+                            <option value="password_reset_success" {{ ($action ?? '') === 'password_reset_success' ? 'selected' : '' }}>Reset Password Berhasil</option>
+                            <option value="update_account" {{ ($action ?? '') === 'update_account' ? 'selected' : '' }}>Update Pengaturan Akun</option>
+                        </optgroup>
+                        <optgroup label="Aktivitas Seller">
+                            <option value="create_product" {{ ($action ?? '') === 'create_product' ? 'selected' : '' }}>Tambah Produk Digital</option>
+                            <option value="update_product" {{ ($action ?? '') === 'update_product' ? 'selected' : '' }}>Update Produk Digital</option>
+                            <option value="delete_product" {{ ($action ?? '') === 'delete_product' ? 'selected' : '' }}>Hapus Produk Digital</option>
+                            <option value="request_payout" {{ ($action ?? '') === 'request_payout' ? 'selected' : '' }}>Pengajuan Payout / Withdraw</option>
+                            <option value="create_shortlink" {{ ($action ?? '') === 'create_shortlink' ? 'selected' : '' }}>Buat Shortlink</option>
+                            <option value="update_shortlink" {{ ($action ?? '') === 'update_shortlink' ? 'selected' : '' }}>Update Shortlink</option>
+                            <option value="create_support_ticket" {{ ($action ?? '') === 'create_support_ticket' ? 'selected' : '' }}>Buat Tiket Bantuan</option>
+                            <option value="reply_support_ticket" {{ ($action ?? '') === 'reply_support_ticket' ? 'selected' : '' }}>Balas Tiket (Seller)</option>
+                        </optgroup>
+                        <optgroup label="Aksi Admin Platform">
+                            <option value="suspend_user" {{ ($action ?? '') === 'suspend_user' ? 'selected' : '' }}>Suspend User</option>
+                            <option value="activate_user" {{ ($action ?? '') === 'activate_user' ? 'selected' : '' }}>{{ __('platform.activate') }} User</option>
+                            <option value="approve_product" {{ ($action ?? '') === 'approve_product' ? 'selected' : '' }}>Approve Produk</option>
+                            <option value="reject_product" {{ ($action ?? '') === 'reject_product' ? 'selected' : '' }}>Reject Produk</option>
+                            <option value="approve_payout" {{ ($action ?? '') === 'approve_payout' ? 'selected' : '' }}>Approve Payout</option>
+                            <option value="reject_payout" {{ ($action ?? '') === 'reject_payout' ? 'selected' : '' }}>Reject Payout</option>
+                            <option value="admin_reply_ticket" {{ ($action ?? '') === 'admin_reply_ticket' ? 'selected' : '' }}>Balas Tiket (Admin)</option>
+                            <option value="update_ticket_status" {{ ($action ?? '') === 'update_ticket_status' ? 'selected' : '' }}>Update Status Tiket</option>
+                            <option value="update_platform_settings" {{ ($action ?? '') === 'update_platform_settings' ? 'selected' : '' }}>Update Setting Platform</option>
+                            <option value="create_broadcast" {{ ($action ?? '') === 'create_broadcast' ? 'selected' : '' }}>Kirim Broadcast</option>
+                        </optgroup>
                     </select>
 
                     <div style="display: flex; align-items: center; gap: 6px;">
@@ -135,7 +158,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>{{ __('platform.time') }}</th>
-                                <th>{{ __('platform.admin') }}</th>
+                                <th>Pengguna / Aktor</th>
                                 <th>{{ __('platform.action') }}</th>
                                 <th>{{ __('platform.activity_description') }}</th>
                                 <th>{{ __('platform.ip_and_device') }}</th>
@@ -157,11 +180,18 @@
                                 </td>
                                 <td>
                                     <div class="admin-cell">
-                                        <div class="admin-avatar">
-                                            {{ strtoupper(substr($log->user->name ?? 'A', 0, 2)) }}
+                                        <div class="admin-avatar" style="{{ ($log->user && $log->user->role === 'admin_seller') ? 'background: #0284c7;' : '' }}">
+                                            {{ strtoupper(substr($log->user->name ?? 'U', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <div class="admin-name">{{ $log->user->name ?? 'Admin Sistem' }}</div>
+                                            <div class="admin-name">
+                                                {{ $log->user->name ?? 'Pengguna Sistem' }}
+                                                @if($log->user && $log->user->role === 'admin_platform')
+                                                    <span class="user-role-badge role-admin">Admin</span>
+                                                @elseif($log->user && $log->user->role === 'admin_seller')
+                                                    <span class="user-role-badge role-seller">Seller</span>
+                                                @endif
+                                            </div>
                                             <div class="admin-email">{{ $log->user->email ?? '-' }}</div>
                                         </div>
                                     </div>
@@ -172,22 +202,128 @@
                                         $icon = 'info-circle';
                                         $label = ucwords(str_replace('_', ' ', $log->action));
 
-                                        if (str_contains($log->action, 'suspend')) {
-                                            $badgeClass = 'badge-suspend';
-                                            $icon = 'ban';
-                                            $label = 'Suspend User';
-                                        } elseif (str_contains($log->action, 'activate')) {
-                                            $badgeClass = 'badge-activate';
-                                            $icon = 'check-circle';
-                                            $label = __('platform.activate') . ' User';
-                                        } elseif (str_contains($log->action, 'approve')) {
-                                            $badgeClass = 'badge-approve';
-                                            $icon = 'check';
-                                            $label = str_contains($log->action, 'product') ? 'Approve Produk' : 'Approve Payout';
-                                        } elseif (str_contains($log->action, 'reject')) {
-                                            $badgeClass = 'badge-reject';
-                                            $icon = 'times';
-                                            $label = str_contains($log->action, 'product') ? 'Reject Produk' : 'Reject Payout';
+                                        switch($log->action) {
+                                            case 'user_login':
+                                                $badgeClass = 'badge-login';
+                                                $icon = 'sign-in-alt';
+                                                $label = 'User Login';
+                                                break;
+                                            case 'user_logout':
+                                                $badgeClass = 'badge-logout';
+                                                $icon = 'sign-out-alt';
+                                                $label = 'User Logout';
+                                                break;
+                                            case 'user_register':
+                                                $badgeClass = 'badge-register';
+                                                $icon = 'user-plus';
+                                                $label = 'Buat Akun';
+                                                break;
+                                            case 'password_reset_otp_sent':
+                                                $badgeClass = 'badge-reset-otp';
+                                                $icon = 'key';
+                                                $label = 'Request OTP PW';
+                                                break;
+                                            case 'password_reset_success':
+                                                $badgeClass = 'badge-activate';
+                                                $icon = 'check-double';
+                                                $label = 'Reset PW Sukses';
+                                                break;
+                                            case 'create_product':
+                                                $badgeClass = 'badge-product-create';
+                                                $icon = 'box';
+                                                $label = 'Tambah Produk';
+                                                break;
+                                            case 'update_product':
+                                                $badgeClass = 'badge-product-update';
+                                                $icon = 'edit';
+                                                $label = 'Update Produk';
+                                                break;
+                                            case 'delete_product':
+                                                $badgeClass = 'badge-product-delete';
+                                                $icon = 'trash-alt';
+                                                $label = 'Hapus Produk';
+                                                break;
+                                            case 'request_payout':
+                                                $badgeClass = 'badge-payout-req';
+                                                $icon = 'hand-holding-usd';
+                                                $label = 'Ajukan Payout';
+                                                break;
+                                            case 'create_shortlink':
+                                                $badgeClass = 'badge-shortlink';
+                                                $icon = 'link';
+                                                $label = 'Buat Shortlink';
+                                                break;
+                                            case 'update_shortlink':
+                                                $badgeClass = 'badge-shortlink';
+                                                $icon = 'link';
+                                                $label = 'Update Shortlink';
+                                                break;
+                                            case 'update_account':
+                                                $badgeClass = 'badge-account';
+                                                $icon = 'user-cog';
+                                                $label = 'Update Profil';
+                                                break;
+                                            case 'suspend_user':
+                                                $badgeClass = 'badge-suspend';
+                                                $icon = 'ban';
+                                                $label = 'Suspend User';
+                                                break;
+                                            case 'activate_user':
+                                                $badgeClass = 'badge-activate';
+                                                $icon = 'check-circle';
+                                                $label = 'Aktivasi User';
+                                                break;
+                                            case 'approve_product':
+                                                $badgeClass = 'badge-approve';
+                                                $icon = 'check';
+                                                $label = 'Approve Produk';
+                                                break;
+                                            case 'reject_product':
+                                                $badgeClass = 'badge-reject';
+                                                $icon = 'times';
+                                                $label = 'Reject Produk';
+                                                break;
+                                            case 'approve_payout':
+                                                $badgeClass = 'badge-approve';
+                                                $icon = 'money-bill-wave';
+                                                $label = 'Approve Payout';
+                                                break;
+                                            case 'reject_payout':
+                                                $badgeClass = 'badge-reject';
+                                                $icon = 'times-circle';
+                                                $label = 'Reject Payout';
+                                                break;
+                                            case 'create_support_ticket':
+                                                $badgeClass = 'badge-reset-otp';
+                                                $icon = 'headset';
+                                                $label = 'Buat Tiket';
+                                                break;
+                                            case 'reply_support_ticket':
+                                                $badgeClass = 'badge-shortlink';
+                                                $icon = 'comment-dots';
+                                                $label = 'Balas Tiket';
+                                                break;
+                                            case 'admin_reply_ticket':
+                                                $badgeClass = 'badge-approve';
+                                                $icon = 'reply';
+                                                $label = 'Balas Tiket';
+                                                break;
+                                            case 'update_ticket_status':
+                                                $badgeClass = 'badge-activate';
+                                                $icon = 'tasks';
+                                                $label = 'Status Tiket';
+                                                break;
+                                            case 'update_platform_settings':
+                                                $badgeClass = 'badge-default';
+                                                $icon = 'cogs';
+                                                $label = 'Setting Platform';
+                                                break;
+                                            case 'create_broadcast':
+                                            case 'delete_broadcast':
+                                                $badgeClass = 'badge-default';
+                                                $icon = 'bullhorn';
+                                                $label = 'Broadcast Pesan';
+                                                break;
                                         }
                                     @endphp
                                     <span class="badge-action {{ $badgeClass }}">

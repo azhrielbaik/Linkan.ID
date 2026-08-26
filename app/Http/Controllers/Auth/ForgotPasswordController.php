@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ResetPasswordOtpMail;
 use App\Models\PasswordResetRequest;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordController extends Controller
 {
@@ -20,7 +23,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Step 1 -> Step 2: Kirim permintaan reset password ke Admin Platform.
+     * Step 1 -> Step 2: Kirim kode OTP reset password langsung ke email pengguna (SMTP).
      */
     public function requestOtp(Request $request)
     {
@@ -39,21 +42,52 @@ class ForgotPasswordController extends Controller
             ]);
         }
 
-        // Cek apakah sudah ada permohonan pending aktif
-        $existing = PasswordResetRequest::where('email', $request->email)
-            ->where('status', 'pending')
-            ->first();
+        // Generate 4-digit OTP acak
+        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
+        $expiresMinutes = 15;
 
-        if (!$existing) {
-            PasswordResetRequest::create([
-                'user_id' => $user->id,
-                'email'   => $user->email,
-                'reason'  => 'Permintaan reset password seller',
-                'status'  => 'pending',
+        // Tandai permohonan aktif sebelumnya agar tidak duplikat
+        PasswordResetRequest::where('email', $user->email)
+            ->whereIn('status', ['pending', 'approved'])
+            ->update([
+                'status'      => 'rejected',
+                'admin_notes' => 'Digantikan oleh permintaan kode OTP baru',
+                'resolved_at' => now(),
+            ]);
+
+        // Simpan request OTP baru dengan status langsung approved
+        $resetRequest = PasswordResetRequest::create([
+            'user_id'     => $user->id,
+            'email'       => $user->email,
+            'reason'      => 'Permintaan reset password via email OTP',
+            'otp_code'    => $otp,
+            'status'      => 'approved',
+            'expires_at'  => now()->addMinutes($expiresMinutes),
+            'resolved_at' => now(),
+        ]);
+
+        // Kirim email OTP langsung via SMTP
+        try {
+            Mail::to($user->email)->send(new ResetPasswordOtpMail($otp, $user->name ?? 'Pengguna', $expiresMinutes));
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim email OTP Reset Password: ' . $e->getMessage());
+            return back()->withInput()->withErrors([
+                'email' => 'Gagal mengirim email verifikasi: ' . $e->getMessage(),
             ]);
         }
 
-        return redirect()->route('password.verify-otp', ['email' => $request->email]);
+        // Simpan email di session
+        session(['reset_email' => $user->email]);
+
+        // Catat di activity log
+        ActivityLogger::log(
+            'password_reset_otp_sent',
+            "Kode OTP verifikasi reset password dikirimkan ke {$user->email}.",
+            ['user_id' => $user->id, 'email' => $user->email]
+        );
+
+        return redirect()->route('password.verify-otp', ['email' => $user->email])
+            ->with('status', 'Kode OTP 4 digit telah dikirim ke email Anda. Silakan periksa inbox atau folder spam.');
     }
 
     /**
@@ -124,7 +158,7 @@ class ForgotPasswordController extends Controller
 
         if (!$resetReq) {
             return back()->withInput()->withErrors([
-                'otp_code' => 'Permintaan reset belum disetujui Admin atau kode telah kedaluwarsa.',
+                'otp_code' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
             ]);
         }
 

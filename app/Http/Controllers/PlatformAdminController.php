@@ -322,45 +322,12 @@ class PlatformAdminController extends Controller
             ];
         }
 
-        // 4. Pending Password Reset Requests
-        $pendingResetReqs = DB::table('password_reset_requests')
-            ->leftJoin('users', 'password_reset_requests.user_id', '=', 'users.id')
-            ->where('password_reset_requests.status', 'pending')
-            ->select(
-                'password_reset_requests.id',
-                'password_reset_requests.email',
-                'password_reset_requests.reason',
-                'password_reset_requests.created_at',
-                DB::raw('COALESCE(users.name, password_reset_requests.email) as seller_name')
-            )
-            ->orderBy('password_reset_requests.created_at', 'desc')
-            ->limit(10)
-            ->get();
-
-        foreach ($pendingResetReqs as $resetReq) {
-            $timeAgo = \Carbon\Carbon::parse($resetReq->created_at)->diffForHumans();
-            $notifications[] = [
-                'id'          => 'reset_req_' . $resetReq->id,
-                'type'        => 'reset_request',
-                'title'       => 'Permintaan Reset Password',
-                'message'     => 'Seller <strong>' . e($resetReq->seller_name) . '</strong> meminta Kode OTP Reset Password.',
-                'badge'       => 'Reset PW',
-                'badge_class' => 'badge-appeal',
-                'icon'        => 'fas fa-key',
-                'icon_bg'     => '#fef3c7',
-                'icon_color'  => '#d97706',
-                'url'         => route('platform-admin.users', ['view' => 'reset_requests']),
-                'time_ago'    => $timeAgo,
-                'timestamp'   => strtotime($resetReq->created_at),
-            ];
-        }
-
         // Urutkan notifikasi berdasarkan waktu terbaru
         usort($notifications, function ($a, $b) {
             return $b['timestamp'] - $a['timestamp'];
         });
 
-        $unreadCount = count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals) + count($pendingResetReqs);
+        $unreadCount = count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals);
 
         return [
             'status'        => 'success',
@@ -369,7 +336,6 @@ class PlatformAdminController extends Controller
                 'products' => count($pendingProducts),
                 'payouts'  => count($pendingPayouts),
                 'appeals'  => count($pendingAppeals),
-                'resets'   => count($pendingResetReqs),
             ],
             'notifications' => array_slice($notifications, 0, 20)
         ];
@@ -485,14 +451,6 @@ class PlatformAdminController extends Controller
         $appeals = $appealsQuery->paginate(15, ['*'], 'appeals_page')->withQueryString();
         $pendingAppealsCount = \App\Models\SuspensionAppeal::where('status', 'pending')->count();
 
-        // Data Permintaan Reset Password
-        $resetRequestsQuery = \App\Models\PasswordResetRequest::with('user')->latest();
-        if ($resetStatus = $request->input('reset_status')) {
-            $resetRequestsQuery->where('status', $resetStatus);
-        }
-        $resetRequests = $resetRequestsQuery->paginate(15, ['*'], 'resets_page')->withQueryString();
-        $pendingResetRequestsCount = \App\Models\PasswordResetRequest::where('status', 'pending')->count();
-
         return view('platformadmin.users', compact(
             'users',
             'totalUsers',
@@ -502,9 +460,7 @@ class PlatformAdminController extends Controller
             'search',
             'viewType',
             'appeals',
-            'pendingAppealsCount',
-            'resetRequests',
-            'pendingResetRequestsCount'
+            'pendingAppealsCount'
         ));
     }
 
@@ -604,59 +560,6 @@ class PlatformAdminController extends Controller
         return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali.");
     }
 
-    /**
-     * Reset Password User/Seller secara manual oleh Platform Admin.
-     */
-    public function resetUserPassword(Request $request, int $id)
-    {
-        $user = User::where('role', '!=', 'admin_platform')->findOrFail($id);
-
-        $mode = $request->input('mode', 'auto'); // 'auto' or 'manual'
-        $newPassword = null;
-
-        if ($mode === 'manual') {
-            $request->validate([
-                'new_password' => ['required', 'string', 'min:8', 'max:50'],
-            ], [
-                'new_password.required' => 'Password baru wajib diisi.',
-                'new_password.min'      => 'Password baru minimal 8 karakter.',
-            ]);
-            $newPassword = $request->input('new_password');
-        } else {
-            // Generate password sementara acak yang aman dan mudah dibaca
-            $randomString = Str::lower(Str::random(6));
-            $randomDigits = rand(10, 99);
-            $newPassword = 'Lk#' . $randomString . $randomDigits;
-        }
-
-        $user->update([
-            'password' => Hash::make($newPassword),
-        ]);
-
-        // Catat Log Aktivitas
-        \App\Services\ActivityLogger::log(
-            'reset_user_password',
-            "Mereset password user: {$user->name} ({$user->email}) melalui mode {$mode}",
-            ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email, 'mode' => $mode]
-        );
-
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'status'        => 'success',
-                'message'       => "Password untuk {$user->name} berhasil direset.",
-                'user_name'     => $user->name,
-                'user_email'    => $user->email,
-                'temp_password' => $newPassword,
-            ]);
-        }
-
-        return back()->with('password_reset_result', [
-            'user_name'     => $user->name,
-            'user_email'    => $user->email,
-            'temp_password' => $newPassword,
-        ]);
-    }
-
     // Setujui Permohonan Banding
     public function approveAppeal(int $id)
     {
@@ -714,87 +617,6 @@ class PlatformAdminController extends Controller
         );
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} telah ditolak.");
-    }
-
-    /**
-     * Setujui Permintaan Reset Password dan Buat Kode OTP 6 Digit.
-     */
-    public function approveResetRequest(Request $request, int $id)
-    {
-        $resetReq = \App\Models\PasswordResetRequest::with('user')->findOrFail($id);
-
-        if ($resetReq->status !== 'pending') {
-            return back()->with('error', 'Permintaan ini sudah diproses sebelumnya.');
-        }
-
-        // Generate 4-digit OTP (sesuai desain UI mockup)
-        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
-
-        $resetReq->update([
-            'status'      => 'approved',
-            'otp_code'    => $otp,
-            'expires_at'  => now()->addMinutes(60),
-            'resolved_at' => now(),
-        ]);
-
-        // Catat Log Aktivitas
-        \App\Services\ActivityLogger::log(
-            'approve_password_reset_request',
-            "Menyetujui permintaan reset password untuk: {$resetReq->email} (OTP: {$otp})",
-            ['request_id' => $resetReq->id, 'email' => $resetReq->email, 'otp_code' => $otp]
-        );
-
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'status'    => 'success',
-                'message'   => "Permintaan reset untuk {$resetReq->email} disetujui.",
-                'otp_code'  => $otp,
-                'email'     => $resetReq->email,
-            ]);
-        }
-
-        return back()->with('otp_approved_result', [
-            'email'    => $resetReq->email,
-            'otp_code' => $otp,
-        ]);
-    }
-
-    /**
-     * Tolak Permintaan Reset Password.
-     */
-    public function rejectResetRequest(Request $request, int $id)
-    {
-        $resetReq = \App\Models\PasswordResetRequest::with('user')->findOrFail($id);
-
-        $request->validate([
-            'admin_notes' => ['required', 'string', 'max:1000'],
-        ], [
-            'admin_notes.required' => 'Wajib memberikan catatan alasan penolakan.',
-        ]);
-
-        $adminNotes = strip_tags($request->admin_notes);
-
-        $resetReq->update([
-            'status'      => 'rejected',
-            'admin_notes' => $adminNotes,
-            'resolved_at' => now(),
-        ]);
-
-        // Catat Log Aktivitas
-        \App\Services\ActivityLogger::log(
-            'reject_password_reset_request',
-            "Menolak permintaan reset password untuk: {$resetReq->email}. Alasan: {$adminNotes}",
-            ['request_id' => $resetReq->id, 'email' => $resetReq->email, 'admin_notes' => $adminNotes]
-        );
-
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => "Permintaan reset untuk {$resetReq->email} telah ditolak.",
-            ]);
-        }
-
-        return back()->with('success', "Permintaan reset password untuk {$resetReq->email} telah ditolak.");
     }
 
     /**

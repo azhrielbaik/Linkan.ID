@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
 
+use App\Mail\BroadcastAnnouncementMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+
 class SettingController extends Controller
 {
     /**
@@ -77,41 +81,76 @@ class SettingController extends Controller
     }
 
     /**
-     * Membuat dan menyiarkan pengumuman baru ke semua seller.
+     * Membuat dan menyiarkan pengumuman baru ke semua seller (opsional via email massal).
      */
     public function storeBroadcast(Request $request)
     {
         $request->validate([
-            'title'   => 'required|string|max:255',
-            'message' => 'required|string|max:2000',
-            'type'    => 'required|in:info,warning,success,danger',
+            'title'      => 'required|string|max:255',
+            'message'    => 'required|string|max:2000',
+            'type'       => 'required|in:info,warning,success,danger',
+            'send_email' => 'nullable|boolean',
         ], [
             'title.required'   => 'Judul pengumuman wajib diisi.',
             'message.required' => 'Isi pesan pengumuman wajib diisi.',
             'type.required'    => 'Tipe pengumuman wajib dipilih.',
         ]);
 
+        $shouldSendEmail = $request->boolean('send_email');
+
         $announcement = BroadcastAnnouncement::create([
-            'admin_id'    => Auth::id(),
-            'title'       => $request->input('title'),
-            'message'     => $request->input('message'),
-            'type'        => $request->input('type'),
-            'target_role' => 'all_sellers',
-            'is_active'   => true,
+            'admin_id'           => Auth::id(),
+            'title'              => $request->input('title'),
+            'message'            => $request->input('message'),
+            'type'               => $request->input('type'),
+            'target_role'        => 'all_sellers',
+            'is_active'          => true,
+            'send_email'         => $shouldSendEmail,
+            'emails_sent_count'  => 0,
+            'email_sent_at'      => $shouldSendEmail ? now() : null,
         ]);
+
+        $sentCount = 0;
+
+        // Jika opsi email dicentang, kirim email ke seluruh seller aktif
+        if ($shouldSendEmail) {
+            $sellers = User::where('role', '!=', 'admin_platform')
+                ->whereNotNull('email')
+                ->get();
+
+            foreach ($sellers as $seller) {
+                try {
+                    Mail::to($seller->email)->send(new BroadcastAnnouncementMail($announcement, $seller));
+                    $sentCount++;
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send broadcast email to {$seller->email}: " . $e->getMessage());
+                }
+            }
+
+            $announcement->update([
+                'emails_sent_count' => $sentCount,
+            ]);
+        }
 
         // Catat ke Log Aktivitas
         ActivityLogger::log(
             'create_broadcast',
-            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})",
+            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email Terkirim: {$sentCount}]" : ""),
             [
-                'announcement_id' => $announcement->id,
-                'title' => $announcement->title,
-                'type' => $announcement->type,
+                'announcement_id'   => $announcement->id,
+                'title'             => $announcement->title,
+                'type'              => $announcement->type,
+                'send_email'        => $shouldSendEmail,
+                'emails_sent_count' => $sentCount,
             ]
         );
 
-        return back()->with('success', 'Broadcast pengumuman berhasil dikirim ke semua seller.');
+        $msg = 'Broadcast pengumuman berhasil disiarkan.';
+        if ($shouldSendEmail) {
+            $msg .= " Sebanyak {$sentCount} email pengumuman telah berhasil dikirimkan ke seller.";
+        }
+
+        return back()->with('success', $msg);
     }
 
     /**

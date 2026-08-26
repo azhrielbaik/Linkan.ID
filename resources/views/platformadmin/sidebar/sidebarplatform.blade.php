@@ -56,6 +56,18 @@
                 <i class="fas fa-receipt"></i><span class="nav-text">{{ __('sidebar.transaction_logs') }}</span>
             </a>
 
+            <a href="{{ route('platform-admin.tickets.index') }}" class="{{ request()->routeIs('platform-admin.tickets*') ? 'active' : '' }}">
+                <i class="fas fa-headset"></i><span class="nav-text">{{ __('platform.pusat_bantuan') }}</span>
+                @php
+                    $pendingTicketsCount = \App\Models\SupportTicket::where('status', 'open')->count();
+                @endphp
+                @if($pendingTicketsCount > 0)
+                    <span style="background: #ef4444; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: auto;">
+                        {{ $pendingTicketsCount }}
+                    </span>
+                @endif
+            </a>
+
             <a href="{{ route('platform-admin.settings.index') }}" class="{{ request()->routeIs('platform-admin.settings*') ? 'active' : '' }}">
                 <i class="fas fa-cog"></i><span class="nav-text">{{ __('sidebar.platform_settings') }}</span>
             </a>

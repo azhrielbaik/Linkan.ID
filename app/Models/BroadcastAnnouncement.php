@@ -16,10 +16,15 @@ class BroadcastAnnouncement extends Model
         'type',
         'target_role',
         'is_active',
+        'send_email',
+        'emails_sent_count',
+        'email_sent_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'send_email' => 'boolean',
+        'email_sent_at' => 'datetime',
     ];
 
     public function admin(): BelongsTo
