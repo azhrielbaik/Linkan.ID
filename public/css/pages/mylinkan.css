@@ -3788,40 +3788,54 @@ div[id^="previewCont_"] {
 .editor-panel-tab-switcher {
     display: flex;
     align-items: center;
-    background: #f1f5f9;
-    border-radius: 10px;
-    padding: 4px;
-    gap: 2px;
+    background: #FF9040;
+    border-radius: 50px;
+    padding: 0;
+    gap: 0;
     flex-shrink: 0;
+    border: none;
 }
 
 /* Tiap tombol tab */
 .editor-panel-tab-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    padding: 7px 14px;
+    padding: 8px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 50px;
     font-size: 13px;
     font-weight: 600;
-    color: #64748b;
+    color: #ffffff;
     background: transparent;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
 }
 
 .editor-panel-tab-btn:hover {
-    color: #374151;
-    background: rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+    opacity: 0.9;
 }
 
-/* State aktif: tampak seperti tab "terangkat" */
 .editor-panel-tab-btn.is-active {
-    color: #1e293b;
     background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    color: #FF9040;
+    position: relative;
+    z-index: 1;
+}
+
+.editor-panel-tab-btn.is-active::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #ffffff;
+    border-radius: 50px;
+    z-index: -1;
 }
 
 .editor-panel-tab-btn.is-active i {
