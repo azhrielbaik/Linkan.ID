@@ -34,31 +34,6 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if(session('success'))
-                <div class="alert-box alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div>
-                        @foreach($errors->all() as $err)
-                            <div>{{ $err }}</div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
             <div class="settings-grid">
                 
                 {{-- Card 1: Pengaturan Komisi & Withdraw --}}

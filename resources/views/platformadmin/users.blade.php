@@ -33,18 +33,6 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if (session('success'))
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
             {{-- View Switcher Tabs --}}
             <div class="view-switcher">
                 <a href="{{ route('platform-admin.users', ['view' => 'users']) }}" 

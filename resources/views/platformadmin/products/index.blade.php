@@ -34,20 +34,6 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if(session('success'))
-                <div class="alert-box alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
-
             {{-- Stats Grid --}}
             <div class="stats-grid">
                 <div class="stat-card total">

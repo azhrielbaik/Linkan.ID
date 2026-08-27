@@ -198,7 +198,7 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #000000;
+    color: #1a1a1a;
     padding: 12px 18px;
     margin: 6px 0;
     border-radius: 12px;
@@ -206,32 +206,48 @@
     font-weight: 700;
     font-size: 16px;
     letter-spacing: -0.2px;
+    line-height: 1.4;
+}
+
+.sidebar a .nav-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
 }
 
 .sidebar a:hover {
-    background-color: rgba(237, 132, 44, 0.08);
-    color: #ED842C;
+    background-color: #f0f0f0;
+    color: #1a1a1a;
 }
 
 .sidebar a:hover i {
-    color: #ED842C;
+    color: #1a1a1a;
 }
 
 .sidebar a i {
     margin-right: 14px;
     width: 24px;
+    min-width: 24px;
     font-size: 19px;
     text-align: center;
-    color: #000000;
+    color: #1a1a1a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: color 0.2s ease;
 }
 
 /* Active Menu Item */
 .sidebar a.active {
-    background-color: #ffffff !important;
+    background-color: #FFF0E5 !important;
     color: #ED842C !important;
     font-weight: 800;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+}
+
+.sidebar a.active .nav-text {
+    font-weight: 800;
+    color: #ED842C !important;
 }
 
 .sidebar a.active i {
@@ -240,7 +256,7 @@
 
 .sidebar hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #eaeaea;
     margin: 20px 0;
 }
 
@@ -253,31 +269,41 @@
     margin: 0;
     display: flex;
     align-items: center;
-    color: #000000;
+    color: #e53935;
     cursor: pointer;
     border-radius: 12px;
     transition: all 0.2s ease;
     font-weight: 700;
     font-size: 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.4;
+}
+
+.sidebar .marketing-tools form button .nav-text {
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .sidebar .marketing-tools form button:hover {
-    background-color: rgba(239, 68, 68, 0.08);
-    color: #dc2626;
+    background-color: #ffebee;
+    color: #d32f2f;
 }
 
 .sidebar .marketing-tools form button i {
     width: 24px;
+    min-width: 24px;
     font-size: 19px;
     text-align: center;
     margin-right: 14px;
-    color: #000000;
+    color: #e53935;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: color 0.2s ease;
 }
 
 .sidebar .marketing-tools form button:hover i {
-    color: #dc2626;
+    color: #d32f2f;
 }
 
 /* Mobile Close & Backdrop */

@@ -152,3 +152,7 @@
         });
     }
 </script>
+
+{{-- Floating Toast Notifications for Platform Admin --}}
+@include('platformadmin.partials.toast')
+
