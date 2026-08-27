@@ -33,15 +33,44 @@
         </div>
     @endif
 
+    <!-- Active Ticket Notice Banner (Rate Limiter) -->
+    @if(isset($activeTicket) && $activeTicket)
+        <div class="ticket-active-alert-card">
+            <div class="ticket-active-alert-content">
+                <div class="ticket-active-alert-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div>
+                    <div class="ticket-active-alert-title">
+                        <i class="fas fa-info-circle"></i> Anda Memiliki Tiket Bantuan yang Masih Aktif (#{{ $activeTicket->ticket_code }})
+                    </div>
+                    <div class="ticket-active-alert-desc">
+                        Subjek: <strong>"{{ $activeTicket->subject }}"</strong> (Status: <em>{{ $activeTicket->status_label }}</em>).<br>
+                        Pengajuan tiket baru dibatasi. Anda dapat membuat tiket baru setelah tiket aktif ini berstatus <strong>Selesai</strong> atau <strong>Ditutup</strong> oleh admin.
+                    </div>
+                </div>
+            </div>
+            <a href="{{ route('admin.tickets.show', $activeTicket->id) }}" class="btn-view-active-ticket">
+                <i class="fas fa-comments"></i> Buka Thread Tiket Aktif
+            </a>
+        </div>
+    @endif
+
     <!-- Header Section -->
     <div class="tickets-header-section">
         <div class="tickets-header-title">
             <h2>Pusat Bantuan & Tiket Bantuan</h2>
             <p>Laporkan kendala terkait penarikan dana, produk digital, atau pertanyaan akun Anda langsung ke tim support.</p>
         </div>
-        <button type="button" class="btn-create-ticket" onclick="openCreateTicketModal()">
-            <i class="fas fa-plus"></i> Buat Tiket Baru
-        </button>
+        @if(isset($activeTicket) && $activeTicket)
+            <button type="button" class="btn-create-ticket btn-disabled" onclick="showActiveTicketNotice()" title="Anda masih memiliki tiket yang sedang aktif">
+                <i class="fas fa-lock"></i> Buat Tiket Baru
+            </button>
+        @else
+            <button type="button" class="btn-create-ticket" onclick="openCreateTicketModal()">
+                <i class="fas fa-plus"></i> Buat Tiket Baru
+            </button>
+        @endif
     </div>
 
     <!-- Stats Cards -->
@@ -233,13 +262,40 @@
     </div>
 </div>
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function openCreateTicketModal() {
-        document.getElementById('createTicketModal').classList.add('show');
+        const modal = document.getElementById('createTicketModal');
+        if (modal) modal.classList.add('show');
     }
 
     function closeCreateTicketModal() {
-        document.getElementById('createTicketModal').classList.remove('show');
+        const modal = document.getElementById('createTicketModal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function showActiveTicketNotice() {
+        @if(isset($activeTicket) && $activeTicket)
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Tiket Masih Aktif!',
+                    html: `Anda saat ini masih memiliki tiket yang belum selesai:<br><strong style="color: #DE6C20;">#{{ $activeTicket->ticket_code }}</strong> — <em>{{ e($activeTicket->subject) }}</em><br><br><span style="font-size: 13px; color: #64748b;">Harap tunggu hingga tiket tersebut diselesaikan atau ditutup oleh admin sebelum mengajukan tiket baru.</span>`,
+                    confirmButtonText: '<i class="fas fa-comments"></i> Buka Tiket Aktif',
+                    confirmButtonColor: '#DE6C20',
+                    showCancelButton: true,
+                    cancelButtonText: 'Tutup',
+                    cancelButtonColor: '#64748b',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('admin.tickets.show', $activeTicket->id) }}";
+                    }
+                });
+            } else {
+                alert('Anda masih memiliki tiket bantuan yang sedang aktif (#{{ $activeTicket->ticket_code }}). Harap tunggu hingga tiket tersebut selesai atau ditutup oleh admin sebelum membuat tiket baru.');
+            }
+        @endif
     }
 
     // Close when click backdrop
@@ -250,4 +306,5 @@
         }
     });
 </script>
+@endpush
 @endsection

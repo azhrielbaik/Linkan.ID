@@ -44,12 +44,19 @@ class SupportTicketController extends Controller
         $inProgressTickets = SupportTicket::where('user_id', $userId)->where('status', 'in_progress')->count();
         $resolvedTickets = SupportTicket::where('user_id', $userId)->where('status', 'resolved')->count();
 
+        // Cek apakah ada tiket aktif (open atau in_progress)
+        $activeTicket = SupportTicket::where('user_id', $userId)
+            ->whereIn('status', ['open', 'in_progress'])
+            ->latest()
+            ->first();
+
         return view('homeadminS.tickets.index', compact(
             'tickets',
             'totalTickets',
             'openTickets',
             'inProgressTickets',
             'resolvedTickets',
+            'activeTicket',
             'status',
             'search'
         ));
@@ -60,6 +67,18 @@ class SupportTicketController extends Controller
      */
     public function store(Request $request)
     {
+        // Rate Limiter: Pengguna yang masih memiliki tiket aktif tidak dapat membuat tiket baru
+        $activeTicket = SupportTicket::where('user_id', Auth::id())
+            ->whereIn('status', ['open', 'in_progress'])
+            ->latest()
+            ->first();
+
+        if ($activeTicket) {
+            return redirect()->route('admin.tickets.index')
+                ->with('error', "Anda masih memiliki tiket bantuan yang sedang aktif (#{$activeTicket->ticket_code} - {$activeTicket->subject}). Harap tunggu hingga tiket tersebut diselesaikan atau ditutup oleh admin sebelum mengajukan tiket baru.")
+                ->withInput();
+        }
+
         $request->validate([
             'category'   => 'required|in:payout,product,account,general',
             'subject'    => 'required|string|max:200',
