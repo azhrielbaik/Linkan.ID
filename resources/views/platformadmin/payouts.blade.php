@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/payouts.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -35,7 +36,7 @@
 
         <div class="content-wrapper">
             {{-- Stats Grid --}}
-            <div class="stats-grid">
+            <div class="stats-grid payout-summary-grid">
                 <div class="stat-card pending">
                     <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
                     <div class="stat-info">
@@ -100,7 +101,7 @@
             <div class="filter-card">
                 <form method="GET" action="{{ route('platform-admin.payouts.index') }}" class="search-form">
                     <input type="hidden" name="tab" value="{{ $tab }}">
-                    
+
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_payout_placeholder') }}">

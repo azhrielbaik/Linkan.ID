@@ -691,8 +691,8 @@ class PlatformAdminController extends Controller
 
             $avatarUrl = null;
             if ($user->avatar) {
-                $avatarUrl = \Illuminate\Support\Str::startsWith($user->avatar, ['http://', 'https://']) 
-                    ? $user->avatar 
+                $avatarUrl = \Illuminate\Support\Str::startsWith($user->avatar, ['http://', 'https://'])
+                    ? $user->avatar
                     : asset('storage/' . $user->avatar);
             }
 
@@ -701,7 +701,7 @@ class PlatformAdminController extends Controller
                 'user' => [
                     'id'           => $user->id,
                     'name'         => $user->name,
-                    'email'        => $user->email,
+                    'email'        => \App\Models\ActivityLog::maskEmail($user->email),
                     'username'     => $user->username,
                     'role'         => $user->role,
                     'is_suspended' => $user->isSuspended(),

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/transactions.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -36,7 +37,7 @@
         <div class="content-wrapper">
 
             {{-- Stats Grid --}}
-            <div class="stats-grid">
+            <div class="stats-grid transaction-summary-grid">
                 <div class="stat-card volume">
                     <div class="stat-icon-wrapper"><i class="fas fa-chart-pie"></i></div>
                     <div class="stat-info">
@@ -98,7 +99,7 @@
             <div class="filter-card">
                 <form method="GET" action="{{ route('platform-admin.logs.transactions') }}" class="search-form">
                     <input type="hidden" name="status" value="{{ $status }}">
-                    
+
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_transactions_placeholder') }}">
@@ -144,7 +145,7 @@
                                 <td>
                                     <div class="product-title">{{ $tx->product->title ?? '-' }}</div>
                                     <div class="seller-info">
-                                        <i class="fas fa-store" style="font-size: 10px;"></i> 
+                                        <i class="fas fa-store" style="font-size: 10px;"></i>
                                         {{ __('platform.seller') }}: <strong>{{ $tx->product->user->name ?? '-' }}</strong> ({{ $tx->product->user->email ?? '-' }})
                                     </div>
                                 </td>

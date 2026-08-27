@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/products.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 

@@ -229,7 +229,7 @@
 
                 <form method="POST" action="{{ route('password.verify-otp.submit') }}" id="otpForm">
                     @csrf
-                    <input type="hidden" name="email" value="{{ $email }}">
+                    <input type="hidden" name="token" value="{{ $token }}">
                     <input type="hidden" name="otp_code" id="fullOtpInput" value="">
 
                     <div class="otp-container">
