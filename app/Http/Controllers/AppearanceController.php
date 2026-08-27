@@ -30,6 +30,9 @@ class AppearanceController extends Controller
             'profile_shape' => 'nullable|string|in:circle,rounded,square',
             'theme_color' => 'nullable|string|max:7',
             'background_color' => 'nullable|string',
+            'background_type' => 'nullable|string|in:color,image',
+            'profile_layout' => 'nullable|string|in:title-top,classic,side',
+            'block_shape' => 'nullable|string|in:sharp,rounded,pill',
             'instagram' => 'nullable|url|max:255',
             'tiktok' => 'nullable|url|max:255',
             'whatsapp' => 'nullable|url|max:255',
@@ -80,6 +83,15 @@ class AppearanceController extends Controller
             $appearance->background_color = $request->background_color;
         } elseif (!$appearance->background_color) {
             $appearance->background_color = '#FFFFFF';
+        }
+        if ($request->filled('background_type')) {
+            $appearance->background_type = $request->background_type;
+        }
+        if ($request->filled('profile_layout')) {
+            $appearance->profile_layout = $request->profile_layout;
+        }
+        if ($request->filled('block_shape')) {
+            $appearance->block_shape = $request->block_shape;
         }
         $appearance->instagram = $request->instagram;
         $appearance->tiktok = $request->tiktok;
@@ -138,5 +150,38 @@ $appearance->discord = $request->discord;
         }
 
         return redirect()->back()->with('success', 'Appearance updated successfully!');
+    }
+
+    /**
+     * Auto-save design settings (background, layout, block shape) via AJAX.
+     * Dipanggil dari panel "Pengaturan" di editor microsite tanpa reload halaman.
+     */
+    public function updateDesignSettings(Request $request)
+    {
+        $request->validate([
+            'background_type' => 'nullable|string|in:color,image',
+            'background_color' => 'nullable|string|max:100',
+            'profile_layout'  => 'nullable|string|in:classic,title-top,side',
+            'block_shape'     => 'nullable|string|in:sharp,rounded,pill',
+        ]);
+
+        $appearance = Appearance::where('user_id', Auth::id())->firstOrCreate(
+            ['user_id' => Auth::id()],
+            ['name' => Auth::user()->name]
+        );
+
+        $appearance->fill($request->only(
+            'background_type',
+            'background_color',
+            'profile_layout',
+            'block_shape'
+        ))->save();
+
+        return response()->json([
+            'success'    => true,
+            'appearance' => $appearance->only(
+                'background_type', 'background_color', 'profile_layout', 'block_shape'
+            ),
+        ]);
     }
 }

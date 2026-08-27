@@ -2066,7 +2066,11 @@ font[face="Verdana"] {
 }
 
 .live-profile-section {
+    margin-top: -12px;
+    margin-left: -14px;
+    width: calc(100% + 28px);
     margin-bottom: 16px;
+    border-radius: 32px 32px 0 0;
 }
 
 .live-phone-banner-container {
@@ -2075,7 +2079,7 @@ font[face="Verdana"] {
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 0;
-    border-bottom: 2px solid rgba(0,0,0,0.05);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
 }
 
 .live-phone-banner-img {
@@ -2094,7 +2098,7 @@ font[face="Verdana"] {
     align-items: center;
     justify-content: center;
     border: 3px solid #ffffff;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: border-radius 0.25s ease;
     position: relative;
     z-index: 2;
@@ -2116,12 +2120,14 @@ font[face="Verdana"] {
     font-weight: 700;
     text-align: center;
     margin-bottom: 4px;
+    padding: 0 14px;
 }
 
 .live-phone-bio {
     font-size: 12px;
     text-align: center;
     margin-bottom: 14px;
+    padding: 0 14px;
 }
 
 .live-image-element {
@@ -2792,8 +2798,21 @@ font[face="Verdana"] {
 .live-element-link {
     display: block;
     width: 100%;
-    cursor: default;
-    pointer-events: none;
+    cursor: pointer !important;
+    pointer-events: none !important;
+}
+
+.live-image-element a,
+.live-image-element iframe,
+.live-text-element a,
+.live-text-element iframe,
+.live-video-wrapper a,
+.live-video-wrapper iframe,
+.live-social-wrapper a,
+.live-social-wrapper iframe,
+.microsite-live-element a,
+.microsite-live-element iframe {
+    pointer-events: none !important;
 }
 
 .live-element-img {
@@ -3329,6 +3348,7 @@ input:checked+.segment-btn {
 
 .text-editor-area * {
     font-size: 14px !important;
+    color: inherit !important;
 }
 
 .text-editor-area[contenteditable="true"]:empty:before {
@@ -3491,17 +3511,20 @@ input:checked+.segment-btn {
 .edit-form-content {
     padding: 20px;
 }
+
 /* Social Media Element Styles */
 .social-edit-header {
     margin-bottom: 20px;
     padding-bottom: 12px;
     border-bottom: 1px solid #f1f5f9;
 }
+
 .social-platforms-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
+
 .social-platform-item {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -3509,30 +3532,36 @@ input:checked+.segment-btn {
     padding: 16px;
     transition: all 0.3s ease;
 }
+
 .social-platform-item:hover {
     border-color: #cbd5e1;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
+
 .platform-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+
 .platform-info {
     display: flex;
     align-items: center;
     gap: 12px;
 }
+
 .platform-name {
     font-weight: 600;
     color: #334155;
     font-size: 14px;
 }
+
 .platform-input-container {
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px dashed #cbd5e1;
 }
+
 .btn-remove-platform {
     background: transparent;
     border: none;
@@ -3548,22 +3577,28 @@ input:checked+.segment-btn {
     height: 32px;
     flex-shrink: 0;
 }
+
 .btn-remove-platform:hover {
     background: transparent;
     color: #B91C1C;
 }
+
 .btn-remove-platform i {
     color: inherit;
 }
+
 .social-platform-item {
     margin-bottom: 12px;
 }
+
 .platform-input-container {
     display: block !important;
 }
 
 /* Edit Image Overlay styling */
-.banner-preview-container, .dynamic-preview-container, div[id^="previewCont_"] {
+.banner-preview-container,
+.dynamic-preview-container,
+div[id^="previewCont_"] {
     position: relative;
 }
 
@@ -3579,7 +3614,7 @@ input:checked+.segment-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 10;
     pointer-events: none;
     font-size: 16px;
@@ -3610,13 +3645,16 @@ input:checked+.segment-btn {
 }
 
 .btn-select-platform:hover {
-    border-color: #6a11cb;
-    box-shadow: 0 2px 8px rgba(106, 17, 203, 0.1);
+    border-color: #e4e4e7;
+    background: #fafafa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
 .btn-select-platform.selected {
-    border-color: #6a11cb;
-    background-color: #f5f3ff;
+    border-color: #ED842C;
+    background: #fff8f3;
+    box-shadow: 0 6px 20px rgba(237, 132, 44, 0.14);
 }
 
 .btn-select-platform .platform-icon {
@@ -3655,8 +3693,8 @@ input:checked+.segment-btn {
 }
 
 .btn-select-platform.selected .platform-checkbox {
-    background-color: #6a11cb;
-    border-color: #6a11cb;
+    background-color: #ED842C;
+    border-color: #ED842C;
 }
 
 .platform-checkbox::after {
@@ -3729,5 +3767,746 @@ input:checked+.segment-btn {
 @media (max-width: 480px) {
     .social-platform-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   EDITOR MODE HEADER BAR & TAB SWITCHER
+   ========================================================================== */
+
+/* Container flex: title di kiri, tab switcher di kanan */
+.editor-mode-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+/* Tab switcher pill container */
+.editor-panel-tab-switcher {
+    display: flex;
+    align-items: center;
+    background: #FF9040;
+    border-radius: 50px;
+    padding: 0;
+    gap: 0;
+    flex-shrink: 0;
+    border: none;
+}
+
+/* Tiap tombol tab */
+.editor-panel-tab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.editor-panel-tab-btn:hover {
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+.editor-panel-tab-btn.is-active {
+    background: #ffffff;
+    color: #FF9040;
+    position: relative;
+    z-index: 1;
+}
+
+.editor-panel-tab-btn.is-active::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #ffffff;
+    border-radius: 50px;
+    z-index: -1;
+}
+
+.editor-panel-tab-btn.is-active i {
+    color: #FF9040;
+}
+
+/* ==========================================================================
+   DESIGN SETTINGS PANEL (Panel Pengaturan)
+   ========================================================================== */
+
+/* Panel aktif tampil flex, panel tersembunyi dihormati via [hidden] */
+#editorPanelElemen,
+#editorPanelPengaturan {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Pastikan atribut HTML `hidden` selalu menang atas display:flex */
+#editorPanelElemen[hidden],
+#editorPanelPengaturan[hidden] {
+    display: none !important;
+}
+
+/* Tiap seksi (Background, Layout, Shape) */
+.design-settings-section {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 20px 0;
+}
+
+.design-settings-section:last-child {
+    border-bottom: none;
+}
+
+/* Header seksi: icon + judul + deskripsi */
+.design-settings-section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.design-settings-section-icon {
+    color: #FF9040;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.design-settings-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 3px 0;
+    line-height: 1.3;
+}
+
+.design-settings-section-desc {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   BACKGROUND SETTINGS: Sub-tab Gambar | Warna
+   ========================================================================== */
+
+.background-sub-tab-switcher {
+    display: flex;
+    gap: 4px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 16px;
+}
+
+.bg-sub-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-sub-tab-btn:hover {
+    color: #374151;
+}
+
+.bg-sub-tab-btn.is-active {
+    color: #1e293b;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Grid 3 kolom untuk pilih gambar background */
+.background-image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+/* Tiap kartu gambar background */
+.background-image-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.background-image-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Preview thumbnail gambar */
+.bg-option-preview {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    position: relative;
+    background-color: #f3f4f6;
+}
+
+/* Opsi "tanpa gambar" */
+.bg-option-none {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #d1d5db;
+    background: repeating-linear-gradient(45deg,
+            #f3f4f6,
+            #f3f4f6 5px,
+            #e5e7eb 5px,
+            #e5e7eb 10px);
+}
+
+.background-image-option:hover .bg-option-preview {
+    border-color: #FF9040;
+    box-shadow: 0 0 0 3px rgba(255, 144, 64, 0.15);
+    transform: translateY(-1px);
+}
+
+/* State terpilih */
+.background-image-option.is-selected .bg-option-preview {
+    border-color: #FF9040;
+    box-shadow: 0 0 0 3px rgba(255, 144, 64, 0.25);
+}
+
+/* Checkmark overlay saat selected */
+.background-image-option.is-selected .bg-option-preview::after {
+    content: '\f058';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    font-size: 16px;
+    color: #FF9040;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+.bg-option-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.background-image-option.is-selected .bg-option-label {
+    color: #FF9040;
+}
+
+/* Panel warna background */
+.background-color-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Grid swatch warna preset */
+.bg-color-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.bg-color-preset-swatch {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.bg-color-preset-swatch:hover {
+    transform: scale(1.12);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bg-color-preset-swatch.is-selected {
+    border-color: #FF9040;
+    box-shadow: 0 0 0 3px rgba(255, 144, 64, 0.3);
+}
+
+/* Checkmark di tengah swatch terpilih */
+.bg-color-preset-swatch.is-selected::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* Row warna custom dengan color picker */
+.bg-color-custom-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bg-color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.bg-color-custom-input {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.bg-color-hex-display {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   PROFILE LAYOUT OPTIONS
+   ========================================================================== */
+
+/* Grid 2x2 untuk 4 kartu layout */
+.profile-layout-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+/* Tiap kartu layout */
+.profile-layout-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.profile-layout-card:hover {
+    border-color: #f4b077;
+    background: #fff8f3;
+}
+
+.profile-layout-card.is-selected {
+    border-color: #FF9040;
+    background: #fff8f3;
+    box-shadow: 0 0 0 3px rgba(255, 144, 64, 0.18);
+}
+
+.profile-layout-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   PROFILE LAYOUT MINI-PREVIEW CARDS
+   Setiap layout-preview adalah thumbnail yang merepresentasikan desain layout
+   ========================================================================== */
+
+/* Base container tiap mini-preview — seperti phone frame kecil */
+.layout-preview {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 100px;
+    position: relative;
+}
+
+/* Shared elemen dasar */
+.lp-line {
+    height: 5px;
+    border-radius: 3px;
+    background: #e0e4ea;
+    display: block;
+}
+
+.lp-line-wide {
+    width: 70%;
+}
+
+.lp-line-mid {
+    width: 45%;
+}
+
+.lp-line-dark {
+    background: #1e293b;
+    height: 7px;
+    border-radius: 3px;
+}
+
+.lp-block {
+    width: 100%;
+    height: 9px;
+    border-radius: 3px;
+    background: #eef0f5;
+    display: block;
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT 1: TITLE-TOP
+   Banner abu di atas (35% tinggi), judul ada di
+   dalam banner, avatar besar di area putih bawah
+   ───────────────────────────────────────────── */
+.layout-preview-title-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 8px;
+}
+
+/* Banner header abu dengan judul di dalamnya */
+.lp-tt-header {
+    width: 100%;
+    background: #d1d5e0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Avatar besar di area putih, di bawah banner */
+.lp-tt-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #a8b0c0;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: -14px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT 2: CLASSIC
+   Banner abu di atas, avatar overlap di tepi
+   bawah banner, judul & bio di area putih bawah
+   ───────────────────────────────────────────── */
+.layout-preview-classic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 8px;
+}
+
+/* Banner atas */
+.lp-cl-banner {
+    width: 100%;
+    height: 48px;
+    background: #d1d5e0;
+    flex-shrink: 0;
+    -webkit-mask-image: radial-gradient(ellipse 90% 12px at 50% 100%, transparent 99%, black 100%);
+    mask-image: radial-gradient(ellipse 90% 12px at 50% 100%, transparent 99%, black 100%);
+}
+
+/* Avatar overlap di batas banner → margin negatif */
+.lp-cl-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #a8b0c0;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    margin-top: -30px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT 3: SIDE PANEL
+   Panel abu di kiri (portrait, 40% lebar),
+   avatar di dalam panel kiri atas,
+   teks & blok di area putih kanan
+   ───────────────────────────────────────────── */
+.layout-preview-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 8px;
+}
+
+.lp-side-banner {
+    width: 100%;
+    height: 32px;
+    background: #d1d5e0;
+    flex-shrink: 0;
+}
+
+.lp-side-avatar-wrapper {
+    padding-left: 8px;
+    margin-top: -14px;
+    position: relative;
+    z-index: 2;
+}
+
+.lp-side-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #a8b0c0;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.lp-side-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px 8px 0;
+    align-items: flex-start;
+}
+
+/* Label nama layout */
+.layout-card-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    text-align: center;
+}
+
+.profile-layout-card.is-selected .layout-card-label {
+    color: #FF9040;
+}
+
+/* ==========================================================================
+   PHONE PREVIEW: Layout Profil per mode
+   Menggunakan atribut data-profile-layout pada #liveProfileSection
+   ========================================================================== */
+
+/* ─── LAYOUT: TITLE-TOP (Standard) ─── */
+/* Menggunakan fallback default style (banner lurus & avatar overlap) */
+
+
+/* Social links paling bawah */
+#liveProfileSection[data-profile-layout="title-top"] .preview-social-links {
+    order: 5;
+}
+
+/* ─── LAYOUT: CLASSIC (default) ─── */
+#liveProfileSection[data-profile-layout="classic"] .live-phone-banner-container,
+#liveProfileSection:not([data-profile-layout]) .live-phone-banner-container {
+    aspect-ratio: 4 / 3;
+    /* Banner lebih tinggi sesuai screenshot */
+    -webkit-mask-image: radial-gradient(ellipse 90% 90px at 49% 100%, transparent 99%, black 100%);
+    mask-image: radial-gradient(ellipse 90% 90px at 49% 100%, transparent 99%, black 100%);
+    border-bottom: none;
+    border-radius: 0;
+}
+
+#liveProfileSection[data-profile-layout="classic"] .live-phone-avatar-container,
+#liveProfileSection:not([data-profile-layout]) .live-phone-avatar-container {
+    width: 100px;
+    height: 100px;
+    margin: -150px auto 16px;
+    /* Tarik ke atas agar pas di lengkungan */
+    border-width: 5px;
+}
+
+
+
+/* ─── LAYOUT: SIDE PANEL (Left Aligned Standard) ─── */
+#liveProfileSection[data-profile-layout="side"] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#liveProfileSection[data-profile-layout="side"] .live-phone-banner-container {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    border-radius: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-bottom: none;
+}
+
+#liveProfileSection[data-profile-layout="side"] .live-phone-avatar-container {
+    width: 68px;
+    height: 68px;
+    margin: -34px 0 10px 20px;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+#liveProfileSection[data-profile-layout="side"] .live-phone-name {
+    text-align: left;
+    padding: 0 20px;
+    align-self: flex-start;
+}
+
+#liveProfileSection[data-profile-layout="side"] .live-phone-bio {
+    text-align: left;
+    padding: 0 20px;
+    align-self: flex-start;
+}
+
+#liveProfileSection[data-profile-layout="side"] .preview-social-links {
+    justify-content: flex-start;
+    padding: 0 20px;
+    align-self: flex-start;
+}
+
+
+
+/* ==========================================================================
+   BLOCK SHAPE OPTIONS
+   ========================================================================== */
+
+/* Flex row 3 pilihan */
+.block-shape-options {
+    display: flex;
+    gap: 12px;
+}
+
+/* Tiap kartu shape */
+.block-shape-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 12px 8px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.block-shape-option:hover {
+    border-color: #f4b077;
+    background: #fff8f3;
+}
+
+.block-shape-option.is-selected {
+    border-color: #FF9040;
+    background: #fff8f3;
+    box-shadow: 0 0 0 3px rgba(255, 144, 64, 0.18);
+}
+
+.block-shape-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Preview persegi panjang setiap shape */
+.block-shape-preview {
+    width: 100%;
+    height: 36px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    border: 1.5px solid #c7d2fe;
+}
+
+.block-shape-sharp {
+    border-radius: 0;
+}
+
+.block-shape-rounded {
+    border-radius: 10px;
+}
+
+.block-shape-pill {
+    border-radius: 9999px;
+}
+
+.block-shape-option.is-selected .block-shape-preview {
+    background: linear-gradient(135deg, #fff0e6 0%, #ffd9b5 100%);
+    border-color: #FF9040;
+}
+
+.block-shape-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.block-shape-option.is-selected .block-shape-label {
+    color: #FF9040;
+}
+
+/* Responsive: pada layar sempit, tab switcher menyesuaikan */
+@media (max-width: 580px) {
+    .editor-mode-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .editor-panel-tab-switcher {
+        width: 100%;
+    }
+
+    .editor-panel-tab-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .profile-layout-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .background-image-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }

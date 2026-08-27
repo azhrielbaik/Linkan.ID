@@ -115,6 +115,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Appearance
     Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
+    Route::post('/appearance/design-settings', [AppearanceController::class, 'updateDesignSettings'])->name('appearance.design-settings.update');
 
     // Microsite Elements
     Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');
