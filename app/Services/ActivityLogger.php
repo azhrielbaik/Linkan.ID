@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ActivityLogger
 {
@@ -33,7 +34,7 @@ class ActivityLogger
                 'properties' => !empty($properties) ? self::sanitizeProperties($properties) : null,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to log admin activity: ' . $e->getMessage());
+            Log::error('Failed to log admin activity: ' . $e->getMessage());
             return null;
         }
     }
