@@ -53,7 +53,7 @@ class ForgotPasswordController extends Controller
         // Generate 4-digit OTP acak
         $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
         $resetToken = Str::random(64);
-        $expiresMinutes = 15;
+        $expiresMinutes = 1;
 
         // Tandai permohonan aktif sebelumnya agar tidak duplikat
         PasswordResetRequest::where('user_id', $user->id)
@@ -114,7 +114,7 @@ class ForgotPasswordController extends Controller
         $latestRequest = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))
             ->where('status', 'approved')
             ->first();
-        if (!$latestRequest || $latestRequest->isExpired() || $latestRequest->used_at) {
+        if (!$latestRequest || $latestRequest->used_at) {
             return redirect()->route('password.request')->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
         }
 
@@ -123,6 +123,71 @@ class ForgotPasswordController extends Controller
             'token'         => $token,
             'latestRequest' => $latestRequest,
         ]);
+    }
+
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string|size:64',
+        ]);
+
+        $tokenHash = hash('sha256', $request->token);
+        $resendKey = 'password-reset-resend|' . $request->ip() . '|' . $tokenHash;
+        if (RateLimiter::tooManyAttempts($resendKey, 1)) {
+            return redirect()->route('password.verify-otp', ['token' => $request->token])
+                ->with('status', 'Silakan tunggu sebentar sebelum meminta kode baru.');
+        }
+
+        $resetRequest = PasswordResetRequest::with('user')
+            ->where('reset_token_hash', $tokenHash)
+            ->where('status', 'approved')
+            ->first();
+
+        if (!$resetRequest || $resetRequest->used_at || !$resetRequest->user) {
+            return redirect()->route('password.request')
+                ->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
+        }
+
+        RateLimiter::hit($resendKey, 60);
+        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
+        $newToken = Str::random(64);
+
+        $resetRequest->update([
+            'status' => 'rejected',
+            'resolved_at' => now(),
+        ]);
+
+        $newRequest = PasswordResetRequest::create([
+            'user_id' => $resetRequest->user_id,
+            'email' => $resetRequest->email,
+            'reset_token_hash' => hash('sha256', $newToken),
+            'reason' => 'Permintaan ulang kode OTP reset password',
+            'otp_hash' => Hash::make($otp),
+            'status' => 'approved',
+            'expires_at' => now()->addMinute(),
+            'resolved_at' => now(),
+        ]);
+
+        try {
+            Mail::to($resetRequest->email)->send(new ResetPasswordOtpMail(
+                $otp,
+                $resetRequest->user->name ?? 'Pengguna',
+                1
+            ));
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim ulang email OTP Reset Password: ' . $e->getMessage());
+            $newRequest->update(['status' => 'rejected', 'resolved_at' => now()]);
+            return redirect()->route('password.verify-otp', ['token' => $request->token])
+                ->with('status', 'Jika kode belum diterima, silakan coba lagi setelah beberapa saat.');
+        }
+
+        session([
+            'reset_token' => $newToken,
+            'reset_request_id' => $newRequest->id,
+        ]);
+
+        return redirect()->route('password.verify-otp', ['token' => $newToken])
+            ->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
     }
 
     /**

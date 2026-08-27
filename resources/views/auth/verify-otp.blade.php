@@ -137,6 +137,39 @@
             color: #DE6C20;
         }
 
+        .otp-expiry-text,
+        .resend-help {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .otp-expiry-text {
+            margin-top: -16px;
+            margin-bottom: 18px;
+        }
+
+        .resend-form {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .resend-btn {
+            border: 0;
+            background: transparent;
+            color: #DE6C20;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .resend-btn:disabled {
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
         .error-box {
             background: #fee2e2;
             color: #dc2626;
@@ -242,8 +275,19 @@
                     <button type="submit" class="auth-pill-btn">Verify</button>
                 </form>
 
+                <div class="otp-expiry-text">
+                    Kode berlaku selama <strong id="otpCountdown">--:--</strong>
+                </div>
+
                 <div class="auth-bottom-wrap">
-                    <a href="{{ route('password.request') }}" class="auth-bottom-link">Resend code</a>
+                    <form method="POST" action="{{ route('password.verify-otp.resend') }}" class="resend-form">
+                        @csrf
+                        <input type="hidden" name="token" value="{{ $token }}">
+                        <button type="submit" id="resendButton" class="resend-btn" disabled>
+                            Resend code in <span id="resendCountdown">60</span>s
+                        </button>
+                    </form>
+                    <div class="resend-help">You can generate a new code after it expires.</div>
                 </div>
             </div>
         </div>
@@ -264,6 +308,36 @@
             document.getElementById('digit-4')
         ];
         const fullOtpInput = document.getElementById('fullOtpInput');
+        const resendButton = document.getElementById('resendButton');
+        const resendCountdown = document.getElementById('resendCountdown');
+        const otpCountdown = document.getElementById('otpCountdown');
+        const otpCreatedAt = {{ $latestRequest->created_at->getTimestamp() * 1000 }};
+        const otpExpiresAt = {{ $latestRequest->expires_at->getTimestamp() * 1000 }};
+        const resendAvailableAt = otpCreatedAt + 60000;
+
+        function updateTimers() {
+            const now = Date.now();
+            const resendSeconds = Math.max(0, Math.ceil((resendAvailableAt - now) / 1000));
+            const otpSeconds = Math.max(0, Math.ceil((otpExpiresAt - now) / 1000));
+            const minutes = String(Math.floor(otpSeconds / 60)).padStart(2, '0');
+            const seconds = String(otpSeconds % 60).padStart(2, '0');
+
+            if (resendCountdown) resendCountdown.textContent = resendSeconds;
+            if (otpCountdown) otpCountdown.textContent = `${minutes}:${seconds}`;
+            if (resendButton && resendSeconds === 0 && otpSeconds > 0) {
+                resendButton.disabled = false;
+                resendButton.textContent = 'Resend code';
+            }
+            if (resendButton && otpSeconds === 0) {
+                resendButton.disabled = resendSeconds > 0;
+                resendButton.textContent = resendSeconds > 0
+                    ? `Generate new code in ${resendSeconds}s`
+                    : 'Generate new code';
+            }
+        }
+
+        updateTimers();
+        setInterval(updateTimers, 1000);
 
         function updateFullOtp() {
             const val = digits.map(d => d.value).join('');

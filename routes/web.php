@@ -58,6 +58,7 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPass
 Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->name('password.request-otp');
 Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verify-otp');
 Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify-otp.submit');
+Route::post('/verify-otp/resend', [ForgotPasswordController::class, 'resendOtp'])->name('password.verify-otp.resend');
 Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->name('password.otp.status');
 Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
 Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
