@@ -63,7 +63,7 @@
                         aria-controls="editorPanelPengaturan"
                         onclick="switchEditorPanel('pengaturan')"
                     >
-                        <i class="fas fa-paint-brush"></i>
+                        <i class="fa-solid fa-palette"></i>
                         <span>Pengaturan</span>
                     </button>
                 </nav>
@@ -916,7 +916,7 @@
                         </div>
 
                         {{-- Sub-panel: Pilih Gambar Background --}}
-                        <div id="bgPanelGambar" class="background-image-grid" {{ ($appearance && $appearance->background_type === 'image') ? '' : 'hidden' }}>
+                        <div id="bgPanelGambar" class="background-image-grid" style="display: {{ ($appearance && $appearance->background_type === 'image') ? 'grid' : 'none' }};">
                             @php
                                 $backgroundImages = [
                                     'blue ocean.png'           => 'Blue Ocean',
@@ -970,7 +970,7 @@
                         </div>
 
                         {{-- Sub-panel: Pilih Warna Background --}}
-                        <div id="bgPanelWarna" class="background-color-panel" {{ ($appearance && $appearance->background_type === 'image') ? 'hidden' : '' }}>
+                        <div id="bgPanelWarna" class="background-color-panel" style="display: {{ ($appearance && $appearance->background_type === 'image') ? 'none' : 'flex' }};">
 
                             <div class="bg-color-presets">
                                 @php
@@ -1077,15 +1077,16 @@
                             <label class="profile-layout-card {{ $currentLayout === 'side' ? 'is-selected' : '' }}">
                                 <input type="radio" name="design_profile_layout" value="side" class="hidden-radio" {{ $currentLayout === 'side' ? 'checked' : '' }} onchange="applyProfileLayout('side')">
                                 <div class="layout-preview layout-preview-side">
-                                    {{-- Panel kiri abu --}}
-                                    <div class="lp-side-panel">
+                                    {{-- Banner atas --}}
+                                    <div class="lp-side-banner"></div>
+                                    {{-- Avatar rata kiri overlap --}}
+                                    <div class="lp-side-avatar-wrapper">
                                         <div class="lp-side-avatar"></div>
                                     </div>
-                                    {{-- Area kanan: nama + bio + blok --}}
+                                    {{-- Konten teks rata kiri --}}
                                     <div class="lp-side-content">
-                                        <div class="lp-line lp-line-wide lp-line-dark"></div>
+                                        <div class="lp-line lp-line-wide"></div>
                                         <div class="lp-line lp-line-mid"></div>
-                                        <div class="lp-block"></div>
                                         <div class="lp-block"></div>
                                     </div>
                                 </div>
@@ -1771,8 +1772,8 @@ function switchBackgroundTab(subTab) {
 function _applyBgPanelVisibility(subTab) {
     const panelGambar = document.getElementById('bgPanelGambar');
     const panelWarna  = document.getElementById('bgPanelWarna');
-    if (panelGambar) panelGambar.hidden = (subTab === 'warna');
-    if (panelWarna)  panelWarna.hidden  = (subTab === 'gambar');
+    if (panelGambar) panelGambar.style.display = (subTab === 'gambar') ? '' : 'none';
+    if (panelWarna)  panelWarna.style.display  = (subTab === 'warna') ? 'flex' : 'none';
 }
 
 /**

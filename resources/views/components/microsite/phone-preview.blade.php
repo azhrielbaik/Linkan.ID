@@ -26,7 +26,18 @@
                             </div>
 
                             <!-- MAIN SCROLLABLE PHONE CONTENT -->
-                            <div class="phone-content" id="phonePreviewContent" style="background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');">
+                            <div class="phone-content" id="phonePreviewContent" style="
+                                @if($appearance && $appearance->background_type === 'image')
+                                    background-image: url('{{ asset('images/background/' . $appearance->background_color) }}');
+                                    background-color: transparent;
+                                @elseif($appearance && $appearance->background_type === 'color')
+                                    background-image: none;
+                                    background-color: {{ $appearance->background_color }};
+                                @else
+                                    background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
+                                    background-color: #ffffff;
+                                @endif
+                            ">
                                 
                                 <!-- EMPTY STATE PLACEHOLDER (SHOWN WHEN NO ELEMENTS ARE ADDED IN LEFT PANEL) -->
                                 <div id="phoneEmptyState" class="phone-empty-state">

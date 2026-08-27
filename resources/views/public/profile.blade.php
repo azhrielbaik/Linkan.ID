@@ -29,8 +29,16 @@
         font[face="Georgia"] { font-family: 'Georgia', serif !important; }
         font[face="Verdana"] { font-family: 'Verdana', sans-serif !important; }
         body {
-            background-color: #f8f9fa;
-            background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
+            @if($appearance && $appearance->background_type === 'image')
+                background-image: url('{{ asset('images/background/' . $appearance->background_color) }}');
+                background-color: #f8f9fa;
+            @elseif($appearance && $appearance->background_type === 'color')
+                background-image: none;
+                background-color: {{ $appearance->background_color }};
+            @else
+                background-color: #f8f9fa;
+                background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
+            @endif
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -102,31 +110,8 @@
             margin-bottom: 16px;
         }
 
-        /* LAYOUT: TITLE TOP */
-        .live-profile-section[data-profile-layout="title-top"] .preview-banner {
-            order: 1;
-            aspect-ratio: 5 / 2;
-            border-radius: 0;
-            position: relative;
-        }
-        .live-profile-section[data-profile-layout="title-top"] .preview-name {
-            order: 2;
-            position: static;
-            text-align: center;
-            padding: 4px 8px 0;
-        }
-        .live-profile-section[data-profile-layout="title-top"] .preview-profile {
-            order: 3;
-            width: 110px;
-            height: 110px;
-            margin: 16px auto 8px;
-        }
-        .live-profile-section[data-profile-layout="title-top"] .preview-bio {
-            order: 4;
-        }
-        .live-profile-section[data-profile-layout="title-top"] .preview-social-links {
-            order: 5;
-        }
+        /* LAYOUT: TITLE TOP (Standard) */
+        /* Menggunakan fallback default style (banner lurus & avatar overlap) */
 
         /* LAYOUT: CLASSIC */
         .live-profile-section[data-profile-layout="classic"] .preview-banner,
@@ -145,47 +130,40 @@
             border-width: 5px;
         }
 
-        /* LAYOUT: SIDE PANEL */
+        /* LAYOUT: SIDE PANEL (Left Aligned Standard) */
         .live-profile-section[data-profile-layout="side"] {
-            display: grid;
-            grid-template-columns: 38% 1fr;
-            grid-template-rows: auto auto auto auto;
-            min-height: 140px;
-            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .live-profile-section[data-profile-layout="side"] .preview-banner {
-            grid-column: 1;
-            grid-row: 1 / 5;
-            aspect-ratio: unset;
-            height: 100%;
+            width: 100%;
+            aspect-ratio: 3 / 1;
             border-bottom: none;
+            border-radius: 0;
+            -webkit-mask-image: none;
+            mask-image: none;
         }
         .live-profile-section[data-profile-layout="side"] .preview-profile {
-            grid-column: 1;
-            grid-row: 1;
-            width: 72px;
-            height: 72px;
-            margin: 20px auto 0;
+            width: 100px;
+            height: 100px;
+            margin: -45px 0 10px 20px;
             border-width: 3px;
         }
         .live-profile-section[data-profile-layout="side"] .preview-name {
-            grid-column: 2;
-            grid-row: 1;
             text-align: left;
-            padding: 20px 12px 4px;
-            align-self: end;
+            padding: 0 20px;
+            align-self: flex-start;
         }
         .live-profile-section[data-profile-layout="side"] .preview-bio {
-            grid-column: 2;
-            grid-row: 2;
             text-align: left;
-            padding: 0 12px;
+            padding: 0 20px;
+            align-self: flex-start;
         }
         .live-profile-section[data-profile-layout="side"] .preview-social-links {
-            grid-column: 2;
-            grid-row: 3;
             justify-content: flex-start;
-            padding-left: 12px;
+            padding: 0 20px;
+            align-self: flex-start;
         }
 
 
