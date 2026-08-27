@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/seller-tickets.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tickets.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -35,20 +36,6 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if(session('success'))
-                <div class="alert-box alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
-
             <!-- Header Section -->
             <div class="platform-tickets-header">
                 <div>
@@ -184,7 +171,7 @@
                                     {{ $t->subject }}
                                 </a>
                                 <div style="font-size: 12px; color: #64748b;">
-                                    <strong style="color: #ED842C;">[{{ $t->category_label }}]</strong> 
+                                    <strong style="color: #ED842C;">[{{ $t->category_label }}]</strong>
                                     {{ Str::limit($t->message, 50) }}
                                 </div>
                             </td>

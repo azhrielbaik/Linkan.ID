@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/verifikasi.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -34,7 +35,7 @@
         </div>
 
         <div class="content-wrapper">
-            
+
             {{-- Tabs --}}
             <div class="tabs-container">
                 <button class="tab-btn active" data-tab="pending">
@@ -75,55 +76,82 @@
                 </div>
             </div>
 
+            <form id="bulkActionForm" action="{{ route('platform-admin.verifikasi.bulk') }}" method="POST" class="bulk-toolbar">
+                @csrf
+                <input type="hidden" name="status" id="bulkStatus">
+                <div id="bulkProductIds"></div>
+                <div class="bulk-selection-info">
+                    <i class="fas fa-layer-group"></i>
+                    <strong id="selectedCount">0</strong> {{ __('platform.selected_products') }}
+                </div>
+                <div class="bulk-actions">
+                    <button type="button" class="bulk-btn bulk-approve" onclick="submitBulkAction('approved')" disabled>
+                        <i class="fas fa-check"></i> {{ __('platform.bulk_approve') }}
+                    </button>
+                    <button type="button" class="bulk-btn bulk-reject" onclick="openBulkRejectModal()" disabled>
+                        <i class="fas fa-times"></i> {{ __('platform.bulk_reject') }}
+                    </button>
+                </div>
+            </form>
+
             {{-- Table Card --}}
             <div class="table-card">
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
+                                <th class="select-column"><input type="checkbox" id="selectAllProducts" aria-label="{{ __('platform.select_all') }}"></th>
                                 <th>#</th>
                                 <th>{{ __('platform.seller') }}</th>
-                                <th>{{ __('platform.content') }}</th>
-                                <th>{{ __('platform.description') }}</th>
+                                <th>{{ __('admin.product') }}</th>
                                 <th>{{ __('platform.price') }}</th>
-                                <th>{{ __('platform.platform_type') }}</th>
-                                <th>{{ __('platform.quantity') }}</th>
-                                <th>{{ __('platform.date') }}</th>
                                 <th>{{ __('platform.status') }}</th>
                                 <th style="text-align: center;">{{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody id="productTableBody">
                             @forelse($products as $index => $product)
-                            <tr class="product-row" 
+                            <tr class="product-row"
                                 data-status="{{ $product->verification_status }}"
                                 data-platform="{{ $product->platform_type }}"
                                 data-date="{{ $product->created_at->format('Y-m-d') }}"
-                                data-title="{{ strtolower($product->title) }}">
-                                <td style="font-weight: 700; color: #94a3b8;">{{ $index + 1 }}</td>
-                                <td>
+                                data-title="{{ strtolower($product->title) }}"
+                                data-description="{{ e(strtolower($product->description ?? '')) }}">
+                                <td data-label="{{ __('platform.select') }}" class="select-column">
+                                    @if($product->verification_status == 'pending')
+                                        <input type="checkbox" class="product-checkbox" value="{{ $product->id }}" aria-label="{{ __('platform.select_product') }}: {{ $product->title }}">
+                                    @endif
+                                </td>
+                                <td data-label="#" class="row-number" style="font-weight: 700; color: #94a3b8;">{{ $index + 1 }}</td>
+                                <td data-label="{{ __('platform.seller') }}">
                                     <div class="user-name-text">{{ $product->user->name ?? '-' }}</div>
                                     <small style="color: #94a3b8;">{{ $product->user->email ?? '' }}</small>
                                 </td>
-                                <td>
-                                    @if($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" class="content-thumb">
-                                    @else
-                                        <div style="width:72px; height:48px; border-radius:8px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">
-                                            No Img
-                                        </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="desc-text">
-                                        <div style="font-weight: 700; color:#1e293b; margin-bottom: 2px;">{{ $product->title }}</div>
-                                        {{ Str::limit($product->description, 45) }}
-                                        @if(strlen($product->description) > 45)
-                                            <span class="read-more-link" onclick="showDescriptionModal(this)" data-title="{{ addslashes($product->title) }}" data-full-description="{{ addslashes($product->description) }}">{{ __('platform.read_more') }}</span>
+                                <td data-label="{{ __('admin.product') }}">
+                                    <div class="product-cell">
+                                        @if($product->image)
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->title }}" class="content-thumb">
+                                        @else
+                                            <div class="content-thumb content-thumb-empty"><i class="fas fa-box"></i></div>
                                         @endif
+                                        <div class="product-cell-info">
+                                            <div class="product-title">{{ $product->title }}</div>
+                                            <button type="button" class="product-detail-link" onclick="showProductDetail(this)"
+                                                data-title="{{ e($product->title) }}"
+                                                data-description="{{ e($product->description ?? '') }}"
+                                                data-platform="{{ e(ucfirst($product->platform_type)) }}"
+                                                data-platform-url="{{ e($product->platform_url ?? '') }}"
+                                                data-platform-file="{{ e($product->platform_file ?? '') }}"
+                                                data-price="Rp {{ number_format($product->sale_price ?: $product->price) }}"
+                                                data-quantity="{{ $product->has_quantity_limit ? $product->quantity : __('platform.unlimited') }}"
+                                                data-date="{{ $product->created_at->format('d M Y') }}"
+                                                data-image="{{ $product->image ? asset('storage/' . $product->image) : '' }}">
+                                                <i class="fas fa-arrow-up-right-from-square"></i> {{ __('platform.view_details') }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="{{ __('platform.price') }}">
                                     @if($product->sale_price)
                                         <div style="font-weight: 700; color: #10b981;">Rp {{ number_format($product->sale_price) }}</div>
                                         <div style="font-size: 11px; text-decoration: line-through; color: #94a3b8;">Rp {{ number_format($product->price) }}</div>
@@ -131,25 +159,7 @@
                                         <div style="font-weight: 700; color: #1e293b;">Rp {{ number_format($product->price) }}</div>
                                     @endif
                                 </td>
-                                <td>
-                                    <span class="badge badge-platform">
-                                        <i class="fas fa-layer-group" style="font-size: 10px;"></i>
-                                        {{ ucfirst($product->platform_type) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span style="font-weight: 600; color: #475569;">
-                                        @if($product->has_quantity_limit)
-                                            {{ $product->quantity }}
-                                        @else
-                                            {{ __('platform.unlimited') }}
-                                        @endif
-                                    </span>
-                                </td>
-                                <td style="font-size: 13px; color: #64748b; white-space: nowrap;">
-                                    {{ $product->created_at->format('d M Y') }}
-                                </td>
-                                <td>
+                                <td data-label="{{ __('platform.status') }}">
                                     @if($product->verification_status == 'approved')
                                         <span class="badge badge-approved">
                                             <i class="fas fa-check-circle"></i> {{ __('platform.approved') }}
@@ -164,11 +174,20 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="{{ __('platform.action') }}" class="row-actions">
                                     @if($product->verification_status == 'pending')
                                         <div class="action-group">
-                                            <button type="button" class="btn-act btn-view" onclick="showPlatformModal({{ $product->id }}, '{{ $product->platform_type }}', '{{ $product->platform_url }}', '{{ $product->platform_file }}')">
-                                                <i class="fas fa-eye"></i> {{ __('platform.view_platform') }}
+                                            <button type="button" class="btn-act btn-view" onclick="showProductDetail(this)"
+                                                data-title="{{ e($product->title) }}"
+                                                data-description="{{ e($product->description ?? '') }}"
+                                                data-platform="{{ e(ucfirst($product->platform_type)) }}"
+                                                data-platform-url="{{ e($product->platform_url ?? '') }}"
+                                                data-platform-file="{{ e($product->platform_file ?? '') }}"
+                                                data-price="Rp {{ number_format($product->sale_price ?: $product->price) }}"
+                                                data-quantity="{{ $product->has_quantity_limit ? $product->quantity : __('platform.unlimited') }}"
+                                                data-date="{{ $product->created_at->format('d M Y') }}"
+                                                data-image="{{ $product->image ? asset('storage/' . $product->image) : '' }}">
+                                                <i class="fas fa-eye"></i> {{ __('platform.view_details') }}
                                             </button>
                                             <form action="{{ route('platform-admin.verifikasi.verify', $product->id) }}" method="POST" style="margin: 0;">
                                                 @csrf
@@ -210,14 +229,59 @@
         </div>
     </div>
 
+    <div id="bulkRejectModal" class="modal">
+        <div class="modal-card">
+            <div class="modal-card-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 6px;"></i>{{ __('platform.bulk_reject_title') }}</h3>
+                <button type="button" class="modal-close-btn" onclick="closeBulkRejectModal()" aria-label="{{ __('platform.close') }}">&times;</button>
+            </div>
+            <div class="modal-card-body">
+                <p class="bulk-reject-copy">{{ __('platform.bulk_reject_message') }}</p>
+                <div class="form-group-custom">
+                    <label for="bulkRejectionReason">{{ __('platform.rejection_reason') }} <span style="color: #ef4444;">*</span></label>
+                    <textarea id="bulkRejectionReason" class="form-control-custom" rows="4" required placeholder="{{ __('platform.enter_rejection_reason') }}"></textarea>
+                </div>
+            </div>
+            <div class="modal-card-footer">
+                <button type="button" class="btn-cancel" onclick="closeBulkRejectModal()">{{ __('platform.cancel') }}</button>
+                <button type="button" class="btn-submit-reject" onclick="submitBulkReject()"><i class="fas fa-times"></i> {{ __('platform.bulk_reject') }}</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Platform Details -->
     <div id="platformModal" class="modal">
         <div class="modal-card">
             <div class="modal-card-header">
-                <h3><i class="fas fa-info-circle" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.platform_details') }}</h3>
-                <button class="modal-close-btn" onclick="closeDetailModal()">&times;</button>
+                <h3><i class="fas fa-box-open" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.product_details') }}</h3>
+                <button type="button" class="modal-close-btn" onclick="closePlatformModal()" aria-label="{{ __('platform.close') }}">&times;</button>
             </div>
             <div class="modal-card-body">
+                <div class="product-modal-overview">
+                    <div id="productImageWrap" class="product-modal-image-wrap"></div>
+                    <div>
+                        <div class="modal-label">{{ __('admin.product') }}</div>
+                        <p id="productTitle" class="product-modal-title"></p>
+                    </div>
+                </div>
+                <div class="product-detail-grid">
+                    <div>
+                        <div class="modal-label">{{ __('platform.price') }}</div>
+                        <p id="productPrice"></p>
+                    </div>
+                    <div>
+                        <div class="modal-label">{{ __('platform.date') }}</div>
+                        <p id="productDate"></p>
+                    </div>
+                    <div>
+                        <div class="modal-label">{{ __('platform.quantity') }}</div>
+                        <p id="productQuantity"></p>
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>{{ __('platform.description') }}</label>
+                    <p id="productDescription" class="product-modal-description"></p>
+                </div>
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">{{ __('platform.platform_type') }}</label>
                     <p id="platformType" style="font-weight: 700; color: #ED842C; font-size: 15px;"></p>

@@ -58,6 +58,7 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPass
 Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->name('password.request-otp');
 Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verify-otp');
 Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify-otp.submit');
+Route::post('/verify-otp/resend', [ForgotPasswordController::class, 'resendOtp'])->name('password.verify-otp.resend');
 Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->name('password.otp.status');
 Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
 Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
@@ -120,11 +121,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Microsite Elements
     Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');
     Route::delete('/elements/image/{id}', [\App\Http\Controllers\ImageElementController::class, 'destroy'])->name('elements.image.destroy');
-    
+
     // Text Element Routes
     Route::post('/elements/text', [\App\Http\Controllers\TextElementController::class, 'store'])->name('elements.text.store');
     Route::delete('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'destroy'])->name('elements.text.destroy');
-    
+
     // Divider Element Routes
     Route::post('/elements/divider', [\App\Http\Controllers\DividerElementController::class, 'store'])->name('elements.divider.store');
     Route::delete('/elements/divider/{id}', [\App\Http\Controllers\DividerElementController::class, 'destroy'])->name('elements.divider.destroy');
@@ -138,7 +139,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/elements/social', [\App\Http\Controllers\SocialMediaElementController::class, 'store'])->name('elements.social.store');
     Route::put('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'update'])->name('elements.social.update');
     Route::delete('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'destroy'])->name('elements.social.destroy');
-    
+
     // Visibility Toggle Route
     Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');
 
@@ -226,6 +227,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Verifikasi produk
     Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi');
+    Route::post('/verifikasi/bulk', [VerifikasiController::class, 'bulkVerify'])->name('verifikasi.bulk');
     Route::post('/verifikasi/{id}', [VerifikasiController::class, 'verify'])->name('verifikasi.verify');
 
     // Print / laporan & Export

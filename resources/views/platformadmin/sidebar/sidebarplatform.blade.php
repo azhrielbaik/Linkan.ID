@@ -11,11 +11,11 @@
     <div class="sidebar-minimize-btn" onclick="toggleMinimize()">
         <i class="fas fa-caret-down"></i>
     </div>
-    
+
     <div class="sidebar-inner-scroll">
         <div class="logo-container">
             <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo">
-            
+
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="lang-toggle">
                     <a href="{{ route('lang.switch', 'id') }}" data-turbo="false" class="{{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
@@ -31,7 +31,7 @@
             <a href="{{ route('platform-admin.dashboard') }}" class="{{ request()->routeIs('platform-admin.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-home"></i><span class="nav-text">{{ __('sidebar.dashboard') }}</span>
             </a>
-            
+
             <a href="{{ route('platform-admin.users') }}" class="{{ request()->routeIs('platform-admin.users*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i><span class="nav-text">{{ __('sidebar.user_management') }}</span>
             </a>
@@ -102,7 +102,7 @@
             }
         }
     }
-    
+
     function toggleMinimize() {
         document.body.classList.toggle('mini-sidebar');
         const isMini = document.body.classList.contains('mini-sidebar');
@@ -131,6 +131,12 @@
             },
             buttonsStyling: false,
             reverseButtons: true,
+            showClass: {
+                popup: 'linkan-swal-show'
+            },
+            hideClass: {
+                popup: 'linkan-swal-hide'
+            },
             backdrop: 'rgba(15, 23, 42, 0.45)'
         }).then((result) => {
             if (result.isConfirmed && typeof options.onConfirm === 'function') {
@@ -147,8 +153,30 @@
             confirmText: '<i class="fas fa-sign-out-alt"></i> Ya, Logout',
             confirmDanger: true,
             onConfirm: () => {
+                setPlatformActionLoading(document.querySelector('#platformLogoutForm button'), 'Keluar...');
                 document.getElementById('platformLogoutForm').submit();
             }
         });
     }
+
+    function setPlatformActionLoading(button, loadingText) {
+        if (!button || button.classList.contains('platform-action-loading')) return;
+        button.classList.add('platform-action-loading');
+        button.disabled = true;
+        button.dataset.originalContent = button.innerHTML;
+        button.innerHTML = `<span class="platform-action-spinner" aria-hidden="true"></span><span class="platform-action-label">${loadingText || 'Memproses...'}</span>`;
+        button.setAttribute('aria-busy', 'true');
+    }
+
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || form.id === 'platformLogoutForm') return;
+
+        const submitButton = form.querySelector('button[type="submit"]:not([disabled])');
+        if (submitButton) setPlatformActionLoading(submitButton);
+    });
 </script>
+
+{{-- Floating Toast Notifications for Platform Admin --}}
+@include('platformadmin.partials.toast')
+

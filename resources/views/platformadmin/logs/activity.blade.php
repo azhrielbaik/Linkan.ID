@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/activity.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -35,7 +36,7 @@
 
         <div class="content-wrapper">
             {{-- Stats Grid --}}
-            <div class="stats-grid">
+            <div class="stats-grid activity-summary-grid">
                 <div class="stat-card total">
                     <div class="stat-icon-wrapper"><i class="fas fa-list"></i></div>
                     <div class="stat-info">
@@ -97,7 +98,7 @@
             <div class="filter-card">
                 <form method="GET" action="{{ route('platform-admin.logs.activity') }}" class="search-form">
                     <input type="hidden" name="category" value="{{ $category }}">
-                    
+
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_activity_placeholder') }}">
@@ -192,7 +193,7 @@
                                                     <span class="user-role-badge role-seller">Seller</span>
                                                 @endif
                                             </div>
-                                            <div class="admin-email">{{ $log->user->email ?? '-' }}</div>
+                                            <div class="admin-email">{{ \App\Models\ActivityLog::maskEmail($log->user->email ?? null) }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -331,13 +332,13 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="desc-text">{{ $log->description }}</div>
+                                    <div class="desc-text">{{ \App\Models\ActivityLog::maskSensitiveText($log->description) }}</div>
                                 </td>
                                 <td>
-                                    <div class="ip-badge">{{ $log->ip_address ?? '127.0.0.1' }}</div>
+                                    <div class="ip-badge">{{ \App\Models\ActivityLog::maskIp($log->ip_address) }}</div>
                                     @if($log->user_agent)
-                                        <div class="ua-text" title="{{ $log->user_agent }}">
-                                            {{ Str::limit($log->user_agent, 28) }}
+                                        <div class="ua-text" title="{{ __('platform.user_agent_hidden') }}">
+                                            {{ __('platform.device_recorded') }}
                                         </div>
                                     @endif
                                 </td>

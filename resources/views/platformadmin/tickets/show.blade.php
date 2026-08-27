@@ -36,31 +36,6 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if(session('success'))
-                <div class="alert-box alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert-box alert-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div>
-                        @foreach($errors->all() as $err)
-                            <div>{{ $err }}</div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
             <!-- Navigation Bar -->
             <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <a href="{{ route('platform-admin.tickets.index') }}" style="display: inline-flex; align-items: center; gap: 8px; color: #475569; text-decoration: none; font-size: 13px; font-weight: 700; background: #ffffff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; transition: all 0.2s;">

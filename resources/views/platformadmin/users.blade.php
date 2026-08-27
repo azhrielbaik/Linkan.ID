@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
 
@@ -33,25 +34,13 @@
         </div>
 
         <div class="content-wrapper">
-
-            {{-- Alerts --}}
-            @if (session('success'))
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
             {{-- View Switcher Tabs --}}
             <div class="view-switcher">
-                <a href="{{ route('platform-admin.users', ['view' => 'users']) }}" 
+                <a href="{{ route('platform-admin.users', ['view' => 'users']) }}"
                    class="view-tab-link {{ $viewType === 'users' ? 'active' : '' }}">
                     <i class="fas fa-users"></i> {{ __('platform.user_management') }}
                 </a>
-                <a href="{{ route('platform-admin.users', ['view' => 'appeals']) }}" 
+                <a href="{{ route('platform-admin.users', ['view' => 'appeals']) }}"
                    class="view-tab-link {{ $viewType === 'appeals' ? 'active' : '' }}">
                     <i class="fas fa-file-contract"></i> {{ __('platform.seller_appeals') }}
                     @if($pendingAppealsCount > 0)
@@ -142,7 +131,7 @@
                                         </div>
                                         <div>
                                             <div class="user-name">{{ $user->name }}</div>
-                                            <div class="user-email">{{ $user->email }}</div>
+                                            <div class="user-email">{{ \App\Models\ActivityLog::maskEmail($user->email) }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -193,7 +182,7 @@
                                                 </button>
                                             </form>
                                         @else
-                                            <button type="button" class="btn-action btn-suspend" 
+                                            <button type="button" class="btn-action btn-suspend"
                                                     onclick="openSuspendModal({{ $user->id }}, '{{ addslashes($user->name) }}')">
                                                 <i class="fas fa-ban"></i> {{ __('platform.suspend') }}
                                             </button>
@@ -258,7 +247,7 @@
                                                 <span>{{ $appeal->user->name ?? 'User Telah Dihapus' }}</span>
                                                 <span style="font-size: 10px; font-weight: 800; background: #fff0e2; color: #ED842C; padding: 1px 6px; border-radius: 4px;">Ke-{{ $userAppealAttempt }}/3</span>
                                             </div>
-                                            <div class="user-email">{{ $appeal->user->email ?? '-' }}</div>
+                                            <div class="user-email">{{ \App\Models\ActivityLog::maskEmail($appeal->user->email ?? null) }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -372,7 +361,7 @@
 
                     <div class="form-group">
                         <label for="suspend_reason">{{ __('platform.suspend_reason_label') }}</label>
-                        <textarea id="suspend_reason" name="suspend_reason" rows="3" class="form-control" 
+                        <textarea id="suspend_reason" name="suspend_reason" rows="3" class="form-control"
                                   placeholder="{{ __('platform.suspend_reason_placeholder') }}" required></textarea>
                     </div>
                 </div>
@@ -399,7 +388,7 @@
                     </p>
                     <div class="form-group">
                         <label for="admin_notes">{{ __('platform.rejection_reason_notes') }}</label>
-                        <textarea id="admin_notes" name="admin_notes" rows="3" class="form-control" 
+                        <textarea id="admin_notes" name="admin_notes" rows="3" class="form-control"
                                   placeholder="Tuliskan catatan alasan penolakan banding..." required></textarea>
                     </div>
                 </div>

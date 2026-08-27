@@ -5,7 +5,7 @@
    Active Theme: #ED842C
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 .sidebar {
     width: 250px;
@@ -16,14 +16,14 @@
     top: 0;
     left: 0;
     padding: 24px 20px;
-    overflow: visible;
     z-index: 1000;
-    transition: width 0.3s ease, transform 0.3s ease;
+    transition:
+        width 0.3s ease,
+        transform 0.3s ease;
     box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
     border-right: 1px solid #eaeaea;
     display: flex;
     flex-direction: column;
-    font-family: 'Plus Jakarta Sans', sans-serif;
     box-sizing: border-box;
 }
 
@@ -58,14 +58,15 @@
     justify-content: center;
     cursor: pointer;
     z-index: 1001;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     color: #000000;
-    transition: transform 0.2s ease, background 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
 }
 
 .sidebar-minimize-btn:hover {
     background: #fff8f2;
-    color: #ED842C;
+    color: #ed842c;
 }
 
 @media (min-width: 901px) {
@@ -78,19 +79,17 @@
     transform: rotate(90deg);
     transition: transform 0.3s ease;
 }
-
 /* Mini Sidebar Overrides - Desktop */
 @media (min-width: 901px) {
     body.mini-sidebar .sidebar {
         width: 80px;
-        padding: 24px 10px;
     }
-    
+
     body.mini-sidebar .sidebar-minimize-btn i {
         transform: rotate(270deg);
     }
 
-    body.mini-sidebar .nav-text, 
+    body.mini-sidebar .nav-text,
     body.mini-sidebar .badge,
     body.mini-sidebar .menu-label {
         display: none;
@@ -99,27 +98,27 @@
     body.mini-sidebar .logo {
         display: none;
     }
-    
+
     body.mini-sidebar .lang-toggle,
     body.mini-sidebar .sidebar-close {
         display: none !important;
     }
-    
+
     body.mini-sidebar .sidebar a {
         justify-content: center;
         padding: 12px 0;
     }
-    
+
     body.mini-sidebar .sidebar a i {
         margin-right: 0;
         font-size: 20px;
     }
-    
+
     body.mini-sidebar .marketing-tools form button {
         justify-content: center;
         padding: 12px 0;
     }
-    
+
     body.mini-sidebar .marketing-tools form button i {
         margin-right: 0;
         font-size: 20px;
@@ -176,7 +175,7 @@
 .lang-toggle a.active {
     background: #000000 !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Menu Category Label */
@@ -198,7 +197,7 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #000000;
+    color: #1a1a1a;
     padding: 12px 18px;
     margin: 6px 0;
     border-radius: 12px;
@@ -206,15 +205,23 @@
     font-weight: 700;
     font-size: 16px;
     letter-spacing: -0.2px;
+    line-height: normal;
+}
+
+.sidebar a .nav-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: normal;
 }
 
 .sidebar a:hover {
-    background-color: rgba(237, 132, 44, 0.08);
-    color: #ED842C;
+    background-color: #f0f0f0;
+    color: #1a1a1a;
 }
 
 .sidebar a:hover i {
-    color: #ED842C;
+    color: #1a1a1a;
 }
 
 .sidebar a i {
@@ -222,25 +229,33 @@
     width: 24px;
     font-size: 19px;
     text-align: center;
-    color: #000000;
+    color: #1a1a1a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: color 0.2s ease;
 }
 
 /* Active Menu Item */
 .sidebar a.active {
-    background-color: #ffffff !important;
-    color: #ED842C !important;
+    background-color: #fff0e5 !important;
+    color: #ed842c !important;
     font-weight: 800;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+}
+
+.sidebar a.active .nav-text {
+    font-weight: 800;
+    color: #ed842c !important;
 }
 
 .sidebar a.active i {
-    color: #ED842C !important;
+    color: #ed842c !important;
 }
 
 .sidebar hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #eaeaea;
     margin: 20px 0;
 }
 
@@ -253,18 +268,24 @@
     margin: 0;
     display: flex;
     align-items: center;
-    color: #000000;
+    color: #e53935;
     cursor: pointer;
     border-radius: 12px;
     transition: all 0.2s ease;
     font-weight: 700;
     font-size: 16px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    line-height: normal;
+}
+
+.sidebar .marketing-tools form button .nav-text {
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .sidebar .marketing-tools form button:hover {
-    background-color: rgba(239, 68, 68, 0.08);
-    color: #dc2626;
+    background-color: #ffebee;
+    color: #d32f2f;
 }
 
 .sidebar .marketing-tools form button i {
@@ -272,12 +293,42 @@
     font-size: 19px;
     text-align: center;
     margin-right: 14px;
-    color: #000000;
+    color: #e53935;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: color 0.2s ease;
 }
 
 .sidebar .marketing-tools form button:hover i {
-    color: #dc2626;
+    color: #d32f2f;
+}
+
+/* Shared action loading state */
+.platform-action-loading {
+    pointer-events: none !important;
+    cursor: wait !important;
+    opacity: 0.78;
+}
+
+.platform-action-loading .platform-action-label {
+    opacity: 0.9;
+}
+
+.platform-action-spinner {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: platformActionSpin 0.65s linear infinite;
+}
+
+@keyframes platformActionSpin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Mobile Close & Backdrop */
@@ -323,10 +374,55 @@
 
 /* SweetAlert2 Modal Customization for Linkan */
 .linkan-swal-popup {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
     border-radius: 20px !important;
     padding: 26px !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.linkan-swal-show {
+    animation: linkanSwalEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+.linkan-swal-hide {
+    animation: linkanSwalExit 0.18s ease-in both !important;
+}
+
+.linkan-swal-popup .swal2-icon {
+    animation: linkanSwalIcon 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+@keyframes linkanSwalEnter {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes linkanSwalExit {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+    }
+}
+
+@keyframes linkanSwalIcon {
+    from {
+        opacity: 0;
+        transform: scale(0.65) rotate(-8deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
 }
 
 .linkan-swal-title {
@@ -343,7 +439,7 @@
 }
 
 .linkan-swal-confirm-btn {
-    background: #ED842C !important;
+    background: #ed842c !important;
     color: #ffffff !important;
     padding: 10px 22px !important;
     border-radius: 10px !important;
@@ -353,7 +449,7 @@
     cursor: pointer !important;
     margin-left: 10px !important;
     transition: background 0.2s !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
 }
 
 .linkan-swal-confirm-btn:hover {
@@ -371,7 +467,7 @@
     cursor: pointer !important;
     margin-left: 10px !important;
     transition: background 0.2s !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
 }
 
 .linkan-swal-confirm-danger-btn:hover {
@@ -388,7 +484,7 @@
     border: none !important;
     cursor: pointer !important;
     transition: background 0.2s !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
 }
 
 .linkan-swal-cancel-btn:hover {
