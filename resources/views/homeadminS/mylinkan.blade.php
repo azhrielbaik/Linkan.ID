@@ -31,12 +31,43 @@
                 </div>
             </div>
         @else
-            <h2 class="editor-mode-title">
-                <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="back-link">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <i class="fas fa-sliders-h text-brand-orange"></i> {{ __('admin.edit_content_blocks') }}
-            </h2>
+            {{-- EDITOR MODE HEADER: Judul di kiri, Tab Switcher di kanan --}}
+            <div class="editor-mode-header-bar">
+                <h2 class="editor-mode-title">
+                    <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="back-link" title="Kembali ke daftar microsite">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <i class="fas fa-sliders-h text-brand-orange"></i> {{ __('admin.edit_content_blocks') }}
+                </h2>
+
+                {{-- TAB SWITCHER: Elemen | Pengaturan --}}
+                <nav class="editor-panel-tab-switcher" role="tablist" aria-label="Panel editor">
+                    <button
+                        type="button"
+                        id="tab-btn-elemen"
+                        role="tab"
+                        class="editor-panel-tab-btn is-active"
+                        aria-selected="true"
+                        aria-controls="editorPanelElemen"
+                        onclick="switchEditorPanel('elemen')"
+                    >
+                        <i class="fas fa-layer-group"></i>
+                        <span>Elemen</span>
+                    </button>
+                    <button
+                        type="button"
+                        id="tab-btn-pengaturan"
+                        role="tab"
+                        class="editor-panel-tab-btn"
+                        aria-selected="false"
+                        aria-controls="editorPanelPengaturan"
+                        onclick="switchEditorPanel('pengaturan')"
+                    >
+                        <i class="fas fa-paint-brush"></i>
+                        <span>Pengaturan</span>
+                    </button>
+                </nav>
+            </div>
         @endif
     </div>
 
@@ -146,7 +177,10 @@
         <div class="editor-layout">
             <!-- LEFT PANEL: BLOCK MANAGEMENT -->
             <div class="editor-left-panel">
-                
+
+                {{-- PANEL ELEMEN: konten default (tambah & edit elemen) --}}
+                <div id="editorPanelElemen" role="tabpanel" aria-labelledby="tab-btn-elemen">
+
                 <!-- ACTION: TAMBAH ELEMENT BUTTON & SLIDE-DOWN PANEL -->
                 <div class="add-element-wrapper">
                     <!-- BUTTON -->
@@ -621,6 +655,9 @@
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
                                                     <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
                                                     <span class="toolbar-divider"></span>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                                    <button type="button" class="toolbar-btn" onclick="execCmd('{{ $elementId }}', 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                                    <span class="toolbar-divider"></span>
                                                     <input type="color" class="toolbar-color-picker" onchange="execCmd('{{ $elementId }}', 'foreColor', this.value)" title="Text Color" value="#000000">
                                                     <span class="toolbar-divider"></span>
                                                     <div class="toolbar-dropdown">
@@ -838,7 +875,270 @@
 
                     </div> <!-- Closes elementBlocksList -->
                 </div> <!-- Closes digitalProductsSection -->
+
+                </div> {{-- Closes #editorPanelElemen --}}
+
+                {{-- ============================================================
+                     PANEL PENGATURAN: Background, Layout Profil, Bentuk Blok
+                     ============================================================ --}}
+                <div id="editorPanelPengaturan" role="tabpanel" aria-labelledby="tab-btn-pengaturan" hidden>
+
+                    {{-- ── SEKSI 1: BACKGROUND ── --}}
+                    <section class="design-settings-section">
+                        <header class="design-settings-section-header">
+                            <div class="design-settings-section-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div>
+                                <h3 class="design-settings-section-title">Background Halaman</h3>
+                                <p class="design-settings-section-desc">Pilih gambar atau warna untuk latar belakang</p>
+                            </div>
+                        </header>
+
+                        {{-- Sub-tab: Gambar | Warna --}}
+                        <div class="background-sub-tab-switcher" role="tablist">
+                            <button
+                                type="button"
+                                id="bg-tab-gambar"
+                                class="bg-sub-tab-btn {{ ($appearance && $appearance->background_type === 'image') ? 'is-active' : '' }}"
+                                onclick="switchBackgroundTab('gambar')"
+                            >
+                                <i class="fas fa-image"></i> Gambar
+                            </button>
+                            <button
+                                type="button"
+                                id="bg-tab-warna"
+                                class="bg-sub-tab-btn {{ (!$appearance || $appearance->background_type !== 'image') ? 'is-active' : '' }}"
+                                onclick="switchBackgroundTab('warna')"
+                            >
+                                <i class="fas fa-palette"></i> Warna
+                            </button>
+                        </div>
+
+                        {{-- Sub-panel: Pilih Gambar Background --}}
+                        <div id="bgPanelGambar" class="background-image-grid" {{ ($appearance && $appearance->background_type === 'image') ? '' : 'hidden' }}>
+                            @php
+                                $backgroundImages = [
+                                    'blue ocean.png'           => 'Blue Ocean',
+                                    'city light.png'           => 'City Light',
+                                    'clasic.png'               => 'Classic',
+                                    'desert.png'               => 'Desert',
+                                    'green flower.png'         => 'Green Flower',
+                                    'library.png'              => 'Library',
+                                    'mountain.png'             => 'Mountain',
+                                    'news paper.png'           => 'News Paper',
+                                    'pink candy.png'           => 'Pink Candy',
+                                    'playstation abstract.png' => 'PS Abstract',
+                                    'sunset.png'               => 'Sunset',
+                                ];
+                                $currentBgImage = ($appearance && $appearance->background_type === 'image')
+                                    ? $appearance->background_color
+                                    : null;
+                            @endphp
+
+                            {{-- Opsi: Tidak ada gambar (transparan / hanya warna) --}}
+                            <label class="background-image-option {{ !$currentBgImage ? 'is-selected' : '' }}">
+                                <input
+                                    type="radio"
+                                    name="design_background_image"
+                                    value=""
+                                    class="hidden-radio"
+                                    {{ !$currentBgImage ? 'checked' : '' }}
+                                    onchange="applyBackgroundImage('')"
+                                >
+                                <div class="bg-option-preview bg-option-none">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                                <span class="bg-option-label">Tanpa Gambar</span>
+                            </label>
+
+                            @foreach($backgroundImages as $filename => $label)
+                                <label class="background-image-option {{ $currentBgImage === $filename ? 'is-selected' : '' }}">
+                                    <input
+                                        type="radio"
+                                        name="design_background_image"
+                                        value="{{ $filename }}"
+                                        class="hidden-radio"
+                                        {{ $currentBgImage === $filename ? 'checked' : '' }}
+                                        onchange="applyBackgroundImage('{{ $filename }}')"
+                                    >
+                                    <div class="bg-option-preview" style="background-image: url('{{ asset('images/background/' . $filename) }}'); background-size: cover; background-position: center;">
+                                    </div>
+                                    <span class="bg-option-label">{{ $label }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        {{-- Sub-panel: Pilih Warna Background --}}
+                        <div id="bgPanelWarna" class="background-color-panel" {{ ($appearance && $appearance->background_type === 'image') ? 'hidden' : '' }}>
+
+                            <div class="bg-color-presets">
+                                @php
+                                    $colorPresets = [
+                                        '#FFFFFF' => 'Putih',
+                                        '#F8FAFC' => 'Abu Terang',
+                                        '#F0FDF4' => 'Hijau Lembut',
+                                        '#FFF7ED' => 'Oranye Lembut',
+                                        '#EFF6FF' => 'Biru Lembut',
+                                        '#FDF4FF' => 'Ungu Lembut',
+                                        '#FFF1F2' => 'Merah Muda',
+                                        '#FAFAF9' => 'Stone',
+                                        '#1E293B' => 'Biru Gelap',
+                                        '#111827' => 'Hitam',
+                                    ];
+                                    $currentBgColor = ($appearance && $appearance->background_type === 'color')
+                                        ? ($appearance->background_color ?? '#FFFFFF')
+                                        : '#FFFFFF';
+                                @endphp
+
+                                @foreach($colorPresets as $hex => $colorName)
+                                    <button
+                                        type="button"
+                                        class="bg-color-preset-swatch {{ $currentBgColor === $hex ? 'is-selected' : '' }}"
+                                        style="background-color: {{ $hex }};"
+                                        title="{{ $colorName }}"
+                                        onclick="applyBackgroundColor('{{ $hex }}')"
+                                        data-color="{{ $hex }}"
+                                    ></button>
+                                @endforeach
+                            </div>
+
+                            <div class="bg-color-custom-row">
+                                <label class="profile-form-label" for="bgColorCustomPicker">Warna Custom</label>
+                                <div class="bg-color-picker-wrapper">
+                                    <input
+                                        type="color"
+                                        id="bgColorCustomPicker"
+                                        value="{{ $currentBgColor ?? '#FFFFFF' }}"
+                                        oninput="applyBackgroundColor(this.value)"
+                                        class="bg-color-custom-input"
+                                    >
+                                    <span id="bgColorHexDisplay" class="bg-color-hex-display">{{ $currentBgColor ?? '#FFFFFF' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- ── SEKSI 2: LAYOUT PROFIL ── --}}
+                    <section class="design-settings-section">
+                        <header class="design-settings-section-header">
+                            <div class="design-settings-section-icon">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h3 class="design-settings-section-title">Layout Profil</h3>
+                                <p class="design-settings-section-desc">Atur posisi dan tampilan bagian profil</p>
+                            </div>
+                        </header>
+
+                        @php
+                            $currentLayout = $appearance->profile_layout ?? 'classic';
+                        @endphp
+
+                        <div class="profile-layout-options" role="radiogroup" aria-label="Pilih layout profil">
+
+                            {{-- Layout 1: Title-Top — judul di area banner, avatar besar di tengah --}}
+                            <label class="profile-layout-card {{ $currentLayout === 'title-top' ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_profile_layout" value="title-top" class="hidden-radio" {{ $currentLayout === 'title-top' ? 'checked' : '' }} onchange="applyProfileLayout('title-top')">
+                                <div class="layout-preview layout-preview-title-top">
+                                    {{-- Banner area dengan judul di dalamnya --}}
+                                    <div class="lp-tt-header">
+                                        <div class="lp-line lp-line-wide lp-line-dark"></div>
+                                    </div>
+                                    {{-- Avatar besar di tengah (di bawah banner, di area putih) --}}
+                                    <div class="lp-tt-avatar"></div>
+                                    {{-- Bio --}}
+                                    <div class="lp-line lp-line-mid" style="margin-top: 4px;"></div>
+                                    {{-- Blok konten --}}
+                                    <div class="lp-block"></div>
+                                </div>
+                                <span class="layout-card-label">Title Top</span>
+                            </label>
+
+                            {{-- Layout 2: Classic — banner atas, avatar overlap di batas, judul & bio di bawah --}}
+                            <label class="profile-layout-card {{ ($currentLayout === 'classic' || !$currentLayout) ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_profile_layout" value="classic" class="hidden-radio" {{ ($currentLayout === 'classic' || !$currentLayout) ? 'checked' : '' }} onchange="applyProfileLayout('classic')">
+                                <div class="layout-preview layout-preview-classic">
+                                    {{-- Banner atas --}}
+                                    <div class="lp-cl-banner"></div>
+                                    {{-- Avatar di tepi banner (overlap) --}}
+                                    <div class="lp-cl-avatar"></div>
+                                    {{-- Nama --}}
+                                    <div class="lp-line lp-line-wide"></div>
+                                    {{-- Bio --}}
+                                    <div class="lp-line lp-line-mid"></div>
+                                    {{-- Blok konten --}}
+                                    <div class="lp-block"></div>
+                                </div>
+                                <span class="layout-card-label">Classic</span>
+                            </label>
+
+                            {{-- Layout 3: Side Panel — area abu portrait di kiri, avatar kiri atas, teks di kanan --}}
+                            <label class="profile-layout-card {{ $currentLayout === 'side' ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_profile_layout" value="side" class="hidden-radio" {{ $currentLayout === 'side' ? 'checked' : '' }} onchange="applyProfileLayout('side')">
+                                <div class="layout-preview layout-preview-side">
+                                    {{-- Panel kiri abu --}}
+                                    <div class="lp-side-panel">
+                                        <div class="lp-side-avatar"></div>
+                                    </div>
+                                    {{-- Area kanan: nama + bio + blok --}}
+                                    <div class="lp-side-content">
+                                        <div class="lp-line lp-line-wide lp-line-dark"></div>
+                                        <div class="lp-line lp-line-mid"></div>
+                                        <div class="lp-block"></div>
+                                        <div class="lp-block"></div>
+                                    </div>
+                                </div>
+                                <span class="layout-card-label">Side Panel</span>
+                            </label>
+
+                        </div>
+                    </section>
+
+                    {{-- ── SEKSI 3: BENTUK BLOK ELEMEN ── --}}
+                    <section class="design-settings-section">
+                        <header class="design-settings-section-header">
+                            <div class="design-settings-section-icon">
+                                <i class="fas fa-vector-square"></i>
+                            </div>
+                            <div>
+                                <h3 class="design-settings-section-title">Bentuk Blok</h3>
+                                <p class="design-settings-section-desc">Atur sudut blok elemen di microsite</p>
+                            </div>
+                        </header>
+
+                        @php $currentBlockShape = $appearance->block_shape ?? 'rounded'; @endphp
+
+                        <div class="block-shape-options" role="radiogroup" aria-label="Pilih bentuk blok">
+
+                            {{-- Shape 1: Sharp (siku-siku) --}}
+                            <label class="block-shape-option {{ $currentBlockShape === 'sharp' ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_block_shape" value="sharp" class="hidden-radio" {{ $currentBlockShape === 'sharp' ? 'checked' : '' }} onchange="applyBlockShape('sharp')">
+                                <div class="block-shape-preview block-shape-sharp"></div>
+                                <span class="block-shape-label">Sharp</span>
+                            </label>
+
+                            {{-- Shape 2: Rounded (sudut bulat biasa) --}}
+                            <label class="block-shape-option {{ $currentBlockShape === 'rounded' ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_block_shape" value="rounded" class="hidden-radio" {{ $currentBlockShape === 'rounded' ? 'checked' : '' }} onchange="applyBlockShape('rounded')">
+                                <div class="block-shape-preview block-shape-rounded"></div>
+                                <span class="block-shape-label">Rounded</span>
+                            </label>
+
+                            {{-- Shape 3: Pill (super rounded) --}}
+                            <label class="block-shape-option {{ $currentBlockShape === 'pill' ? 'is-selected' : '' }}">
+                                <input type="radio" name="design_block_shape" value="pill" class="hidden-radio" {{ $currentBlockShape === 'pill' ? 'checked' : '' }} onchange="applyBlockShape('pill')">
+                                <div class="block-shape-preview block-shape-pill"></div>
+                                <span class="block-shape-label">Pill</span>
+                            </label>
+
+                        </div>
+                    </section>
+
+                </div> {{-- Closes #editorPanelPengaturan --}}
+
             </div> <!-- Closes editor-left-panel -->
+
 
             <!-- RIGHT PANEL: STICKY PHONE PREVIEW -->
             <x-microsite.phone-preview :appearance="$appearance" :image-elements="$imageElements ?? null" :divider-elements="$dividerElements ?? null" :text-elements="$textElements ?? null" :video-elements="$videoElements ?? null" :social-media-elements="$socialMediaElements ?? null" />
@@ -1071,6 +1371,9 @@
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
                             <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
+                            <span class="toolbar-divider"></span>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="toolbar-btn" onclick="execCmd('__ELEMENT_ID__', 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
                             <span class="toolbar-divider"></span>
                             <input type="color" class="toolbar-color-picker" onchange="execCmd('__ELEMENT_ID__', 'foreColor', this.value)" title="Text Color" value="#000000">
                             <span class="toolbar-divider"></span>
@@ -1404,7 +1707,259 @@
     data-route-social-store="{{ route('admin.elements.social.store') }}"
     data-route-order-update="{{ route('admin.elements.order.update') }}"
     data-route-appearance-update="{{ route('admin.appearance.update') }}"
+    data-route-design-settings-update="{{ route('admin.appearance.design-settings.update') }}"
     data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}">
 </div>
+
+<script>
+// ================================================================
+// EDITOR PANEL TAB SWITCHER
+// Mengontrol visibilitas panel "Elemen" vs "Pengaturan"
+// ================================================================
+
+/**
+ * Switch antara panel editor "elemen" dan "pengaturan".
+ * @param {'elemen'|'pengaturan'} activePanel - nama panel yang akan ditampilkan
+ */
+function switchEditorPanel(activePanel) {
+    const panelElemen      = document.getElementById('editorPanelElemen');
+    const panelPengaturan  = document.getElementById('editorPanelPengaturan');
+    const tabBtnElemen     = document.getElementById('tab-btn-elemen');
+    const tabBtnPengaturan = document.getElementById('tab-btn-pengaturan');
+
+    if (!panelElemen || !panelPengaturan) return;
+
+    const isElemen = (activePanel === 'elemen');
+
+    // Toggle panel visibility menggunakan atribut `hidden` (accessible)
+    panelElemen.hidden     = !isElemen;
+    panelPengaturan.hidden = isElemen;
+
+    // Update ARIA dan visual state tombol tab
+    tabBtnElemen.classList.toggle('is-active', isElemen);
+    tabBtnElemen.setAttribute('aria-selected', isElemen ? 'true' : 'false');
+
+    tabBtnPengaturan.classList.toggle('is-active', !isElemen);
+    tabBtnPengaturan.setAttribute('aria-selected', isElemen ? 'false' : 'true');
+
+    // Inisialisasi sub-tab background saat pertama kali buka panel Pengaturan
+    if (!isElemen) {
+        const currentType = document.getElementById('bgColorCustomPicker') ? 'ready' : null;
+        if (currentType) {
+            const activeBgTabId = document.getElementById('bg-tab-warna')?.classList.contains('is-active')
+                ? 'warna' : 'gambar';
+            _applyBgPanelVisibility(activeBgTabId);
+        }
+    }
+}
+
+// ================================================================
+// BACKGROUND SETTINGS: Sub-tab Gambar | Warna
+// ================================================================
+
+/**
+ * Switch antara panel background "gambar" dan "warna".
+ * @param {'gambar'|'warna'} subTab
+ */
+function switchBackgroundTab(subTab) {
+    document.getElementById('bg-tab-gambar')?.classList.toggle('is-active', subTab === 'gambar');
+    document.getElementById('bg-tab-warna')?.classList.toggle('is-active', subTab === 'warna');
+    _applyBgPanelVisibility(subTab);
+}
+
+/** Helper internal untuk show/hide panel background sesuai sub-tab aktif */
+function _applyBgPanelVisibility(subTab) {
+    const panelGambar = document.getElementById('bgPanelGambar');
+    const panelWarna  = document.getElementById('bgPanelWarna');
+    if (panelGambar) panelGambar.hidden = (subTab === 'warna');
+    if (panelWarna)  panelWarna.hidden  = (subTab === 'gambar');
+}
+
+/**
+ * Terapkan gambar background ke phone preview dan auto-save ke DB.
+ * @param {string} filename - nama file dari folder public/images/background/
+ */
+function applyBackgroundImage(filename) {
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        if (filename) {
+            phoneContent.style.backgroundImage = `url('{{ asset('images/background/') }}/${filename}')`;
+            phoneContent.style.backgroundColor = 'transparent';
+        } else {
+            phoneContent.style.backgroundImage = '';
+            phoneContent.style.backgroundColor = '#ffffff';
+        }
+    }
+
+    // Highlight opsi yang dipilih
+    document.querySelectorAll('.background-image-option').forEach(opt => {
+        const radio = opt.querySelector('input[type="radio"]');
+        opt.classList.toggle('is-selected', radio && radio.value === filename);
+    });
+
+    // Auto-save via AJAX
+    _saveDesignSetting({
+        background_type:  filename ? 'image' : 'color',
+        background_color: filename || (document.getElementById('bgColorCustomPicker')?.value ?? '#FFFFFF'),
+    });
+}
+
+/**
+ * Terapkan warna background ke phone preview dan auto-save ke DB.
+ * @param {string} hexColor - nilai hex warna, misal '#F8FAFC'
+ */
+function applyBackgroundColor(hexColor) {
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        phoneContent.style.backgroundImage = '';
+        phoneContent.style.backgroundColor = hexColor;
+    }
+
+    // Update color picker & hex display
+    const picker     = document.getElementById('bgColorCustomPicker');
+    const hexDisplay = document.getElementById('bgColorHexDisplay');
+    if (picker)     picker.value       = hexColor;
+    if (hexDisplay) hexDisplay.textContent = hexColor;
+
+    // Highlight preset swatch yang aktif
+    document.querySelectorAll('.bg-color-preset-swatch').forEach(swatch => {
+        swatch.classList.toggle('is-selected', swatch.dataset.color === hexColor);
+    });
+
+    // Auto-save via AJAX
+    _saveDesignSetting({
+        background_type:  'color',
+        background_color: hexColor,
+    });
+}
+
+// ================================================================
+// PROFILE LAYOUT
+// ================================================================
+
+/**
+ * Terapkan layout profil dan update phone preview secara real-time.
+ * Semua perubahan visual dikontrol via CSS dengan data-profile-layout attribute.
+ * @param {'title-top'|'classic'|'side'} layout
+ */
+function applyProfileLayout(layout) {
+    // Highlight kartu yang aktif di panel Pengaturan
+    document.querySelectorAll('.profile-layout-card').forEach(card => {
+        const radio = card.querySelector('input[type="radio"]');
+        card.classList.toggle('is-selected', radio && radio.value === layout);
+    });
+
+    // Set data-attribute pada live profile section — CSS menangani semua layout
+    const liveProfile = document.getElementById('liveProfileSection');
+    if (!liveProfile) return;
+
+    liveProfile.setAttribute('data-profile-layout', layout);
+
+    // Pastikan banner container terlihat untuk semua layout (CSS yang atur posisinya)
+    const bannerContainer = document.getElementById('livePhoneBannerContainer');
+    if (bannerContainer) {
+        const bannerImg = document.getElementById('livePhoneBannerImg');
+        const hasBanner = bannerImg && bannerImg.src && !bannerImg.src.endsWith('/');
+        // Tampilkan banner untuk semua layout jika ada banner, CSS yang atur tampilannya
+        if (hasBanner) {
+            bannerContainer.style.display = '';
+        }
+    }
+
+    // Auto-save via AJAX
+    _saveDesignSetting({ profile_layout: layout });
+}
+
+
+// ================================================================
+// BLOCK SHAPE
+// ================================================================
+
+/**
+ * Terapkan bentuk sudut blok elemen dan update phone preview secara real-time.
+ * @param {'sharp'|'rounded'|'pill'} shape
+ */
+function applyBlockShape(shape) {
+    const radiusMap = { sharp: '0px', rounded: '14px', pill: '9999px' };
+    const borderRadius = radiusMap[shape] ?? '14px';
+
+    // Terapkan ke semua blok di phone preview
+    document.querySelectorAll(
+        '.live-image-element, .live-text-element, .live-video-wrapper, .live-social-wrapper, .microsite-live-element'
+    ).forEach(el => {
+        el.style.borderRadius = borderRadius;
+    });
+
+    // Highlight pilihan yang aktif
+    document.querySelectorAll('.block-shape-option').forEach(opt => {
+        const radio = opt.querySelector('input[type="radio"]');
+        opt.classList.toggle('is-selected', radio && radio.value === shape);
+    });
+
+    // Auto-save via AJAX
+    _saveDesignSetting({ block_shape: shape });
+}
+
+// ================================================================
+// AJAX AUTO-SAVE (shared utility)
+// ================================================================
+
+/**
+ * Kirim perubahan design setting ke server via AJAX.
+ * @param {Object} settingPayload - key-value pair dari field yang ingin disimpan
+ */
+function _saveDesignSetting(settingPayload) {
+    const urlContainer = document.getElementById('micrositeEditorUrls');
+    if (!urlContainer) return;
+
+    const endpoint = urlContainer.dataset.routeDesignSettingsUpdate;
+    if (!endpoint) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch(endpoint, {
+        method:  'POST',
+        headers: {
+            'Content-Type':     'application/json',
+            'Accept':           'application/json',
+            'X-CSRF-TOKEN':     csrfToken ?? '',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify(settingPayload),
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response))
+    .catch(err => console.error('[Design Settings] Gagal menyimpan:', err));
+}
+
+// ================================================================
+// INISIALISASI: terapkan block_shape yang tersimpan ke phone preview
+// ================================================================
+(function initDesignSettings() {
+    const savedBlockShape = '{{ $appearance->block_shape ?? "rounded" }}';
+    if (savedBlockShape !== 'rounded') {
+        // Terapkan tanpa trigger auto-save ulang saat init
+        const radiusMap = { sharp: '0px', rounded: '14px', pill: '9999px' };
+        const radius = radiusMap[savedBlockShape] ?? '14px';
+        document.querySelectorAll(
+            '.live-image-element, .live-text-element, .live-video-wrapper, .live-social-wrapper'
+        ).forEach(el => { el.style.borderRadius = radius; });
+    }
+
+    // Inisialisasi sub-tab background berdasarkan data tersimpan
+    const savedBgType = '{{ $appearance->background_type ?? "color" }}';
+    if (savedBgType === 'image') {
+        switchBackgroundTab('gambar');
+    } else {
+        switchBackgroundTab('warna');
+    }
+
+    // Inisialisasi profile layout di phone preview saat halaman load
+    const savedProfileLayout = '{{ $appearance->profile_layout ?? "classic" }}';
+    const liveProfile = document.getElementById('liveProfileSection');
+    if (liveProfile && savedProfileLayout && savedProfileLayout !== 'classic') {
+        liveProfile.setAttribute('data-profile-layout', savedProfileLayout);
+    }
+})();
+</script>
 
 @endpush

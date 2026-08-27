@@ -1221,9 +1221,24 @@ function replaceFontSize(id, sizePx) {
 function updateTextPreview(id) {
     const editor = document.getElementById('editorContent_' + id);
     const liveDiv = document.getElementById('live_' + id);
-    if (editor && liveDiv) {
-        liveDiv.innerHTML = editor.innerHTML;
+    
+    if (editor) {
+        // [Refactor] Sync list item marker size with inner text font-size
+        const lis = editor.querySelectorAll('li');
+        lis.forEach(li => {
+            const fontEl = li.querySelector('font, span[style*="font-size"]');
+            if (fontEl && fontEl.style.fontSize) {
+                li.style.fontSize = fontEl.style.fontSize;
+            } else {
+                li.style.fontSize = '';
+            }
+        });
+
+        if (liveDiv) {
+            liveDiv.innerHTML = editor.innerHTML;
+        }
     }
+    
     // Update max height if content grows
     const formBody = document.getElementById('formBody_' + id);
     if (formBody && formBody.classList.contains('open')) {

@@ -13,6 +13,12 @@
             if ($appearance->profile_shape === 'rounded') $shapeRadius = '14px';
             if ($appearance->profile_shape === 'square') $shapeRadius = '0px';
         }
+
+        $blockRadius = '14px';
+        if (isset($appearance->block_shape)) {
+            if ($appearance->block_shape === 'sharp') $blockRadius = '0px';
+            if ($appearance->block_shape === 'pill') $blockRadius = '9999px';
+        }
     @endphp
     <style>
         /* Force font face to override parent elements */
@@ -87,6 +93,101 @@
             height: 100%;
             object-fit: cover;
         }
+
+        /* ─── LIVE PROFILE LAYOUTS ─── */
+        .live-profile-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+
+        /* LAYOUT: TITLE TOP */
+        .live-profile-section[data-profile-layout="title-top"] .preview-banner {
+            order: 1;
+            aspect-ratio: 5 / 2;
+            border-radius: 0;
+            position: relative;
+        }
+        .live-profile-section[data-profile-layout="title-top"] .preview-name {
+            order: 2;
+            position: static;
+            text-align: center;
+            padding: 4px 8px 0;
+        }
+        .live-profile-section[data-profile-layout="title-top"] .preview-profile {
+            order: 3;
+            width: 110px;
+            height: 110px;
+            margin: 16px auto 8px;
+        }
+        .live-profile-section[data-profile-layout="title-top"] .preview-bio {
+            order: 4;
+        }
+        .live-profile-section[data-profile-layout="title-top"] .preview-social-links {
+            order: 5;
+        }
+
+        /* LAYOUT: CLASSIC */
+        .live-profile-section[data-profile-layout="classic"] .preview-banner,
+        .live-profile-section:not([data-profile-layout]) .preview-banner {
+            aspect-ratio: 4 / 3; /* Banner lebih tinggi sesuai screenshot */
+            -webkit-mask-image: radial-gradient(ellipse 85% 55px at 50% 100%, transparent 99%, black 100%);
+            mask-image:radial-gradient(ellipse 90% 90px at 49% 100%, transparent 99%, black 100%);
+            border-bottom: none;
+            border-radius: 0; /* Let edge bleed or rounded based on content-wrapper */
+        }
+        .live-profile-section[data-profile-layout="classic"] .preview-profile,
+        .live-profile-section:not([data-profile-layout]) .preview-profile {
+            width: 100px;
+            height: 100px;
+            margin: -150px auto 16px; /* Tarik ke atas agar pas di lengkungan */
+            border-width: 5px;
+        }
+
+        /* LAYOUT: SIDE PANEL */
+        .live-profile-section[data-profile-layout="side"] {
+            display: grid;
+            grid-template-columns: 38% 1fr;
+            grid-template-rows: auto auto auto auto;
+            min-height: 140px;
+            background: transparent;
+        }
+        .live-profile-section[data-profile-layout="side"] .preview-banner {
+            grid-column: 1;
+            grid-row: 1 / 5;
+            aspect-ratio: unset;
+            height: 100%;
+            border-bottom: none;
+        }
+        .live-profile-section[data-profile-layout="side"] .preview-profile {
+            grid-column: 1;
+            grid-row: 1;
+            width: 72px;
+            height: 72px;
+            margin: 20px auto 0;
+            border-width: 3px;
+        }
+        .live-profile-section[data-profile-layout="side"] .preview-name {
+            grid-column: 2;
+            grid-row: 1;
+            text-align: left;
+            padding: 20px 12px 4px;
+            align-self: end;
+        }
+        .live-profile-section[data-profile-layout="side"] .preview-bio {
+            grid-column: 2;
+            grid-row: 2;
+            text-align: left;
+            padding: 0 12px;
+        }
+        .live-profile-section[data-profile-layout="side"] .preview-social-links {
+            grid-column: 2;
+            grid-row: 3;
+            justify-content: flex-start;
+            padding-left: 12px;
+        }
+
 
         .preview-name {
             font-size: 18px;
@@ -230,58 +331,63 @@
 
         @foreach($blocksOrder as $blockId)
             @if($blockId === 'profile')
-                @if($appearance && $appearance->banner)
-                    <div class="preview-banner">
-                        <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner">
-                    </div>
-                @endif
-
-                <div class="preview-profile">
-                    @if($appearance && $appearance->profile_image)
-                        <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image">
+                <div class="live-profile-section" data-profile-layout="{{ $appearance->profile_layout ?? 'classic' }}">
+                    @if($appearance && $appearance->banner)
+                        <div class="preview-banner">
+                            <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner">
+                        </div>
                     @else
-                        <i class="fas fa-user"></i>
+                        <div class="preview-banner"></div>
                     @endif
+
+                    <div class="preview-profile">
+                        @if($appearance && $appearance->profile_image)
+                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image">
+                        @else
+                            <i class="fas fa-user"></i>
+                        @endif
+                    </div>
+
+                    <div class="preview-name">{!! $appearance->name ?? $user->name !!}</div>
+                    <div class="preview-bio">{!! $appearance->bio ?? '' !!}</div>
+
+                    <div class="preview-social-links" id="livePreviewSocialLinks">
+                        @if($appearance && $appearance->instagram)
+                            <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                        @endif
+                        @if($appearance && $appearance->tiktok)
+                            <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        @endif
+                        @if($appearance && $appearance->whatsapp)
+                            <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        @endif
+                        @if($appearance && $appearance->linkedin)
+                            <a href="{{ $appearance->linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        @endif
+                        @if($appearance && $appearance->facebook)
+                            <a href="{{ $appearance->facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
+                        @endif
+                        @if($appearance && $appearance->website)
+                            <a href="{{ $appearance->website }}" target="_blank"><i class="fas fa-globe"></i></a>
+                        @endif
+                        @if($appearance && $appearance->twitter)
+                            <a href="{{ $appearance->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                        @endif
+                        @if($appearance && $appearance->youtube)
+                            <a href="{{ $appearance->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                        @endif
+                        @if($appearance && $appearance->telegram)
+                            <a href="{{ $appearance->telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
+                        @endif
+                        @if($appearance && $appearance->email)
+                            <a href="mailto:{{ $appearance->email }}"><i class="fas fa-envelope"></i></a>
+                        @endif
+                        @if($appearance && $appearance->discord)
+                            <a href="{{ $appearance->discord }}" target="_blank"><i class="fab fa-discord"></i></a>
+                        @endif
+                    </div>
                 </div>
 
-                <div class="preview-name">{!! $appearance->name ?? $user->name !!}</div>
-                <div class="preview-bio">{!! $appearance->bio ?? '' !!}</div>
-
-                <div class="preview-social-links" id="livePreviewSocialLinks">
-                    @if($appearance && $appearance->instagram)
-                        <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
-                    @endif
-                    @if($appearance && $appearance->tiktok)
-                        <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
-                    @endif
-                    @if($appearance && $appearance->whatsapp)
-                        <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                    @endif
-                    @if($appearance && $appearance->linkedin)
-                        <a href="{{ $appearance->linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    @endif
-                    @if($appearance && $appearance->facebook)
-                        <a href="{{ $appearance->facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
-                    @endif
-                    @if($appearance && $appearance->website)
-                        <a href="{{ $appearance->website }}" target="_blank"><i class="fas fa-globe"></i></a>
-                    @endif
-                    @if($appearance && $appearance->twitter)
-                        <a href="{{ $appearance->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
-                    @endif
-                    @if($appearance && $appearance->youtube)
-                        <a href="{{ $appearance->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
-                    @endif
-                    @if($appearance && $appearance->telegram)
-                        <a href="{{ $appearance->telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
-                    @endif
-                    @if($appearance && $appearance->email)
-                        <a href="mailto:{{ $appearance->email }}"><i class="fas fa-envelope"></i></a>
-                    @endif
-                    @if($appearance && $appearance->discord)
-                        <a href="{{ $appearance->discord }}" target="_blank"><i class="fab fa-discord"></i></a>
-                    @endif
-                </div>
             @elseif(str_starts_with($blockId, 'image_'))
                 @php
                     $elId = str_replace('image_', '', $blockId);
@@ -289,7 +395,7 @@
                 @endphp
                 @if($imageEl && $imageEl->image_path)
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
-                    <div style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
+                    <div style="margin-bottom: 12px; border-radius: {{ $blockRadius }}; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
                         @if(!empty($imageEl->link_url))
                             <a href="{{ $imageEl->link_url }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
                         @else
@@ -324,7 +430,7 @@
                 @endphp
                 @if($textEl)
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
-                    <div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0;">
+                    <div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0; border-radius: {{ $blockRadius }};">
                         {!! $textEl->content !!}
                     </div>
                     </div>
@@ -343,7 +449,7 @@
                     @endphp
                     @if($embedUrl)
                         <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
-                            <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                            <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: {{ $blockRadius }}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                                 <iframe src="{{ $embedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
@@ -368,7 +474,7 @@
                             'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335'],
                         ];
                     @endphp
-                    <div style="display: flex; justify-content: center; gap: 12px; padding: 10px 0; margin-bottom: 12px; width: 100%; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: center; gap: 12px; padding: 10px 0; margin-bottom: 12px; width: 100%; box-sizing: border-box; border-radius: {{ $blockRadius }};">
                         @foreach($platforms as $plat => $url)
                             @if(!empty($url) && isset($availableIcons[$plat]))
                                 <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: {{ $availableIcons[$plat]['color'] }}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
