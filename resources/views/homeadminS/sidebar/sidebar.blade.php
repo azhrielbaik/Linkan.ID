@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 
 <div class="sidebar" id="sidebar">
     <div class="sidebar-minimize-btn" onclick="toggleMinimize()">

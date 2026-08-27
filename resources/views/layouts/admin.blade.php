@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     @stack('styles')
     @stack('page-styles')
     <style>
@@ -272,6 +273,15 @@
     @stack('page-styles')
     <meta name="view-transition" content="same-origin" />
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js"></script>
+    <script>
+        document.addEventListener("turbo:before-render", function(event) {
+            if (document.body.classList.contains('mini-sidebar')) {
+                event.detail.newBody.classList.add('mini-sidebar');
+            } else {
+                event.detail.newBody.classList.remove('mini-sidebar');
+            }
+        });
+    </script>
     <style>
         /* Optional fade transition during turbo drive navigations */
         ::view-transition-old(root),
