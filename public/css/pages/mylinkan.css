@@ -2034,8 +2034,15 @@ font[face="Verdana"] {
     min-height: 0;
     padding: 12px 14px 16px 14px;
     overflow-y: auto;
+    overflow-x: hidden;
     background-size: cover;
     background-position: center;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.phone-content::-webkit-scrollbar {
+    display: none;
 }
 
 .empty-state-icon-wrapper {

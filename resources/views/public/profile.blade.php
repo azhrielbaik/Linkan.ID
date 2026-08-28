@@ -5,7 +5,7 @@
     <title>{{ strip_tags($appearance->name ?? $user->name) }} | Linkan.id</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @php
         $shapeRadius = '50%';
@@ -442,6 +442,8 @@
                     @php
                         $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
                         $availableIcons = [
+                            'linkedin' => ['icon' => 'fab fa-linkedin', 'color' => '#0077b5'],
+                            'reddit' => ['icon' => 'fab fa-reddit', 'color' => '#FF4500'],
                             'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C'],
                             'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2'],
                             'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000'],
@@ -455,8 +457,8 @@
                     <div style="display: flex; justify-content: center; gap: 12px; padding: 10px 0; margin-bottom: 12px; width: 100%; box-sizing: border-box; border-radius: {{ $blockRadius }};">
                         @foreach($platforms as $plat => $url)
                             @if(!empty($url) && isset($availableIcons[$plat]))
-                                <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: {{ $availableIcons[$plat]['color'] }}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
-                                    <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 32px;"></i>
+                                <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 45px; height: 45px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                                    <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 24px;"></i>
                                 </a>
                             @endif
                         @endforeach

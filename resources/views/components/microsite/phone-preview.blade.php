@@ -203,6 +203,8 @@
                                             $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
                                             
                                             $availableIcons = [
+                                                'linkedin' => ['icon' => 'fab fa-linkedin', 'color' => '#0077b5'],
+                                                'reddit' => ['icon' => 'fab fa-reddit', 'color' => '#FF4500'],
                                                 'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C'],
                                                 'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2'],
                                                 'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000'],
@@ -217,8 +219,8 @@
                                             <div id="liveSocialContainer_{{ $elementId }}" class="live-social-container" style="display: flex; justify-content: center; gap: 12px; padding: 10px 0;">
                                                 @foreach($platforms as $plat => $url)
                                                     @if(!empty($url) && isset($availableIcons[$plat]))
-                                                        <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: {{ $availableIcons[$plat]['color'] }}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
-                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 32px;"></i>
+                                                        <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 35px; height: 35px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 18px;"></i>
                                                         </a>
                                                     @endif
                                                 @endforeach
