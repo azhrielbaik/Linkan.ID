@@ -1,0 +1,55 @@
+/* Mobile overrides for admin platform */
+@media only screen and (max-width: 768px) {
+  /* Sidebar */
+  .platform-sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    height: 100vh;
+    width: 250px;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+  .platform-sidebar.open {
+    transform: translateX(0);
+  }
+  .hamburger-btn { display: inline-block; }
+
+  /* Main content takes full width */
+  .platform-main { margin-left: 0; }
+
+  /* Grid layout to single column */
+  .two-col-grid {
+    display: block;
+  }
+  .section-card, .chart-card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Chart canvas full width */
+  .chart-canvas-wrapper canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Table responsiveness */
+  .table-responsive { overflow-x: auto; }
+
+  /* Adjust toolbar spacing */
+  .dashboard-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .export-actions { margin-top: 0.5rem; }
+
+  /* Adjust seller list */
+  .seller-list {
+    display: block;
+  }
+  .seller-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+}

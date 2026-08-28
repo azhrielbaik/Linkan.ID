@@ -5,6 +5,8 @@ namespace App\Http\Controllers\PlatformAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\PlatformAdmin\VerifikasiRequest;
+use App\Http\Requests\PlatformAdmin\BulkVerifikasiRequest;
 use App\Models\DigitalProduct;
 
 class VerifikasiController extends Controller
@@ -18,12 +20,8 @@ class VerifikasiController extends Controller
         return view('platformadmin.verifikasi', compact('products'));
     }
 
-    public function verify(Request $request, $id)
+    public function verify(\App\Http\Requests\PlatformAdmin\VerifikasiRequest $request, $id)
     {
-        $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'rejection_reason' => 'required_if:status,rejected|nullable|string|max:500'
-        ]);
 
         $product = DigitalProduct::findOrFail($id);
         $product->verification_status = $request->status;
@@ -55,12 +53,8 @@ class VerifikasiController extends Controller
 
     public function bulkVerify(Request $request)
     {
-        $validated = $request->validate([
-            'product_ids' => 'required|array|min:1',
-            'product_ids.*' => 'integer|distinct|exists:digital_products,id',
-            'status' => 'required|in:approved,rejected',
-            'rejection_reason' => 'required_if:status,rejected|nullable|string|max:500',
-        ]);
+        // Validation handled by BulkVerifikasiRequest
+        $validated = $request->validated();
 
         $products = DigitalProduct::with('user')
             ->whereIn('id', $validated['product_ids'])
