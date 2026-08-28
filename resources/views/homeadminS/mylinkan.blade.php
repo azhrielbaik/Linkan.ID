@@ -819,6 +819,8 @@
                                                 <div class="social-platforms-list" id="social_platforms_list_{{ $elementId }}">
                                                     @php
                                                         $availablePlatforms = [
+                                                            'linkedin' => ['icon' => 'fab fa-linkedin', 'color' => '#0077b5', 'label' => 'LinkedIn', 'placeholder' => 'contoh: https://linkedin.com/in/username'],
+                                                            'reddit' => ['icon' => 'fab fa-reddit', 'color' => '#FF4500', 'label' => 'Reddit', 'placeholder' => 'contoh: https://reddit.com/user/username'],
                                                             'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C', 'label' => 'Instagram', 'placeholder' => 'contoh: https://instagram.com/username'],
                                                             'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2', 'label' => 'Facebook', 'placeholder' => 'contoh: https://facebook.com/username'],
                                                             'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000', 'label' => 'YouTube', 'placeholder' => 'contoh: https://youtube.com/c/username'],
@@ -862,7 +864,7 @@
                                                     <button type="button" class="btn-secondary" onclick="toggleSocialEditForm('{{ $elementId }}')">
                                                         Batal
                                                     </button>
-                                                    <button type="button" class="btn-primary" onclick="saveDynamicSocialMedia('{{ $elementId }}')">
+                                                    <button type="button" class="btn-primary btn-submit" onclick="saveDynamicSocialMedia('{{ $elementId }}')">
                                                     Simpan
                                                     </button>
                                                 </div>
@@ -1495,9 +1497,12 @@
     <!-- CUSTOM DELETE CONFIRMATION MODAL -->
 
     <template id="social-live-template">
-        <div id="live___ELEMENT_ID__" class="microsite-live-element live-social-wrapper" style="display: none;" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('__ELEMENT_ID__', true);">
+        <div id="live___ELEMENT_ID__" class="microsite-live-element live-social-wrapper" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('__ELEMENT_ID__', true);">
             <div id="liveSocialContainer___ELEMENT_ID__" class="live-social-container" style="display: flex; justify-content: center; gap: 12px; padding: 10px 0;">
-                <!-- Social media icons will be rendered here dynamically -->
+                <div style="background: #f3f4f6; padding: 10px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px; width: 100%;">
+                    <i class="fas fa-share-alt" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    Atur Media Sosial
+                </div>
             </div>
         </div>
     </template>
@@ -1549,7 +1554,7 @@
             </div>
 
             <!-- Form Edit untuk Media Sosial -->
-            <div id="editForm___ELEMENT_ID__" class="edit-form-body">
+            <div id="formBody___ELEMENT_ID__" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
                 <div class="edit-form-content">
                     <form id="socialForm___ELEMENT_ID__">
                         <div class="social-edit-header">
@@ -1573,7 +1578,7 @@
                             <button type="button" class="btn-secondary" onclick="toggleSocialEditForm('__ELEMENT_ID__')">
                                 Batal
                             </button>
-                            <button type="button" class="btn-primary" onclick="saveDynamicSocialMedia('__ELEMENT_ID__')">
+                            <button type="button" class="btn-primary btn-submit" onclick="saveDynamicSocialMedia('__ELEMENT_ID__')">
                                 <i class="fas fa-save" style="margin-right: 6px;"></i> Simpan
                             </button>
                         </div>
@@ -1691,7 +1696,7 @@
         }
     };
 </script>
-<script src="{{ asset('js/microsite-editor.js') }}"></script>
+<script src="{{ asset('js/microsite-editor.js') }}?v={{ time() }}"></script>
 
 
 

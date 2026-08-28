@@ -466,13 +466,14 @@ function saveElementsOrder() {
 
     const blocksOrderStr = order.join(',');
 
-    fetch(document.getElementById('micrositeEditorUrls').dataset.routeOrderUpdate, {
+    return fetch(document.getElementById('micrositeEditorUrls').dataset.routeOrderUpdate, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify({ blocks_order: blocksOrderStr })
+        body: JSON.stringify({ blocks_order: blocksOrderStr }),
+        keepalive: true
     });
 }
 
@@ -511,7 +512,7 @@ function initPageEvents() {
             } else if (blockId.startsWith('video_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="video"]`);
-            } else if (blockId.startsWith('social_')) {
+            } else if (blockId.startsWith('social_') || blockId.startsWith('socialBlock_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
             }
@@ -1637,14 +1638,9 @@ function addSocialMediaElement() {
     liveTemplate = liveTemplate.replace(/__ELEMENT_ID__/g, tempId);
     
     // Insert live template before the preview-url-browser-bar or at end of container
-    const previewContainer = document.querySelector('.mockup-phone-display');
-    if (previewContainer) {
-        const gestureBar = previewContainer.querySelector('.mockup-home-gesture-wrapper');
-        if (gestureBar) {
-            gestureBar.insertAdjacentHTML('beforebegin', liveTemplate);
-        } else {
-            previewContainer.insertAdjacentHTML('beforeend', liveTemplate);
-        }
+    const phoneContent = document.getElementById('phonePreviewContent');
+    if (phoneContent) {
+        phoneContent.insertAdjacentHTML('beforeend', liveTemplate);
     }
 
     saveElementsOrder();
@@ -1726,6 +1722,8 @@ function updateSocialPreview(elementId) {
     if (!liveContainer) return;
     
     const availableIcons = {
+        'linkedin': {icon: 'fab fa-linkedin', color: '#0077b5'},
+        'reddit': {icon: 'fab fa-reddit', color: '#FF4500'},
         'instagram': {icon: 'fab fa-instagram', color: '#E1306C'},
         'facebook': {icon: 'fab fa-facebook', color: '#1877F2'},
         'youtube': {icon: 'fab fa-youtube', color: '#FF0000'},
@@ -1754,8 +1752,8 @@ function updateSocialPreview(elementId) {
                 }
             }
             
-            html += `<a href="${url}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; color: ${availableIcons[plat].color}; text-decoration: none; transition: all 0.2s; margin: 0 4px;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
-                        <i class="${availableIcons[plat].icon}" style="font-size: 32px;"></i>
+            html += `<a href="${url}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 35px; height: 35px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                        <i class="${availableIcons[plat].icon}" style="font-size: 18px;"></i>
                      </a>`;
         }
     });
@@ -1811,17 +1809,36 @@ function saveDynamicSocialMedia(elementId) {
             }
             
             toggleSocialEditForm(elementId);
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: 'Media sosial berhasil disimpan',
-                timer: 1500,
-                showConfirmButton: false
-            });
-            
             updateSocialPreview(elementId);
-            saveElementsOrder();
+            
+            const saveOrderPromise = saveElementsOrder();
+            if (saveOrderPromise) {
+                saveOrderPromise.then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Media sosial berhasil disimpan',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }).catch(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Media sosial berhasil disimpan',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Media sosial berhasil disimpan',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
         } else {
             Swal.fire('Error', 'Gagal menyimpan media sosial', 'error');
         }
@@ -1932,6 +1949,8 @@ function addSocialPlatformToForm(elementId, platform) {
     }
 
     const availablePlatforms = {
+        'linkedin': {icon: 'fab fa-linkedin', color: '#0077b5', name: 'LinkedIn', label: 'URL Profil LinkedIn', placeholder: 'contoh: https://linkedin.com/in/username'},
+        'reddit': {icon: 'fab fa-reddit', color: '#FF4500', name: 'Reddit', label: 'URL atau Username Reddit', placeholder: 'contoh: https://reddit.com/user/username'},
         'instagram': {icon: 'fab fa-instagram', color: '#E1306C', name: 'Instagram', label: 'URL atau Username Instagram', placeholder: 'contoh: https://instagram.com/username'},
         'facebook': {icon: 'fab fa-facebook', color: '#1877F2', name: 'Facebook', label: 'URL Facebook', placeholder: 'contoh: https://facebook.com/username'},
         'youtube': {icon: 'fab fa-youtube', color: '#FF0000', name: 'YouTube', label: 'URL Channel YouTube', placeholder: 'contoh: https://youtube.com/c/username'},

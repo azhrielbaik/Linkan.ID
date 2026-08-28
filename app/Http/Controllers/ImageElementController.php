@@ -87,6 +87,7 @@ class ImageElementController extends Controller
         );
 
         $appearance->blocks_order = $request->blocks_order;
+        \Illuminate\Support\Facades\Log::info('Saving blocks_order: ' . $request->blocks_order);
         $appearance->save();
 
         return response()->json(['success' => true]);

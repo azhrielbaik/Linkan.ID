@@ -26,10 +26,9 @@ class SocialMediaElementController extends Controller
             $element = new SocialMediaElement();
             $element->user_id = $user->id;
             $element->is_active = true;
-            $element->platforms = [];
-        } else {
-            $element->platforms = $request->platforms ?? [];
-        }
+        } 
+        
+        $element->platforms = $request->platforms ?? [];
 
         $element->save();
 
@@ -78,7 +77,7 @@ class SocialMediaElementController extends Controller
                 $order = json_decode($appearance->blocks_order, true);
                 if (is_array($order)) {
                     $order = array_filter($order, function($item) use ($id) {
-                        return $item !== 'socialBlock_' . $id;
+                        return $item !== 'social_' . $id;
                     });
                     $appearance->blocks_order = json_encode(array_values($order));
                     $appearance->save();
