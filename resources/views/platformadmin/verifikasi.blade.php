@@ -77,7 +77,8 @@
             </div>
 
             <form id="bulkActionForm" action="{{ route('platform-admin.verifikasi.bulk') }}" method="POST" class="bulk-toolbar">
-                @csrf
+    @csrf
+
                 <input type="hidden" name="status" id="bulkStatus">
                 <div id="bulkProductIds"></div>
                 <div class="bulk-selection-info">

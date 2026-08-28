@@ -22,6 +22,9 @@ yarn-error.log
 /.vscode
 /.zed
 #/storage/framework/views/*.php
+/storage/framework/views/*.php
+/.postman/
+/postman/
 
 
 # Dev helper scripts

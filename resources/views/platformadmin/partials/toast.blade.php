@@ -7,7 +7,7 @@
             </div>
             <div class="toast-content">
                 <div class="toast-title">Berhasil</div>
-                <div class="toast-message">{{ session('success') }}</div>
+                <div class="toast-message">{{ e(session('success')) }}</div>
             </div>
             <button type="button" class="toast-close" onclick="closeToast(this.closest('.toast-item'))" aria-label="Tutup">
                 <i class="fas fa-times"></i>
