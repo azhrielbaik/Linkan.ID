@@ -49,7 +49,7 @@
                                 </div>
 
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
-                                <div id="liveProfileSection" class="live-profile-section" style="display: none; cursor: pointer;" onclick="if(typeof toggleProfileEditForm === 'function') toggleProfileEditForm(true);">
+                                <div id="liveProfileSection" class="live-profile-section live-element-pointer js-toggle-edit-form" style="display: none;" data-type="Profile" data-force-open="true">
                                     <div id="livePhoneBannerContainer" class="live-phone-banner-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
                                         <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" class="live-phone-banner-img">
                                     </div>
@@ -122,8 +122,8 @@
                                             $elementId = 'imageBlock_' . $imageEl->id; 
                                             $isActive = $imageEl->is_active ?? true;
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="live-image-element" style="cursor: pointer; display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleImageEditForm === 'function') toggleImageEditForm('{{ $elementId }}', true);">
-                                            <a id="liveLink_{{ $elementId }}" class="live-image-link" style="pointer-events: none;">
+                                        <div id="live_{{ $elementId }}" class="live-image-element live-element-pointer js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Image" data-target-id="{{ $elementId }}" data-force-open="true">
+                                            <a id="liveLink_{{ $elementId }}" class="live-image-link pointer-events-none">
                                                 <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" class="live-image-img">
                                             </a>
                                         </div>
@@ -139,7 +139,7 @@
                                             $border = $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none';
                                             $isActive = $dividerEl->is_active ?? true;
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-divider-wrapper" style="padding: {{ $padding }}; display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleDividerEditForm === 'function') toggleDividerEditForm('{{ $elementId }}', true);">
+                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-divider-wrapper js-toggle-edit-form" style="padding: {{ $padding }}; display: {{ $isActive ? 'block' : 'none' }};" data-type="Divider" data-target-id="{{ $elementId }}" data-force-open="true">
                                             <div id="liveDivider_{{ $elementId }}" class="live-divider-inner" style="border-top: {{ $border }}; height: {{ $height }};"></div>
                                         </div>
                                     @endforeach
@@ -151,7 +151,7 @@
                                             $elementId = 'textBlock_' . $textEl->id; 
                                             $isActive = $textEl->is_active ?? true;
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="live-text-element" style="display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleTextEditForm === 'function') toggleTextEditForm('{{ $elementId }}', true);">
+                                        <div id="live_{{ $elementId }}" class="live-text-element js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Text" data-target-id="{{ $elementId }}" data-force-open="true">
                                             {!! $textEl->content !!}
                                         </div>
                                     @endforeach
@@ -163,7 +163,7 @@
                                             $elementId = 'videoBlock_' . $videoEl->id; 
                                             $isActive = $videoEl->is_active ?? true;
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="live-video-wrapper" style="display: {{ $isActive ? 'block' : 'none' }}; cursor: pointer;" onclick="if(typeof toggleVideoEditForm === 'function') toggleVideoEditForm('{{ $elementId }}', true);">
+                                        <div id="live_{{ $elementId }}" class="live-video-wrapper live-element-pointer js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Video" data-target-id="{{ $elementId }}" data-force-open="true">
                                             <div class="video-container" id="liveVideoContainer_{{ $elementId }}">
                                                 @if($videoEl->video_url)
                                                     @php
@@ -175,18 +175,18 @@
                                                     @endphp
                                                     @if($embedUrl)
                                                         <!-- pointer-events: none to allow clicking through to edit form -->
-                                                        <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; pointer-events: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                                            <iframe src="{{ $embedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                        <div class="live-video-embed-wrapper">
+                                                            <iframe src="{{ $embedUrl }}" class="live-video-iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                                         </div>
                                                     @else
-                                                        <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
-                                                            <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                                                        <div class="live-video-placeholder">
+                                                            <i class="fab fa-youtube live-video-placeholder-icon"></i>
                                                             URL YouTube Tidak Valid
                                                         </div>
                                                     @endif
                                                 @else
-                                                    <div style="background: #f3f4f6; padding: 40px 20px; text-align: center; border-radius: 8px; color: #6b7280; font-size: 14px;">
-                                                        <i class="fab fa-youtube" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                                                    <div class="live-video-placeholder">
+                                                        <i class="fab fa-youtube live-video-placeholder-icon"></i>
                                                         Masukkan URL YouTube
                                                     </div>
                                                 @endif
@@ -215,12 +215,12 @@
                                                 'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335'],
                                             ];
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-social-wrapper" style="display: {{ $isActive ? 'block' : 'none' }};" onclick="if(typeof toggleSocialEditForm === 'function') toggleSocialEditForm('{{ $elementId }}', true);">
-                                            <div id="liveSocialContainer_{{ $elementId }}" class="live-social-container" style="display: flex; justify-content: center; gap: 12px; padding: 10px 0;">
+                                        <div id="live_{{ $elementId }}" class="microsite-live-element live-social-wrapper js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Social" data-target-id="{{ $elementId }}" data-force-open="true">
+                                            <div id="liveSocialContainer_{{ $elementId }}" class="live-social-container live-social-container-styled">
                                                 @foreach($platforms as $plat => $url)
                                                     @if(!empty($url) && isset($availableIcons[$plat]))
-                                                        <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 35px; height: 35px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
-                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 18px;"></i>
+                                                        <a href="{{ $url }}" target="_blank" class="live-social-icon-btn">
+                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" class="live-social-icon-inner"></i>
                                                         </a>
                                                     @endif
                                                 @endforeach
@@ -253,7 +253,7 @@
                         <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
                         <div class="vertical-action-stack">
                             <!-- Copy Button -->
-                            <button type="button" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')" class="btn-vertical-action btn-copy" title="Salin Tautan Microsite">
+                            <button class="js-copy-url btn-vertical-action btn-copy" type="button" data-url="{{ url('/linkan.id/' . Auth::user()->username) }}" title="Salin Tautan Microsite">
                                 <i class="fas fa-copy"></i>
                             </button>
                             
