@@ -26,10 +26,7 @@
             </div>
             <div class="header-right">
                 @include('platformadmin.partials.notifications')
-                <div class="header-user">
-                    <div class="header-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-                    <span>{{ Auth::user()->name }}</span>
-                </div>
+                @include('platformadmin.partials.header_profile')
             </div>
         </div>
 

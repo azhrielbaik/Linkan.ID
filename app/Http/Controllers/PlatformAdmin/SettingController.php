@@ -8,6 +8,7 @@ use App\Models\PlatformSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\PlatformAdmin\UpdateSettingsRequest;
 
 use Illuminate\Support\Facades\Hash;
 
@@ -77,7 +78,7 @@ class SettingController extends Controller
             ]
         );
 
-        return back()->with('success', __('platform.financial_settings_updated'));
+        return back()->with('success', __('messages.financial_settings_updated'));
     }
 
     /**
@@ -145,9 +146,9 @@ class SettingController extends Controller
             ]
         );
 
-        $msg = 'Broadcast pengumuman berhasil disiarkan.';
+        $msg = __('messages.broadcast_success');
         if ($shouldSendEmail) {
-            $msg .= " Sebanyak {$sentCount} email pengumuman telah berhasil dikirimkan ke seller.";
+            $msg .= " " . __('messages.broadcast_email_sent', ['count' => $sentCount]);
         }
 
         return back()->with('success', $msg);
@@ -174,7 +175,7 @@ class SettingController extends Controller
             ]
         );
 
-        return back()->with('success', "Pengumuman berhasil {$statusText}.");
+        return back()->with('success', __('messages.ticket_reply_sent'));
     }
 
     /**
@@ -193,6 +194,7 @@ class SettingController extends Controller
             ['title' => $title]
         );
 
-        return back()->with('success', 'Pengumuman berhasil dihapus.');
+        return back()->with('success', __('messages.product_takedown', ['title' => $title]));
+
     }
 }

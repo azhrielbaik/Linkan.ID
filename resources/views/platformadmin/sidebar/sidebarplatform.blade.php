@@ -1,10 +1,24 @@
 {{-- Linkan.ID Platform Admin Sidebar --}}
 <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/platform/theme.css') }}?v={{ time() }}">
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
     if (localStorage.getItem('sidebar-mini') === 'true') {
         document.body.classList.add('mini-sidebar');
     }
+    (function() {
+        const savedMode = localStorage.getItem('platform_theme_mode') || '{{ Auth::user()->theme ?? "light" }}';
+        const savedColor = localStorage.getItem('platform_theme_color') || '{{ Auth::user()->theme_color ?? "#ed842c" }}';
+        if (savedMode === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark-mode');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        document.documentElement.setAttribute('data-theme-color', savedColor);
+    })();
 </script>
 
 <div class="sidebar" id="sidebar">
@@ -179,4 +193,7 @@
 
 {{-- Floating Toast Notifications for Platform Admin --}}
 @include('platformadmin.partials.toast')
+
+{{-- Dynamic Theme & Dark Mode Script --}}
+<script src="{{ asset('js/platform/theme.js') }}?v={{ time() }}"></script>
 
