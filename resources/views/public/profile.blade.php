@@ -53,7 +53,7 @@
             width: 100%;
             max-width: 480px;
             background: transparent;
-            padding: 0 5px 40px 5px !important;
+            padding: 0 0 40px 0 !important;
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
@@ -182,6 +182,7 @@
             margin-bottom: 10px;
             text-align: center;
             color: {{ $appearance->theme_color ?? '#FF9040' }};
+            padding: 0 20px;
         }
 
         .preview-bio {
@@ -529,7 +530,7 @@
                             ]
                         ];
                     @endphp
-                    <div class="dp-wrapper" style="width: 50%; padding: 0 5px; box-sizing: border-box;">
+                    <div class="dp-wrapper" style="width: 50%; padding: 0 10px; box-sizing: border-box;">
                         <x-microsite.digital-product-view :product="$productData" :media="$media" />
                     </div>
                 @endif

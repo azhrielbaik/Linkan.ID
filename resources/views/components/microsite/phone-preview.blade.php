@@ -48,10 +48,16 @@
                                         width: 100%;
                                         flex: 0 0 100%;
                                     }
+                                    #phonePreviewContent > .live-profile-section {
+                                        width: calc(100% + 28px) !important;
+                                        flex: 0 0 calc(100% + 28px) !important;
+                                        margin-left: -14px !important;
+                                        margin-top: -12px !important;
+                                    }
                                     #phonePreviewContent > div[data-type="DigitalProduct"] {
                                         width: 50%;
                                         flex: 0 0 50%;
-                                        padding: 0 5px;
+                                        padding: 0 10px;
                                         box-sizing: border-box;
                                     }
                                 </style>
