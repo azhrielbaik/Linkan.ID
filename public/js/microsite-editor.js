@@ -449,7 +449,7 @@ function saveElementsOrder() {
     const list = document.getElementById('elementBlocksList');
     if (!list) return;
 
-    const blocks = list.querySelectorAll('.draggable-element-block');
+    const blocks = list.querySelectorAll('.draggable-element-block, .element-block');
     const order = ['profile']; // Profile is strictly always the first element in DB
     blocks.forEach(block => {
         const type = block.getAttribute('data-element-type');
@@ -468,6 +468,9 @@ function saveElementsOrder() {
         } else if (type === 'social') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('social_' + dbId);
+        } else if (type === 'digital_product') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('digitalproduct_' + dbId);
         }
     });
 
@@ -522,6 +525,9 @@ function initPageEvents() {
             } else if (blockId.startsWith('social_') || blockId.startsWith('socialBlock_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
+            } else if (blockId.startsWith('digitalproduct_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="digital_product"]`);
             }
             if (el) {
                 list.appendChild(el);
@@ -691,7 +697,7 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video' || type === 'social') {
+        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video' || type === 'social' || type === 'digital_product') {
             const liveElement = document.getElementById('live_' + block.id);
             if (liveElement) {
                 phoneContent.appendChild(liveElement);
@@ -2057,6 +2063,7 @@ function finishSocialPlatformSelection() {
             else if (type === 'Text') toggleTextEditForm(id, forceOpen);
             else if (type === 'Video') toggleVideoEditForm(id, forceOpen);
             else if (type === 'Social') toggleSocialEditForm(id, forceOpen);
+            else if (type === 'DigitalProduct') toggleDigitalProductEditForm(id, forceOpen);
         }
 
         if ((target = e.target.closest('.js-remove-element'))) {
@@ -2352,3 +2359,60 @@ function finishSocialPlatformSelection() {
     window.finishSocialPlatformSelection = finishSocialPlatformSelection;
 
 })();
+
+function deleteDynamicDigitalProduct(id) {
+    if (confirm('Yakin ingin menghapus Produk Digital ini?')) {
+        const routeBase = document.getElementById('micrositeEditorUrls').dataset.routeImageStore; // We will use base route but replace
+        // Since we don't have a dataset URL, we'll hardcode the base for now or use window location
+        
+        fetch('/admin/elements/digital-product/' + id, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const block = document.querySelector(`.draggable-element-block[data-db-id="${id}"][data-element-type="digital_product"]`);
+                if (block) block.remove();
+                
+                const liveEl = document.getElementById('live_digitalProductBlock_' + id);
+                if (liveEl) liveEl.remove();
+                
+                syncPhonePreviewOrder();
+                saveElementsOrder();
+            } else {
+                alert('Gagal menghapus produk dari database.');
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat menghapus.');
+        });
+    }
+}
+
+function toggleDigitalProductEditForm(elementId, forceOpen = false) {
+    const formBody = document.getElementById('formBody_' + elementId);
+    const btnText = document.getElementById('btnText_' + elementId);
+    if (!formBody) return;
+
+    if (formBody.classList.contains('open') && !forceOpen) {
+        formBody.style.maxHeight = '0px';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0px';
+        formBody.classList.remove('open');
+        if (btnText) btnText.innerText = 'Detail';
+    } else {
+        closeAllEditForms();
+        formBody.style.maxHeight = formBody.scrollHeight + 100 + 'px';
+        formBody.style.opacity = '1';
+        formBody.style.marginTop = '16px';
+        formBody.classList.add('open');
+        if (btnText) btnText.innerText = 'Tutup';
+        
+        const card = formBody.closest('.block-item-card');
+        if(card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}

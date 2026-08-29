@@ -1,4 +1,4 @@
-@props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements'])
+@props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements', 'digitalProducts'])
 
 <div class="editor-sticky-preview clean-sticky-preview">
                 <!-- SECTION TITLE -->
@@ -38,6 +38,23 @@
                                     background-color: #ffffff;
                                 @endif
                             ">
+                                <style>
+                                    #phonePreviewContent {
+                                        display: flex;
+                                        flex-wrap: wrap;
+                                        align-content: flex-start;
+                                    }
+                                    #phonePreviewContent > div {
+                                        width: 100%;
+                                        flex: 0 0 100%;
+                                    }
+                                    #phonePreviewContent > div[data-type="DigitalProduct"] {
+                                        width: 50%;
+                                        flex: 0 0 50%;
+                                        padding: 0 5px;
+                                        box-sizing: border-box;
+                                    }
+                                </style>
                                 
                                 <!-- EMPTY STATE PLACEHOLDER (SHOWN WHEN NO ELEMENTS ARE ADDED IN LEFT PANEL) -->
                                 <div id="phoneEmptyState" class="phone-empty-state">
@@ -115,6 +132,55 @@
                                     
 
                                 </div>
+
+                                @if(isset($digitalProducts))
+                                    @foreach($digitalProducts as $digitalProduct)
+                                        @php
+                                            $elementId = 'digitalproduct_' . $digitalProduct->id;
+                                            $isActive = $digitalProduct->is_active ?? true;
+                                            
+                                            // Format the product array for the component
+                                            $mediaFiles = is_string($digitalProduct->media_files) ? json_decode($digitalProduct->media_files, true) : ($digitalProduct->media_files ?? []);
+                                            $media = [];
+                                            foreach($mediaFiles as $file) {
+                                                if (is_array($file)) {
+                                                    $media[] = [
+                                                        'type' => $file['type'] ?? 'image/jpeg',
+                                                        'url' => isset($file['path']) ? asset('storage/' . $file['path']) : ($file['url'] ?? '')
+                                                    ];
+                                                }
+                                            }
+
+                                            $productData = [
+                                                'title' => $digitalProduct->title,
+                                                'description' => $digitalProduct->description,
+                                                'pricing' => [
+                                                    'type' => $digitalProduct->pricing_type,
+                                                    'fixed' => $digitalProduct->price,
+                                                    'min' => $digitalProduct->price_min,
+                                                    'max' => $digitalProduct->price_max,
+                                                ],
+                                                'quantity' => [
+                                                    'min' => $digitalProduct->quantity_min ?? 1,
+                                                    'max' => $digitalProduct->has_quantity_limit ? $digitalProduct->quantity : null,
+                                                ],
+                                                'schedule' => [
+                                                    'enabled' => $digitalProduct->is_scheduled,
+                                                    'start' => $digitalProduct->start_time,
+                                                    'end' => $digitalProduct->end_time,
+                                                ],
+                                                'deliverable' => [
+                                                    'type' => $digitalProduct->deliverable_type ?? 'external',
+                                                    'url' => $digitalProduct->deliverable_type !== 'upload' ? $digitalProduct->deliverable_url : '',
+                                                    'file' => $digitalProduct->deliverable_type === 'upload' ? $digitalProduct->deliverable_url : ''
+                                                ]
+                                            ];
+                                        @endphp
+                                        <div id="live_{{ $elementId }}" class="live-element-pointer" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="DigitalProduct" data-target-id="{{ $elementId }}" data-force-open="true">
+                                            <x-microsite.digital-product-view :product="$productData" :media="$media" />
+                                        </div>
+                                    @endforeach
+                                @endif
 
                                 @if(isset($imageElements))
                                     @foreach($imageElements as $imageEl)
