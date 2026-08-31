@@ -140,198 +140,535 @@
                 {{-- ============================================================
                      PANEL DIGITAL PRODUCT WIZARD (Hidden by default)
                      ============================================================ --}}
+                <style>
+                    /* Digital Product Wizard Styles (Matches image reference) */
+                    .dp-wizard-container {
+                        background: #ffffff;
+                        border-radius: 8px;
+                        padding: 30px;
+                        font-family: 'Plus Jakarta Sans', sans-serif;
+                    }
+                    
+                    /* Stepper UI */
+                    .dp-stepper-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 30px;
+                        padding: 0 10px;
+                    }
+                    .dp-stepper-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        color: #9ca3af;
+                        font-weight: 600;
+                        font-size: 14px;
+                        transition: color 0.2s;
+                    }
+                    .dp-stepper-item.active {
+                        color: #F97316;
+                    }
+                    .dp-stepper-item.completed {
+                        color: #111827;
+                    }
+                    .dp-stepper-circle {
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        background: #e5e7eb;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 12px;
+                        color: #6b7280;
+                        font-weight: 700;
+                        transition: all 0.2s;
+                    }
+                    .dp-stepper-item.active .dp-stepper-circle {
+                        background: #F97316;
+                        color: #fff;
+                    }
+                    .dp-stepper-item.completed .dp-stepper-circle {
+                        background: #d9f99d; 
+                        color: #111827;
+                    }
+                    .dp-stepper-line {
+                        flex: 1;
+                        height: 1px;
+                        background: #e5e7eb;
+                        margin: 0 15px;
+                    }
+
+                    /* Form Rows */
+                    .dp-form-row-box {
+                        display: grid;
+                        grid-template-columns: 150px 1fr;
+                        align-items: center;
+                        gap: 15px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 6px;
+                        padding: 14px 18px;
+                        margin-bottom: 16px;
+                        background: #fff;
+                        transition: all 0.2s ease;
+                    }
+                    .dp-form-row-box:focus-within {
+                        border-color: #F97316;
+                        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+                    }
+                    .dp-row-label {
+                        font-weight: 700;
+                        color: #111827;
+                        font-size: 14px;
+                        margin: 0;
+                    }
+                    .dp-row-input {
+                        border: none;
+                        outline: none;
+                        width: 100%;
+                        font-size: 14px;
+                        color: #111827;
+                        background: transparent;
+                        font-family: inherit;
+                        padding: 0;
+                    }
+                    .dp-row-input::placeholder {
+                        color: #9ca3af;
+                    }
+                    
+                    /* Upload Box */
+                    .dp-upload-box {
+                        border: 1px dashed #d1d5db;
+                        border-radius: 4px;
+                        padding: 40px 20px;
+                        text-align: center;
+                        cursor: pointer;
+                        background: #fff;
+                        transition: all 0.2s ease;
+                        margin-bottom: 24px;
+                    }
+                    .dp-upload-box:hover {
+                        border-color: #F97316;
+                        background: #fff8f3;
+                    }
+                    .dp-upload-box i {
+                        font-size: 28px;
+                        color: #F97316;
+                        margin-bottom: 12px;
+                    }
+                    .dp-upload-box h4 {
+                        margin: 0 0 5px 0;
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: #111827;
+                    }
+                    .dp-upload-box p {
+                        margin: 0;
+                        font-size: 13px;
+                        color: #6b7280;
+                    }
+
+                    /* Radio Cards */
+                    .dp-platform-cards-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                        margin-bottom: 24px;
+                    }
+                    .dp-platform-card {
+                        border: 1px solid #e5e7eb;
+                        border-radius: 4px;
+                        padding: 20px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        background: #fff;
+                        display: block;
+                        height: 100%;
+                    }
+                    .dp-platform-card:hover {
+                        border-color: #F97316;
+                    }
+                    .dp-platform-card-wrapper input[type="radio"] {
+                        display: none;
+                    }
+                    .dp-platform-card-wrapper input[type="radio"]:checked ~ .dp-platform-card .dp-platform-radio-circle {
+                        border-color: #F97316;
+                        background: #F97316;
+                        box-shadow: inset 0 0 0 3px #fff;
+                    }
+                    .dp-platform-card-wrapper.active .dp-platform-card {
+                        border-color: #F97316;
+                    }
+                    .dp-platform-card-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-bottom: 12px;
+                    }
+                    .dp-platform-card-title {
+                        font-weight: 700;
+                        font-size: 15px;
+                        color: #111827;
+                    }
+                    .dp-platform-radio-circle {
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 50%;
+                        border: 1px solid #d1d5db;
+                        transition: all 0.2s ease;
+                        margin-left: 10px;
+                        flex-shrink: 0;
+                    }
+                    .dp-platform-card-desc {
+                        font-size: 13px;
+                        color: #6b7280;
+                        margin: 0 0 15px 0;
+                        line-height: 1.4;
+                    }
+
+                    /* Toggle Switch */
+                    .dp-toggle-switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 44px;
+                        height: 24px;
+                    }
+                    .dp-toggle-switch input { opacity: 0; width: 0; height: 0; }
+                    .dp-toggle-slider {
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background-color: #e5e7eb;
+                        transition: .4s;
+                        border-radius: 24px;
+                    }
+                    .dp-toggle-slider:before {
+                        position: absolute; content: "";
+                        height: 18px; width: 18px;
+                        left: 3px; bottom: 3px;
+                        background-color: white;
+                        transition: .4s; border-radius: 50%;
+                    }
+                    .dp-toggle-switch input:checked + .dp-toggle-slider { background-color: #F97316; }
+                    .dp-toggle-switch input:checked + .dp-toggle-slider:before { transform: translateX(20px); }
+
+                    /* Footer Buttons */
+                    .dp-wizard-footer {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                    }
+                    .dp-btn-prev {
+                        padding: 10px 20px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 4px;
+                        background: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                        color: #374151;
+                        font-size: 14px;
+                    }
+                    .dp-btn-next {
+                        padding: 10px 24px;
+                        border: none;
+                        border-radius: 4px;
+                        background: #F97316;
+                        color: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                    }
+
+                    /* Mobile Responsiveness for Wizard */
+                    @media (max-width: 768px) {
+                        .dp-wizard-container {
+                            padding: 20px 15px;
+                        }
+                        .dp-stepper-wrapper {
+                            padding: 0;
+                            margin-bottom: 25px;
+                        }
+                        .dp-stepper-item {
+                            font-size: 12px;
+                            gap: 6px;
+                        }
+                        /* Hide inactive labels on mobile to prevent cut-off */
+                        .dp-stepper-item:not(.active) .dp-stepper-label {
+                            display: none;
+                        }
+                        .dp-stepper-line {
+                            margin: 0 8px;
+                        }
+                    }
+                </style>
+
                 <div id="digitalProductWizardPanel" style="display: none;">
-                    <div class="edit-element-header">
-                        <h3 class="element-header-title">
-                            <i class="fas fa-box text-brand-orange"></i> Tambah Digital Product
-                        </h3>
-                    </div>
+                    <div class="dp-wizard-container">
+                        <!-- Stepper UI -->
+                        <div class="dp-stepper-wrapper">
+                            <div class="dp-stepper-item active" id="dp-step-indicator-1">
+                                <div class="dp-stepper-circle">
+                                    <i class="fas fa-check" id="dp-step-icon-1" style="display:none;"></i>
+                                    <span id="dp-step-num-1">1</span>
+                                </div>
+                                <div class="dp-stepper-label">Detail Produk</div>
+                            </div>
+                            <div class="dp-stepper-line"></div>
+                            <div class="dp-stepper-item" id="dp-step-indicator-2">
+                                <div class="dp-stepper-circle">
+                                    <i class="fas fa-check" id="dp-step-icon-2" style="display:none;"></i>
+                                    <span id="dp-step-num-2">2</span>
+                                </div>
+                                <div class="dp-stepper-label">Pricing</div>
+                            </div>
+                            <div class="dp-stepper-line"></div>
+                            <div class="dp-stepper-item" id="dp-step-indicator-3">
+                                <div class="dp-stepper-circle">
+                                    <i class="fas fa-check" id="dp-step-icon-3" style="display:none;"></i>
+                                    <span id="dp-step-num-3">3</span>
+                                </div>
+                                <div class="dp-stepper-label">Penayangan</div>
+                            </div>
+                        </div>
 
-                    <!-- Wizard Steps Indicator -->
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                        <div id="dp-step-indicator-1" style="font-weight: bold; color: #FF9040;">1. Detail Produk</div>
-                        <div id="dp-step-indicator-2" style="color: #999;">2. Pricing</div>
-                        <div id="dp-step-indicator-3" style="color: #999;">3. Waktu Penayangan</div>
-                    </div>
-
-                    <!-- Wizard Body -->
-                    <div class="wizard-body" style="background: white; border-radius: 8px; padding: 15px; border: 1px solid #eee;">
-                        <!-- Step 1: Detail Produk -->
-                        <div class="wizard-step" id="dp-step-1">
-                            <h4 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Detail Produk</h4>
+                        <!-- Wizard Body -->
+                        <div class="wizard-body">
                             
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label for="dpTitle" class="form-label-custom" style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Nama Produk <span style="color: #ef4444;">*</span></label>
-                                <input type="text" id="dpTitle" class="form-control-input" placeholder="Masukkan judul/nama produk digital..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpTitle(this.value)" required>
-                            </div>
+                            <!-- Step 1: Detail Produk -->
+                            <div class="wizard-step" id="dp-step-1">
+                                
+                                <div class="dp-form-row-box">
+                                    <span class="dp-row-label">Nama Produk:</span>
+                                    <input type="text" id="dpTitle" class="dp-row-input" placeholder="Misal: Template Undangan..." oninput="updateDpTitle(this.value)" required>
+                                </div>
 
-                            <!-- Include Quill CSS -->
-                            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-                            <style>
-                                .ql-toolbar.ql-snow { border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #cbd5e1; }
-                                .ql-container.ql-snow { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-color: #cbd5e1; font-family: inherit; }
-                                .ql-editor { min-height: 150px; font-size: 14px; }
-                            </style>
+                                <div class="dp-form-row-box" style="display: block;">
+                                    <span class="dp-row-label" style="display: block; margin-bottom: 10px;">Deskripsi:</span>
+                                    <div style="width: 100%;">
+                                        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+                                        <style>
+                                            .ql-toolbar.ql-snow { border: none; border-bottom: 1px solid #e5e7eb; padding: 5px 0; }
+                                            .ql-container.ql-snow { border: none; font-family: inherit; font-size: 14px; }
+                                            .ql-editor { min-height: 100px; padding: 10px 0; }
+                                        </style>
+                                        <div id="dpDescriptionEditor"></div>
+                                    </div>
+                                </div>
 
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label class="form-label-custom" style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Deskripsi Produk <span style="color: #ef4444;">*</span></label>
-                                <div id="dpDescriptionEditor"></div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label class="form-label-custom" style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Media Produk (Maks. 5 File)</label>
-                                <div class="upload-dropzone" style="border: 2px dashed #cbd5e1; padding: 25px; text-align: center; border-radius: 8px; cursor: pointer; background: #f8fafc; transition: background 0.2s;" onclick="document.getElementById('dpFiles').click()" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                                <!-- Media Upload Box -->
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.05em;">Media Produk (Maks. 5 File)</div>
+                                <div class="dp-upload-box" onclick="document.getElementById('dpFiles').click()">
                                     <input type="file" id="dpFiles" accept="image/jpeg,image/png,image/gif,video/mp4" multiple style="display: none;" onchange="handleDpFiles(this)">
-                                    <i class="fas fa-cloud-upload-alt" style="font-size: 28px; color: #64748b; margin-bottom: 10px;"></i>
-                                    <div style="color: #475569; font-size: 15px;">Klik untuk memilih Gambar atau Video (MP4)</div>
-                                    <div style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Format yang didukung: JPG, PNG, GIF, MP4</div>
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <h4>Click to upload or drag and drop</h4>
+                                    <p>Format JPG, PNG, GIF, MP4 (Video)</p>
                                 </div>
-                                <div id="dpFilesError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></div>
-                                
-                                <!-- File Preview Grid -->
-                                <div id="dpFilesPreview" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px;">
-                                    <!-- Thumbnail elements will be injected here via JS -->
-                                </div>
-                            </div>
-                            
-                            <div class="form-group" style="margin-bottom: 10px;">
-                                <label class="form-label-custom" style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Isi Produk yang Dijual (Akses Produk) <span style="color: #ef4444;">*</span></label>
-                                
-                                <!-- Radio selection -->
-                                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
-                                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #475569;">
+                                <div id="dpFilesError" style="color: #ef4444; font-size: 13px; margin-top: -15px; margin-bottom: 15px; display: none;"></div>
+                                <div id="dpFilesPreview" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;"></div>
+
+                                <!-- Deliverable Selection -->
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Akses Produk (Deliverable)</div>
+                                <div class="dp-platform-cards-grid">
+                                    <label class="dp-platform-card-wrapper active" id="dp-deliv-upload-wrapper">
                                         <input type="radio" name="dpDeliverableType" value="upload" onchange="changeDpDeliverableType(this.value)" checked>
-                                        Upload File
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Upload File</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Unggah file digital Anda secara langsung ke server kami.</p>
+                                            </div>
+                                        </div>
                                     </label>
-                                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #475569;">
+
+                                    <label class="dp-platform-card-wrapper" id="dp-deliv-gdrive-wrapper">
                                         <input type="radio" name="dpDeliverableType" value="gdrive" onchange="changeDpDeliverableType(this.value)">
-                                        Link Google Drive
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Google Drive</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Berikan akses lewat tautan Google Drive.</p>
+                                            </div>
+                                        </div>
                                     </label>
-                                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #475569;">
+
+                                    <label class="dp-platform-card-wrapper" id="dp-deliv-external-wrapper">
                                         <input type="radio" name="dpDeliverableType" value="external" onchange="changeDpDeliverableType(this.value)">
-                                        Link Lainnya
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Link Eksternal</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Tautkan file dari platform atau website eksternal lainnya.</p>
+                                            </div>
+                                        </div>
                                     </label>
                                 </div>
 
                                 <!-- Upload Section -->
                                 <div id="dpDeliverableUploadSection">
-                                    <div class="upload-dropzone" style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; background: #f8fafc;" onclick="document.getElementById('dpDeliverableFile').click()" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                                    <div class="dp-form-row-box" onclick="document.getElementById('dpDeliverableFile').click()" style="cursor: pointer; justify-content: space-between;">
+                                        <span class="dp-row-label" style="min-width: auto; margin-right: 0;">File Produk:</span>
+                                        <div style="flex: 1; text-align: right; color: #9ca3af; font-size: 14px;">
+                                            <i class="fas fa-paperclip" style="margin-right: 5px;"></i>
+                                            <span>Pilih file...</span>
+                                        </div>
                                         <input type="file" id="dpDeliverableFile" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display: none;" onchange="handleDpDeliverableFile(this)">
-                                        <i class="fas fa-file-upload" style="font-size: 24px; color: #64748b; margin-bottom: 10px;"></i>
-                                        <div style="color: #475569; font-size: 14px;">Klik untuk memilih File (Gambar, PDF, Word)</div>
                                     </div>
                                     <div id="dpDeliverableFilePreview" style="margin-top: 10px; display: none; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; align-items: center; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
                                         <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-                                            <i class="fas fa-file-alt" style="font-size: 20px; color: #3b82f6;"></i>
+                                            <i class="fas fa-file-alt" style="font-size: 20px; color: #F97316;"></i>
                                             <span id="dpDeliverableFileName" style="font-size: 14px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">filename.pdf</span>
                                         </div>
                                         <button type="button" onclick="removeDpDeliverableFile()" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
 
-                                <!-- GDrive / External Section -->
+                                <!-- URL Section -->
                                 <div id="dpDeliverableUrlSection" style="display: none;">
-                                    <input type="url" id="dpDeliverableUrl" class="form-control-input" placeholder="https://..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpDeliverableUrl(this.value)">
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">URL Akses:</span>
+                                        <input type="url" id="dpDeliverableUrl" class="dp-row-input" placeholder="https://..." oninput="updateDpDeliverableUrl(this.value)">
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Step 2: Pricing -->
-                        <div class="wizard-step" id="dp-step-2" style="display: none;">
-                            <h4 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #334155;">Pengaturan Harga</h4>
-                            
-                            <!-- Pricing Type -->
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label class="form-label-custom" style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Tipe Harga <span style="color: #ef4444;">*</span></label>
+                            </div>
+
+                            <!-- Step 2: Pricing -->
+                            <div class="wizard-step" id="dp-step-2" style="display: none;">
                                 
-                                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #475569;">
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Tipe Harga</div>
+                                <div class="dp-platform-cards-grid">
+                                    <label class="dp-platform-card-wrapper active" id="dp-price-fixed-wrapper">
                                         <input type="radio" name="dpPriceType" value="fixed" onchange="changeDpPriceType(this.value)" checked>
-                                        Harga Biasa (Fixed Price)
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Harga Tetap</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Tentukan satu harga pasti untuk produk digital Anda.</p>
+                                            </div>
+                                        </div>
                                     </label>
-                                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #475569;">
+
+                                    <label class="dp-platform-card-wrapper" id="dp-price-pwyw-wrapper">
                                         <input type="radio" name="dpPriceType" value="pwyw" onchange="changeDpPriceType(this.value)">
-                                        Bebas Tentukan Harga (Pay What You Want)
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Pay What You Want</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Izinkan pembeli menentukan harga sendiri dengan batas minimal.</p>
+                                            </div>
+                                        </div>
                                     </label>
                                 </div>
 
                                 <!-- Fixed Price Input -->
                                 <div id="dpFixedPriceSection">
-                                    <label for="dpFixedPrice" class="form-label-custom" style="display: block; margin-bottom: 5px; font-size: 13px; color: #64748b;">Harga Jual (Rp) <span style="color: #ef4444;">*</span></label>
-                                    <input type="number" id="dpFixedPrice" class="form-control-input" placeholder="0" min="0" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpPriceField('fixed', this.value)">
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Harga (Rp):</span>
+                                        <input type="number" id="dpFixedPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('fixed', this.value)">
+                                    </div>
                                 </div>
 
                                 <!-- PWYW Input -->
                                 <div id="dpPwywSection" style="display: none;">
-                                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                                        <div style="flex: 1; min-width: 150px;">
-                                            <label for="dpMinPrice" class="form-label-custom" style="display: block; margin-bottom: 5px; font-size: 13px; color: #64748b;">Harga Minimal (Rp) <span style="color: #ef4444;">*</span></label>
-                                            <input type="number" id="dpMinPrice" class="form-control-input" placeholder="0" min="0" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpPriceField('min', this.value)">
-                                        </div>
-                                        <div style="flex: 1; min-width: 150px;">
-                                            <label for="dpMaxPrice" class="form-label-custom" style="display: block; margin-bottom: 5px; font-size: 13px; color: #64748b;">Harga Maksimal (Rp) (Opsional)</label>
-                                            <input type="number" id="dpMaxPrice" class="form-control-input" placeholder="0" min="0" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpPriceField('max', this.value)">
-                                        </div>
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Min. Harga (Rp):</span>
+                                        <input type="number" id="dpMinPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('min', this.value)">
                                     </div>
-                                    <div style="font-size: 12px; color: #94a3b8; margin-top: 6px;">Pembeli dapat membayar berapapun di antara batas harga ini. Kosongkan harga maksimal jika tidak ada batasan.</div>
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Maks. Harga (Rp):</span>
+                                        <input type="number" id="dpMaxPrice" class="dp-row-input" placeholder="Tak Terbatas" min="0" oninput="updateDpPriceField('max', this.value)">
+                                    </div>
+                                    <div style="font-size: 12px; color: #9ca3af; margin-top: -5px; margin-bottom: 15px;">Kosongkan harga maksimal jika tidak ada batasan.</div>
+                                </div>
+
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.05em;">Batas Pembelian</div>
+                                <div class="dp-form-row-box">
+                                    <span class="dp-row-label">Minimal Qty:</span>
+                                    <input type="number" id="dpMinQty" class="dp-row-input" value="1" min="1" oninput="updateDpQtyField('min', this.value)">
+                                </div>
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.05em;">Tipe Maksimal Qty</div>
+                                <div class="dp-platform-cards-grid">
+                                    <label class="dp-platform-card-wrapper active" id="dp-qty-unlimited-wrapper">
+                                        <input type="radio" name="dpQtyLimitType" value="unlimited" onchange="changeDpQtyLimitType(this.value)" checked>
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Tak Terbatas</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Pembeli dapat membeli produk tanpa batasan jumlah.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="dp-platform-card-wrapper" id="dp-qty-limited-wrapper">
+                                        <input type="radio" name="dpQtyLimitType" value="limited" onchange="changeDpQtyLimitType(this.value)">
+                                        <div class="dp-platform-card">
+                                            <div class="dp-platform-card-content">
+                                                <div class="dp-platform-card-header">
+                                                    <span class="dp-platform-card-title">Terbatas</span>
+                                                    <span class="dp-platform-radio-circle"></span>
+                                                </div>
+                                                <p class="dp-platform-card-desc">Tentukan batas maksimal jumlah yang bisa dibeli.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div id="dpMaxQtySection" style="display: none;">
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Maksimal Qty:</span>
+                                        <input type="number" id="dpMaxQty" class="dp-row-input" placeholder="Misal: 10" min="1" oninput="updateDpQtyField('max', this.value)">
+                                    </div>
                                 </div>
                             </div>
 
-                            <h4 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #334155;">Kuantitas Pembelian</h4>
-                            
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                                    <div style="flex: 1; min-width: 150px;">
-                                        <label for="dpMinQty" class="form-label-custom" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Minimal Pembelian <span style="color: #ef4444;">*</span></label>
-                                        <input type="number" id="dpMinQty" class="form-control-input" value="1" min="1" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpQtyField('min', this.value)">
+                            <!-- Step 3: Waktu Penayangan -->
+                            <div class="wizard-step" id="dp-step-3" style="display: none;">
+                                
+                                <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; background: #fff; transition: all 0.2s ease;">
+                                    <div>
+                                        <span class="dp-row-label" style="display: block; margin-bottom: 4px;">Aktifkan Jadwal</span>
+                                        <span style="font-size: 13px; color: #6b7280;">Batasi waktu rilis produk</span>
                                     </div>
-                                    <div style="flex: 1; min-width: 150px;">
-                                        <label for="dpMaxQty" class="form-label-custom" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Maksimal Pembelian (Opsional)</label>
-                                        <input type="number" id="dpMaxQty" class="form-control-input" placeholder="Tak Terbatas" min="1" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" oninput="updateDpQtyField('max', this.value)">
+                                    <label class="dp-toggle-switch">
+                                        <input type="checkbox" id="dpEnableSchedule" onchange="toggleDpSchedule(this.checked)">
+                                        <span class="dp-toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div id="dpScheduleSection" style="display: none; padding-top: 15px;">
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Waktu Mulai:</span>
+                                        <input type="datetime-local" id="dpStartTime" class="dp-row-input" onchange="updateDpScheduleField('start', this.value)">
+                                    </div>
+                                    <div class="dp-form-row-box">
+                                        <span class="dp-row-label">Waktu Akhir:</span>
+                                        <input type="datetime-local" id="dpEndTime" class="dp-row-input" onchange="updateDpScheduleField('end', this.value)">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Step 3: Waktu Penayangan -->
-                        <div class="wizard-step" id="dp-step-3" style="display: none;">
-                            <h4 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #334155;">Waktu Penayangan</h4>
-                            
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label style="cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 600; color: #334155;">
-                                    <input type="checkbox" id="dpEnableSchedule" onchange="toggleDpSchedule(this.checked)" style="width: 16px; height: 16px; cursor: pointer;">
-                                    Aktifkan Batas Waktu Rilis
-                                </label>
-                                <div style="font-size: 13px; color: #64748b; margin-top: 5px; margin-left: 26px;">
-                                    Jika tidak diaktifkan, produk akan tayang seterusnya di microsite.
-                                </div>
+                        <!-- Wizard Footer (Navigation) -->
+                        <div class="dp-wizard-footer">
+                            <button type="button" class="dp-btn-prev" onclick="cancelDigitalProductWizard()">Batal</button>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="button" class="dp-btn-prev" id="btn-dp-prev" onclick="prevDigitalProductStep()" style="display: none;">Kembali</button>
+                                <button type="button" class="dp-btn-next" id="btn-dp-next" onclick="nextDigitalProductStep()">Lanjut <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
                             </div>
-
-                            <div id="dpScheduleSection" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-                                <div class="form-group" style="margin-bottom: 15px;">
-                                    <label for="dpStartTime" class="form-label-custom" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Waktu Mulai <span style="color: #ef4444;">*</span></label>
-                                    <input type="datetime-local" id="dpStartTime" class="form-control-input" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onchange="updateDpScheduleField('start', this.value)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dpEndTime" class="form-label-custom" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Waktu Berakhir <span style="color: #ef4444;">*</span></label>
-                                    <input type="datetime-local" id="dpEndTime" class="form-control-input" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onchange="updateDpScheduleField('end', this.value)">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Wizard Footer (Navigation) -->
-                    <div class="wizard-footer" style="display: flex; justify-content: space-between; margin-top: 20px;">
-                        <button type="button" onclick="cancelDigitalProductWizard()" style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px; background: white; cursor: pointer;">
-                            Cancel
-                        </button>
-                        <div style="display: flex; gap: 10px;">
-                            <button type="button" id="btn-dp-prev" onclick="prevDigitalProductStep()" style="display: none; padding: 8px 16px; border: 1px solid #FF9040; color: #FF9040; border-radius: 6px; background: white; cursor: pointer;">
-                                Previous
-                            </button>
-                            <button type="button" id="btn-dp-next" onclick="nextDigitalProductStep()" style="padding: 8px 16px; border: none; background: #FF9040; color: white; border-radius: 6px; cursor: pointer;">
-                                Next
-                            </button>
                         </div>
                     </div>
                 </div> {{-- Closes #digitalProductWizardPanel --}}
@@ -351,6 +688,7 @@
 
     // Form Local State
     let dpFormState = {
+        element_id: null,
         title: '',
         description: '',
         files: [], // Media
@@ -358,8 +696,8 @@
         deliverableFile: null,
         deliverableUrl: '',
         priceType: 'fixed', // 'fixed', 'pwyw'
-        priceFixed: '',
-        priceMin: '',
+        priceFixed: 0,
+        priceMin: 0,
         priceMax: '',
         qtyMin: 1,
         qtyMax: '',
@@ -377,7 +715,7 @@
             [{ 'background': [] }], // Highlight Color
             [{ 'list': 'bullet' }, { 'list': 'ordered' }],
             [{ 'align': [] }],
-            ['link', 'image', 'video']
+            ['link']
         ];
 
         dpQuill = new Quill('#dpDescriptionEditor', {
@@ -414,6 +752,9 @@
 
         // Reset step and state
         currentDpStep = 1;
+        
+        // Reset state
+        dpFormState.element_id = null;
         dpFormState.title = '';
         dpFormState.description = '';
         dpFormState.files = [];
@@ -460,6 +801,61 @@
         updateDigitalProductWizardUI();
 
         // Show wizard
+        document.getElementById('digitalProductWizardPanel').style.display = 'block';
+    }
+
+    function openEditDigitalProductWizard(product) {
+        // Hide main panels
+        const tabHeader = document.querySelector('.editor-panel-tab-switcher');
+        if(tabHeader) tabHeader.style.display = 'none';
+        document.getElementById('editorPanelElemen').style.display = 'none';
+        
+        currentDpStep = 1;
+        
+        // Populate state
+        dpFormState.element_id = product.id;
+        dpFormState.title = product.title || '';
+        dpFormState.description = product.description || '';
+        dpFormState.files = []; // Existing media not fully supported via frontend state yet without pre-fetching files, but we preserve them in backend
+        dpFormState.deliverableType = product.deliverable_type || 'upload';
+        dpFormState.deliverableFile = null;
+        dpFormState.deliverableUrl = product.deliverable_url || '';
+        dpFormState.priceType = product.pricing_type || 'fixed';
+        dpFormState.priceFixed = product.price || '';
+        dpFormState.priceMin = product.price_min || '';
+        dpFormState.priceMax = product.price_max || '';
+        dpFormState.qtyMin = product.quantity_min || 1;
+        dpFormState.qtyMax = product.has_quantity_limit ? product.quantity : '';
+        dpFormState.isScheduled = product.is_scheduled ? true : false;
+        dpFormState.startTime = product.start_time ? product.start_time.substring(0, 16) : ''; // format YYYY-MM-DDThh:mm
+        dpFormState.endTime = product.end_time ? product.end_time.substring(0, 16) : '';
+        
+        // Populate UI
+        document.getElementById('dpTitle').value = dpFormState.title;
+        if (dpQuill) {
+            dpQuill.root.innerHTML = dpFormState.description;
+        }
+        renderDpFilePreviews();
+        
+        document.querySelector(`input[name="dpDeliverableType"][value="${dpFormState.deliverableType}"]`).checked = true;
+        document.getElementById('dpDeliverableUrl').value = dpFormState.deliverableUrl;
+        changeDpDeliverableType(dpFormState.deliverableType);
+
+        document.querySelector(`input[name="dpPriceType"][value="${dpFormState.priceType}"]`).checked = true;
+        document.getElementById('dpFixedPrice').value = dpFormState.priceFixed;
+        document.getElementById('dpMinPrice').value = dpFormState.priceMin;
+        document.getElementById('dpMaxPrice').value = dpFormState.priceMax;
+        document.getElementById('dpMinQty').value = dpFormState.qtyMin;
+        document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
+        changeDpPriceType(dpFormState.priceType);
+        changeDpQtyLimitType(product.has_quantity_limit ? 'limited' : 'unlimited');
+
+        document.getElementById('dpEnableSchedule').checked = dpFormState.isScheduled;
+        document.getElementById('dpStartTime').value = dpFormState.startTime;
+        document.getElementById('dpEndTime').value = dpFormState.endTime;
+        toggleDpSchedule(dpFormState.isScheduled);
+
+        updateDigitalProductWizardUI();
         document.getElementById('digitalProductWizardPanel').style.display = 'block';
     }
 
@@ -671,6 +1067,25 @@
         else if (field === 'max') dpFormState.qtyMax = value;
     }
 
+    function changeDpQtyLimitType(type) {
+        dpFormState.qtyLimitType = type;
+        const qtyUnlimitedWrapper = document.getElementById('dp-qty-unlimited-wrapper');
+        const qtyLimitedWrapper = document.getElementById('dp-qty-limited-wrapper');
+        const maxQtySection = document.getElementById('dpMaxQtySection');
+        
+        if (type === 'unlimited') {
+            qtyUnlimitedWrapper.classList.add('active');
+            qtyLimitedWrapper.classList.remove('active');
+            maxQtySection.style.display = 'none';
+            dpFormState.qtyMax = ''; // Clear value
+            document.getElementById('dpMaxQty').value = '';
+        } else {
+            qtyUnlimitedWrapper.classList.remove('active');
+            qtyLimitedWrapper.classList.add('active');
+            maxQtySection.style.display = 'block';
+        }
+    }
+
     // Step 3: Schedule Handlers
     function toggleDpSchedule(enabled) {
         dpFormState.isScheduled = enabled;
@@ -788,6 +1203,9 @@
 
         // 2. Siapkan FormData
         let formData = new FormData();
+        if (dpFormState.element_id) {
+            formData.append('element_id', dpFormState.element_id);
+        }
         formData.append('title', dpFormState.title);
         formData.append('description', dpFormState.description);
         
@@ -798,16 +1216,16 @@
         });
 
         // Pricing
-        formData.append('pricing_type', dpFormState.priceType);
+        formData.append('pricing_type', dpFormState.priceType || 'fixed');
         if (dpFormState.priceType === 'fixed') {
-            formData.append('price_fixed', dpFormState.priceFixed);
+            formData.append('price_fixed', dpFormState.priceFixed || 0);
         } else {
-            formData.append('price_min', dpFormState.priceMin);
-            formData.append('price_max', dpFormState.priceMax);
+            formData.append('price_min', dpFormState.priceMin || 0);
+            formData.append('price_max', dpFormState.priceMax || '');
         }
 
         // Quantity
-        formData.append('quantity_min', dpFormState.qtyMin);
+        formData.append('quantity_min', dpFormState.qtyMin || 1);
         if (dpFormState.qtyMax) {
             formData.append('has_quantity_limit', 1);
             formData.append('quantity_max', dpFormState.qtyMax);
@@ -818,12 +1236,12 @@
         // Scheduling
         formData.append('is_scheduled', dpFormState.isScheduled ? 1 : 0);
         if (dpFormState.isScheduled) {
-            formData.append('start_time', dpFormState.startTime);
-            formData.append('end_time', dpFormState.endTime);
+            formData.append('start_time', dpFormState.startTime || '');
+            formData.append('end_time', dpFormState.endTime || '');
         }
 
         // Deliverable
-        formData.append('deliverable_type', dpFormState.deliverableType);
+        formData.append('deliverable_type', dpFormState.deliverableType || 'upload');
         if (dpFormState.deliverableType === 'upload' && dpFormState.deliverableFile) {
             formData.append('deliverable_file', dpFormState.deliverableFile);
         } else if (dpFormState.deliverableUrl) {
@@ -874,27 +1292,40 @@
     }
 
     function updateDigitalProductWizardUI() {
-        // Hide all steps
+        // Hide all steps and update indicators
         for (let i = 1; i <= maxDpStep; i++) {
             const stepEl = document.getElementById(`dp-step-${i}`);
             const indicatorEl = document.getElementById(`dp-step-indicator-${i}`);
+            const iconEl = document.getElementById(`dp-step-icon-${i}`);
+            const numEl = document.getElementById(`dp-step-num-${i}`);
             
             if (stepEl) stepEl.style.display = 'none';
+            
             if (indicatorEl) {
-                indicatorEl.style.color = '#999';
-                indicatorEl.style.fontWeight = 'normal';
+                // Remove legacy inline styles if any
+                indicatorEl.style.color = '';
+                indicatorEl.style.fontWeight = '';
+                
+                indicatorEl.classList.remove('active', 'completed');
+                
+                if (i < currentDpStep) {
+                    indicatorEl.classList.add('completed');
+                    if (iconEl) iconEl.style.display = 'inline-block';
+                    if (numEl) numEl.style.display = 'none';
+                } else if (i === currentDpStep) {
+                    indicatorEl.classList.add('active');
+                    if (iconEl) iconEl.style.display = 'none';
+                    if (numEl) numEl.style.display = 'inline-block';
+                } else {
+                    if (iconEl) iconEl.style.display = 'none';
+                    if (numEl) numEl.style.display = 'inline-block';
+                }
             }
         }
 
         // Show current step
         const currentStepEl = document.getElementById(`dp-step-${currentDpStep}`);
-        const currentIndicatorEl = document.getElementById(`dp-step-indicator-${currentDpStep}`);
-        
         if (currentStepEl) currentStepEl.style.display = 'block';
-        if (currentIndicatorEl) {
-            currentIndicatorEl.style.color = '#FF9040';
-            currentIndicatorEl.style.fontWeight = 'bold';
-        }
 
         // Show/hide prev button
         const btnPrev = document.getElementById('btn-dp-prev');
