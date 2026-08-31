@@ -1,3 +1,10 @@
+/**
+ * Microsite Editor JavaScript
+ * Refactored using Unobtrusive JS and Event Delegation pattern.
+ */
+(function() {
+    'use strict';
+
 let currentStep = 1;
 
 function copyToClipboard(text) {
@@ -442,7 +449,7 @@ function saveElementsOrder() {
     const list = document.getElementById('elementBlocksList');
     if (!list) return;
 
-    const blocks = list.querySelectorAll('.draggable-element-block');
+    const blocks = list.querySelectorAll('.draggable-element-block, .element-block');
     const order = ['profile']; // Profile is strictly always the first element in DB
     blocks.forEach(block => {
         const type = block.getAttribute('data-element-type');
@@ -461,6 +468,9 @@ function saveElementsOrder() {
         } else if (type === 'social') {
             const dbId = block.getAttribute('data-db-id');
             if (dbId) order.push('social_' + dbId);
+        } else if (type === 'digital_product') {
+            const dbId = block.getAttribute('data-db-id');
+            if (dbId) order.push('digitalproduct_' + dbId);
         }
     });
 
@@ -515,6 +525,9 @@ function initPageEvents() {
             } else if (blockId.startsWith('social_') || blockId.startsWith('socialBlock_')) {
                 const dbId = blockId.split('_')[1];
                 el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
+            } else if (blockId.startsWith('digitalproduct_')) {
+                const dbId = blockId.split('_')[1];
+                el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="digital_product"]`);
             }
             if (el) {
                 list.appendChild(el);
@@ -684,7 +697,7 @@ function syncPhonePreviewOrder() {
             if (liveProfile) {
                 phoneContent.appendChild(liveProfile);
             }
-        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video' || type === 'social') {
+        } else if (type === 'image' || type === 'divider' || type === 'text' || type === 'video' || type === 'social' || type === 'digital_product') {
             const liveElement = document.getElementById('live_' + block.id);
             if (liveElement) {
                 phoneContent.appendChild(liveElement);
@@ -2025,4 +2038,381 @@ function finishSocialPlatformSelection() {
     });
     
     closeSocialPlatformSelector();
+}
+
+
+
+    // ==========================================
+    // EVENT DELEGATION SYSTEM (UNOBTRUSIVE JS)
+    // ==========================================
+    document.addEventListener('click', function(e) {
+        let target;
+        
+        if (e.target.closest('.js-stop-propagation')) {
+            e.stopPropagation();
+        }
+
+        if ((target = e.target.closest('.js-toggle-edit-form'))) {
+            const type = target.dataset.type;
+            const id = target.dataset.targetId;
+            const forceOpen = target.dataset.forceOpen === 'true';
+            
+            if (type === 'Profile') toggleProfileEditForm(forceOpen);
+            else if (type === 'Image') toggleImageEditForm(id, forceOpen);
+            else if (type === 'Divider') toggleDividerEditForm(id, forceOpen);
+            else if (type === 'Text') toggleTextEditForm(id, forceOpen);
+            else if (type === 'Video') toggleVideoEditForm(id, forceOpen);
+            else if (type === 'Social') toggleSocialEditForm(id, forceOpen);
+            else if (type === 'DigitalProduct') toggleDigitalProductEditForm(id, forceOpen);
+        }
+
+        if ((target = e.target.closest('.js-remove-element'))) {
+            e.stopPropagation();
+            const type = target.dataset.type;
+            const id = target.dataset.targetId;
+            if (type === 'Element') removeDynamicElement(id);
+            else if (type === 'Divider') removeDynamicDivider(id);
+            else if (type === 'Text') removeDynamicText(id);
+            else if (type === 'Video') removeDynamicVideo(id);
+            else if (type === 'SocialMedia') removeDynamicSocialMedia(id);
+        }
+
+        if ((target = e.target.closest('.js-save-element'))) {
+            const type = target.dataset.type;
+            const id = target.dataset.targetId;
+            
+            if (type === 'Element') saveDynamicElement(id);
+            else if (type === 'Divider') saveDynamicDivider(id);
+            else if (type === 'Text') saveDynamicText(id);
+            else if (type === 'Video') saveDynamicVideo(id);
+            else if (type === 'SocialMedia') saveDynamicSocialMedia(id);
+        }
+
+        if ((target = e.target.closest('.js-adjust-divider-size'))) {
+            if (typeof adjustDividerSize === 'function') {
+                adjustDividerSize(target.dataset.targetId, parseInt(target.dataset.step, 10));
+            }
+        }
+
+        if ((target = e.target.closest('.js-exec-cmd'))) {
+            if (typeof execCmd === 'function') {
+                execCmd(target.dataset.targetId, target.dataset.cmd);
+            }
+        }
+
+        if ((target = e.target.closest('.js-apply-custom-size'))) {
+            if (typeof applyCustomSize === 'function') {
+                applyCustomSize(target.dataset.targetId);
+            }
+        }
+
+        if ((target = e.target.closest('.js-open-social-selector'))) {
+            if (typeof openSocialPlatformSelector === 'function') {
+                openSocialPlatformSelector(target.dataset.targetId);
+            }
+        }
+
+        if ((target = e.target.closest('.js-remove-social-platform'))) {
+            if (typeof removeSocialPlatformFromForm === 'function') {
+                removeSocialPlatformFromForm(target.dataset.targetId, target.dataset.platform);
+            }
+        }
+
+        if ((target = e.target.closest('.js-toggle-social-selection'))) {
+            if (typeof toggleSocialPlatformSelection === 'function') {
+                toggleSocialPlatformSelection(target);
+            }
+        }
+
+        if ((target = e.target.closest('.js-close-social-selector'))) {
+            if (typeof closeSocialPlatformSelector === 'function') {
+                closeSocialPlatformSelector();
+            }
+        }
+
+        if ((target = e.target.closest('.js-finish-social-selection'))) {
+            if (typeof finishSocialPlatformSelection === 'function') {
+                finishSocialPlatformSelection();
+            }
+        }
+
+        if ((target = e.target.closest('.js-close-delete-modal'))) {
+            if (typeof closeDeleteConfirmModal === 'function') closeDeleteConfirmModal();
+        }
+
+        if ((target = e.target.closest('.js-confirm-delete-modal'))) {
+            if (typeof window.confirmDeleteCallback === 'function' && window.confirmDeleteCallback) {
+                window.confirmDeleteCallback();
+            }
+            if (typeof closeDeleteConfirmModal === 'function') closeDeleteConfirmModal();
+        }
+
+        if ((target = e.target.closest('.js-format-profile-text'))) {
+            if (typeof formatText === 'function') {
+                formatText(target.dataset.cmd);
+            }
+        }
+
+        if ((target = e.target.closest('.js-copy-url'))) {
+            if (typeof copyToClipboard === 'function') {
+                copyToClipboard(target.dataset.url);
+            }
+        }
+        
+        if ((target = e.target.closest('.js-prevent-default'))) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('.js-toggle-visibility')) {
+            if (typeof toggleElementVisibility === 'function') {
+                toggleElementVisibility(e.target.dataset.targetId, e.target);
+            }
+        }
+
+        if (e.target.matches('.js-preview-image')) {
+            if (typeof previewDynamicImage === 'function') {
+                previewDynamicImage(e.target, e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-change-divider-type')) {
+            const id = e.target.dataset.targetId;
+            const input = document.getElementById('dividerType_' + id);
+            if (input) input.value = e.target.value;
+            if (typeof updateDividerPreview === 'function') updateDividerPreview(id);
+            if (typeof updateSegmentedControl === 'function') updateSegmentedControl(e.target);
+        }
+
+        if (e.target.matches('.js-exec-cmd-value')) {
+            if (typeof execCmd === 'function') {
+                execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
+            }
+        }
+
+        if (e.target.matches('.js-change-text-size')) {
+            if (typeof changeTextSize === 'function') {
+                changeTextSize(e.target.dataset.targetId, e.target.value);
+            }
+        }
+
+        if (e.target.matches('.js-apply-custom-size-input')) {
+            if (typeof applyCustomSize === 'function') {
+                applyCustomSize(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-update-video-preview')) {
+            if (typeof updateVideoPreview === 'function') {
+                updateVideoPreview(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-update-social-preview')) {
+            if (typeof updateSocialPreview === 'function') {
+                updateSocialPreview(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-preview-profile-avatar')) {
+            if (typeof previewProfileAvatar === 'function') {
+                previewProfileAvatar(e.target);
+            }
+        }
+
+        if (e.target.matches('.js-update-profile-shape')) {
+            if (typeof updateProfileShape === 'function') {
+                updateProfileShape(e.target.dataset.shape);
+            }
+        }
+
+        if (e.target.matches('.js-preview-profile-banner')) {
+            if (typeof previewProfileBanner === 'function') {
+                previewProfileBanner(e.target);
+            }
+        }
+
+        if (e.target.matches('.js-format-profile-text-val')) {
+            if (typeof formatText === 'function') {
+                formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
+            }
+        }
+    });
+
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('.js-update-image-link')) {
+            if (typeof updateDynamicImageLink === 'function') {
+                updateDynamicImageLink(e.target.dataset.targetId, e.target.value);
+            }
+        }
+
+        if (e.target.matches('.js-update-divider-preview')) {
+            if (typeof updateDividerPreview === 'function') {
+                updateDividerPreview(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-update-text-preview')) {
+            if (typeof updateTextPreview === 'function') {
+                updateTextPreview(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-update-video-preview')) {
+            if (typeof updateVideoPreview === 'function') {
+                updateVideoPreview(e.target.dataset.targetId);
+            }
+        }
+        
+        if (e.target.matches('.js-format-profile-text-val')) {
+            if (typeof formatText === 'function') {
+                formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
+            }
+        }
+    });
+
+    document.addEventListener('keyup', function(e) {
+        if (e.target.matches('.js-update-social-preview')) {
+            if (typeof updateSocialPreview === 'function') {
+                updateSocialPreview(e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-sync-profile-name')) {
+            if (typeof syncProfileName === 'function') syncProfileName();
+            if (typeof updateLiveProfileName === 'function') updateLiveProfileName(e.target.innerHTML);
+        }
+
+        if (e.target.matches('.js-sync-profile-bio')) {
+            if (typeof syncProfileBio === 'function') syncProfileBio();
+            if (typeof updateLiveProfileBio === 'function') updateLiveProfileBio(e.target.innerHTML);
+        }
+    });
+
+
+    // Expose functions globally for remaining inline handlers in index.blade.php
+    window.copyToClipboard = copyToClipboard;
+    window.openNewMicrositeModal = openNewMicrositeModal;
+    window.closeNewMicrositeModal = closeNewMicrositeModal;
+    window.selectPurposeCard = selectPurposeCard;
+    window.goToStep = goToStep;
+    window.toggleAddElementPanel = toggleAddElementPanel;
+    window.closeAllEditForms = closeAllEditForms;
+    window.toggleProfileEditForm = toggleProfileEditForm;
+    window.previewProfileBanner = previewProfileBanner;
+    window.previewProfileAvatar = previewProfileAvatar;
+    window.updateProfileShape = updateProfileShape;
+    window.updateLiveProfileName = updateLiveProfileName;
+    window.updateLiveProfileBio = updateLiveProfileBio;
+    window.previewDynamicImage = previewDynamicImage;
+    window.removeDynamicElement = removeDynamicElement;
+    window.saveDynamicElement = saveDynamicElement;
+    window.saveElementsOrder = saveElementsOrder;
+    window.bindDynamicDropzone = bindDynamicDropzone;
+    window.initPageEvents = initPageEvents;
+    window.showSuccessToast = showSuccessToast;
+    window.initElementDragAndDrop = initElementDragAndDrop;
+    window.syncPhonePreviewOrder = syncPhonePreviewOrder;
+    window.updatePhonePreviewVisibility = updatePhonePreviewVisibility;
+    window.formatText = formatText;
+    window.syncProfileName = syncProfileName;
+    window.syncProfileBio = syncProfileBio;
+    window.showDeleteConfirmModal = showDeleteConfirmModal;
+    window.closeDeleteConfirmModal = closeDeleteConfirmModal;
+    window.addGambarElement = addGambarElement;
+    window.toggleImageEditForm = toggleImageEditForm;
+    window.updateDynamicImageLink = updateDynamicImageLink;
+    window.addDividerElement = addDividerElement;
+    window.toggleDividerEditForm = toggleDividerEditForm;
+    window.adjustDividerSize = adjustDividerSize;
+    window.updateDividerPreview = updateDividerPreview;
+    window.updateSegmentedControl = updateSegmentedControl;
+    window.saveDynamicDivider = saveDynamicDivider;
+    window.removeDynamicDivider = removeDynamicDivider;
+    window.addTextElement = addTextElement;
+    window.toggleTextEditForm = toggleTextEditForm;
+    window.execCmd = execCmd;
+    window.changeTextSize = changeTextSize;
+    window.applyCustomSize = applyCustomSize;
+    window.replaceFontSize = replaceFontSize;
+    window.updateTextPreview = updateTextPreview;
+    window.saveDynamicText = saveDynamicText;
+    window.removeDynamicText = removeDynamicText;
+    window.addVideoElement = addVideoElement;
+    window.toggleVideoEditForm = toggleVideoEditForm;
+    window.updateVideoPreview = updateVideoPreview;
+    window.saveDynamicVideo = saveDynamicVideo;
+    window.removeDynamicVideo = removeDynamicVideo;
+    window.toggleElementVisibility = toggleElementVisibility;
+    window.addSocialMediaElement = addSocialMediaElement;
+    window.toggleSocialEditForm = toggleSocialEditForm;
+    window.toggleSocialInput = toggleSocialInput;
+    window.updateSocialPreview = updateSocialPreview;
+    window.saveDynamicSocialMedia = saveDynamicSocialMedia;
+    window.removeDynamicSocialMedia = removeDynamicSocialMedia;
+    window.openSocialPlatformSelector = openSocialPlatformSelector;
+    window.closeSocialPlatformSelector = closeSocialPlatformSelector;
+    window.addSocialPlatformToForm = addSocialPlatformToForm;
+    window.removeSocialPlatformFromForm = removeSocialPlatformFromForm;
+    window.toggleSocialPlatformSelection = toggleSocialPlatformSelection;
+    window.finishSocialPlatformSelection = finishSocialPlatformSelection;
+
+})();
+
+function deleteDynamicDigitalProduct(id) {
+    if (confirm('Yakin ingin menghapus Produk Digital ini?')) {
+        const routeBase = document.getElementById('micrositeEditorUrls').dataset.routeImageStore; // We will use base route but replace
+        // Since we don't have a dataset URL, we'll hardcode the base for now or use window location
+        
+        fetch('/admin/elements/digital-product/' + id, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const block = document.querySelector(`.draggable-element-block[data-db-id="${id}"][data-element-type="digital_product"]`);
+                if (block) block.remove();
+                
+                const liveEl = document.getElementById('live_digitalProductBlock_' + id);
+                if (liveEl) liveEl.remove();
+                
+                syncPhonePreviewOrder();
+                saveElementsOrder();
+            } else {
+                alert('Gagal menghapus produk dari database.');
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat menghapus.');
+        });
+    }
+}
+
+function toggleDigitalProductEditForm(elementId, forceOpen = false) {
+    const formBody = document.getElementById('formBody_' + elementId);
+    const btnText = document.getElementById('btnText_' + elementId);
+    if (!formBody) return;
+
+    if (formBody.classList.contains('open') && !forceOpen) {
+        formBody.style.maxHeight = '0px';
+        formBody.style.opacity = '0';
+        formBody.style.marginTop = '0px';
+        formBody.classList.remove('open');
+        if (btnText) btnText.innerText = 'Detail';
+    } else {
+        closeAllEditForms();
+        formBody.style.maxHeight = formBody.scrollHeight + 100 + 'px';
+        formBody.style.opacity = '1';
+        formBody.style.marginTop = '16px';
+        formBody.classList.add('open');
+        if (btnText) btnText.innerText = 'Tutup';
+        
+        const card = formBody.closest('.block-item-card');
+        if(card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
 }

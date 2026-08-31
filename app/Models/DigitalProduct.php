@@ -29,7 +29,25 @@ class DigitalProduct extends Model
         'takedown_at',
         'button_text',
         'verification_status',
-        'rejection_reason'
+        'rejection_reason',
+        // New fields
+        'media_files',
+        'pricing_type',
+        'price_min',
+        'price_max',
+        'quantity_min',
+        'is_scheduled',
+        'start_time',
+        'end_time',
+        'deliverable_type',
+        'deliverable_url'
+    ];
+
+    protected $casts = [
+        'media_files' => 'array',
+        'is_scheduled' => 'boolean',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
      // ✅ Tambahkan ini
     public function user()

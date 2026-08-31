@@ -36,7 +36,7 @@ class AdminController extends Controller
 
         $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
 
-        return view('homeadminS.mylinkan', compact(
+        return view('pages.mylinkan.index', compact(
             'digitalProducts',
             'appearance',
             'shortlinks',

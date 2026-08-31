@@ -55,9 +55,18 @@
             background: transparent;
             padding: 0 0 40px 0 !important;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: flex-start;
             min-height: 100vh;
+        }
+        .content-wrapper > div {
+            width: 100%;
+            flex: 0 0 100%;
+        }
+        .content-wrapper > .dp-wrapper {
+            width: 50%;
+            flex: 0 0 50%;
         }
 
         @media (max-width: 768px) {
@@ -173,6 +182,7 @@
             margin-bottom: 10px;
             text-align: center;
             color: {{ $appearance->theme_color ?? '#FF9040' }};
+            padding: 0 20px;
         }
 
         .preview-bio {
@@ -278,31 +288,43 @@
                 $blocksOrder = explode(',', $appearance->blocks_order);
             } else {
                 $blocksOrder = ['profile'];
-                if (isset($imageElements)) {
-                    foreach($imageElements as $el) {
-                        $blocksOrder[] = 'image_' . $el->id;
-                    }
+            }
+            
+            // Append missing elements to ensure they always render even if blocks_order is out of sync
+            if (isset($imageElements)) {
+                foreach($imageElements as $el) {
+                    $id = 'image_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
-                if (isset($dividerElements)) {
-                    foreach($dividerElements as $el) {
-                        $blocksOrder[] = 'divider_' . $el->id;
-                    }
+            }
+            if (isset($dividerElements)) {
+                foreach($dividerElements as $el) {
+                    $id = 'divider_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
-                if (isset($textElements)) {
-                    foreach($textElements as $el) {
-                        $blocksOrder[] = 'text_' . $el->id;
-                    }
+            }
+            if (isset($textElements)) {
+                foreach($textElements as $el) {
+                    $id = 'text_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
-                if (isset($videoElements)) {
-                    foreach($videoElements as $el) {
-                        $blocksOrder[] = 'video_' . $el->id;
-                    }
+            }
+            if (isset($videoElements)) {
+                foreach($videoElements as $el) {
+                    $id = 'video_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
-                
-                if (isset($socialMediaElements)) {
-                    foreach($socialMediaElements as $el) {
-                        $blocksOrder[] = 'social_' . $el->id;
-                    }
+            }
+            if (isset($socialMediaElements)) {
+                foreach($socialMediaElements as $el) {
+                    $id = 'social_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
+                }
+            }
+            if (isset($products)) {
+                foreach($products as $el) {
+                    $id = 'digitalproduct_' . $el->id;
+                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
             }
         @endphp
@@ -462,6 +484,54 @@
                                 </a>
                             @endif
                         @endforeach
+                    </div>
+                @endif
+            @elseif(str_starts_with($blockId, 'digitalproduct_'))
+                @php
+                    $elId = str_replace('digitalproduct_', '', $blockId);
+                    $digitalProduct = isset($products) ? $products->firstWhere('id', $elId) : null;
+                @endphp
+                @if($digitalProduct && ($digitalProduct->is_active ?? true))
+                    @php
+                        // Format the product array for the component
+                        $mediaFiles = is_string($digitalProduct->media_files) ? json_decode($digitalProduct->media_files, true) : ($digitalProduct->media_files ?? []);
+                        $media = [];
+                        foreach($mediaFiles as $file) {
+                            if (is_array($file)) {
+                                $media[] = [
+                                    'type' => $file['type'] ?? 'image/jpeg',
+                                    'url' => isset($file['path']) ? asset('storage/' . $file['path']) : ($file['url'] ?? '')
+                                ];
+                            }
+                        }
+
+                        $productData = [
+                            'title' => $digitalProduct->title,
+                            'description' => $digitalProduct->description,
+                            'pricing' => [
+                                'type' => $digitalProduct->pricing_type,
+                                'fixed' => $digitalProduct->price,
+                                'min' => $digitalProduct->price_min,
+                                'max' => $digitalProduct->price_max,
+                            ],
+                            'quantity' => [
+                                'min' => $digitalProduct->quantity_min ?? 1,
+                                'max' => $digitalProduct->has_quantity_limit ? $digitalProduct->quantity : null,
+                            ],
+                            'schedule' => [
+                                'enabled' => $digitalProduct->is_scheduled,
+                                'start' => $digitalProduct->start_time,
+                                'end' => $digitalProduct->end_time,
+                            ],
+                            'deliverable' => [
+                                'type' => $digitalProduct->deliverable_type ?? 'external',
+                                'url' => $digitalProduct->deliverable_type !== 'upload' ? $digitalProduct->deliverable_url : '',
+                                'file' => $digitalProduct->deliverable_type === 'upload' ? $digitalProduct->deliverable_url : ''
+                            ]
+                        ];
+                    @endphp
+                    <div class="dp-wrapper" style="width: 50%; padding: 0 10px; box-sizing: border-box;">
+                        <x-microsite.digital-product-view :product="$productData" :media="$media" />
                     </div>
                 @endif
             @endif

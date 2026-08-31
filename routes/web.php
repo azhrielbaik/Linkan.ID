@@ -140,6 +140,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::put('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'update'])->name('elements.social.update');
     Route::delete('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'destroy'])->name('elements.social.destroy');
 
+    // Digital Product Element Routes
+    Route::post('/elements/digital-product', [\App\Http\Controllers\DigitalProductElementController::class, 'store'])->name('elements.digital-product.store');
+    Route::delete('/elements/digital-product/{id}', [\App\Http\Controllers\DigitalProductElementController::class, 'destroy'])->name('elements.digital-product.destroy');
+
     // Visibility Toggle Route
     Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');
 
