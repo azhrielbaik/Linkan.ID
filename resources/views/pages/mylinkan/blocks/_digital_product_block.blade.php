@@ -40,18 +40,35 @@
             <div class="profile-form-header" style="margin-bottom: 16px;">
                 <i class="fas fa-box dynamic-setting-header-icon-blue"></i> Detail Produk Digital
             </div>
-            
-            <div class="element-body p-3" style="background: #f8fafc; font-size: 13px; color: #64748b; border-radius: 8px; border: 1px solid #e2e8f0;">
-                <div class="d-flex justify-content-between mb-2">
-                    <div><strong>Harga:</strong> {{ $priceDisplay }}</div>
-                    <div><strong>Isi Produk:</strong> {{ $deliverableText }}</div>
+            <div class="dp-detail-card" style="background: #ffffff; font-size: 14px; color: #334155; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="padding: 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="margin: 0; font-size: 15px; font-weight: 600; color: #0f172a;">Informasi Produk</h5>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">Detail dari produk digital Anda</p>
+                    </div>
+                    <button type="button" class="btn btn-sm" style="border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; border-radius: 6px; font-weight: 600;" onclick='openEditDigitalProductWizard(@json($digitalProduct))'>
+                        <i class="fas fa-edit" style="color: #6366f1;"></i> Edit
+                    </button>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <div><strong>Kuantitas:</strong> {{ $digitalProduct->has_quantity_limit ? 'Maks ' . $digitalProduct->quantity : 'Tanpa Batas' }}</div>
-                    <div><strong>Status Jadwal:</strong> {!! $digitalProduct->is_scheduled ? '<span class="text-success">Aktif</span>' : '<span class="text-muted">Tidak Aktif</span>' !!}</div>
-                </div>
-                <div class="mt-3 text-center">
-                    <em>(Fitur edit langsung untuk produk digital sedang dikembangkan. Hapus dan buat baru jika ingin mengubah data).</em>
+                <div style="padding: 16px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Harga</span>
+                            <span style="font-weight: 600; color: #0f172a;">{{ $priceDisplay }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tipe Pengiriman</span>
+                            <span style="font-weight: 600; color: #0f172a;">{{ $deliverableText }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Ketersediaan</span>
+                            <span style="font-weight: 600; color: #0f172a;">{{ $digitalProduct->has_quantity_limit ? 'Terbatas (' . $digitalProduct->quantity . ')' : 'Tanpa Batas' }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Status Rilis</span>
+                            <span style="font-weight: 600;">{!! $digitalProduct->is_scheduled ? '<span style="color: #10b981;"><i class="fas fa-clock"></i> Terjadwal</span>' : '<span style="color: #64748b;"><i class="fas fa-minus-circle"></i> Reguler</span>' !!}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

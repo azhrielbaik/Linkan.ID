@@ -1,0 +1,10 @@
+.live-social-wrapper {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.live-social-icon-btn, .preview-social-links a {
+    color: white !important;
+}
+.live-social-icon-btn i, .preview-social-links a i {
+    color: white !important;
+}

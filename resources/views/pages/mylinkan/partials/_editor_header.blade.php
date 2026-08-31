@@ -1,6 +1,6 @@
 <div class="editor-mode-header-bar">
     <h2 class="editor-mode-title">
-        <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="back-link" title="Kembali ke daftar microsite">
+        <a href="{{ route('admin.mylinkan', ['mode' => 'gallery']) }}" class="back-link" title="Kembali ke daftar microsite" onclick="if(document.getElementById('digitalProductWizardPanel') && document.getElementById('digitalProductWizardPanel').style.display !== 'none') { event.preventDefault(); cancelDigitalProductWizard(); return false; }">
             <i class="fas fa-arrow-left"></i>
         </a>
         <i class="fas fa-sliders-h text-brand-orange"></i> {{ __('admin.edit_content_blocks') }}
