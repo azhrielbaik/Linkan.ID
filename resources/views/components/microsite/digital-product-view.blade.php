@@ -1,4 +1,4 @@
-@props(['product', 'media' => []])
+@props(['product', 'media' => [], 'isPreview' => false])
 
 @php
     // Penjadwalan Waktu (Scheduling Logic)
@@ -22,7 +22,7 @@
 @endphp
 
 {{-- 1. COMPACT CARD VIEW (Shown on Microsite) --}}
-<div class="dp-compact-card" onclick="openDpModal('{{ $uniqueId }}')" style="background: white; border-radius: 12px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; border: 1px solid #f1f5f9; transition: transform 0.2s;">
+<div class="dp-compact-card" {!! !$isPreview ? 'onclick="openDpModal(\''.$uniqueId.'\')"' : '' !!} style="background: white; border-radius: 12px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; border: 1px solid #f1f5f9; transition: transform 0.2s;">
     {{-- Card Image (First Media) --}}
     <div style="position: relative; aspect-ratio: 1/1; background: #f8fafc; overflow: hidden;">
         @if(count($media) > 0)
@@ -76,6 +76,7 @@
 </div>
 
 {{-- 2. MODAL VIEW (Shown when card is clicked) --}}
+@if(!$isPreview)
 <div id="dpModal_{{ $uniqueId }}" class="dp-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 99999; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
     <div class="dp-modal-content" style="background: white; width: 100%; max-width: 500px; max-height: 90vh; border-radius: 20px 20px 0 0; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; position: relative; display: flex; flex-direction: column;">
         
@@ -167,6 +168,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <style>
 /* CSS Scroll Snap Slider */

@@ -113,10 +113,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/mylinkan', [AdminController::class, 'myLinkan'])->name('mylinkan');
     Route::post('/microsite/create', [AdminController::class, 'storeMicrosite'])->name('microsite.store');
 
-    // Appearance
-    Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');
+    // Appearance (Profile Block settings)
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
     Route::post('/appearance/design-settings', [AppearanceController::class, 'updateDesignSettings'])->name('appearance.design-settings.update');
+
 
     // Microsite Elements
     Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');

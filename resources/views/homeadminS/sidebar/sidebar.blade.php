@@ -34,12 +34,6 @@
             <i class="fa-solid {{ $isSuspended ? 'fa-lock' : 'fa-pager' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
         </a>
 
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.appearance') }}" 
-           class="{{ request()->routeIs('admin.appearance*') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-paint-brush' }}"></i><span class="nav-text">{{ __('sidebar.appearance') }}</span>
-        </a>
 
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.shortlinks.index') }}" 
            class="{{ request()->routeIs('admin.shortlinks.*') ? 'active' : '' }}"

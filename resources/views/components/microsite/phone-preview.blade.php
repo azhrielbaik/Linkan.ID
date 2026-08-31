@@ -182,8 +182,8 @@
                                                 ]
                                             ];
                                         @endphp
-                                        <div id="live_{{ $elementId }}" class="live-element-pointer" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="DigitalProduct" data-target-id="{{ $elementId }}" data-force-open="true">
-                                            <x-microsite.digital-product-view :product="$productData" :media="$media" />
+                                        <div id="live_{{ $elementId }}" class="live-element-pointer js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="DigitalProduct" data-target-id="{{ $elementId }}" data-force-open="true">
+                                            <x-microsite.digital-product-view :product="$productData" :media="$media" :is-preview="true" />
                                         </div>
                                     @endforeach
                                 @endif
