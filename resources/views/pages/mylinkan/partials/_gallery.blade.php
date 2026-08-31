@@ -89,9 +89,7 @@
                         <a href="{{ route('admin.mylinkan', ['mode' => 'edit']) }}" class="btn-action-primary">
                             <i class="fas fa-pen"></i> {{ __('admin.edit_block') }}
                         </a>
-                        <a href="{{ route('admin.appearance') }}" class="btn-action-secondary">
-                            <i class="fas fa-paint-brush"></i> {{ __('admin.appearance') }}
-                        </a>
+
                         <button type="button" class="btn-action-secondary" onclick="copyToClipboard('{{ url('/linkan.id/' . Auth::user()->username) }}')">
                             <i class="fas fa-copy"></i> {{ __('admin.copy_link') }}
                         </button>
