@@ -44,7 +44,7 @@ Route::view('/about', 'about')->name('about');
 
 // Auth
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:10,1')->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
@@ -55,11 +55,11 @@ Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallba
 
 // Password Reset via Admin Platform OTP (4-Step Flow)
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->name('password.request-otp');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->middleware('throttle:5,1')->name('password.request-otp');
 Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verify-otp');
-Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify-otp.submit');
-Route::post('/verify-otp/resend', [ForgotPasswordController::class, 'resendOtp'])->name('password.verify-otp.resend');
-Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->name('password.otp.status');
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->middleware('throttle:5,1')->name('password.verify-otp.submit');
+Route::post('/verify-otp/resend', [ForgotPasswordController::class, 'resendOtp'])->middleware('throttle:5,1')->name('password.verify-otp.resend');
+Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->middleware('throttle:5,1')->name('password.otp.status');
 Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
 Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
 Route::get('/password-reset-success', [ForgotPasswordController::class, 'showSuccessPage'])->name('password.success');
@@ -85,7 +85,7 @@ Route::match(['get', 'post'], '/checkout/{id}', [DigitalProductController::class
 Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty'])->name('cart.updateQty');
 
 // Digital product payment flow (public callbacks & result pages)
-Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->name('midtrans.callback');
+Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
 Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction'])->name('transaction.store');
 
 // Password-protected shortlink
@@ -284,6 +284,9 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->name('settings.broadcast.store');
     Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->name('settings.broadcast.toggle');
     Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->name('settings.broadcast.delete');
+
+    // Theme & Tampilan Platform Admin
+    Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->name('theme.update');
 });
 
 

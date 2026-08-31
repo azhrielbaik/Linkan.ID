@@ -12,6 +12,20 @@ use Illuminate\Support\Facades\DB;
 class ProductManagementController extends Controller
 {
     /**
+     * Mask email address for privacy when displaying in admin views.
+     * Shows first two characters of the local part and masks the rest.
+     */
+    private function maskEmail(string $email): string
+    {
+        $parts = explode('@', $email);
+        if (count($parts) !== 2) {
+            return $email; // fallback if not a valid email
+        }
+        [$local, $domain] = $parts;
+        $maskedLocal = substr($local, 0, 2) . str_repeat('*', max(0, strlen($local) - 2));
+        return $maskedLocal . '@' . $domain;
+    }
+    /**
      * Menampilkan daftar semua produk digital dari seluruh seller dengan filter lengkap.
      */
     public function index(Request $request)
@@ -78,6 +92,12 @@ class ProductManagementController extends Controller
         }
 
         $products = $query->paginate(15)->withQueryString();
+        // Mask seller email in each product's user relation for privacy
+        $products->getCollection()->each(function ($product) {
+            if ($product->relationLoaded('user') && $product->user) {
+                $product->user->email = $this->maskEmail($product->user->email);
+            }
+        });
 
         // Data Statistik
         $totalProductsCount  = DigitalProduct::count();
@@ -91,6 +111,10 @@ class ProductManagementController extends Controller
             ->select('id', 'name', 'email')
             ->orderBy('name')
             ->get();
+        // Mask email addresses in seller list for privacy
+        $sellers->each(function ($seller) {
+            $seller->email = $this->maskEmail($seller->email);
+        });
 
         return view('platformadmin.products.index', compact(
             'products',

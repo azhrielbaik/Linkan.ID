@@ -30,6 +30,8 @@ class User extends Authenticatable
         'avatar',
         'google_id',
         'role',
+        'theme',
+        'theme_color',
         'suspended_at',
         'suspended_until',
         'suspend_reason',

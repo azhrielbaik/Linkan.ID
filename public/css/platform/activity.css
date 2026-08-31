@@ -723,3 +723,55 @@ nav[role="navigation"] a:hover {
         align-items: stretch;
     }
 }
+
+/* ---- Micro‑animations ---- */
+
+/* Spinner for loading actions */
+.platform-action-spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #ed842c;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Toast notification for action confirmations */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Button loading state */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.btn-loading .platform-action-spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}

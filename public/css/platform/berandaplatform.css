@@ -447,35 +447,94 @@ tbody td {
     padding: 11px 16px;
     font-size: 13px;
     color: #334155;
-    vertical-align: middle;
+/* Commission Feed List (Concise & No Horizontal Slide) */
+.commission-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.table-seller-name {
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.table-seller-email {
-    font-size: 11px;
-    color: #94a3b8;
-}
-
-.table-date {
-    color: #64748b;
-    font-size: 12px;
-    white-space: nowrap;
-}
-
-.amount-chip {
-    display: inline-flex;
+.commission-list-item {
+    display: flex;
     align-items: center;
-    background: #f8fafc;
-    color: #0f172a;
-    border: 1px solid #e2e8f0;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s ease;
+    gap: 12px;
+}
+
+.commission-list-item:last-child {
+    border-bottom: none;
+}
+
+.commission-list-item:hover {
+    background: #fff8f2;
+}
+
+.commission-left-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.commission-avatar-small {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 800;
     font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 16px;
+    flex-shrink: 0;
+}
+
+.commission-text {
+    min-width: 0;
+}
+
+.commission-text .name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.commission-text .sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.commission-stats-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.commission-amount-badge {
+    font-weight: 800;
+    color: #16a34a;
+    font-size: 13px;
+    background: #dcfce7;
+    padding: 3px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    letter-spacing: -0.2px;
+}
+
+.commission-sub-label {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
 }
 
 /* Empty State */

@@ -27,10 +27,7 @@
             </div>
             <div class="header-right">
                 @include('platformadmin.partials.notifications')
-                <div class="header-user">
-                    <div class="header-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-                    <span>{{ Auth::user()->name }}</span>
-                </div>
+                @include('platformadmin.partials.header_profile')
             </div>
         </div>
 
@@ -120,42 +117,30 @@
                         <h3><i class="fas fa-history" style="color: #ED842C; margin-right: 6px;"></i>{{ __('platform.recent_commissions') }}</h3>
                         <span class="section-card-subtitle">Live Feed</span>
                     </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>{{ __('platform.seller') }}</th>
-                                    <th>{{ __('platform.date') }}</th>
-                                    <th>{{ __('platform.commission') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="commissionTableBody">
-                                @forelse($commissions as $c)
-                                <tr>
-                                    <td>
-                                        <div class="table-seller-name">{{ $c->seller_name }}</div>
-                                        <div class="table-seller-email">{{ $c->seller_email }}</div>
-                                    </td>
-                                    <td class="table-date">
-                                        {{ \Carbon\Carbon::parse($c->created_at)->format('d M Y') }}
-                                    </td>
-                                    <td>
-                                        <span class="amount-chip">Rp {{ number_format($c->commission, 0, ',', '.') }}</span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="3">
-                                        <div class="empty-state">
-                                            <i class="fas fa-inbox"></i>
-                                            <p>{{ __('platform.no_commission_data') }}</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    <ul class="commission-list" id="commissionList">
+                        @forelse($commissions->take(5) as $c)
+                        <li class="commission-list-item">
+                            <div class="commission-left-info">
+                                <div class="commission-avatar-small">
+                                    {{ strtoupper(substr($c->seller_name ?? 'S', 0, 2)) }}
+                                </div>
+                                <div class="commission-text">
+                                    <div class="name">{{ $c->seller_name }}</div>
+                                    <div class="sub">{{ \Carbon\Carbon::parse($c->created_at)->translatedFormat('d M Y • H:i') }}</div>
+                                </div>
+                            </div>
+                            <div class="commission-stats-right">
+                                <div class="commission-amount-badge">+Rp {{ number_format($c->commission, 0, ',', '.') }}</div>
+                                <div class="commission-sub-label">Komisi Platform</div>
+                            </div>
+                        </li>
+                        @empty
+                        <li class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>{{ __('platform.no_commission_data') }}</p>
+                        </li>
+                        @endforelse
+                    </ul>
                 </div>
 
             </div>
@@ -176,5 +161,6 @@
     </script>
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
+<script src="{{ asset('js/platform/activity.js') }}"></script>
 </body>
 </html>
