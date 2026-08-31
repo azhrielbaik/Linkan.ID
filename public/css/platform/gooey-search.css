@@ -1,0 +1,399 @@
+/* ==========================================================================
+   LINKAN.ID — MODERN GOOEY SEARCH BAR & ANIMATED AUTOCOMPLETE ENGINE
+   
+   Specifications:
+   1. Gooey Effect (SVG Filter): Uses filter: url(#goo-effect) with feGaussianBlur & feColorMatrix.
+   2. State 1 (Button): Initially a compact capsule button (rounded-full) displaying "Search".
+   3. State 2 (Input): Expands smoothly on click (transition-all duration-500 ease-out),
+      replacing "Search" text with active <input> and a splitting gooey magnifying glass orb on the right.
+   4. Search Results Animation: Results dropdown animates from opacity-0 translate-y-4 to opacity-100 translate-y-0.
+   ========================================================================== */
+
+/* Hidden SVG Filter Container */
+.gooey-svg-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+/* 1. Main Search Container / Wrapper */
+.search-box,
+.search-wrap,
+.gooey-search-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 42px;
+    height: 42px;
+    width: 130px; /* State 1: Compact Button Capsule */
+    padding: 3px 6px 3px 14px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9999px; /* rounded-full */
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    cursor: pointer;
+    overflow: visible;
+    user-select: none;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s ease,
+                box-shadow 0.4s ease,
+                background-color 0.3s ease;
+}
+
+/* Optional Gooey Filter Wrapper (Applied on Gooey Stage) */
+.gooey-search-stage {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    filter: url(#goo-effect);
+}
+
+/* State 1: Placeholder Text "Search" Button */
+.gooey-search-placeholder {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.3s ease, max-width 0.4s ease, transform 0.3s ease;
+    max-width: 90px;
+    opacity: 1;
+}
+
+.gooey-search-placeholder i {
+    font-size: 13px;
+    color: var(--p-primary, #ed842c);
+    transition: transform 0.4s ease;
+}
+
+/* Search Input Element (Default Inactive) */
+.search-box input[type="text"],
+.search-wrap input[type="text"],
+.gooey-search-container input[type="text"],
+.search-box input[type="text"]:focus,
+.search-wrap input[type="text"]:focus,
+.gooey-search-container input[type="text"]:focus {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #1e293b;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease 0.1s, padding 0.3s ease;
+}
+
+.search-box input[type="text"]::placeholder,
+.search-wrap input[type="text"]::placeholder,
+.gooey-search-container input[type="text"]::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Right Search Orb / Glass Button */
+.gooey-search-btn,
+.search-box > i.fa-search,
+.search-wrap > i.fa-search {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.85);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--p-primary-subtle, rgba(237, 132, 44, 0.1));
+    color: var(--p-primary, #ed842c);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+}
+
+/* Hide raw leading icon when enhanced */
+.search-box.gooey-enhanced > i.fa-search:not(.gooey-search-btn),
+.search-wrap.gooey-enhanced > i.fa-search:not(.gooey-search-btn) {
+    display: none;
+}
+
+/* ==========================================================================
+   2. STATE 2: EXPANDED / INPUT ACTIVE
+   ========================================================================== */
+.search-box.is-expanded,
+.search-wrap.is-expanded,
+.gooey-search-container.is-expanded,
+.search-box:focus-within,
+.search-wrap:focus-within,
+.gooey-search-container:focus-within {
+    width: 320px; /* Expanded Width */
+    max-width: 100%;
+    border-color: var(--p-primary, #ed842c);
+    box-shadow: 0 4px 20px rgba(237, 132, 44, 0.12), 0 0 0 3px rgba(237, 132, 44, 0.08);
+    cursor: default;
+    padding-right: 42px;
+}
+
+/* Hide initial button text */
+.search-box.is-expanded .gooey-search-placeholder,
+.search-wrap.is-expanded .gooey-search-placeholder,
+.gooey-search-container.is-expanded .gooey-search-placeholder,
+.search-box:focus-within .gooey-search-placeholder,
+.search-wrap:focus-within .gooey-search-placeholder,
+.gooey-search-container:focus-within .gooey-search-placeholder {
+    max-width: 0;
+    opacity: 0;
+    margin: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+/* Expand Input to Full Active State */
+.search-box.is-expanded input[type="text"],
+.search-wrap.is-expanded input[type="text"],
+.gooey-search-container.is-expanded input[type="text"],
+.search-box:focus-within input[type="text"],
+.search-wrap:focus-within input[type="text"],
+.gooey-search-container:focus-within input[type="text"] {
+    width: 100%;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0 8px 0 2px;
+}
+
+/* Magnifying Glass Orb Appears / Splits with Gooey Spring */
+.search-box.is-expanded .gooey-search-btn,
+.search-wrap.is-expanded .gooey-search-btn,
+.gooey-search-container.is-expanded .gooey-search-btn,
+.search-box:focus-within .gooey-search-btn,
+.search-wrap:focus-within .gooey-search-btn,
+.gooey-search-container:focus-within .gooey-search-btn {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1);
+    background: var(--p-primary, #ed842c);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(237, 132, 44, 0.35);
+}
+
+.gooey-search-btn:hover {
+    transform: translateY(-50%) scale(1.08);
+}
+
+/* Clear Button */
+.gooey-search-clear {
+    position: absolute;
+    right: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.search-box.has-value .gooey-search-clear,
+.search-wrap.has-value .gooey-search-clear,
+.gooey-search-container.has-value .gooey-search-clear {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.gooey-search-clear:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+/* ==========================================================================
+   4. ANIMATED AUTOCOMPLETE RESULTS DROPDOWN
+   ========================================================================== */
+.gooey-autocomplete-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    min-width: 280px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+    padding: 6px;
+    z-index: 1000;
+    list-style: none;
+    margin: 0;
+    max-height: 280px;
+    overflow-y: auto;
+    
+    /* Animation: From opacity-0 translate-y-4 to opacity-100 translate-y-0 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.3s;
+}
+
+/* Results Dropdown Active / Visible */
+.gooey-autocomplete-dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Autocomplete Result Item */
+.gooey-autocomplete-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 14px;
+    border-radius: 0.65rem;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.gooey-autocomplete-item:hover,
+.gooey-autocomplete-item.is-highlighted {
+    background: #f8fafc;
+    color: var(--p-primary, #ed842c);
+    transform: translateX(3px);
+}
+
+.gooey-autocomplete-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gooey-autocomplete-item-icon {
+    font-size: 12px;
+    color: #94a3b8;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.gooey-autocomplete-item:hover .gooey-autocomplete-item-icon,
+.gooey-autocomplete-item.is-highlighted .gooey-autocomplete-item-icon {
+    color: var(--p-primary, #ed842c);
+}
+
+.gooey-autocomplete-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gooey-autocomplete-item-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    background: #f1f5f9;
+    color: #64748b;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+/* Loading & Empty State in Suggestions */
+.gooey-autocomplete-loading,
+.gooey-autocomplete-empty {
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. DARK MODE SUPPORT
+   ========================================================================== */
+html[data-theme="dark"] .search-box,
+html[data-theme="dark"] .search-wrap,
+html[data-theme="dark"] .gooey-search-container,
+body.dark-mode .search-box,
+body.dark-mode .search-wrap,
+body.dark-mode .gooey-search-container {
+    background: var(--p-bg-surface-elevated, #1e293b);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .search-box input[type="text"],
+html[data-theme="dark"] .search-wrap input[type="text"],
+html[data-theme="dark"] .gooey-search-container input[type="text"],
+body.dark-mode .search-box input[type="text"],
+body.dark-mode .search-wrap input[type="text"],
+body.dark-mode .gooey-search-container input[type="text"] {
+    color: #f8fafc;
+}
+
+html[data-theme="dark"] .gooey-search-placeholder,
+body.dark-mode .gooey-search-placeholder {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .gooey-autocomplete-dropdown,
+body.dark-mode .gooey-autocomplete-dropdown {
+    background: var(--p-bg-surface-elevated, #1e293b);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .gooey-autocomplete-item,
+body.dark-mode .gooey-autocomplete-item {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .gooey-autocomplete-item:hover,
+html[data-theme="dark"] .gooey-autocomplete-item.is-highlighted,
+body.dark-mode .gooey-autocomplete-item:hover,
+body.dark-mode .gooey-autocomplete-item.is-highlighted {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--p-primary, #ed842c);
+}
+
+html[data-theme="dark"] .gooey-autocomplete-item-badge,
+body.dark-mode .gooey-autocomplete-item-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}

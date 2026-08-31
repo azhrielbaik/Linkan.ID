@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/activity.css') }}">
+<link rel="stylesheet" href="{{ asset('css/platform/autocomplete.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
@@ -98,7 +99,8 @@
 
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_activity_placeholder') }}">
+                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_activity_placeholder') }}" data-autocomplete-type="activity" data-suggest-url="{{ route('platform-admin.logs.activity.suggest') }}" list="autocomplete-activity">
+                        <datalist id="autocomplete-activity"></datalist>
                     </div>
 
                     <select name="action" class="filter-select">
@@ -135,10 +137,9 @@
                         </optgroup>
                     </select>
 
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.from_date') }}">
-                        <span style="color: #94a3b8;">-</span>
-                        <input type="date" name="end_date" value="{{ $endDate ?? '' }}" class="date-input" title="{{ __('platform.to_date') }}">
+                    <div class="date-picker-box">
+                        <i class="fas fa-calendar-alt date-picker-icon"></i>
+                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.filter_by_date') }}">
                     </div>
 
                     <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
@@ -365,6 +366,7 @@
     </div>
 
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/search-autocomplete.js') }}"></script>
     <script src="{{ asset('js/platform/activity.js') }}"></script>
 </body>
 </html>

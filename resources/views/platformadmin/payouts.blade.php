@@ -75,22 +75,22 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'all'])) }}"
                    class="tab-link {{ ($tab ?? 'all') === 'all' ? 'active' : '' }}">
-                    {{ __('platform.all_requests') }}
+                    <i class="fas fa-money-bill-wave"></i> {{ __('platform.all_requests') }}
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'pending'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'pending' ? 'active' : '' }}">
-                    {{ __('platform.pending_verification') }}
+                    <i class="fas fa-hourglass-half"></i> {{ __('platform.pending_verification') }}
                     @if($totalPendingCount > 0)
                         <span class="tab-counter">{{ $totalPendingCount }}</span>
                     @endif
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'approved'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'approved' ? 'active' : '' }}">
-                    {{ __('platform.approved_status') }}
+                    <i class="fas fa-check-circle"></i> {{ __('platform.approved_status') }}
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'rejected'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'rejected' ? 'active' : '' }}">
-                    {{ __('platform.rejected_status') }}
+                    <i class="fas fa-times-circle"></i> {{ __('platform.rejected_status') }}
                 </a>
             </div>
 
@@ -101,7 +101,8 @@
 
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_payout_placeholder') }}">
+                                                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_payout_placeholder') }}" data-autocomplete-type="payouts" list="autocomplete-payouts">
+                        <datalist id="autocomplete-payouts"></datalist>
                     </div>
 
                     <select name="method" class="filter-select">
@@ -111,10 +112,9 @@
                         <option value="ShopeePay" {{ ($method ?? '') === 'ShopeePay' ? 'selected' : '' }}>ShopeePay</option>
                     </select>
 
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.from_date') }}">
-                        <span style="color: #94a3b8;">-</span>
-                        <input type="date" name="end_date" value="{{ $endDate ?? '' }}" class="date-input" title="{{ __('platform.to_date') }}">
+                    <div class="date-picker-box">
+                        <i class="fas fa-calendar-alt date-picker-icon"></i>
+                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.filter_by_date') }}">
                     </div>
 
                     <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>

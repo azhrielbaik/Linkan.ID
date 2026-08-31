@@ -1,6 +1,10 @@
 {{-- Linkan.ID Platform Admin Sidebar --}}
 <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}?v={{ time() }}">
 <link rel="stylesheet" href="{{ asset('css/platform/theme.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/platform/custom-dropdown.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/platform/gooey-search.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}?v={{ time() }}">
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -196,4 +200,10 @@
 
 {{-- Dynamic Theme & Dark Mode Script --}}
 <script src="{{ asset('js/platform/theme.js') }}?v={{ time() }}"></script>
+{{-- Modern Custom Dropdown Engine --}}
+<script src="{{ asset('js/platform/custom-dropdown.js') }}?v={{ time() }}"></script>
+{{-- Modern Expanding Capsule Tab Navbar Engine --}}
+<script src="{{ asset('js/platform/tabs.js') }}?v={{ time() }}"></script>
+{{-- Modern Gooey Search Bar & Animated Autocomplete Engine --}}
+<script src="{{ asset('js/platform/gooey-search.js') }}?v={{ time() }}"></script>
 

@@ -78,21 +78,28 @@
     background: var(--p-primary) !important;
 }
 
-.search-box input:focus,
-.search-form input:focus,
-.search-wrap input:focus,
-.date-input:focus,
 .filter-select:focus,
 .p-filter-select:focus,
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="date"]:focus,
+.form-control:focus,
+.modal input:focus,
+.modal textarea:focus,
+.form-group input:focus,
+.form-group textarea:focus,
 select:focus,
 textarea:focus {
     border-color: var(--p-primary) !important;
     box-shadow: 0 0 0 3px var(--p-primary-subtle) !important;
+}
+
+/* Ensure inner search box inputs remain clean and borderless */
+.search-box input:focus,
+.search-form .search-wrap input:focus,
+.search-wrap input:focus,
+.gooey-search-container input:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 nav[role="navigation"] span[aria-current="page"] span {
@@ -339,15 +346,13 @@ body.dark-mode .empty-state p {
     color: var(--p-text-muted) !important;
 }
 
-/* Inputs, Selects, and Search Wrappers */
-html[data-theme="dark"] .search-box input,
-body.dark-mode .search-box input,
-html[data-theme="dark"] .search-form input,
-body.dark-mode .search-form input,
-html[data-theme="dark"] .search-wrap input,
-body.dark-mode .search-wrap input,
-html[data-theme="dark"] .date-input,
-body.dark-mode .date-input,
+/* Inputs, Selects, and Form Controls */
+html[data-theme="dark"] .form-control,
+body.dark-mode .form-control,
+html[data-theme="dark"] .modal input,
+body.dark-mode .modal input,
+html[data-theme="dark"] .modal textarea,
+body.dark-mode .modal textarea,
 html[data-theme="dark"] .filter-select,
 body.dark-mode .filter-select,
 html[data-theme="dark"] .p-filter-select,
@@ -686,14 +691,15 @@ body.dark-mode .header-user-btn span.user-name {
     width: 310px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    border-radius: 18px;
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-8px) scale(0.98);
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.95);
     transform-origin: top right;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
 }
 
@@ -701,12 +707,13 @@ html[data-theme="dark"] .platform-theme-dropdown,
 body.dark-mode .platform-theme-dropdown {
     background: var(--p-bg-surface) !important;
     border: var(--p-stroke-white-strong) !important;
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.65) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
 }
 
 .platform-theme-dropdown.show {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
     transform: translateY(0) scale(1);
 }
 

@@ -292,40 +292,7 @@ input[type="checkbox"] {
     text-align: center;
 }
 
-.search-box {
-    position: relative;
-    flex: 1 1 260px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    font-size: 14px;
-    pointer-events: none;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 9px 16px 9px 42px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 13px;
-    font-family: inherit;
-    background: #f8fafc;
-    color: #1e293b;
-    outline: none;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-}
-
-.search-box input:focus {
-    border-color: #ed842c;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.1);
-}
+/* Search box handled by gooey-search.css */
 
 .filter-actions {
     display: flex;

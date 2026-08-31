@@ -51,7 +51,7 @@ class VerifikasiController extends Controller
         return redirect()->back()->with('success', 'Status verifikasi produk berhasil diperbarui');
     }
 
-    public function bulkVerify(Request $request)
+    public function bulkVerify(BulkVerifikasiRequest $request)
     {
         // Validation handled by BulkVerifikasiRequest
         $validated = $request->validated();

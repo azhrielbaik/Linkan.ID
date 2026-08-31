@@ -71,19 +71,19 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'all'])) }}"
                    class="tab-link {{ ($tab ?? 'all') === 'all' ? 'active' : '' }}">
-                    {{ __('platform.all_products') }} ({{ $totalProductsCount }})
+                    <i class="fas fa-boxes"></i> {{ __('platform.all_products') }} ({{ $totalProductsCount }})
                 </a>
                 <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'active'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'active' ? 'active' : '' }}">
-                    {{ __('platform.active_products') }} ({{ $activeProductsCount }})
+                    <i class="fas fa-check-circle"></i> {{ __('platform.active_products') }} ({{ $activeProductsCount }})
                 </a>
                 <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'takedown'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'takedown' ? 'active' : '' }}">
-                    {{ __('platform.takedown_products') }} ({{ $takedownCount }})
+                    <i class="fas fa-ban"></i> {{ __('platform.takedown_products') }} ({{ $takedownCount }})
                 </a>
                 <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'pending'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'pending' ? 'active' : '' }}">
-                    {{ __('platform.pending_verification') }} ({{ $pendingCount }})
+                    <i class="fas fa-clock"></i> {{ __('platform.pending_verification') }} ({{ $pendingCount }})
                 </a>
             </div>
 

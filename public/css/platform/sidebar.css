@@ -89,9 +89,9 @@
         transform: rotate(270deg);
     }
 
-    body.mini-sidebar .nav-text,
-    body.mini-sidebar .badge,
-    body.mini-sidebar .menu-label {
+    body.mini-sidebar .sidebar .nav-text,
+    body.mini-sidebar .sidebar .badge,
+    body.mini-sidebar .sidebar .menu-label {
         display: none;
     }
 

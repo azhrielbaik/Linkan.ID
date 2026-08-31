@@ -464,6 +464,46 @@ class PlatformAdminController extends Controller
         ));
     }
 
+    /**
+     * Endpoint autocomplete suggestion untuk Manajemen User.
+     */
+    public function userSuggest(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+        if (empty($q)) {
+            return response()->json([]);
+        }
+
+        $users = User::where('role', '!=', 'admin_platform')
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('email', 'like', "%{$q}%");
+            })
+            ->limit(10)
+            ->get();
+
+        $suggestions = collect();
+
+        foreach ($users as $user) {
+            if ($user->name && stripos($user->name, $q) !== false) {
+                $suggestions->push([
+                    'label' => $user->name . ' (Nama)',
+                    'value' => $user->name
+                ]);
+            }
+            if ($user->email && stripos($user->email, $q) !== false) {
+                $suggestions->push([
+                    'label' => $user->email . ' (Email)',
+                    'value' => $user->email
+                ]);
+            }
+        }
+
+        $uniqueSuggestions = $suggestions->unique('value')->values()->take(5);
+
+        return response()->json($uniqueSuggestions);
+    }
+
     // Suspend akun user dengan pilihan durasi dan alasan
     public function suspend(Request $request, int $id)
     {

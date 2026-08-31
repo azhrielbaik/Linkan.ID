@@ -245,22 +245,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const tabs = document.querySelectorAll(".tab-btn");
     const searchInput = document.getElementById("searchInput");
     const platformFilter = document.getElementById("platformFilter");
-    const startDate = document.getElementById("startDate");
-    const endDate = document.getElementById("endDate");
+    const filterDate = document.getElementById("filterDate") || document.getElementById("startDate");
     const productRows = document.querySelectorAll(".product-row");
     const noDataMessage = document.getElementById("noDataMessage");
+
+    let currentActiveTab = "pending";
 
     function filterProducts() {
         const searchTerm = searchInput
             ? searchInput.value.toLowerCase().trim()
             : "";
         const platformValue = platformFilter ? platformFilter.value : "";
-        const startDateValue = startDate ? startDate.value : "";
-        const endDateValue = endDate ? endDate.value : "";
-        const activeTabElement = document.querySelector(".tab-btn.active");
-        const activeTab = activeTabElement
-            ? activeTabElement.dataset.tab
-            : "pending";
+        const filterDateValue = filterDate ? filterDate.value : "";
+        const activeTab = currentActiveTab;
 
         let visibleCount = 0;
 
@@ -283,8 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const matchesPlatform =
                 !platformValue || platform === platformValue;
             const matchesDate =
-                (!startDateValue || date >= startDateValue) &&
-                (!endDateValue || date <= endDateValue);
+                !filterDateValue || date === filterDateValue || date.startsWith(filterDateValue);
 
             let matchesStatus = false;
             if (activeTab === "pending") {
@@ -320,8 +316,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tabs.forEach((tab) => {
         tab.addEventListener("click", function () {
-            tabs.forEach((t) => t.classList.remove("active"));
+            tabs.forEach((t) => {
+                t.classList.remove("active");
+                t.classList.remove("is-expanded");
+            });
             this.classList.add("active");
+            this.classList.add("is-expanded");
+            currentActiveTab = this.dataset.tab || "pending";
             filterProducts();
         });
     });
@@ -329,8 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (searchInput) searchInput.addEventListener("input", filterProducts);
     if (platformFilter)
         platformFilter.addEventListener("change", filterProducts);
-    if (startDate) startDate.addEventListener("change", filterProducts);
-    if (endDate) endDate.addEventListener("change", filterProducts);
+    if (filterDate) filterDate.addEventListener("change", filterProducts);
 
     document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
         checkbox.addEventListener("change", updateBulkSelection);

@@ -1,136 +1,289 @@
-/* Shared platform admin tab navigation */
+/* ==========================================================================
+   LINKAN.ID — MODERN CAPSULE TAB NAVBAR STYLESHEET (ALL PLATFORM PAGES)
+   
+   Specifications:
+   1. Container: Capsule shaped (rounded-2xl / border-radius: 16px), subtle border, soft shadow, flexbox.
+   2. Tab Item:
+      - Default (Inactive): Icon only (label text hidden with max-w-0 opacity-0 overflow-hidden).
+      - Active: Expands smoothly to show text, primary/accent color, muted background.
+   3. Separator: Vertical line divider between tab items.
+   4. Animation (Pure CSS): transition-all duration-300 ease-in-out from max-w-0 opacity-0 to max-w-[250px] opacity-100.
+   5. Vanilla JS Interaction: Single active tab toggle & Click outside collapse to icons.
+   ========================================================================== */
+
+/* 1. Container Kapsul */
+.tabs-container,
+.view-switcher,
+.p-ticket-tabs,
+.filter-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    max-width: 100%;
+    margin-bottom: 0;
+    padding: 4px 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem; /* rounded-2xl */
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+    overflow-x: auto;
+    overflow-y: hidden;
+    user-select: none;
+    scrollbar-width: none; /* Hide scrollbar */
+    transition: all 0.3s ease-in-out;
+}
+
 .tabs-container,
 .view-switcher,
 .p-ticket-tabs {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
     margin-bottom: 20px;
-    padding: 7px;
-    border: 1px solid #e7eaf0;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
 }
 
 .tabs-container::-webkit-scrollbar,
 .view-switcher::-webkit-scrollbar,
-.p-ticket-tabs::-webkit-scrollbar {
-    height: 4px;
+.p-ticket-tabs::-webkit-scrollbar,
+.filter-tabs::-webkit-scrollbar {
+    display: none;
 }
 
-.tabs-container::-webkit-scrollbar-thumb,
-.view-switcher::-webkit-scrollbar-thumb,
-.p-ticket-tabs::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
+/* 2. Tab Item */
 .tabs-container .tab-btn,
 .tabs-container .tab-link,
 .view-switcher .view-tab-link,
-.p-ticket-tabs .p-ticket-tab {
+.p-ticket-tabs .p-ticket-tab,
+.filter-tabs .filter-tab {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
-    min-width: 112px;
-    min-height: 42px;
-    padding: 11px 22px;
+    min-height: 38px;
+    padding: 7px 13px;
     border: 0;
-    border-radius: 12px;
+    border-radius: 0.75rem; /* rounded-xl / rounded-2xl */
     background: transparent;
     color: #64748b;
     font-family: inherit;
     font-size: 13px;
-    font-weight: 750;
+    font-weight: 700;
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
+    outline: none;
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+/* Hover State */
 .tabs-container .tab-btn:hover,
 .tabs-container .tab-link:hover,
 .view-switcher .view-tab-link:hover,
-.p-ticket-tabs .p-ticket-tab:hover {
-    color: #c75f0f;
-    background: #fff7ef;
+.p-ticket-tabs .p-ticket-tab:hover,
+.filter-tabs .filter-tab:hover {
+    color: var(--p-primary, #ed842c);
+    background: #f1f5f9;
 }
 
+/* Tab Icon */
+.tabs-container .tab-btn i,
+.tabs-container .tab-link i,
+.view-switcher .view-tab-link i,
+.p-ticket-tabs .p-ticket-tab i,
+.filter-tabs .filter-tab i,
+.tabs-container .tab-btn svg,
+.tabs-container .tab-link svg,
+.view-switcher .view-tab-link svg,
+.p-ticket-tabs .p-ticket-tab svg,
+.filter-tabs .filter-tab svg {
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* 4. Animasi Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
+.tab-label,
+.tabs-container .tab-btn .tab-text,
+.tabs-container .tab-link .tab-text,
+.view-switcher .view-tab-link .tab-text,
+.p-ticket-tabs .p-ticket-tab .tab-text,
+.filter-tabs .filter-tab .tab-text {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 0;
+    display: inline-block;
+    vertical-align: middle;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+/* Tab Badge Counter */
+.tab-counter {
+    min-width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    padding: 0 5px;
+    border-radius: 9999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Tab Aktif (Saat Diklik / Halaman Terbuka) */
 .tabs-container .tab-btn.active,
 .tabs-container .tab-link.active,
 .view-switcher .view-tab-link.active,
-.p-ticket-tabs .p-ticket-tab.active {
-    color: #c75f0f;
-    background: #fff0e5;
-    box-shadow: inset 0 0 0 1px rgba(237, 132, 44, 0.12);
+.p-ticket-tabs .p-ticket-tab.active,
+.filter-tabs .filter-tab.active,
+.tabs-container .tab-btn.is-expanded,
+.tabs-container .tab-link.is-expanded,
+.view-switcher .view-tab-link.is-expanded,
+.p-ticket-tabs .p-ticket-tab.is-expanded,
+.filter-tabs .filter-tab.is-expanded {
+    color: var(--p-primary, #ed842c);
+    background: #f1f5f9; /* Background abu-abu / muted */
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
-/* Override legacy page styles that added an active underline. */
+.tabs-container .tab-btn.active i,
+.tabs-container .tab-link.active i,
+.view-switcher .view-tab-link.active i,
+.p-ticket-tabs .p-ticket-tab.active i,
+.filter-tabs .filter-tab.active i,
+.tabs-container .tab-btn.is-expanded i,
+.tabs-container .tab-link.is-expanded i,
+.view-switcher .view-tab-link.is-expanded i,
+.p-ticket-tabs .p-ticket-tab.is-expanded i,
+.filter-tabs .filter-tab.is-expanded i {
+    color: var(--p-primary, #ed842c);
+    transform: scale(1.08);
+}
+
+/* Melebar (Expand) ke max-w-[250px] opacity-100 saat aktif */
+.tabs-container .tab-btn.active .tab-label,
+.tabs-container .tab-link.active .tab-label,
+.view-switcher .view-tab-link.active .tab-label,
+.p-ticket-tabs .p-ticket-tab.active .tab-label,
+.filter-tabs .filter-tab.active .tab-label,
+.tabs-container .tab-btn.is-expanded .tab-label,
+.tabs-container .tab-link.is-expanded .tab-label,
+.view-switcher .view-tab-link.is-expanded .tab-label,
+.p-ticket-tabs .p-ticket-tab.is-expanded .tab-label,
+.filter-tabs .filter-tab.is-expanded .tab-label,
+.tabs-container .tab-btn.active .tab-text,
+.tabs-container .tab-link.active .tab-text,
+.view-switcher .view-tab-link.active .tab-text,
+.p-ticket-tabs .p-ticket-tab.active .tab-text,
+.filter-tabs .filter-tab.active .tab-text,
+.tabs-container .tab-btn.is-expanded .tab-text,
+.tabs-container .tab-link.is-expanded .tab-text,
+.view-switcher .view-tab-link.is-expanded .tab-text,
+.p-ticket-tabs .p-ticket-tab.is-expanded .tab-text,
+.filter-tabs .filter-tab.is-expanded .tab-text {
+    max-width: 250px;
+    opacity: 1;
+    margin-left: 8px;
+}
+
+/* 3. Separator Garis Pemisah Vertikal */
+.tab-separator,
+.tabs-separator {
+    width: 1px;
+    height: 18px;
+    background: #e2e8f0;
+    margin: 0 3px;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
+}
+
+/* Override legacy underline effects */
 .tabs-container .tab-btn.active::after,
 .tabs-container .tab-link.active::after,
-.view-switcher .view-tab-link.active::after {
+.view-switcher .view-tab-link.active::after,
+.p-ticket-tabs .p-ticket-tab.active::after,
+.filter-tabs .filter-tab.active::after {
     display: none !important;
     content: none !important;
 }
 
-.tabs-container .tab-counter,
-.view-switcher .tab-counter {
-    min-width: 20px;
-    margin-left: 4px;
-    padding: 3px 6px;
-    border-radius: 999px;
-    background: #ef4444;
-    color: #ffffff;
-    font-size: 10px;
-    line-height: 1;
-    text-align: center;
+/* ==========================================================================
+   DARK MODE COMPATIBILITY
+   ========================================================================== */
+html[data-theme="dark"] .tabs-container,
+html[data-theme="dark"] .view-switcher,
+html[data-theme="dark"] .p-ticket-tabs,
+html[data-theme="dark"] .filter-tabs,
+body.dark-mode .tabs-container,
+body.dark-mode .view-switcher,
+body.dark-mode .p-ticket-tabs,
+body.dark-mode .filter-tabs {
+    background: var(--p-bg-surface-elevated, #1e293b);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
-.p-ticket-tabs {
-    width: auto;
-    margin-bottom: 0;
-    padding: 5px;
-    border: 0;
-    box-shadow: none;
-    background: #f8fafc;
+html[data-theme="dark"] .tabs-container .tab-btn,
+html[data-theme="dark"] .tabs-container .tab-link,
+html[data-theme="dark"] .view-switcher .view-tab-link,
+html[data-theme="dark"] .p-ticket-tabs .p-ticket-tab,
+html[data-theme="dark"] .filter-tabs .filter-tab,
+body.dark-mode .tabs-container .tab-btn,
+body.dark-mode .tabs-container .tab-link,
+body.dark-mode .view-switcher .view-tab-link,
+body.dark-mode .p-ticket-tabs .p-ticket-tab,
+body.dark-mode .filter-tabs .filter-tab {
+    color: #94a3b8;
 }
 
-.p-ticket-tabs .p-ticket-tab {
-    min-width: 0;
-    min-height: 38px;
-    padding: 9px 16px;
-    font-size: 12px;
+html[data-theme="dark"] .tabs-container .tab-btn:hover,
+html[data-theme="dark"] .tabs-container .tab-link:hover,
+html[data-theme="dark"] .view-switcher .view-tab-link:hover,
+html[data-theme="dark"] .p-ticket-tabs .p-ticket-tab:hover,
+html[data-theme="dark"] .filter-tabs .filter-tab:hover,
+body.dark-mode .tabs-container .tab-btn:hover,
+body.dark-mode .tabs-container .tab-link:hover,
+body.dark-mode .view-switcher .view-tab-link:hover,
+body.dark-mode .p-ticket-tabs .p-ticket-tab:hover,
+body.dark-mode .filter-tabs .filter-tab:hover {
+    color: var(--p-primary, #ed842c);
+    background: rgba(255, 255, 255, 0.07);
 }
 
-@media (max-width: 600px) {
-    .tabs-container,
-    .view-switcher {
-        margin-bottom: 14px;
-        padding: 5px;
-        border-radius: 14px;
-    }
+html[data-theme="dark"] .tabs-container .tab-btn.active,
+html[data-theme="dark"] .tabs-container .tab-link.active,
+html[data-theme="dark"] .view-switcher .view-tab-link.active,
+html[data-theme="dark"] .p-ticket-tabs .p-ticket-tab.active,
+html[data-theme="dark"] .filter-tabs .filter-tab.active,
+html[data-theme="dark"] .tabs-container .tab-btn.is-expanded,
+html[data-theme="dark"] .tabs-container .tab-link.is-expanded,
+html[data-theme="dark"] .view-switcher .view-tab-link.is-expanded,
+html[data-theme="dark"] .p-ticket-tabs .p-ticket-tab.is-expanded,
+html[data-theme="dark"] .filter-tabs .filter-tab.is-expanded,
+body.dark-mode .tabs-container .tab-btn.active,
+body.dark-mode .tabs-container .tab-link.active,
+body.dark-mode .view-switcher .view-tab-link.active,
+body.dark-mode .p-ticket-tabs .p-ticket-tab.active,
+body.dark-mode .filter-tabs .filter-tab.active,
+body.dark-mode .tabs-container .tab-btn.is-expanded,
+body.dark-mode .tabs-container .tab-link.is-expanded,
+body.dark-mode .view-switcher .view-tab-link.is-expanded,
+body.dark-mode .p-ticket-tabs .p-ticket-tab.is-expanded,
+body.dark-mode .filter-tabs .filter-tab.is-expanded {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--p-primary, #ed842c);
+}
 
-    .tabs-container .tab-btn,
-    .tabs-container .tab-link,
-    .view-switcher .view-tab-link {
-        min-height: 36px;
-        min-width: 0;
-        padding: 10px 16px;
-        font-size: 12px;
-    }
-
-    .p-ticket-tabs {
-        width: 100%;
-    }
+html[data-theme="dark"] .tab-separator,
+html[data-theme="dark"] .tabs-separator,
+body.dark-mode .tab-separator,
+body.dark-mode .tabs-separator {
+    background: rgba(255, 255, 255, 0.12);
 }

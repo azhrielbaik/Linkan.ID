@@ -1,0 +1,143 @@
+/* ==========================================================================
+   LINKAN.ID — MODERN SINGLE CAPSULE DATE PICKER (PLATFORM ADMIN)
+   
+   Features:
+   1. Clean Single Capsule Container (rounded-full / rounded-2xl).
+   2. Integrated Accent Calendar Icon & borderless, shadowless inner input.
+   3. Absolutely NO inner box/outline when clicked.
+   4. Smooth hover/focus ring on capsule container and Dark Mode support.
+   ========================================================================== */
+
+/* 1. Single Date Picker Capsule Container */
+.date-picker-box,
+.date-range-box,
+.date-range-container,
+.date-picker-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    height: 40px;
+    padding: 3px 14px 3px 14px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9999px; /* rounded-full / capsule */
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    user-select: none;
+}
+
+.date-picker-box:hover,
+.date-range-box:hover,
+.date-range-container:hover,
+.date-picker-wrap:hover {
+    border-color: #cbd5e1;
+}
+
+.date-picker-box:focus-within,
+.date-range-box:focus-within,
+.date-range-container:focus-within,
+.date-picker-wrap:focus-within {
+    border-color: var(--p-primary, #ed842c);
+    box-shadow: 0 4px 14px rgba(237, 132, 44, 0.12), 0 0 0 3px rgba(237, 132, 44, 0.08);
+}
+
+/* Leading Calendar Icon */
+.date-range-icon,
+.date-picker-icon,
+.date-picker-box > i.fa-calendar-alt,
+.date-range-box > i.fa-calendar-alt {
+    color: var(--p-primary, #ed842c);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* 2. Inner Date Input (Completely Borderless & No Inner Box/Shadow) */
+.date-input,
+input[type="date"].date-input,
+.date-picker-box input[type="date"],
+.date-range-box input[type="date"] {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 0 4px !important;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+}
+
+.date-input:focus,
+input[type="date"].date-input:focus,
+.date-picker-box input[type="date"]:focus,
+.date-range-box input[type="date"]:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: var(--p-primary, #ed842c);
+}
+
+/* Custom Calendar Indicator Icon (Chrome/Edge/Safari) */
+.date-input::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 2px;
+    margin-left: 4px;
+    border-radius: 4px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    filter: invert(45%) sepia(85%) saturate(1200%) hue-rotate(350deg) brightness(95%) contrast(90%);
+}
+
+.date-input:hover::-webkit-calendar-picker-indicator,
+input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   DARK MODE COMPATIBILITY
+   ========================================================================== */
+html[data-theme="dark"] .date-picker-box,
+html[data-theme="dark"] .date-range-box,
+html[data-theme="dark"] .date-range-container,
+html[data-theme="dark"] .date-picker-wrap,
+body.dark-mode .date-picker-box,
+body.dark-mode .date-range-box,
+body.dark-mode .date-range-container,
+body.dark-mode .date-picker-wrap {
+    background: var(--p-bg-surface-elevated, #1e293b);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .date-input,
+html[data-theme="dark"] input[type="date"].date-input,
+html[data-theme="dark"] .date-picker-box input[type="date"],
+html[data-theme="dark"] .date-range-box input[type="date"],
+body.dark-mode .date-input,
+body.dark-mode input[type="date"].date-input,
+body.dark-mode .date-picker-box input[type="date"],
+body.dark-mode .date-range-box input[type="date"] {
+    color: #f8fafc;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+html[data-theme="dark"] .date-input:focus,
+body.dark-mode .date-input:focus {
+    color: var(--p-primary, #ed842c);
+}
+
+html[data-theme="dark"] .date-input::-webkit-calendar-picker-indicator,
+body.dark-mode .date-input::-webkit-calendar-picker-indicator {
+    filter: invert(65%) sepia(90%) saturate(1200%) hue-rotate(350deg) brightness(105%) contrast(95%);
+}

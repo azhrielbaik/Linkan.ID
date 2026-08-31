@@ -35,17 +35,17 @@
 
             {{-- Tabs --}}
             <div class="tabs-container">
-                <button class="tab-btn active" data-tab="pending">
-                    {{ __('platform.pending_verification') }}
+                <button type="button" class="tab-btn active" data-tab="pending">
+                    <i class="fas fa-clock"></i> <span class="tab-label">{{ __('platform.pending_verification') }}</span>
                 </button>
-                <button class="tab-btn" data-tab="approved">
-                    {{ __('platform.approved') }}
+                <button type="button" class="tab-btn" data-tab="approved">
+                    <i class="fas fa-check-circle"></i> <span class="tab-label">{{ __('platform.approved') }}</span>
                 </button>
-                <button class="tab-btn" data-tab="rejected">
-                    {{ __('platform.rejected') }}
+                <button type="button" class="tab-btn" data-tab="rejected">
+                    <i class="fas fa-times-circle"></i> <span class="tab-label">{{ __('platform.rejected') }}</span>
                 </button>
-                <button class="tab-btn" data-tab="archive">
-                    {{ __('platform.archive') }}
+                <button type="button" class="tab-btn" data-tab="archive">
+                    <i class="fas fa-archive"></i> <span class="tab-label">{{ __('platform.archive') }}</span>
                 </button>
             </div>
 
@@ -65,10 +65,9 @@
                         <option value="other">Lainnya / Other</option>
                     </select>
 
-                    <div class="date-range-box">
-                        <input type="date" class="date-input" id="startDate" title="{{ __('platform.from_date') }}">
-                        <span style="color:#94a3b8; font-size:13px;">-</span>
-                        <input type="date" class="date-input" id="endDate" title="{{ __('platform.to_date') }}">
+                    <div class="date-picker-box">
+                        <i class="fas fa-calendar-alt date-picker-icon"></i>
+                        <input type="date" class="date-input" id="filterDate" title="{{ __('platform.filter_by_date') }}">
                     </div>
                 </div>
             </div>

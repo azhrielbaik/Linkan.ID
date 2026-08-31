@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/transactions.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/autocomplete.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
@@ -48,7 +49,7 @@
                     <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
                     <div class="stat-info">
                         <div class="stat-label">{{ __('platform.successful_payments') }}</div>
-                        <div class="stat-val">{{ $totalSuccessCount }} {{ __('platform.all_transactions') }}</div>
+                        <div class="stat-val">{{ $totalSuccessCount }} Transaksi</div>
                         <div class="stat-sub">{{ __('platform.success_status') }}</div>
                     </div>
                 </div>
@@ -57,7 +58,7 @@
                     <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
                     <div class="stat-info">
                         <div class="stat-label">{{ __('platform.pending_payments') }}</div>
-                        <div class="stat-val">{{ $totalPendingCount }} {{ __('platform.all_transactions') }}</div>
+                        <div class="stat-val">{{ $totalPendingCount }} Transaksi</div>
                         <div class="stat-sub">{{ __('platform.pending_status') }}</div>
                     </div>
                 </div>
@@ -66,7 +67,7 @@
                     <div class="stat-icon-wrapper"><i class="fas fa-times-circle"></i></div>
                     <div class="stat-info">
                         <div class="stat-label">{{ __('platform.failed_payments') }}</div>
-                        <div class="stat-val">{{ $totalFailedCount }} {{ __('platform.all_transactions') }}</div>
+                        <div class="stat-val">{{ $totalFailedCount }} Transaksi</div>
                         <div class="stat-sub">{{ __('platform.failed_status') }}</div>
                     </div>
                 </div>
@@ -76,19 +77,19 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'all'])) }}"
                    class="tab-link {{ ($status ?? 'all') === 'all' ? 'active' : '' }}">
-                    {{ __('platform.all_transactions') }} ({{ $totalTransactionsCount }})
+                    <i class="fas fa-receipt"></i> {{ __('platform.all_transactions') }} ({{ $totalTransactionsCount }})
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'success'])) }}"
                    class="tab-link {{ ($status ?? '') === 'success' ? 'active' : '' }}">
-                    {{ __('platform.success_status') }} ({{ $totalSuccessCount }})
+                    <i class="fas fa-check-circle"></i> {{ __('platform.success_status') }} ({{ $totalSuccessCount }})
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'pending'])) }}"
                    class="tab-link {{ ($status ?? '') === 'pending' ? 'active' : '' }}">
-                    {{ __('platform.pending_status') }} ({{ $totalPendingCount }})
+                    <i class="fas fa-clock"></i> {{ __('platform.pending_status') }} ({{ $totalPendingCount }})
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'failed'])) }}"
                    class="tab-link {{ ($status ?? '') === 'failed' ? 'active' : '' }}">
-                    {{ __('platform.failed_status') }} ({{ $totalFailedCount }})
+                    <i class="fas fa-times-circle"></i> {{ __('platform.failed_status') }} ({{ $totalFailedCount }})
                 </a>
             </div>
 
@@ -99,13 +100,13 @@
 
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_transactions_placeholder') }}">
+                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_transactions_placeholder') }}" data-autocomplete-type="transactions" data-suggest-url="{{ route('platform-admin.logs.transactions.suggest') }}" list="autocomplete-transactions">
+                        <datalist id="autocomplete-transactions"></datalist>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.from_date') }}">
-                        <span style="color: #94a3b8;">-</span>
-                        <input type="date" name="end_date" value="{{ $endDate ?? '' }}" class="date-input" title="{{ __('platform.to_date') }}">
+                    <div class="date-picker-box">
+                        <i class="fas fa-calendar-alt date-picker-icon"></i>
+                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.filter_by_date') }}">
                     </div>
 
                     <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
@@ -203,6 +204,7 @@
     </div>
 
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/search-autocomplete.js') }}"></script>
     <script src="{{ asset('js/platform/transactions.js') }}"></script>
 </body>
 </html>

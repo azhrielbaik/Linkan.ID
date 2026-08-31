@@ -58,24 +58,26 @@ class LogController extends Controller
         }
 
         // Filter Tanggal
-        if ($startDate = $request->input('start_date')) {
-            $query->whereDate('created_at', '>=', $startDate);
-        }
-        if ($endDate = $request->input('end_date')) {
-            $query->whereDate('created_at', '<=', $endDate);
+        if ($startDate = $request->input('start_date') ?: $request->input('date')) {
+            if ($endDate = $request->input('end_date')) {
+                $query->whereDate('created_at', '>=', $startDate)
+                      ->whereDate('created_at', '<=', $endDate);
+            } else {
+                $query->whereDate('created_at', $startDate);
+            }
         }
 
         $logs = $query->paginate(20)->withQueryString();
 
         // Stats
-        $totalLogsCount = ActivityLog::count();
+        $totalLogsCount   = ActivityLog::count();
         $adminActionCount = ActivityLog::whereIn('action', [
             'suspend_user', 'activate_user',
             'approve_product', 'reject_product',
             'approve_payout', 'reject_payout',
             'update_platform_settings', 'create_broadcast', 'delete_broadcast'
         ])->count();
-        $authActionCount = ActivityLog::whereIn('action', [
+        $authActionCount  = ActivityLog::whereIn('action', [
             'user_register', 'user_login', 'user_logout',
             'password_reset_otp_sent', 'password_reset_success'
         ])->count();
@@ -84,11 +86,13 @@ class LogController extends Controller
             'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
         ])->count();
 
+        $endDate = $request->input('end_date') ?? '';
+
         return view('platformadmin.logs.activity', compact(
             'logs',
-            'search',
-            'action',
             'category',
+            'action',
+            'search',
             'startDate',
             'endDate',
             'totalLogsCount',
@@ -128,11 +132,14 @@ class LogController extends Controller
         }
 
         // Filter Tanggal
-        if ($startDate = $request->input('start_date')) {
-            $query->whereDate('created_at', '>=', $startDate);
-        }
-        if ($endDate = $request->input('end_date')) {
-            $query->whereDate('created_at', '<=', $endDate);
+        $endDate = $request->input('end_date') ?? '';
+        if ($startDate = $request->input('start_date') ?: $request->input('date')) {
+            if ($endDate) {
+                $query->whereDate('created_at', '>=', $startDate)
+                      ->whereDate('created_at', '<=', $endDate);
+            } else {
+                $query->whereDate('created_at', $startDate);
+            }
         }
 
         $transactions = $query->paginate(15)->withQueryString();
@@ -156,5 +163,156 @@ class LogController extends Controller
             'totalFailedCount',
             'totalTransactionsCount'
         ));
+    }
+
+    /**
+     * Endpoint autocomplete suggestion untuk Log Aktivitas Admin.
+     */
+    public function activitySuggest(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+        if (empty($q)) {
+            return response()->json([]);
+        }
+
+        // Ambil data yang relevan dari deskripsi, action, IP, atau user
+        $logs = ActivityLog::with('user')
+            ->where(function ($query) use ($q) {
+                $query->where('description', 'like', "%{$q}%")
+                      ->orWhere('action', 'like', "%{$q}%")
+                      ->orWhere('ip_address', 'like', "%{$q}%")
+                      ->orWhereHas('user', function ($uq) use ($q) {
+                          $uq->where('name', 'like', "%{$q}%")
+                             ->orWhere('email', 'like', "%{$q}%")
+                             ->orWhere('username', 'like', "%{$q}%");
+                      });
+            })
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $suggestions = collect();
+
+        foreach ($logs as $log) {
+            // Saran dari User
+            if ($log->user) {
+                if (stripos($log->user->name, $q) !== false) {
+                    $suggestions->push([
+                        'label' => $log->user->name . ' (User)',
+                        'value' => $log->user->name
+                    ]);
+                }
+                if (stripos($log->user->email, $q) !== false) {
+                    $suggestions->push([
+                        'label' => $log->user->email . ' (Email)',
+                        'value' => $log->user->email
+                    ]);
+                }
+            }
+
+            // Saran dari Deskripsi
+            if ($log->description && stripos($log->description, $q) !== false) {
+                $descExcerpt = mb_strimwidth($log->description, 0, 50, '...');
+                $suggestions->push([
+                    'label' => $descExcerpt,
+                    'value' => $log->description
+                ]);
+            }
+
+            // Saran dari IP Address
+            if ($log->ip_address && stripos($log->ip_address, $q) !== false) {
+                $suggestions->push([
+                    'label' => $log->ip_address . ' (IP Address)',
+                    'value' => $log->ip_address
+                ]);
+            }
+
+            // Saran dari Action
+            if ($log->action && stripos($log->action, $q) !== false) {
+                $suggestions->push([
+                    'label' => $log->action . ' (Action)',
+                    'value' => $log->action
+                ]);
+            }
+        }
+
+        // Ambil unique berdasarkan value dan batasi maksimal 5 item
+        $uniqueSuggestions = $suggestions->unique('value')->values()->take(5);
+
+        return response()->json($uniqueSuggestions);
+    }
+
+    /**
+     * Endpoint autocomplete suggestion untuk Log Transaksi Global.
+     */
+    public function transactionSuggest(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+        if (empty($q)) {
+            return response()->json([]);
+        }
+
+        $transactions = Transaction::with(['product.user'])
+            ->where(function ($query) use ($q) {
+                $query->where('order_id', 'like', "%{$q}%")
+                      ->orWhere('buyer_name', 'like', "%{$q}%")
+                      ->orWhere('buyer_email', 'like', "%{$q}%")
+                      ->orWhereHas('product', function ($pq) use ($q) {
+                          $pq->where('title', 'like', "%{$q}%")
+                             ->orWhereHas('user', function ($uq) use ($q) {
+                                 $uq->where('name', 'like', "%{$q}%")
+                                    ->orWhere('email', 'like', "%{$q}%");
+                             });
+                      });
+            })
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $suggestions = collect();
+
+        foreach ($transactions as $tx) {
+            // Order ID
+            if ($tx->order_id && stripos($tx->order_id, $q) !== false) {
+                $suggestions->push([
+                    'label' => $tx->order_id . ' (Order ID)',
+                    'value' => $tx->order_id
+                ]);
+            }
+
+            // Buyer Name / Email
+            if ($tx->buyer_name && stripos($tx->buyer_name, $q) !== false) {
+                $suggestions->push([
+                    'label' => $tx->buyer_name . ' (Pembeli)',
+                    'value' => $tx->buyer_name
+                ]);
+            }
+            if ($tx->buyer_email && stripos($tx->buyer_email, $q) !== false) {
+                $suggestions->push([
+                    'label' => $tx->buyer_email . ' (Email Pembeli)',
+                    'value' => $tx->buyer_email
+                ]);
+            }
+
+            // Product Title
+            if ($tx->product && $tx->product->title && stripos($tx->product->title, $q) !== false) {
+                $suggestions->push([
+                    'label' => $tx->product->title . ' (Produk)',
+                    'value' => $tx->product->title
+                ]);
+            }
+
+            // Seller Name
+            if ($tx->product && $tx->product->user && stripos($tx->product->user->name, $q) !== false) {
+                $suggestions->push([
+                    'label' => $tx->product->user->name . ' (Seller)',
+                    'value' => $tx->product->user->name
+                ]);
+            }
+        }
+
+        $uniqueSuggestions = $suggestions->unique('value')->values()->take(5);
+
+        return response()->json($uniqueSuggestions);
     }
 }

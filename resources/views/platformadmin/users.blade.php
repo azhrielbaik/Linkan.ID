@@ -73,27 +73,32 @@
                 </div>
 
                 {{-- Toolbar --}}
-                <div class="toolbar">
-                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form">
+                <div class="toolbar" style="display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap;">
+                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto;">
                         <input type="hidden" name="view" value="users">
+                        @if($filter && $filter !== 'all')
+                            <input type="hidden" name="filter" value="{{ $filter }}">
+                        @endif
                         <div class="search-wrap">
                             <i class="fas fa-search"></i>
-                            <input type="text" name="search"
-                                   placeholder="{{ __('platform.search_user_placeholder') }}"
-                                   value="{{ $search ?? '' }}">
+                            <input type="text" name="search" placeholder="{{ __('platform.search_user_placeholder') }}" value="{{ $search ?? '' }}" data-autocomplete-type="users" data-suggest-url="{{ route('platform-admin.users.suggest') }}" list="autocomplete-users">
+                            <datalist id="autocomplete-users"></datalist>
                         </div>
-                        <button type="submit" class="btn-search">
-                            <i class="fas fa-search"></i> {{ __('platform.search') }}
-                        </button>
                     </form>
 
                     <div class="filter-tabs">
                         <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'all', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? 'all') === 'all' ? 'active' : '' }}">{{ __('platform.all') }}</a>
+                           class="filter-tab {{ ($filter ?? 'all') === 'all' ? 'active' : '' }}">
+                            <i class="fas fa-users"></i> {{ __('platform.all') }}
+                        </a>
                         <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'active', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? '') === 'active' ? 'active' : '' }}">{{ __('platform.active') }}</a>
+                           class="filter-tab {{ ($filter ?? '') === 'active' ? 'active' : '' }}">
+                            <i class="fas fa-user-check"></i> {{ __('platform.active') }}
+                        </a>
                         <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'suspended', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? '') === 'suspended' ? 'active' : '' }}">{{ __('platform.suspended') }}</a>
+                           class="filter-tab {{ ($filter ?? '') === 'suspended' ? 'active' : '' }}">
+                            <i class="fas fa-user-slash"></i> {{ __('platform.suspended') }}
+                        </a>
                     </div>
                 </div>
 

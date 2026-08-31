@@ -249,6 +249,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Manajemen User & Banding Suspend
     Route::get('/users', [PlatformAdminController::class, 'users'])->name('users');
+    Route::get('/users/suggest', [PlatformAdminController::class, 'userSuggest'])->name('users.suggest');
     Route::get('/users/appeals', [PlatformAdminController::class, 'appeals'])->name('users.appeals');
     Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
     Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->name('users.suspend');
@@ -276,7 +277,9 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Log & Audit
     Route::get('/logs/activity', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activityLogs'])->name('logs.activity');
+    Route::get('/logs/activity/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activitySuggest'])->name('logs.activity.suggest');
     Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
+    Route::get('/logs/transactions/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionSuggest'])->name('logs.transactions.suggest');
 
     // Pengaturan Platform & Broadcast
     Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');

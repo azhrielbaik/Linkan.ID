@@ -88,19 +88,19 @@
             <div class="p-tickets-filters">
                 <div class="p-ticket-tabs">
                     <a href="{{ route('platform-admin.tickets.index') }}" class="p-ticket-tab {{ empty($status) ? 'active' : '' }}">
-                        {{ __('platform.all_tickets') }} ({{ $totalCount }})
+                        <i class="fas fa-inbox"></i> {{ __('platform.all_tickets') }} ({{ $totalCount }})
                     </a>
                     <a href="{{ route('platform-admin.tickets.index', ['status' => 'open']) }}" class="p-ticket-tab {{ $status === 'open' ? 'active' : '' }}">
-                        {{ __('platform.waiting_tickets') }} ({{ $openCount }})
+                        <i class="fas fa-envelope-open-text"></i> {{ __('platform.waiting_tickets') }} ({{ $openCount }})
                     </a>
                     <a href="{{ route('platform-admin.tickets.index', ['status' => 'in_progress']) }}" class="p-ticket-tab {{ $status === 'in_progress' ? 'active' : '' }}">
-                        {{ __('platform.in_process_tickets') }} ({{ $inProgressCount }})
+                        <i class="fas fa-spinner"></i> {{ __('platform.in_process_tickets') }} ({{ $inProgressCount }})
                     </a>
                     <a href="{{ route('platform-admin.tickets.index', ['status' => 'resolved']) }}" class="p-ticket-tab {{ $status === 'resolved' ? 'active' : '' }}">
-                        {{ __('platform.status_resolved') }} ({{ $resolvedCount }})
+                        <i class="fas fa-check-double"></i> {{ __('platform.status_resolved') }} ({{ $resolvedCount }})
                     </a>
                     <a href="{{ route('platform-admin.tickets.index', ['status' => 'closed']) }}" class="p-ticket-tab {{ $status === 'closed' ? 'active' : '' }}">
-                        {{ __('platform.closed_tickets') }} ({{ $closedCount }})
+                        <i class="fas fa-archive"></i> {{ __('platform.closed_tickets') }} ({{ $closedCount }})
                     </a>
                 </div>
 
@@ -125,7 +125,10 @@
                         <option value="general" {{ $category === 'general' ? 'selected' : '' }}>{{ __('platform.cat_general') }}</option>
                     </select>
 
-                    <input type="text" name="search" class="p-filter-search" placeholder="{{ __('platform.search_ticket_placeholder') }}" value="{{ $search }}">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" class="p-filter-search" placeholder="{{ __('platform.search_ticket_placeholder') }}" value="{{ $search }}">
+                    </div>
                     <button type="submit" style="display: none;"></button>
                 </form>
             </div>
