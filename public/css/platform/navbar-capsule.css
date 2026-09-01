@@ -136,3 +136,14 @@ html[data-theme="dark"] .nav-capsule-separator,
 body.dark-mode .nav-capsule-separator {
     background: rgba(255, 255, 255, 0.12);
 }
+
+/* =========================================================
+   MOBILE RESPONSIVE — NAVBAR CAPSULE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    /* Di mobile, sembunyikan navbar capsule (navigasi via sidebar) */
+    .platform-navbar-capsule {
+        display: none;
+    }
+}

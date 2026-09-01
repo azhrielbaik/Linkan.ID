@@ -60,6 +60,7 @@ function openSellerModal(userId) {
             const s = data.stats;
             const products = data.recent_products || [];
             const payouts = data.recent_payouts || [];
+            const appeals = data.appeals_history || [];
 
             let avatarHtml = u.avatar 
                 ? `<img src="${u.avatar}" alt="${u.name}">` 
@@ -123,13 +124,16 @@ function openSellerModal(userId) {
                     </div>
                 </div>
 
-                <!-- Modal Tabs (Products & Payouts) -->
+                <!-- Modal Tabs (Products, Payouts & Appeals) -->
                 <div class="modal-tabs">
                     <button type="button" class="modal-tab-btn active" onclick="switchModalTab('tabProducts')">
                         <i class="fas fa-box"></i> ${lang.products_tab || 'Produk'} (${products.length})
                     </button>
                     <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabPayouts')">
                         <i class="fas fa-money-bill-wave"></i> ${lang.payouts_tab || 'Riwayat Payout'} (${payouts.length})
+                    </button>
+                    <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabAppeals')">
+                        <i class="fas fa-file-contract"></i> Riwayat Banding ${appeals.length > 0 ? `<span style="background:#fff0e2;color:#ED842C;font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:4px;">${appeals.length}</span>` : ''}
                     </button>
                 </div>
 
@@ -200,6 +204,41 @@ function openSellerModal(userId) {
                         </table>
                     ` : `<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 13px;">${lang.no_payouts || 'Belum ada riwayat penarikan dana.'}</div>`}
                 </div>
+
+                <!-- Tab 3: Riwayat Banding -->
+                <div id="tabAppeals" class="modal-tab-content">
+                    ${appeals.length > 0 ? `
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            ${appeals.map((a, i) => {
+                                const statusConfig = {
+                                    approved: { cls: 'badge-active',    icon: 'fa-check-circle',  label: 'Disetujui',   border: '#16a34a' },
+                                    rejected: { cls: 'badge-suspended', icon: 'fa-times-circle', label: 'Ditolak',     border: '#dc2626' },
+                                    pending:  { cls: 'badge-pending',   icon: 'fa-clock',        label: 'Menunggu',    border: '#d97706' },
+                                };
+                                const cfg = statusConfig[a.status] || statusConfig.pending;
+                                const attemptNum = appeals.length - i;
+                                return `
+                                    <div style="border: 1px solid #f1f5f9; border-left: 4px solid ${cfg.border}; border-radius: 10px; padding: 14px 16px; background: #fafafa;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="font-size: 11px; font-weight: 800; background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 20px;">Percobaan #${attemptNum}</span>
+                                                <span class="badge ${cfg.cls}" style="font-size: 10px;"><i class="fas ${cfg.icon}"></i> ${cfg.label}</span>
+                                            </div>
+                                            <span style="font-size: 11px; color: #94a3b8;"><i class="fas fa-clock"></i> ${a.submitted_at}</span>
+                                        </div>
+                                        <div style="font-size: 13px; color: #334155; line-height: 1.55; margin-bottom: ${a.admin_notes ? '10px' : '0'}">${a.appeal_reason}</div>
+                                        ${a.admin_notes ? `
+                                            <div style="font-size: 11px; color: #64748b; background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #ED842C; border-radius: 6px; padding: 8px 12px; margin-top: 8px;">
+                                                <strong>Catatan Admin:</strong> ${a.admin_notes}
+                                                ${a.resolved_at ? `<span style="float:right;color:#94a3b8;">${a.resolved_at}</span>` : ''}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : `<div style="text-align: center; padding: 28px 20px; color: #94a3b8; font-size: 13px;"><i class="fas fa-file-contract" style="font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.4;"></i>Belum ada riwayat permohonan banding.</div>`}
+                </div>
             `;
 
             modalBody.innerHTML = html;
@@ -262,3 +301,140 @@ function confirmApproveAppeal(form, userName) {
     }
 }
 
+// ── Appeal Detail Modal ──────────────────────────────────────────────────────
+
+let _currentAppealData = null;
+
+function openAppealDetailModal(appeal) {
+    _currentAppealData = appeal;
+    const modal  = document.getElementById('appealDetailModal');
+    const body   = document.getElementById('appealDetailBody');
+    const footer = document.getElementById('appealDetailFooter');
+    if (!modal || !body || !footer) return;
+
+    body.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: #f8fafc; border-radius: 12px; padding: 16px; border: 1px solid #f1f5f9; display: flex; align-items: center; gap: 14px;">
+                <div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #ED842C, #f59e0b); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 16px; flex-shrink: 0;">
+                    ${appeal.user_name.substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 15px; color: #1e293b;">${appeal.user_name}</div>
+                    <div style="font-size: 12px; color: #64748b;">${appeal.user_email}</div>
+                </div>
+                <div style="margin-left: auto;">
+                    <span style="font-size: 11px; font-weight: 800; background: #fff0e2; color: #ED842C; padding: 3px 10px; border-radius: 20px;">Percobaan Ke-${appeal.attempt}/3</span>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #64748b;">
+                <i class="fas fa-clock" style="color: #ED842C;"></i> Diajukan: <strong>${appeal.submitted_at}</strong>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <i class="fas fa-comment-alt" style="color: #ED842C;"></i> Alasan Banding
+                </div>
+                <div style="background: #fff; border: 1px solid #e2e8f0; border-left: 4px solid #ED842C; border-radius: 8px; padding: 14px 16px; font-size: 14px; color: #1e293b; line-height: 1.6;">
+                    ${appeal.appeal_reason}
+                </div>
+            </div>
+            <div id="rejectNotesSection" style="display: none;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <i class="fas fa-pen" style="color: #dc2626;"></i> Catatan Penolakan
+                </div>
+                <textarea id="appealRejectNotes" rows="3" class="form-control" placeholder="Tuliskan catatan alasan penolakan banding..." style="width: 100%; resize: vertical;"></textarea>
+            </div>
+        </div>
+    `;
+
+    footer.innerHTML = `
+        <button type="button" class="btn-modal-cancel" onclick="closeAppealDetailModal()">Tutup</button>
+        <button type="button" class="btn-action btn-reject" id="btnShowReject" onclick="showAppealRejectSection()">
+            <i class="fas fa-times"></i> Tolak Banding
+        </button>
+        <button type="button" class="btn-action btn-approve" id="btnApprove" onclick="submitApproveAppeal()">
+            <i class="fas fa-check"></i> Setujui Banding
+        </button>
+    `;
+
+    modal.classList.add('show');
+}
+
+function showAppealRejectSection() {
+    const section       = document.getElementById('rejectNotesSection');
+    const btnShowReject = document.getElementById('btnShowReject');
+    const btnApprove    = document.getElementById('btnApprove');
+    const footer        = document.getElementById('appealDetailFooter');
+    if (!section) return;
+
+    section.style.display = 'block';
+    if (btnShowReject) btnShowReject.style.display = 'none';
+    if (btnApprove)    btnApprove.style.display    = 'none';
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'btn-modal-submit-danger';
+    confirmBtn.innerHTML = '<i class="fas fa-times"></i> Konfirmasi Tolak';
+    confirmBtn.onclick = submitRejectAppeal;
+    footer.appendChild(confirmBtn);
+}
+
+function submitApproveAppeal() {
+    if (!_currentAppealData) return;
+    const userName = _currentAppealData.user_name;
+    const url      = _currentAppealData.approve_url;
+
+    if (typeof showConfirmModal === 'function') {
+        showConfirmModal({
+            title: 'Setujui Permohonan Banding?',
+            text: `Permohonan banding dari ${userName} akan disetujui, dan status suspend akun akan langsung dipulihkan.`,
+            icon: 'question',
+            confirmText: '<i class="fas fa-check"></i> Ya, Setujui & Pulihkan',
+            onConfirm: () => { _postAppealAction(url, {}); }
+        });
+    } else {
+        if (confirm(`Setujui banding dari ${userName}?`)) {
+            _postAppealAction(url, {});
+        }
+    }
+}
+
+function submitRejectAppeal() {
+    if (!_currentAppealData) return;
+    const notes = (document.getElementById('appealRejectNotes') || {}).value || '';
+    if (!notes.trim()) {
+        alert('Catatan penolakan wajib diisi.');
+        return;
+    }
+    _postAppealAction(_currentAppealData.reject_url, { admin_notes: notes });
+}
+
+function _postAppealAction(url, extraData) {
+    const csrfToken = (window.PlatformUsersConfig && window.PlatformUsersConfig.csrfToken) || '';
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.style.display = 'none';
+
+    const csrf = document.createElement('input');
+    csrf.type  = 'hidden';
+    csrf.name  = '_token';
+    csrf.value = csrfToken;
+    form.appendChild(csrf);
+
+    for (const [key, val] of Object.entries(extraData)) {
+        const input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = key;
+        input.value = val;
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function closeAppealDetailModal() {
+    const modal = document.getElementById('appealDetailModal');
+    if (modal) modal.classList.remove('show');
+    _currentAppealData = null;
+}

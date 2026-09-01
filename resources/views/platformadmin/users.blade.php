@@ -31,23 +31,7 @@
         </div>
 
         <div class="content-wrapper">
-            {{-- View Switcher Tabs --}}
-            <div class="view-switcher">
-                <a href="{{ route('platform-admin.users', ['view' => 'users']) }}"
-                   class="view-tab-link {{ $viewType === 'users' ? 'active' : '' }}">
-                    <i class="fas fa-users"></i> {{ __('platform.user_management') }}
-                </a>
-                <a href="{{ route('platform-admin.users', ['view' => 'appeals']) }}"
-                   class="view-tab-link {{ $viewType === 'appeals' ? 'active' : '' }}">
-                    <i class="fas fa-file-contract"></i> {{ __('platform.seller_appeals') }}
-                    @if($pendingAppealsCount > 0)
-                        <span class="tab-counter">{{ $pendingAppealsCount }}</span>
-                    @endif
-                </a>
-            </div>
-
-            @if($viewType === 'users')
-                {{-- Stats Row --}}
+            {{-- Stats Row --}}
                 <div class="stats-row">
                     <div class="stat-card total">
                         <div class="stat-icon-wrap"><i class="fas fa-users"></i></div>
@@ -203,6 +187,24 @@
                                                 <i class="fas fa-ban"></i> {{ __('platform.suspend') }}
                                             </button>
                                         @endif
+
+                                        {{-- Tombol Detail Banding (hanya jika ada banding pending) --}}
+                                        @php $pendingAppeal = $user->suspensionAppeals->first(); @endphp
+                                        @if ($pendingAppeal)
+                                            <button type="button" class="btn-action btn-appeal"
+                                                    onclick="openAppealDetailModal({{ json_encode([
+                                                        'id'            => $pendingAppeal->id,
+                                                        'user_name'     => $user->name,
+                                                        'user_email'    => \App\Models\ActivityLog::maskEmail($user->email),
+                                                        'appeal_reason' => $pendingAppeal->appeal_reason,
+                                                        'submitted_at'  => $pendingAppeal->created_at->format('d M Y, H:i'),
+                                                        'attempt'       => \App\Models\SuspensionAppeal::where('user_id', $user->id)->where('id', '<=', $pendingAppeal->id)->count(),
+                                                        'approve_url'   => route('platform-admin.users.appeals.approve', $pendingAppeal->id),
+                                                        'reject_url'    => route('platform-admin.users.appeals.reject', $pendingAppeal->id),
+                                                    ]) }})">
+                                                <i class="fas fa-file-contract"></i> Detail Banding
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -223,114 +225,7 @@
                     @endif
                 </div>
 
-            @elseif($viewType === 'appeals')
-                {{-- Appeals View --}}
-                <div class="table-card">
-                    @if ($appeals->count() > 0)
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Seller</th>
-                                <th>{{ __('platform.appeal_reason') }}</th>
-                                <th>{{ __('platform.time') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th>{{ __('platform.action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($appeals as $i => $appeal)
-                            <tr>
-                                <td style="color:#94a3b8; font-weight:600; font-size:13px;">
-                                    {{ $appeals->firstItem() + $i }}
-                                </td>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-avatar">
-                                            @if ($appeal->user && $appeal->user->avatar)
-                                                <img src="{{ Str::startsWith($appeal->user->avatar, ['http://', 'https://']) ? $appeal->user->avatar : asset('storage/' . $appeal->user->avatar) }}" alt="{{ $appeal->user->name }}">
-                                            @else
-                                                {{ strtoupper(substr($appeal->user->name ?? 'User', 0, 2)) }}
-                                            @endif
-                                        </div>
-                                        <div>
-                                            @php
-                                                $userAppealAttempt = \App\Models\SuspensionAppeal::where('user_id', $appeal->user_id)
-                                                    ->where('id', '<=', $appeal->id)
-                                                    ->count();
-                                            @endphp
-                                            <div class="user-name" style="display: flex; align-items: center; gap: 6px;">
-                                                <span>{{ $appeal->user->name ?? 'User Telah Dihapus' }}</span>
-                                                <span style="font-size: 10px; font-weight: 800; background: #fff0e2; color: #ED842C; padding: 1px 6px; border-radius: 4px;">Ke-{{ $userAppealAttempt }}/3</span>
-                                            </div>
-                                            <div class="user-email">{{ \App\Models\ActivityLog::maskEmail($appeal->user->email ?? null) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div style="font-size: 13px; color: #1e293b; line-height: 1.4; max-width: 380px;">
-                                        {{ $appeal->appeal_reason }}
-                                    </div>
-                                    @if($appeal->admin_notes)
-                                        <div style="font-size: 11px; color: #64748b; margin-top: 6px; background: #f8fafc; padding: 4px 8px; border-radius: 6px; border-left: 3px solid #ED842C;">
-                                            <strong>{{ __('platform.admin_notes') }}:</strong> {{ $appeal->admin_notes }}
-                                        </div>
-                                    @endif
-                                </td>
-                                <td style="color:#64748b; font-size:12px; white-space: nowrap;">
-                                    {{ $appeal->created_at->format('d M Y, H:i') }}
-                                </td>
-                                <td>
-                                    @if($appeal->status === 'approved')
-                                        <span class="badge badge-active">
-                                            <i class="fas fa-check-circle"></i> {{ __('platform.appeal_approved') }}
-                                        </span>
-                                    @elseif($appeal->status === 'rejected')
-                                        <span class="badge badge-suspended">
-                                            <i class="fas fa-times-circle"></i> {{ __('platform.appeal_rejected') }}
-                                        </span>
-                                    @else
-                                        <span class="badge badge-pending">
-                                            <i class="fas fa-clock"></i> {{ __('platform.pending_review') }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($appeal->status === 'pending')
-                                        <div class="action-group">
-                                            <form action="{{ route('platform-admin.users.appeals.approve', $appeal->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <button type="button" class="btn-action btn-approve" onclick="confirmApproveAppeal(this.form, '{{ addslashes($appeal->user->name ?? 'Seller') }}')">
-                                                    <i class="fas fa-check"></i> {{ __('platform.approve_appeal') }}
-                                                </button>
-                                            </form>
-                                            <button type="button" class="btn-action btn-reject" onclick="openRejectAppealModal({{ $appeal->id }}, '{{ addslashes($appeal->user->name ?? 'Seller') }}')">
-                                                <i class="fas fa-times"></i> {{ __('platform.reject_appeal') }}
-                                            </button>
-                                        </div>
-                                    @else
-                                        <span style="font-size: 12px; color: #94a3b8; font-weight: 600;">Selesai Ditinjau</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
 
-                    @if ($appeals->hasPages())
-                        <div class="pagination-wrap">
-                            {{ $appeals->links() }}
-                        </div>
-                    @endif
-                    @else
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>{{ __('platform.no_appeals_found') }}</p>
-                    </div>
-                    @endif
-                </div>
-
-            @endif
 
         </div>
     </div>
@@ -413,6 +308,22 @@
                     <button type="submit" class="btn-modal-submit-danger"><i class="fas fa-times"></i> {{ __('platform.reject_appeal') }}</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Detail Permohonan Banding Seller -->
+    <div id="appealDetailModal" class="modal">
+        <div class="modal-container modal-container-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-contract" style="color: #ED842C;"></i> Detail Permohonan Banding</h3>
+                <button type="button" class="modal-close" onclick="closeAppealDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="appealDetailBody">
+                {{-- Filled by JS --}}
+            </div>
+            <div class="modal-footer" id="appealDetailFooter">
+                <button type="button" class="btn-modal-cancel" onclick="closeAppealDetailModal()">{{ __('platform.close') }}</button>
+            </div>
         </div>
     </div>
 

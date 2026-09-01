@@ -403,7 +403,9 @@ class PlatformAdminController extends Controller
     {
         $viewType = $request->input('view', 'users'); // 'users', 'appeals', or 'reset_requests'
 
-        $query = User::query()->where('role', '!=', 'admin_platform');
+        $query = User::with(['suspensionAppeals' => function ($q) {
+            $q->where('status', 'pending')->latest()->limit(1);
+        }])->where('role', '!=', 'admin_platform');
 
         // Search by name or email
         if ($search = $request->input('search')) {
@@ -472,8 +474,6 @@ class PlatformAdminController extends Controller
             'search',
             'startDate',
             'endDate',
-            'viewType',
-            'appeals',
             'pendingAppealsCount'
         ));
     }
@@ -743,6 +743,23 @@ class PlatformAdminController extends Controller
                 ->take(5)
                 ->get();
 
+            // Riwayat Permohonan Banding (semua)
+            $appealsHistory = \App\Models\SuspensionAppeal::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($a, $index) use ($user) {
+                    return [
+                        'id'            => $a->id,
+                        'attempt'       => $index + 1,
+                        'appeal_reason' => $a->appeal_reason,
+                        'status'        => $a->status,
+                        'admin_notes'   => $a->admin_notes,
+                        'submitted_at'  => $a->created_at->format('d M Y, H:i'),
+                        'resolved_at'   => $a->resolved_at ? $a->resolved_at->format('d M Y, H:i') : null,
+                    ];
+                })
+                ->values();
+
             $avatarUrl = null;
             if ($user->avatar) {
                 $avatarUrl = \Illuminate\Support\Str::startsWith($user->avatar, ['http://', 'https://'])
@@ -777,8 +794,9 @@ class PlatformAdminController extends Controller
                     'pending_withdraw'  => $pendingWithdraw,
                     'current_balance'   => $currentBalance,
                 ],
-                'recent_products' => $recentProducts,
-                'recent_payouts'  => $recentPayouts,
+                'recent_products'  => $recentProducts,
+                'recent_payouts'   => $recentPayouts,
+                'appeals_history'  => $appealsHistory,
             ]);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error loading seller detail: ' . $e->getMessage());

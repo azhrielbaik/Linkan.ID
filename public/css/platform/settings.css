@@ -460,8 +460,18 @@ tbody td {
 
 @media (max-width: 900px) {
     .platform-main { margin-left: 0 !important; }
-    .hamburger-btn { display: block; }
-    .platform-header { padding: 14px 20px; }
-    .content-wrapper { padding: 20px 16px; }
+    .hamburger-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .platform-header { padding: 12px 16px; }
+    .content-wrapper { padding: 16px 14px; }
     .broadcast-form-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+    .platform-header { padding: 10px 12px; }
+    .platform-header h1 { font-size: 17px; }
+    .content-wrapper { padding: 12px 10px; }
 }

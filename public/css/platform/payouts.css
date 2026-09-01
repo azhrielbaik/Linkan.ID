@@ -835,19 +835,22 @@ nav[role="navigation"] a:hover {
     }
 
     .hamburger-btn {
-        display: block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .platform-header {
-        padding: 14px 20px;
+        padding: 12px 16px;
     }
 
     .content-wrapper {
-        padding: 20px 16px;
+        padding: 16px 14px;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
     .filter-card {
@@ -860,3 +863,37 @@ nav[role="navigation"] a:hover {
         align-items: stretch;
     }
 }
+
+@media (max-width: 600px) {
+    .platform-header {
+        padding: 10px 12px;
+    }
+
+    .platform-header h1 {
+        font-size: 17px;
+    }
+
+    .content-wrapper {
+        padding: 12px 10px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .stat-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+
+    .stat-info .stat-val {
+        font-size: 18px;
+    }
+}
