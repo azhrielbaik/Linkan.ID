@@ -58,8 +58,10 @@ class LogController extends Controller
         }
 
         // Filter Tanggal
-        if ($startDate = $request->input('start_date') ?: $request->input('date')) {
-            if ($endDate = $request->input('end_date')) {
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+        if ($startDate) {
+            if ($endDate) {
                 $query->whereDate('created_at', '>=', $startDate)
                       ->whereDate('created_at', '<=', $endDate);
             } else {
@@ -85,8 +87,6 @@ class LogController extends Controller
             'create_product', 'update_product', 'delete_product',
             'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
         ])->count();
-
-        $endDate = $request->input('end_date') ?? '';
 
         return view('platformadmin.logs.activity', compact(
             'logs',
@@ -132,8 +132,9 @@ class LogController extends Controller
         }
 
         // Filter Tanggal
-        $endDate = $request->input('end_date') ?? '';
-        if ($startDate = $request->input('start_date') ?: $request->input('date')) {
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+        if ($startDate) {
             if ($endDate) {
                 $query->whereDate('created_at', '>=', $startDate)
                       ->whereDate('created_at', '<=', $endDate);

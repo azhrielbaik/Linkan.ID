@@ -43,8 +43,11 @@ class PayoutManagementController extends Controller
         }
 
         // Filter Tanggal
-        if ($startDate = $request->input('start_date') ?: $request->input('date')) {
-            if ($endDate = $request->input('end_date')) {
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+
+        if ($startDate) {
+            if ($endDate) {
                 $query->whereDate('created_at', '>=', $startDate)
                       ->whereDate('created_at', '<=', $endDate);
             } else {
