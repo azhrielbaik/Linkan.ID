@@ -1,14 +1,9 @@
 /* ==========================================================================
-   LINKAN.ID — MODERN SINGLE CAPSULE DATE PICKER (PLATFORM ADMIN)
-   
-   Features:
-   1. Clean Single Capsule Container (rounded-full / rounded-2xl).
-   2. Integrated Accent Calendar Icon & borderless, shadowless inner input.
-   3. Absolutely NO inner box/outline when clicked.
-   4. Smooth hover/focus ring on capsule container and Dark Mode support.
+   LINKAN.ID — COMPACT & SLEEK DATE RANGE PICKER (PLATFORM ADMIN)
+   Pixel-perfect clean calendar popup with seamless range selection
    ========================================================================== */
 
-/* 1. Single Date Picker Capsule Container */
+/* 1. Date Range Trigger Capsule Container */
 .date-picker-box,
 .date-range-box,
 .date-range-container,
@@ -17,127 +12,523 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    min-height: 40px;
-    height: 40px;
-    padding: 3px 14px 3px 14px;
+    min-height: 38px;
+    height: 38px;
+    padding: 0 14px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 9999px; /* rounded-full / capsule */
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    border-radius: 9999px; /* Capsule */
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    cursor: pointer;
     user-select: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
 }
 
 .date-picker-box:hover,
 .date-range-box:hover,
-.date-range-container:hover,
-.date-picker-wrap:hover {
+.date-range-container:hover {
     border-color: #cbd5e1;
+    background-color: #f8fafc;
 }
 
+.date-picker-box.is-active,
 .date-picker-box:focus-within,
-.date-range-box:focus-within,
-.date-range-container:focus-within,
-.date-picker-wrap:focus-within {
-    border-color: var(--p-primary, #ed842c);
-    box-shadow: 0 4px 14px rgba(237, 132, 44, 0.12), 0 0 0 3px rgba(237, 132, 44, 0.08);
+.date-range-box.is-active,
+.date-range-box:focus-within {
+    border-color: var(--p-primary, #0084ff);
+    box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.12);
+    background-color: #ffffff;
 }
 
 /* Leading Calendar Icon */
-.date-range-icon,
 .date-picker-icon,
+.date-range-icon,
 .date-picker-box > i.fa-calendar-alt,
 .date-range-box > i.fa-calendar-alt {
-    color: var(--p-primary, #ed842c);
+    color: var(--p-primary, #0084ff);
     font-size: 13px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.date-picker-box:hover .date-picker-icon {
+    transform: scale(1.08);
+}
+
+/* Display Value in Capsule */
+.date-range-display,
+.date-picker-display {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 120px;
+    line-height: 1;
+}
+
+.date-range-display.is-placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Reset / Clear Button on Capsule */
+.date-range-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    margin-left: 2px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    border: none;
+    cursor: pointer;
+    font-size: 9.5px;
+    transition: all 0.2s ease;
+    padding: 0;
     flex-shrink: 0;
 }
 
-/* 2. Inner Date Input (Completely Borderless & No Inner Box/Shadow) */
-.date-input,
-input[type="date"].date-input,
-.date-picker-box input[type="date"],
-.date-range-box input[type="date"] {
-    background: transparent !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    color: #1e293b;
-    padding: 0 4px !important;
-    cursor: pointer;
-    line-height: 1.2;
-    transition: color 0.2s ease;
-}
-
-.date-input:focus,
-input[type="date"].date-input:focus,
-.date-picker-box input[type="date"]:focus,
-.date-range-box input[type="date"]:focus {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    color: var(--p-primary, #ed842c);
-}
-
-/* Custom Calendar Indicator Icon (Chrome/Edge/Safari) */
-.date-input::-webkit-calendar-picker-indicator,
-input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.7;
-    padding: 2px;
-    margin-left: 4px;
-    border-radius: 4px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    filter: invert(45%) sepia(85%) saturate(1200%) hue-rotate(350deg) brightness(95%) contrast(90%);
-}
-
-.date-input:hover::-webkit-calendar-picker-indicator,
-input[type="date"]:hover::-webkit-calendar-picker-indicator {
-    opacity: 1;
+.date-range-clear-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
     transform: scale(1.1);
 }
 
+/* Hidden inputs inside capsule */
+.date-range-hidden-input {
+    display: none !important;
+}
+
 /* ==========================================================================
-   DARK MODE COMPATIBILITY
+   2. FLOATING CALENDAR POPUP MODAL / DROPDOWN (COMPACT)
+   ========================================================================== */
+.linkan-datepicker-dropdown {
+    position: fixed;
+    z-index: 99999;
+    width: 270px; /* Compact width */
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.12), 0 6px 12px -3px rgba(15, 23, 42, 0.06);
+    padding: 12px 14px 12px 14px;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    user-select: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px) scale(0.97);
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.18s;
+}
+
+.linkan-datepicker-dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* Header: Navigation & Month Year */
+.linkan-dp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 0 2px;
+}
+
+.linkan-dp-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+
+.linkan-dp-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.linkan-dp-nav-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.linkan-dp-nav-btn:active {
+    transform: scale(0.92);
+}
+
+/* Weekday Row (Su Mo Tu We Th Fr Sa) */
+.linkan-dp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.linkan-dp-weekday {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+    padding: 2px 0;
+}
+
+/* Days Grid (7 columns) */
+.linkan-dp-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 2px;
+    column-gap: 0;
+}
+
+/* Individual Day Cell */
+.linkan-dp-day-cell {
+    position: relative;
+    height: 30px; /* Compact height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1e293b;
+    box-sizing: border-box;
+}
+
+/* Day Number Circle/Span */
+.linkan-dp-day-number {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px; /* Compact circle */
+    height: 27px;
+    border-radius: 50%;
+    transition: all 0.15s ease;
+}
+
+/* Hover on normal day */
+.linkan-dp-day-cell:not(.is-disabled):not(.is-range-start):not(.is-range-end):hover .linkan-dp-day-number {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* Previous & Next Month Days (Muted) */
+.linkan-dp-day-cell.is-outside {
+    color: #94a3b8;
+}
+
+.linkan-dp-day-cell.is-outside:hover .linkan-dp-day-number {
+    color: #64748b;
+}
+
+/* Today Indicator */
+.linkan-dp-day-cell.is-today:not(.is-range-start):not(.is-range-end) .linkan-dp-day-number {
+    font-weight: 700;
+    color: var(--p-primary, #0084ff);
+}
+
+/* ==========================================================================
+   RANGE SELECTION HIGHLIGHT STRIP (Matching user screenshot precisely)
+   ========================================================================== */
+
+/* Background connector strip container */
+.linkan-dp-range-bg {
+    position: absolute;
+    top: 1.5px;
+    bottom: 1.5px;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    background: #d0e6ff; /* Soft light blue */
+    pointer-events: none;
+}
+
+/* Row Start & Row End Rounding for Range Strip */
+.linkan-dp-day-cell.is-row-start .linkan-dp-range-bg {
+    border-top-left-radius: 9999px;
+    border-bottom-left-radius: 9999px;
+}
+
+.linkan-dp-day-cell.is-row-end .linkan-dp-range-bg {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+}
+
+/* Range Start Cell */
+.linkan-dp-day-cell.is-range-start .linkan-dp-day-number {
+    background: var(--p-primary, #0084ff); /* Vibrant solid blue */
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 132, 255, 0.35);
+}
+
+/* If range extends to right, range bg covers right half of start cell */
+.linkan-dp-day-cell.is-range-start.has-range-right .linkan-dp-range-bg {
+    left: 50%;
+    right: 0;
+}
+
+/* If range start is also at row end */
+.linkan-dp-day-cell.is-range-start.is-row-end.has-range-right .linkan-dp-range-bg {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+}
+
+/* Range End Cell */
+.linkan-dp-day-cell.is-range-end .linkan-dp-day-number {
+    background: var(--p-primary, #0084ff); /* Vibrant solid blue */
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 132, 255, 0.35);
+}
+
+/* If range extends from left, range bg covers left half of end cell */
+.linkan-dp-day-cell.is-range-end.has-range-left .linkan-dp-range-bg {
+    left: 0;
+    right: 50%;
+}
+
+/* If range end is at row start */
+.linkan-dp-day-cell.is-range-end.is-row-start.has-range-left .linkan-dp-range-bg {
+    border-top-left-radius: 9999px;
+    border-bottom-left-radius: 9999px;
+}
+
+/* Range In-between Day Cells */
+.linkan-dp-day-cell.is-in-range {
+    color: #0f172a;
+}
+
+.linkan-dp-day-cell.is-in-range .linkan-dp-day-number {
+    background: transparent;
+}
+
+/* Single Selected Day (Start == End) */
+.linkan-dp-day-cell.is-single-selected .linkan-dp-day-number {
+    background: var(--p-primary, #0084ff);
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 132, 255, 0.35);
+}
+
+.linkan-dp-day-cell.is-single-selected .linkan-dp-range-bg {
+    display: none !important;
+}
+
+/* ==========================================================================
+   3. FOOTER ACTIONS & OK BUTTON
+   ========================================================================== */
+.linkan-dp-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.linkan-dp-shortcuts-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.linkan-dp-shortcut-btn {
+    flex: 1;
+    padding: 4px 2px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+
+.linkan-dp-shortcut-btn:hover {
+    background: var(--p-primary, #0084ff);
+    border-color: var(--p-primary, #0084ff);
+    color: #ffffff;
+}
+
+/* Actions Row with OK and Cancel button */
+.linkan-dp-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.linkan-dp-action-btn {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+.linkan-dp-cancel-btn {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.linkan-dp-cancel-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.linkan-dp-ok-btn {
+    background: var(--p-primary, #0084ff);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 132, 255, 0.25);
+}
+
+.linkan-dp-ok-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.linkan-dp-ok-btn:active {
+    transform: scale(0.97);
+}
+
+/* ==========================================================================
+   4. DARK MODE COMPATIBILITY
    ========================================================================== */
 html[data-theme="dark"] .date-picker-box,
 html[data-theme="dark"] .date-range-box,
 html[data-theme="dark"] .date-range-container,
-html[data-theme="dark"] .date-picker-wrap,
 body.dark-mode .date-picker-box,
 body.dark-mode .date-range-box,
-body.dark-mode .date-range-container,
-body.dark-mode .date-picker-wrap {
-    background: var(--p-bg-surface-elevated, #1e293b);
+body.dark-mode .date-range-container {
+    background: #1e293b;
     border-color: rgba(255, 255, 255, 0.12);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
-html[data-theme="dark"] .date-input,
-html[data-theme="dark"] input[type="date"].date-input,
-html[data-theme="dark"] .date-picker-box input[type="date"],
-html[data-theme="dark"] .date-range-box input[type="date"],
-body.dark-mode .date-input,
-body.dark-mode input[type="date"].date-input,
-body.dark-mode .date-picker-box input[type="date"],
-body.dark-mode .date-range-box input[type="date"] {
+html[data-theme="dark"] .date-picker-box:hover,
+html[data-theme="dark"] .date-range-box:hover,
+body.dark-mode .date-picker-box:hover,
+body.dark-mode .date-range-box:hover {
+    background: #243046;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="dark"] .date-range-display,
+html[data-theme="dark"] .date-picker-display,
+body.dark-mode .date-range-display,
+body.dark-mode .date-picker-display {
     color: #f8fafc;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
 }
 
-html[data-theme="dark"] .date-input:focus,
-body.dark-mode .date-input:focus {
-    color: var(--p-primary, #ed842c);
+html[data-theme="dark"] .date-range-clear-btn,
+body.dark-mode .date-range-clear-btn {
+    background: #334155;
+    color: #94a3b8;
 }
 
-html[data-theme="dark"] .date-input::-webkit-calendar-picker-indicator,
-body.dark-mode .date-input::-webkit-calendar-picker-indicator {
-    filter: invert(65%) sepia(90%) saturate(1200%) hue-rotate(350deg) brightness(105%) contrast(95%);
+html[data-theme="dark"] .linkan-datepicker-dropdown,
+body.dark-mode .linkan-datepicker-dropdown {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.5), 0 10px 15px -4px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .linkan-dp-title,
+body.dark-mode .linkan-dp-title {
+    color: #f8fafc;
+}
+
+html[data-theme="dark"] .linkan-dp-nav-btn,
+body.dark-mode .linkan-dp-nav-btn {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .linkan-dp-nav-btn:hover,
+body.dark-mode .linkan-dp-nav-btn:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .linkan-dp-weekday,
+body.dark-mode .linkan-dp-weekday {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .linkan-dp-day-cell,
+body.dark-mode .linkan-dp-day-cell {
+    color: #f1f5f9;
+}
+
+html[data-theme="dark"] .linkan-dp-day-cell:not(.is-disabled):not(.is-range-start):not(.is-range-end):hover .linkan-dp-day-number,
+body.dark-mode .linkan-dp-day-cell:not(.is-disabled):not(.is-range-start):not(.is-range-end):hover .linkan-dp-day-number {
+    background: #334155;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .linkan-dp-day-cell.is-outside,
+body.dark-mode .linkan-dp-day-cell.is-outside {
+    color: #64748b;
+}
+
+html[data-theme="dark"] .linkan-dp-range-bg,
+body.dark-mode .linkan-dp-range-bg {
+    background: rgba(0, 132, 255, 0.28);
+}
+
+html[data-theme="dark"] .linkan-dp-footer,
+body.dark-mode .linkan-dp-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .linkan-dp-shortcut-btn,
+body.dark-mode .linkan-dp-shortcut-btn {
+    background: #0f172a;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .linkan-dp-shortcut-btn:hover,
+body.dark-mode .linkan-dp-shortcut-btn:hover {
+    background: var(--p-primary, #0084ff);
+    border-color: var(--p-primary, #0084ff);
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .linkan-dp-cancel-btn,
+body.dark-mode .linkan-dp-cancel-btn {
+    background: #334155;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .linkan-dp-cancel-btn:hover,
+body.dark-mode .linkan-dp-cancel-btn:hover {
+    background: #475569;
+    color: #ffffff;
 }

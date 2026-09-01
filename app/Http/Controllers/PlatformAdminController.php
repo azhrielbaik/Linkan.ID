@@ -429,6 +429,18 @@ class PlatformAdminController extends Controller
             });
         }
 
+        // Filter by date range (Registration Date)
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
         $users = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         $totalUsers     = User::where('role', '!=', 'admin_platform')->count();
@@ -458,6 +470,8 @@ class PlatformAdminController extends Controller
             'totalSuspended',
             'filter',
             'search',
+            'startDate',
+            'endDate',
             'viewType',
             'appeals',
             'pendingAppealsCount'

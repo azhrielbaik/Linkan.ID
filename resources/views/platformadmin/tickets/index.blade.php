@@ -125,11 +125,23 @@
                         <option value="general" {{ $category === 'general' ? 'selected' : '' }}>{{ __('platform.cat_general') }}</option>
                     </select>
 
+                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Tiket">
+                        <i class="fas fa-calendar-alt date-picker-icon"></i>
+                        <span class="date-range-display">Tanggal Tiket</span>
+                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                        <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                        <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                    </div>
+
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" name="search" class="p-filter-search" placeholder="{{ __('platform.search_ticket_placeholder') }}" value="{{ $search }}">
                     </div>
-                    <button type="submit" style="display: none;"></button>
+
+                    <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
+                    @if($search || $priority || $category || $startDate || $endDate)
+                        <a href="{{ route('platform-admin.tickets.index', ['status' => $status]) }}" class="btn-reset"><i class="fas fa-rotate-left"></i> {{ __('platform.reset') }}</a>
+                    @endif
                 </form>
             </div>
 

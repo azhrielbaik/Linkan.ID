@@ -132,6 +132,15 @@
                         <span style="color: #94a3b8;">-</span>
                         <input type="number" name="max_price" value="{{ $maxPrice ?? '' }}" placeholder="{{ __('platform.max_price') }} (Rp)" class="price-input" min="0">
 
+                        {{-- Filter Rentang Tanggal --}}
+                        <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Upload">
+                            <i class="fas fa-calendar-alt date-picker-icon"></i>
+                            <span class="date-range-display">Tanggal Upload</span>
+                            <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                            <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                            <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                        </div>
+
                         {{-- Sort By --}}
                         <select name="sort" class="filter-select">
                             <option value="latest" {{ ($sortBy ?? '') === 'latest' ? 'selected' : '' }}>{{ __('platform.sort_latest') }}</option>
@@ -141,7 +150,7 @@
                         </select>
 
                         <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
-                        @if($search || $sellerId || $platformType || $verificationStatus || $minPrice || $maxPrice || ($sortBy && $sortBy !== 'latest'))
+                        @if($search || $sellerId || $platformType || $verificationStatus || $minPrice || $maxPrice || $startDate || $endDate || ($sortBy && $sortBy !== 'latest'))
                             <a href="{{ route('platform-admin.products.index', ['tab' => $tab]) }}" class="btn-reset">{{ __('platform.reset') }}</a>
                         @endif
                     </div>

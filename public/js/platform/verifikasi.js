@@ -245,7 +245,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const tabs = document.querySelectorAll(".tab-btn");
     const searchInput = document.getElementById("searchInput");
     const platformFilter = document.getElementById("platformFilter");
-    const filterDate = document.getElementById("filterDate") || document.getElementById("startDate");
+    const filterStartDate = document.getElementById("filterStartDate") || document.getElementById("startDate") || document.getElementById("filterDate");
+    const filterEndDate = document.getElementById("filterEndDate") || document.getElementById("endDate");
+    const filterDateBox = document.getElementById("verificationDateRange") || document.querySelector(".date-picker-box");
     const productRows = document.querySelectorAll(".product-row");
     const noDataMessage = document.getElementById("noDataMessage");
 
@@ -256,7 +258,8 @@ document.addEventListener("DOMContentLoaded", function () {
             ? searchInput.value.toLowerCase().trim()
             : "";
         const platformValue = platformFilter ? platformFilter.value : "";
-        const filterDateValue = filterDate ? filterDate.value : "";
+        const startVal = filterStartDate ? filterStartDate.value : "";
+        const endVal = filterEndDate ? filterEndDate.value : "";
         const activeTab = currentActiveTab;
 
         let visibleCount = 0;
@@ -279,8 +282,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const matchesPlatform =
                 !platformValue || platform === platformValue;
-            const matchesDate =
-                !filterDateValue || date === filterDateValue || date.startsWith(filterDateValue);
+
+            let matchesDate = true;
+            if (startVal && endVal) {
+                matchesDate = date >= startVal && date <= endVal;
+            } else if (startVal) {
+                matchesDate = date >= startVal;
+            } else if (endVal) {
+                matchesDate = date <= endVal;
+            }
 
             let matchesStatus = false;
             if (activeTab === "pending") {
@@ -330,7 +340,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (searchInput) searchInput.addEventListener("input", filterProducts);
     if (platformFilter)
         platformFilter.addEventListener("change", filterProducts);
-    if (filterDate) filterDate.addEventListener("change", filterProducts);
+    if (filterStartDate) filterStartDate.addEventListener("change", filterProducts);
+    if (filterEndDate) filterEndDate.addEventListener("change", filterProducts);
+    if (filterDateBox) filterDateBox.addEventListener("dateRangeChange", filterProducts);
 
     document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
         checkbox.addEventListener("change", updateBulkSelection);

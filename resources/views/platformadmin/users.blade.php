@@ -74,7 +74,7 @@
 
                 {{-- Toolbar --}}
                 <div class="toolbar" style="display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap;">
-                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto;">
+                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <input type="hidden" name="view" value="users">
                         @if($filter && $filter !== 'all')
                             <input type="hidden" name="filter" value="{{ $filter }}">
@@ -84,6 +84,20 @@
                             <input type="text" name="search" placeholder="{{ __('platform.search_user_placeholder') }}" value="{{ $search ?? '' }}" data-autocomplete-type="users" data-suggest-url="{{ route('platform-admin.users.suggest') }}" list="autocomplete-users">
                             <datalist id="autocomplete-users"></datalist>
                         </div>
+
+                        <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Daftar">
+                            <i class="fas fa-calendar-alt date-picker-icon"></i>
+                            <span class="date-range-display">Tanggal Daftar</span>
+                            <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                            <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                            <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                        </div>
+
+                        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
+
+                        @if($search || $startDate || $endDate)
+                            <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => $filter ?? 'all']) }}" class="btn-reset"><i class="fas fa-rotate-left"></i> {{ __('platform.reset') }}</a>
+                        @endif
                     </form>
 
                     <div class="filter-tabs">

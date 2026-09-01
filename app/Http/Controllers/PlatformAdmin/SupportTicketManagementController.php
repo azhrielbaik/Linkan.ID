@@ -49,6 +49,18 @@ class SupportTicketManagementController extends Controller
             });
         }
 
+        // Filter Tanggal Tiket
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
         $tickets = $query->latest('last_replied_at')->paginate(15)->withQueryString();
 
         // Hitung statistik tiket global
@@ -68,7 +80,9 @@ class SupportTicketManagementController extends Controller
             'status',
             'priority',
             'category',
-            'search'
+            'search',
+            'startDate',
+            'endDate'
         ));
     }
 

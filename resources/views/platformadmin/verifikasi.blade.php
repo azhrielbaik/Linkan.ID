@@ -65,9 +65,12 @@
                         <option value="other">Lainnya / Other</option>
                     </select>
 
-                    <div class="date-picker-box">
+                    <div class="date-picker-box" id="verificationDateRange" data-no-submit="true" data-start-name="start_date" data-end-name="end_date" data-placeholder="{{ __('platform.filter_by_date') }}">
                         <i class="fas fa-calendar-alt date-picker-icon"></i>
-                        <input type="date" class="date-input" id="filterDate" title="{{ __('platform.filter_by_date') }}">
+                        <span class="date-range-display">{{ __('platform.filter_by_date') }}</span>
+                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                        <input type="hidden" name="start_date" id="filterStartDate" class="date-range-hidden-input">
+                        <input type="hidden" name="end_date" id="filterEndDate" class="date-range-hidden-input">
                     </div>
                 </div>
             </div>
