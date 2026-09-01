@@ -17,9 +17,6 @@ class AdminController extends Controller
         $user = auth()->user();
         $digitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
         $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
-        $shortlinks = \App\Models\Shortlink::where('user_id', $user->id)
-            ->latest()
-            ->paginate(6, ['*'], 'links_page');
         $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
         $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
         $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
@@ -32,14 +29,12 @@ class AdminController extends Controller
             ->count();
 
         $totalProducts = $digitalProducts->where('is_active', 1)->where('verification_status', 'approved')->count();
-        $totalShortlinks = \App\Models\Shortlink::where('user_id', $user->id)->count();
 
         $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
 
         return view('pages.mylinkan.index', compact(
             'digitalProducts',
             'appearance',
-            'shortlinks',
             'imageElements',
             'dividerElements',
             'textElements',
@@ -47,7 +42,6 @@ class AdminController extends Controller
             'socialMediaElements',
             'totalViews',
             'totalProducts',
-            'totalShortlinks',
             'viewMode'
         ));
     }

@@ -32,20 +32,20 @@
 
                         {{-- Sub-panel: Pilih Gambar Background --}}
                         <div id="bgPanelGambar" class="background-image-grid" style="display: {{ ($appearance && $appearance->background_type === 'image') ? 'grid' : 'none' }};">
-                            @php
-                                $backgroundImages = [
-                                    'blue ocean.png'           => 'Blue Ocean',
-                                    'city light.png'           => 'City Light',
-                                    'clasic.png'               => 'Classic',
-                                    'desert.png'               => 'Desert',
-                                    'green flower.png'         => 'Green Flower',
-                                    'library.png'              => 'Library',
-                                    'mountain.png'             => 'Mountain',
-                                    'news paper.png'           => 'News Paper',
-                                    'pink candy.png'           => 'Pink Candy',
-                                    'playstation abstract.png' => 'PS Abstract',
-                                    'sunset.png'               => 'Sunset',
-                                ];
+                                @php
+                                    $backgroundImages = [
+                                        'blue ocean.webp'           => 'Blue Ocean',
+                                        'city light.webp'           => 'City Light',
+                                        'clasic.webp'               => 'Classic',
+                                        'desert.webp'               => 'Desert',
+                                        'green flower.webp'         => 'Green Flower',
+                                        'library.webp'              => 'Library',
+                                        'mountain.webp'             => 'Mountain',
+                                        'news paper.webp'           => 'News Paper',
+                                        'pink candy.webp'           => 'Pink Candy',
+                                        'playstation abstract.webp' => 'PS Abstract',
+                                        'sunset.webp'               => 'Sunset',
+                                    ];
                                 $currentBgImage = ($appearance && $appearance->background_type === 'image')
                                     ? $appearance->background_color
                                     : null;

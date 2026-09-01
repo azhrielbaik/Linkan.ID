@@ -638,24 +638,6 @@
     document.addEventListener('turbo:load', initPageEvents);
     document.addEventListener('turbolinks:load', initPageEvents);
 
-    function showSuccessToast(message) {
-        let toast = document.getElementById('profileSuccessToast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'profileSuccessToast';
-            toast.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: #10B981; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 13px; box-shadow: 0 4px 14px rgba(16,185,129,0.3); z-index: 9999; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; opacity: 0; transform: translateY(10px);';
-            toast.innerHTML = '<i class="fas fa-check-circle"></i> <span>' + message + '</span>';
-            document.body.appendChild(toast);
-        }
-        setTimeout(() => {
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateY(0)';
-        }, 10);
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
-        }, 3000);
-    }
 
     window.onclick = function (event) {
         if (event.target.id === 'newMicrositeModalOverlay') {
@@ -1249,7 +1231,61 @@
             });
 
             if (liveDiv) {
-                liveDiv.innerHTML = editor.innerHTML;
+                let html = ``;
+                const hasBtn = document.getElementById('hasButton_' + id);
+                if (hasBtn && hasBtn.checked) {
+                    const btnText = document.getElementById('buttonText_' + id)?.value || 'Tombol';
+                    const btnColor = document.getElementById('buttonColor_' + id)?.value || '#f8f9fa';
+                    const iconType = document.getElementById('buttonIconType_' + id)?.value || 'none';
+                    
+                    let iconHtml = '<i class="fas fa-align-left"></i>';
+                    
+                    if (iconType === 'emoji') {
+                        const emojiVal = document.getElementById('buttonIconEmoji_' + id)?.value || '';
+                        if (emojiVal) iconHtml = `<span style="font-size:18px;">${emojiVal}</span>`;
+                    } else if (iconType === 'fontawesome') {
+                        const faVal = document.getElementById('buttonIconFa_' + id)?.value || '';
+                        if (faVal) iconHtml = `<i class="${faVal}"></i>`;
+                    } else if (iconType === 'url') {
+                        const urlVal = document.getElementById('buttonIconUrl_' + id)?.value || '';
+                        if (urlVal) iconHtml = `<img src="${urlVal}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">`;
+                    } else if (iconType === 'upload') {
+                        // For preview in editor, we can't easily show the unsaved local file unless we read it with FileReader.
+                        // For simplicity, we just check if there's a file, otherwise we'll show an image icon
+                        const fileInput = document.getElementById('buttonIconUpload_' + id);
+                        if (fileInput && fileInput.files && fileInput.files[0]) {
+                            const url = URL.createObjectURL(fileInput.files[0]);
+                            iconHtml = `<img src="${url}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">`;
+                        } else {
+                            // Try to get existing value from DOM if possible (we don't have it directly in JS, so fallback)
+                            iconHtml = '<i class="fas fa-image"></i>';
+                        }
+                    }
+
+                    html += `
+                        <div class="text-element-accordion" style="width: 100%; margin: 15px 0;">
+                            <div class="text-element-button-wrapper">
+                                <button class="text-element-button" style="background-color: ${btnColor} !important;" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active')">
+                                    <div class="text-element-btn-icon-left">
+                                        ${iconHtml}
+                                    </div>
+                                    <span class="btn-text">${btnText}</span>
+                                    <div class="text-element-btn-icon-right">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="text-element-content-sliding">
+                                <div class="text-element-content-inner">
+                                    ${editor.innerHTML}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `<div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0;">${editor.innerHTML}</div>`;
+                }
+                liveDiv.innerHTML = html;
             }
         }
 
@@ -1271,6 +1307,31 @@
         formData.append('content', editor.innerHTML);
         if (dbId) {
             formData.append('element_id', dbId);
+        }
+
+        const hasBtn = document.getElementById('hasButton_' + id);
+        const btnText = document.getElementById('buttonText_' + id);
+        const btnLink = document.getElementById('buttonLink_' + id);
+        const btnColor = document.getElementById('buttonColor_' + id);
+        const btnIconType = document.getElementById('buttonIconType_' + id);
+        const btnIconEmoji = document.getElementById('buttonIconEmoji_' + id);
+        const btnIconUrl = document.getElementById('buttonIconUrl_' + id);
+        const btnIconUpload = document.getElementById('buttonIconUpload_' + id);
+
+        if (hasBtn) formData.append('has_button', hasBtn.checked ? 1 : 0);
+        if (btnText) formData.append('button_text', btnText.value);
+        if (btnLink) formData.append('button_link', btnLink.value);
+        if (btnColor) formData.append('button_color', btnColor.value);
+        
+        if (btnIconType) {
+            formData.append('button_icon_type', btnIconType.value);
+            if (btnIconType.value === 'emoji' && btnIconEmoji) formData.append('button_icon_emoji', btnIconEmoji.value);
+            if (btnIconType.value === 'url' && btnIconUrl) formData.append('button_icon_url', btnIconUrl.value);
+            const btnIconFa = document.getElementById('buttonIconFa_' + id);
+            if (btnIconType.value === 'fontawesome' && btnIconFa) formData.append('button_icon_emoji', btnIconFa.value); // Reusing emoji column for string
+            if (btnIconType.value === 'upload' && btnIconUpload && btnIconUpload.files[0]) {
+                formData.append('button_icon_upload', btnIconUpload.files[0]);
+            }
         }
 
         const url = document.getElementById('micrositeEditorUrls').dataset.routeTextStore || '/admin/elements/text';
@@ -2110,6 +2171,104 @@
             e.stopPropagation();
         }
 
+                if (e.target.matches('.js-toggle-use-icon') || e.target.closest('.js-toggle-use-icon')) {
+            const radio = e.target.matches('.js-toggle-use-icon') ? e.target : e.target.closest('.js-toggle-use-icon');
+            const id = radio.dataset.targetId;
+            const hiddenType = document.getElementById('buttonIconType_' + id);
+            
+            if (radio.value === 'none') {
+                if (hiddenType) hiddenType.value = 'none';
+            } else {
+                // If they say Yes, default to emoji if it was none
+                if (hiddenType && hiddenType.value === 'none') hiddenType.value = 'emoji';
+            }
+            if (hiddenType) hiddenType.dispatchEvent(new Event('change', { bubbles: true }));
+            
+        }
+
+        if (e.target.matches('.js-adv-tab') || e.target.closest('.js-adv-tab')) {
+            const btn = e.target.matches('.js-adv-tab') ? e.target : e.target.closest('.js-adv-tab');
+            const id = btn.dataset.targetId;
+            const tab = btn.dataset.tab;
+            
+            // Switch active class
+            btn.parentElement.querySelectorAll('.js-adv-tab').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show content
+            document.getElementById('advTab_pilih-icon_' + id).style.display = (tab === 'pilih-icon') ? 'block' : 'none';
+            document.getElementById('advTab_unggah-gambar_' + id).style.display = (tab === 'unggah-gambar') ? 'block' : 'none';
+            
+            // Update hidden type
+            const hiddenType = document.getElementById('buttonIconType_' + id);
+            if (hiddenType) {
+                if (tab === 'unggah-gambar') {
+                    hiddenType.value = 'upload';
+                } else {
+                    // Find active subtab
+                    const activeSub = document.getElementById('advTab_pilih-icon_' + id).querySelector('.js-adv-subtab.active');
+                    if (activeSub) hiddenType.value = activeSub.dataset.subtab;
+                }
+                hiddenType.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            
+        }
+
+        if (e.target.matches('.js-adv-subtab') || e.target.closest('.js-adv-subtab')) {
+            const btn = e.target.matches('.js-adv-subtab') ? e.target : e.target.closest('.js-adv-subtab');
+            const id = btn.dataset.targetId;
+            const subtab = btn.dataset.subtab;
+            
+            // Switch active class
+            btn.parentElement.querySelectorAll('.js-adv-subtab').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show content
+            document.getElementById('advSubTab_emoji_' + id).style.display = (subtab === 'emoji') ? 'block' : 'none';
+            document.getElementById('advSubTab_fontawesome_' + id).style.display = (subtab === 'fontawesome') ? 'block' : 'none';
+            document.getElementById('advSubTab_url_' + id).style.display = (subtab === 'url') ? 'block' : 'none';
+            
+            // Update hidden type
+            const hiddenType = document.getElementById('buttonIconType_' + id);
+            if (hiddenType) {
+                hiddenType.value = subtab;
+                hiddenType.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            
+        }
+
+        if (e.target.matches('.js-scroll-cat') || e.target.closest('.js-scroll-cat')) {
+            const btn = e.target.matches('.js-scroll-cat') ? e.target : e.target.closest('.js-scroll-cat');
+            const id = btn.dataset.targetId;
+            const cat = btn.dataset.cat;
+            
+            // Highlight nav icon
+            btn.parentElement.querySelectorAll('.js-scroll-cat').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Scroll to category
+            const scrollContainer = document.getElementById('emojiScroll_' + id);
+            const targetSection = document.getElementById('cat_' + cat + '_' + id);
+            if (scrollContainer && targetSection) {
+                scrollContainer.scrollTo({
+                    top: targetSection.offsetTop - scrollContainer.offsetTop - 10,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        if (e.target.matches('.js-pick-emoji') || e.target.closest('.js-pick-emoji')) {
+            const btn = e.target.matches('.js-pick-emoji') ? e.target : e.target.closest('.js-pick-emoji');
+            const id = btn.dataset.targetId;
+            const emoji = btn.dataset.emoji;
+            const input = document.getElementById('buttonIconEmoji_' + id);
+            if (input) {
+                input.value = emoji;
+                if (typeof updateTextPreview === 'function') updateTextPreview(id);
+                
+            }
+        }
+
         if ((target = e.target.closest('.js-toggle-edit-form'))) {
             const type = target.dataset.type;
             const id = target.dataset.targetId;
@@ -2232,6 +2391,43 @@
         if (e.target.matches('.js-preview-image')) {
             if (typeof previewDynamicImage === 'function') {
                 previewDynamicImage(e.target, e.target.dataset.targetId);
+            }
+        }
+
+        if (e.target.matches('.js-toggle-text-button')) {
+            const id = e.target.dataset.targetId;
+            const fields = document.getElementById('buttonFields_' + id);
+            if (fields) {
+                fields.style.display = e.target.checked ? 'block' : 'none';
+            }
+        }
+
+        if (e.target.matches('.js-toggle-icon-type')) {
+            const id = e.target.dataset.targetId;
+            const val = e.target.value;
+            const emojiF = document.getElementById('iconEmojiField_' + id);
+            const urlF = document.getElementById('iconUrlField_' + id);
+            const upF = document.getElementById('iconUploadField_' + id);
+            
+            if (emojiF) emojiF.style.display = (val === 'emoji') ? 'block' : 'none';
+            if (urlF) urlF.style.display = (val === 'url') ? 'block' : 'none';
+            if (upF) upF.style.display = (val === 'upload') ? 'block' : 'none';
+        }
+
+        if (e.target.matches('.js-upload-icon-preview')) {
+            const file = e.target.files[0];
+            const id = e.target.dataset.targetId;
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const previewDiv = document.getElementById('uploadPreview_' + id);
+                    if (previewDiv) {
+                        previewDiv.innerHTML = '<img src="' + evt.target.result + '" style="width:32px; height:32px; object-fit:contain; border-radius:6px;"><span style="font-size:12px; margin-left:10px; color:#475569;">' + file.name + '</span>';
+                        previewDiv.style.display = 'flex';
+                    }
+                    if (typeof updateTextPreview === 'function') updateTextPreview(id);
+                }
+                reader.readAsDataURL(file);
             }
         }
 
@@ -2474,3 +2670,59 @@ function toggleDigitalProductEditForm(elementId, forceOpen = false) {
         }
     }
 }
+
+// --- Emoji Search Logic ---
+const emojiKeywords = {
+  "😀": "smile senyum bahagia", "😃": "smile senyum besar bahagia", "😄": "smile senyum tertawa", "😁": "smile senyum gigi",
+  "😆": "tertawa ngakak", "😅": "senyum keringat sweat", "😂": "tertawa air mata joy", "🤣": "ngakak guling",
+  "😊": "senyum bahagia seneng", "😇": "malaikat angel", "🙂": "senyum tipis", "😉": "kedip wink",
+  "😍": "cinta love hati mata", "🥰": "cinta love sayang", "😘": "cium kiss", "😎": "keren cool kacamata",
+  "😭": "nangis sedih cry", "😡": "marah pouting angry", "👍": "jempol bagus mantap ok", "👎": "jelek buruk",
+  "👏": "tepuk tangan clap", "🙏": "mohon doa terima kasih", "❤️": "hati cinta love red", "🔥": "api panas fire hot",
+  "✨": "bintang kilau sparkle", "⭐": "bintang star", "🚀": "roket rocket", "🎉": "pesta party",
+  "🎁": "kado hadiah gift", "🛒": "keranjang belanja cart", "📦": "paket kotak box", "📞": "telepon call",
+  "✉️": "surat email amplop", "🌐": "globe internet web dunia", "🎓": "lulus sarjana topi", "💼": "tas kerja",
+  "🐶": "anjing dog", "🐱": "kucing cat", "🚗": "mobil car", "🍔": "burger makanan", "🍕": "pizza makanan",
+  "⚽": "bola sepak soccer", "🏀": "basket bola", "✔️": "ceklis centang check", "✅": "ceklis hijau", 
+  "❌": "silang cross", "⚠️": "warning awas", "💡": "lampu ide idea"
+};
+
+document.addEventListener('input', function(e) {
+    if (e.target.matches('.js-emoji-search')) {
+        const query = e.target.value.toLowerCase().trim();
+        const id = e.target.dataset.targetId;
+        const container = document.getElementById('emojiScroll_' + id);
+        
+        if (container) {
+            const sections = container.querySelectorAll('.emoji-section-title');
+            const grids = container.querySelectorAll('.emoji-grid');
+            
+            if (query === '') {
+                sections.forEach(s => s.style.display = 'block');
+                grids.forEach(g => {
+                    g.style.display = 'grid';
+                    g.querySelectorAll('.emoji-item').forEach(item => item.style.display = 'flex');
+                });
+                return;
+            }
+            
+            // Search active
+            sections.forEach(s => s.style.display = 'none');
+            
+            grids.forEach(grid => {
+                let hasVisible = false;
+                grid.querySelectorAll('.emoji-item').forEach(item => {
+                    const emoji = item.getAttribute('data-emoji');
+                    const keywords = emojiKeywords[emoji] || "";
+                    if (keywords.includes(query) || emoji === query) {
+                        item.style.display = 'flex';
+                        hasVisible = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                grid.style.display = hasVisible ? 'grid' : 'none';
+            });
+        }
+    }
+});

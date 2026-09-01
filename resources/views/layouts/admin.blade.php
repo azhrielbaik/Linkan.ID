@@ -64,7 +64,7 @@
         .header h1 {
             font-size: 26px !important;
             font-weight: 800 !important;
-            color: #1E50D8 !important;
+            color: #1a1a1a !important;
             letter-spacing: -0.5px !important;
             text-transform: capitalize !important;
             margin: 0 !important;
@@ -95,7 +95,7 @@
         }
 
         .action-icon {
-            color: #5A5BF1;
+            color: #1a1a1a;
             font-size: 20px;
             cursor: pointer;
             transition: color 0.2s;
@@ -145,7 +145,7 @@
 
         .top-profile-arrow {
             font-size: 12px;
-            color: #5A5BF1;
+            color: #1a1a1a;
         }
 
         .hamburger-menu {
@@ -429,6 +429,20 @@
             }
         });
     </script>
+    <script src="{{ asset('js/toast-notification.js') }}?v={{ time() }}"></script>
+    @if(session('success'))
+    <script>
+        (function() {
+            function triggerToast() {
+                if (typeof window.showSuccessToast === 'function') {
+                    window.showSuccessToast("{!! addslashes(session('success')) !!}");
+                }
+            }
+            triggerToast();
+            document.addEventListener('turbo:load', triggerToast, { once: true });
+        })();
+    </script>
+    @endif
     @stack('scripts')
 </body>
 </html>

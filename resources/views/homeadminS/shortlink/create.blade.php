@@ -12,19 +12,7 @@
 
 
 
-    @if(session('success'))
-        <div class="success-card" id="successToast">
-            <div class="success-card-header">
-                <div class="icon"><i class="fas fa-check"></i></div>
-                <h3 style="font-size: 16px;">{{ __('shortlink.saved_successfully') }}</h3>
-                <button class="success-card-close" onclick="closeToast()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="shortlink-display">
-                <input type="text" id="shortlinkInput" value="{{ session('success') }}" readonly>
-                <button class="btn-copy" onclick="copyToClipboard()"><i class="fas fa-copy"></i> {{ __('shortlink.copy') }}</button>
-            </div>
-        </div>
-    @endif
+
 
     <div class="dashboard-grid">
         <!-- LEFT COLUMN -->

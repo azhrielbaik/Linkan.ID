@@ -1,5 +1,13 @@
 @props(['appearance', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements', 'digitalProducts'])
 
+@php
+    $blockRadius = '14px';
+    if (isset($appearance->block_shape)) {
+        if ($appearance->block_shape === 'sharp') $blockRadius = '0px';
+        if ($appearance->block_shape === 'pill') $blockRadius = '9999px';
+    }
+@endphp
+
 <div class="editor-sticky-preview clean-sticky-preview">
                 <!-- SECTION TITLE -->
                 <div class="phone-preview-header">
@@ -39,6 +47,75 @@
                                 @endif
                             ">
                                 <style>
+                                    /* TEXT ELEMENT BUTTON WITH SLIDING ANIMATION */
+                                    .text-element-button-wrapper {
+                                        width: 100%;
+                                    }
+                                    .text-element-content-sliding {
+                                        max-height: 0;
+                                        overflow: hidden;
+                                        transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-in-out, margin-top 0.6s ease-in-out;
+                                        opacity: 0;
+                                        margin-top: 0;
+                                    }
+                                    .text-element-content-sliding.show {
+                                        max-height: 2000px;
+                                        opacity: 1;
+                                        margin-top: 8px;
+                                    }
+                                    .text-element-content-inner {
+                                        background: white;
+                                        padding: 20px;
+                                        border-radius: {{ $blockRadius }};
+                                        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                                        text-align: left;
+                                        color: #1e293b;
+                                        font-size: 15px;
+                                        word-break: break-word;
+                                    }
+                                    .text-element-button {
+                                        width: 100%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        padding: 6px;
+                                        background: {{ $appearance->theme_color ?? '#111827' }};
+                                        color: white;
+                                        text-decoration: none;
+                                        border-radius: {{ $blockRadius }};
+                                        font-weight: 600;
+                                        font-size: 15px;
+                                        border: none;
+                                        cursor: pointer;
+                                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                                        transition: all 0.3s ease;
+                                    }
+                                    .text-element-button:hover {
+                                        transform: translateY(-2px);
+                                        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+                                    }
+                                    .text-element-btn-icon-left, .text-element-btn-icon-right {
+                                        width: 36px;
+                                        height: 36px;
+                                        background: rgba(0,0,0,0.15);
+                                        border-radius: 8px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        flex-shrink: 0;
+                                        font-size: 14px;
+                                    }
+                                    .text-element-button .btn-text {
+                                        flex-grow: 1;
+                                        text-align: center;
+                                    }
+                                    .text-element-btn-icon-right i {
+                                        transition: transform 0.3s ease;
+                                    }
+                                    .text-element-button.active .text-element-btn-icon-right i {
+                                        transform: rotate(180deg);
+                                    }
+
                                     #phonePreviewContent {
                                         display: flex;
                                         flex-wrap: wrap;
@@ -224,7 +301,40 @@
                                             $isActive = $textEl->is_active ?? true;
                                         @endphp
                                         <div id="live_{{ $elementId }}" class="live-text-element js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Text" data-target-id="{{ $elementId }}" data-force-open="true">
-                                            {!! $textEl->content !!}
+                                            @if(isset($textEl->has_button) && $textEl->has_button)
+                                                <div class="text-element-accordion" style="width: 100%; margin: 15px 0;">
+                                                    <div class="text-element-button-wrapper">
+                                                        <button class="text-element-button" style="background-color: {{ $textEl->button_color ?? '#f8f9fa' }} !important;" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active')">
+                                                            <div class="text-element-btn-icon-left">
+                                                                @if(($textEl->button_icon_type ?? 'none') === 'emoji')
+                                                                    <span style="font-size:25px;">{{ $textEl->button_icon_value }}</span>
+                                                                @elseif(($textEl->button_icon_type ?? 'none') === 'fontawesome')
+                                                                    <i class="{{ $textEl->button_icon_value }}"></i>
+                                                                @elseif(($textEl->button_icon_type ?? 'none') === 'url')
+                                                                    <img src="{{ $textEl->button_icon_value }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                                                @elseif(($textEl->button_icon_type ?? 'none') === 'upload' && !empty($textEl->button_icon_value))
+                                                                    <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                                                @else
+                                                                    <i class="fas fa-align-left"></i>
+                                                                @endif
+                                                            </div>
+                                                            <span class="btn-text">{{ $textEl->button_text }}</span>
+                                                            <div class="text-element-btn-icon-right">
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-element-content-sliding">
+                                                        <div class="text-element-content-inner">
+                                                            {!! $textEl->content !!}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div style="width: 100%; word-break: break-word; color: #1e293b; font-size: 16px; margin: 15px 0; border-radius: {{ $blockRadius }};">
+                                                    {!! $textEl->content !!}
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 @endif

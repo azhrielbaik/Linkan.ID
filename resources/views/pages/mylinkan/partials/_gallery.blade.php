@@ -52,15 +52,6 @@
                                     </div>
                                 @endforeach
                             @endif
-
-                            @if($shortlinks && $shortlinks->count() > 0)
-                                @foreach($shortlinks->take(2) as $sl)
-                                    <div class="phone-thumb-block">
-                                        <i class="fas fa-link"></i>
-                                        <span>{{ $sl->title ?: $sl->slug }}</span>
-                                    </div>
-                                @endforeach
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -78,7 +69,6 @@
                     <div class="card-stats-tags">
                         <span class="stat-tag"><i class="fas fa-eye"></i> {{ number_format($totalViews) }} views</span>
                         <span class="stat-tag"><i class="fas fa-cube"></i> {{ $digitalProducts->count() }} {{ __('admin.product') }}</span>
-                        <span class="stat-tag"><i class="fas fa-link"></i> {{ $shortlinks->total() }} {{ __('admin.link') }}</span>
                     </div>
 
                     <!-- ACTION BUTTONS -->
