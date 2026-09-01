@@ -9,7 +9,11 @@
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            alert('Tautan berhasil disalin ke clipboard!');
+            if (typeof window.showSuccessToast === 'function') {
+                window.showSuccessToast('Tautan berhasil disalin!');
+            } else {
+                alert('Tautan berhasil disalin ke clipboard!');
+            }
         }).catch(err => {
             console.error('Gagal menyalin teks: ', err);
         });

@@ -758,6 +758,8 @@
         dpFormState.title = '';
         dpFormState.description = '';
         dpFormState.files = [];
+        dpFormState.existingFiles = [];
+        dpFormState.existingPlatformFile = null;
         dpFormState.deliverableType = 'upload';
         dpFormState.deliverableFile = null;
         dpFormState.deliverableUrl = '';
@@ -816,7 +818,17 @@
         dpFormState.element_id = product.id;
         dpFormState.title = product.title || '';
         dpFormState.description = product.description || '';
-        dpFormState.files = []; // Existing media not fully supported via frontend state yet without pre-fetching files, but we preserve them in backend
+        dpFormState.files = []; 
+        
+        let existingMedia = [];
+        if (product.media_files) {
+            existingMedia = typeof product.media_files === 'string' ? JSON.parse(product.media_files) : product.media_files;
+        } else if (product.image) {
+            existingMedia = [{url: '/storage/' + product.image}];
+        }
+        dpFormState.existingFiles = existingMedia;
+        dpFormState.existingPlatformFile = product.platform_file || null;
+        
         dpFormState.deliverableType = product.deliverable_type || 'upload';
         dpFormState.deliverableFile = null;
         dpFormState.deliverableUrl = product.deliverable_url || '';
@@ -849,6 +861,15 @@
         document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
         changeDpPriceType(dpFormState.priceType);
         changeDpQtyLimitType(product.has_quantity_limit ? 'limited' : 'unlimited');
+
+        if (dpFormState.existingPlatformFile && dpFormState.deliverableType === 'upload') {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            const nameEl = document.getElementById('dpDeliverableFileName');
+            nameEl.innerText = dpFormState.existingPlatformFile.split('/').pop() + " (Sudah diupload)";
+            preview.style.display = 'flex';
+        } else {
+            document.getElementById('dpDeliverableFilePreview').style.display = 'none';
+        }
 
         document.getElementById('dpEnableSchedule').checked = dpFormState.isScheduled;
         document.getElementById('dpStartTime').value = dpFormState.startTime;
@@ -920,6 +941,46 @@
     function renderDpFilePreviews() {
         const container = document.getElementById('dpFilesPreview');
         container.innerHTML = ''; // Clear container
+        
+        // Render existing files first
+        if (dpFormState.existingFiles && dpFormState.existingFiles.length > 0) {
+            dpFormState.existingFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.style.position = 'relative';
+                item.style.width = '80px';
+                item.style.height = '80px';
+                item.style.borderRadius = '8px';
+                item.style.overflow = 'hidden';
+                item.style.border = '1px solid #e2e8f0';
+                item.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                item.style.backgroundColor = '#f1f5f9';
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.justifyContent = 'center';
+                
+                const img = document.createElement('img');
+                img.src = file.url;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                item.appendChild(img);
+                
+                // Overlay text indicating existing
+                const badge = document.createElement('div');
+                badge.innerText = 'Tersimpan';
+                badge.style.position = 'absolute';
+                badge.style.bottom = '0';
+                badge.style.width = '100%';
+                badge.style.textAlign = 'center';
+                badge.style.background = 'rgba(0,0,0,0.5)';
+                badge.style.color = 'white';
+                badge.style.fontSize = '10px';
+                badge.style.padding = '2px 0';
+                item.appendChild(badge);
+                
+                container.appendChild(item);
+            });
+        }
         
         dpFormState.files.forEach((file, index) => {
             const item = document.createElement('div');

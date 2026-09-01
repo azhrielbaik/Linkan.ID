@@ -35,7 +35,9 @@ class ContactController extends Controller
 
         try {
             // Kirim email
-            Mail::to('dhefajar0410@gmail.com')->send(new ContactMail($data));
+            Mail::to('sense.xj@gmail.com')->send(new ContactMail($data));
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
             \Log::error('Contact mail sending error: ' . $e->getMessage());
         }

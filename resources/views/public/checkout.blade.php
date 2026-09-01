@@ -214,7 +214,7 @@
             <div class="product-info">
                 <h2>{{ $product->title }}</h2>
                 <div class="qty"><i class="fa-solid fa-cart-shopping"></i> Qty: <strong>{{ $savedQty }}</strong></div>
-                <div class="price"><i class="fa-solid fa-tag"></i> Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                <div class="price"><i class="fa-solid fa-tag"></i> Rp {{ number_format($itemPrice ?? $product->price, 0, ',', '.') }}</div>
             </div>
             <a href="{{ route('product.show', ['id' => $product->id]) }}" class="btn-detail" title="Lihat Detail Produk">
                 Detail <i class="fa-solid fa-arrow-right"></i>
@@ -245,13 +245,13 @@
             </div>
             <div class="payment-row">
                 <span>Subtotal</span>
-                <span>Rp {{ number_format($product->price * $savedQty, 0, ',', '.') }}</span>
+                <span>Rp {{ number_format(($itemPrice ?? $product->price) * $savedQty, 0, ',', '.') }}</span>
             </div>
             <div class="payment-row total">
                 <span>Total</span>
-                <span>Rp {{ number_format($product->price * $savedQty, 0, ',', '.') }}</span>
+                <span>Rp {{ number_format(($itemPrice ?? $product->price) * $savedQty, 0, ',', '.') }}</span>
             </div>
-            <div id="select-method"><i class="fa-solid fa-money-bill-wave"></i> Buy Now </div>
+            <div id="select-method"><i class="fa-solid fa-money-bill-wave"></i> {{ ($itemPrice ?? $product->price) * $savedQty > 0 ? 'Buy Now' : 'Dapatkan Gratis' }} </div>
         </div>
     </form>
 </div>
@@ -281,6 +281,53 @@
             return;
         }
 
+        const totalPrice = {{ $savedQty * ($itemPrice ?? $product->price) }};
+        if (totalPrice === 0) {
+            // Free product, bypass midtrans snap and just post transaction store
+            Swal.fire('Diproses', 'Memproses pesanan gratis...', 'info');
+            const transactionData = {
+                order_id: 'FREE-' + Date.now(),
+                transaction_status: 'success',
+                product_id: {{ $product->id }},
+                buyer_email: email,
+                buyer_name: name,
+                qty: {{ $savedQty }},
+                total_price: 0
+            };
+            fetch("{{ route('transaction.store') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(transactionData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.redirect) {
+                        Swal.fire({
+                            title: 'Produk Terkirim!',
+                            text: 'Produk digital telah dikirim ke email Anda. Silahkan cek inbox atau spam folder.',
+                            icon: 'success',
+                            confirmButtonText: 'kembali ke halaman profile'
+                        }).then(() => {
+                            window.location.href = data.redirect;
+                        });
+                    } else {
+                        window.location.href = '{{ route("admin.digital-products.success") }}';
+                    }
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Terjadi kesalahan saat memproses pesanan gratis.', 'error');
+            });
+            return;
+        }
+
         snap.pay('{{ $snapToken }}', {
             onSuccess: function(result) {
                 console.log('Payment success:', result); // Log hasil pembayaran
@@ -295,7 +342,7 @@
                     buyer_email: email,
                     buyer_name: name,
                     qty: {{ $savedQty }},
-                    total_price: {{ $savedQty * $product->price }}
+                    total_price: totalPrice
                 };
 
                 console.log('Sending transaction data:', transactionData); // Log data yang akan dikirim

@@ -60,7 +60,7 @@
         <hr style="border-color: #ff7a00; margin: 20px 0;">
 
         <p>Kalau ada pertanyaan, balas saja email ini ya.</p>
-          <p>dhefajar0410@gmail.com</p>
+          <p>sense.xj@gmail.com</p>
         <p style="margin-top: 30px;">Salam hangat,<br><strong>LINKAN.ID</strong></p>
     </div>
 </body>
