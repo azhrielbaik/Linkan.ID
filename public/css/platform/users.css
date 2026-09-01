@@ -1152,6 +1152,77 @@ nav[role="navigation"] a:hover {
     color: #334155;
 }
 
+/* =========================================================
+   SKELETON LOADING (SELLER DETAIL MODAL)
+   ========================================================= */
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-elem {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+html[data-theme="dark"] .skeleton-elem,
+body.dark-mode .skeleton-elem {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+}
+
+.seller-skeleton {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    animation: fadeIn 0.25s ease-in;
+}
+
+.seller-skeleton-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+html[data-theme="dark"] .seller-skeleton-banner,
+body.dark-mode .seller-skeleton-banner {
+    background: #0f172a;
+    border-color: #1e293b;
+}
+
+.seller-skeleton-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.seller-skeleton-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skeleton-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+}
+
 .mode-selector {
     display: grid;
     grid-template-columns: 1fr 1fr;

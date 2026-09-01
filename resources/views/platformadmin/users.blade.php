@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
@@ -336,9 +336,85 @@
                 <button type="button" class="modal-close" onclick="closeSellerModal()">&times;</button>
             </div>
             <div class="modal-body" id="sellerModalBody">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
-                    {{ __('platform.loading_data') }}
+                <div class="seller-skeleton">
+                    <!-- Skeleton Banner -->
+                    <div class="seller-skeleton-banner">
+                        <div class="seller-skeleton-banner-left">
+                            <div class="skeleton-elem skeleton-avatar"></div>
+                            <div class="seller-skeleton-info">
+                                <div class="skeleton-elem" style="width: 150px; height: 18px; border-radius: 4px;"></div>
+                                <div class="skeleton-elem" style="width: 230px; height: 13px; border-radius: 4px;"></div>
+                                <div class="skeleton-elem" style="width: 120px; height: 12px; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="skeleton-elem" style="width: 80px; height: 26px; border-radius: 20px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton 4 Mini Financial Stats Grid -->
+                    <div class="modal-stats-grid">
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Extra Details Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
+                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
+                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Tabs -->
+                    <div class="modal-tabs" style="margin-bottom: 16px; display: flex; gap: 10px;">
+                        <div class="skeleton-elem" style="width: 110px; height: 32px; border-radius: 8px;"></div>
+                        <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
+                        <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                    </div>
+
+                    <!-- Skeleton Mini Table -->
+                    <div style="border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; background: #fff;">
+                        <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; display: flex; gap: 16px;">
+                            <div class="skeleton-elem" style="width: 30%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="padding: 14px 16px; border-bottom: 1px solid #f8fafc; display: flex; gap: 16px; align-items: center;">
+                            <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="padding: 14px 16px; display: flex; gap: 16px; align-items: center;">
+                            <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
