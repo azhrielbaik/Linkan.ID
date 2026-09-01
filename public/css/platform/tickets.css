@@ -86,19 +86,36 @@
     background: #ffffff;
     border: var(--platform-border);
     border-radius: var(--platform-radius);
-    padding: var(--platform-card-padding);
+    padding: 0;
     margin-bottom: 20px;
+    box-shadow: var(--platform-card-shadow);
+    overflow: hidden;
+}
+
+/* Row 1 — Status Tabs */
+.p-ticket-tabs-row {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: space-between;
     align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Row 2 — Filter Inputs */
+.p-filter-inputs-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .p-ticket-tabs {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .p-ticket-tab {
@@ -126,6 +143,15 @@
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
+}
+
+/* Search input standalone (no wrapper needed, avoids gooey JS) */
+.p-filter-search-standalone {
+    padding-left: 34px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 14px;
 }
 
 .p-filter-select {
@@ -345,3 +371,85 @@
 .btn-send-admin-reply:hover {
     background: #d46f1e;
 }
+
+/* =========================================================
+   MOBILE RESPONSIVE — TICKETS
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .p-filter-inputs-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .p-filter-inputs {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .p-ticket-search-box {
+        width: 100%;
+    }
+
+    .p-filter-search {
+        width: 100%;
+    }
+
+    .p-filter-select {
+        width: 100%;
+    }
+
+    .p-thread-main {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .platform-tickets-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .platform-tickets-header h2 {
+        font-size: 18px;
+    }
+
+    .platform-tickets-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .p-ticket-stat {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .p-ticket-stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .p-ticket-stat-num {
+        font-size: 18px;
+    }
+
+    .p-ticket-tabs {
+        width: 100%;
+    }
+
+    .p-ticket-tab {
+        flex: 1;
+        text-align: center;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .p-thread-main {
+        padding: 12px;
+    }
+}
+

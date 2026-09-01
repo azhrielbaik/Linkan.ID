@@ -201,7 +201,7 @@ body {
 .filter-card {
     background: #ffffff;
     border-radius: 14px;
-    padding: 12px 18px;
+    padding: 16px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
     display: flex;
@@ -888,13 +888,15 @@ nav[role="navigation"] a:hover {
         margin-left: 0 !important;
     }
     .hamburger-btn {
-        display: block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     .platform-header {
-        padding: 14px 20px;
+        padding: 12px 16px;
     }
     .content-wrapper {
-        padding: 20px 16px;
+        padding: 16px 14px;
     }
     .filter-card {
         flex-direction: column;
@@ -916,6 +918,22 @@ nav[role="navigation"] a:hover {
 }
 
 @media (max-width: 600px) {
+    .platform-header {
+        padding: 10px 12px;
+    }
+    .platform-header h1 {
+        font-size: 17px;
+    }
+    .content-wrapper {
+        padding: 12px 10px;
+    }
+    .date-range-box {
+        flex-direction: column;
+    }
+    .date-input {
+        width: 100%;
+    }
+
     .bulk-toolbar {
         align-items: stretch;
         flex-direction: column;

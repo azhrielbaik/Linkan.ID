@@ -2,26 +2,24 @@
    LINKAN.ID — MODERN CAPSULE NAVBAR SYSTEM FOR PLATFORM ADMIN
    
    Specifications:
-   1. Container: Capsule shaped (rounded-2xl / border-radius: 16px), subtle border, soft shadow, flexbox.
-   2. Tab Item:
-      - Default: Icon only (label text hidden with max-w-0 opacity-0 overflow-hidden).
-      - Active: Expands smoothly to show text, primary/accent color, muted background.
-   3. Separator: Vertical line divider between tab groups.
-   4. Animation (Pure CSS): transition-all duration-300 ease-in-out from max-w-0 opacity-0 to max-w-[200px] opacity-100.
-   5. Vanilla JS Interaction: Single active tab toggle & Click outside collapse to icons.
+   1. Container: Capsule shaped (border-radius: 9999px), subtle border, soft shadow, flexbox, 4px padding.
+   2. Inactive Tab Item: Square/Circular icon-only 36px x 36px button.
+   3. Active Tab Item: Expanded pill (padding: 0 16px), 8px gap between icon and text, primary color & soft background.
+   4. Separator: Subtle vertical divider between tab groups.
    ========================================================================== */
 
 /* 1. Container Kapsul */
 .platform-navbar-capsule {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 1rem; /* rounded-2xl */
-    padding: 4px 6px;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+    border-radius: 9999px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
     user-select: none;
+    box-sizing: border-box;
     transition: all 0.3s ease-in-out;
 }
 
@@ -30,9 +28,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    height: 36px;
     min-height: 36px;
-    padding: 6px 11px;
-    border-radius: 0.75rem; /* rounded-xl */
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+    border-radius: 9999px;
     color: #64748b;
     text-decoration: none;
     background: transparent;
@@ -41,25 +42,26 @@
     outline: none;
     position: relative;
     white-space: nowrap;
-    transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-capsule-tab:hover {
     color: var(--p-primary, #ed842c);
-    background: #f1f5f9;
+    background: #f8fafc;
 }
 
 /* Icon */
 .nav-capsule-icon {
     font-size: 14px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: transform 0.25s ease, color 0.25s ease;
 }
 
-/* 4. Animasi Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
+/* Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
 .nav-capsule-label {
     max-width: 0;
     opacity: 0;
@@ -67,62 +69,50 @@
     white-space: nowrap;
     font-size: 13px;
     font-weight: 700;
+    line-height: 1;
     color: inherit;
     margin-left: 0;
     display: inline-block;
     vertical-align: middle;
-    transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+    transition: max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 }
 
-/* State Aktif (Saat Tab Diklik) */
+/* State Aktif (Expanded Pill dengan Padding Presisi 0 16px & Gap 8px) */
 .nav-capsule-tab.is-active {
-    background: #f1f5f9; /* background abu-abu / muted */
-    color: var(--p-primary, #ed842c); /* warna teks & icon jadi primary / biru aksen */
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    width: auto;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 16px !important;
+    gap: 8px;
+    background: #f1f5f9 !important;
+    color: var(--p-primary, #ed842c) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
 .nav-capsule-tab.is-active .nav-capsule-icon {
     color: var(--p-primary, #ed842c);
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
-/* Melebar (Expand) ke max-w-[200px] opacity-100 */
 .nav-capsule-tab.is-active .nav-capsule-label {
     max-width: 200px;
     opacity: 1;
-    margin-left: 8px;
 }
 
-/* 3. Separator Garis Pemisah Vertikal */
+/* Separator Garis Pemisah Vertikal */
 .nav-capsule-separator {
     width: 1px;
     height: 18px;
     background: #e2e8f0;
-    margin: 0 4px;
+    margin: 0 2px;
     flex-shrink: 0;
-    transition: background-color 0.3s ease;
 }
 
-/* Tooltip bawaan browser yang halus */
-.nav-capsule-tab[title] {
-    position: relative;
-}
-
-/* Responsive adjustment: di layar sangat kecil kapsul tetap rapi */
-@media (max-width: 900px) {
-    .platform-navbar-capsule {
-        display: none; /* Sembunyikan quick kapsul jika ruang header sempit */
-    }
-}
-
-/* ==========================================================================
-   DARK MODE COMPATIBILITY
-   ========================================================================== */
+/* Dark Mode */
 html[data-theme="dark"] .platform-navbar-capsule,
 body.dark-mode .platform-navbar-capsule {
     background: var(--p-bg-surface-elevated, #1e293b);
     border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 html[data-theme="dark"] .nav-capsule-tab,
@@ -133,16 +123,27 @@ body.dark-mode .nav-capsule-tab {
 html[data-theme="dark"] .nav-capsule-tab:hover,
 body.dark-mode .nav-capsule-tab:hover {
     color: var(--p-primary, #ed842c);
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 html[data-theme="dark"] .nav-capsule-tab.is-active,
 body.dark-mode .nav-capsule-tab.is-active {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--p-primary, #ed842c);
+    background: #243046 !important;
+    color: var(--p-primary, #ed842c) !important;
 }
 
 html[data-theme="dark"] .nav-capsule-separator,
 body.dark-mode .nav-capsule-separator {
     background: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE — NAVBAR CAPSULE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    /* Di mobile, sembunyikan navbar capsule (navigasi via sidebar) */
+    .platform-navbar-capsule {
+        display: none;
+    }
 }

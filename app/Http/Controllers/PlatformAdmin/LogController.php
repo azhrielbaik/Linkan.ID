@@ -60,13 +60,13 @@ class LogController extends Controller
         // Filter Tanggal
         $startDate = $request->input('start_date') ?: $request->input('date', '');
         $endDate   = $request->input('end_date', '');
-        if ($startDate) {
-            if ($endDate) {
-                $query->whereDate('created_at', '>=', $startDate)
-                      ->whereDate('created_at', '<=', $endDate);
-            } else {
-                $query->whereDate('created_at', $startDate);
-            }
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
 
         $logs = $query->paginate(20)->withQueryString();
@@ -134,13 +134,13 @@ class LogController extends Controller
         // Filter Tanggal
         $startDate = $request->input('start_date') ?: $request->input('date', '');
         $endDate   = $request->input('end_date', '');
-        if ($startDate) {
-            if ($endDate) {
-                $query->whereDate('created_at', '>=', $startDate)
-                      ->whereDate('created_at', '<=', $endDate);
-            } else {
-                $query->whereDate('created_at', $startDate);
-            }
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
 
         $transactions = $query->paginate(15)->withQueryString();

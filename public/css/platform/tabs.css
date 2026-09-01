@@ -2,13 +2,10 @@
    LINKAN.ID — MODERN CAPSULE TAB NAVBAR STYLESHEET (ALL PLATFORM PAGES)
    
    Specifications:
-   1. Container: Capsule shaped (rounded-2xl / border-radius: 16px), subtle border, soft shadow, flexbox.
-   2. Tab Item:
-      - Default (Inactive): Icon only (label text hidden with max-w-0 opacity-0 overflow-hidden).
-      - Active: Expands smoothly to show text, primary/accent color, muted background.
-   3. Separator: Vertical line divider between tab items.
-   4. Animation (Pure CSS): transition-all duration-300 ease-in-out from max-w-0 opacity-0 to max-w-[250px] opacity-100.
-   5. Vanilla JS Interaction: Single active tab toggle & Click outside collapse to icons.
+   1. Container: Capsule shaped (border-radius: 9999px), subtle border, soft shadow, flexbox, 4px padding.
+   2. Inactive Tab Item: Square/Circular icon-only 36px x 36px button.
+   3. Active Tab Item: Expanded pill (padding: 0 16px), 8px gap between icon and text, primary color & soft background.
+   4. Separator: Subtle vertical divider between tab items.
    ========================================================================== */
 
 /* 1. Container Kapsul */
@@ -21,23 +18,22 @@
     gap: 4px;
     width: auto;
     max-width: 100%;
-    margin-bottom: 0;
-    padding: 4px 6px;
+    margin-bottom: 20px;
+    padding: 4px;
     border: 1px solid #e2e8f0;
-    border-radius: 1rem; /* rounded-2xl */
+    border-radius: 9999px; /* Smooth full capsule */
     background: #ffffff;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
     overflow-x: auto;
     overflow-y: hidden;
     user-select: none;
     scrollbar-width: none; /* Hide scrollbar */
+    box-sizing: border-box;
     transition: all 0.3s ease-in-out;
 }
 
-.tabs-container,
-.view-switcher,
-.p-ticket-tabs {
-    margin-bottom: 20px;
+.filter-tabs {
+    margin-bottom: 0;
 }
 
 .tabs-container::-webkit-scrollbar,
@@ -47,7 +43,7 @@
     display: none;
 }
 
-/* 2. Tab Item */
+/* 2. Base Tab Item (Default Inactive: Icon Only 36x36) */
 .tabs-container .tab-btn,
 .tabs-container .tab-link,
 .view-switcher .view-tab-link,
@@ -57,31 +53,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
-    padding: 7px 13px;
+    height: 36px;
+    min-height: 36px;
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
     border: 0;
-    border-radius: 0.75rem; /* rounded-xl / rounded-2xl */
+    border-radius: 9999px;
     background: transparent;
     color: #64748b;
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
     outline: none;
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-/* Hover State */
-.tabs-container .tab-btn:hover,
-.tabs-container .tab-link:hover,
-.view-switcher .view-tab-link:hover,
-.p-ticket-tabs .p-ticket-tab:hover,
-.filter-tabs .filter-tab:hover {
-    color: var(--p-primary, #ed842c);
-    background: #f1f5f9;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Tab Icon */
@@ -96,11 +86,24 @@
 .p-ticket-tabs .p-ticket-tab svg,
 .filter-tabs .filter-tab svg {
     font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: transform 0.25s ease, color 0.25s ease;
 }
 
-/* 4. Animasi Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
+/* Hover State */
+.tabs-container .tab-btn:hover,
+.tabs-container .tab-link:hover,
+.view-switcher .view-tab-link:hover,
+.p-ticket-tabs .p-ticket-tab:hover,
+.filter-tabs .filter-tab:hover {
+    color: var(--p-primary, #ed842c);
+    background: #f8fafc;
+}
+
+/* 3. Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
 .tab-label,
 .tabs-container .tab-btn .tab-text,
 .tabs-container .tab-link .tab-text,
@@ -111,13 +114,14 @@
     opacity: 0;
     overflow: hidden;
     white-space: nowrap;
-    margin-left: 0;
     display: inline-block;
     vertical-align: middle;
     color: inherit;
     font-size: 13px;
     font-weight: 700;
-    transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+    line-height: 1;
+    margin-left: 0;
+    transition: max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 }
 
 /* Tab Badge Counter */
@@ -135,9 +139,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    line-height: 1;
 }
 
-/* Tab Aktif (Saat Diklik / Halaman Terbuka) */
+/* 4. Tab Aktif (Expanded Pill dengan Padding Presisi 0 16px & Gap 8px) */
 .tabs-container .tab-btn.active,
 .tabs-container .tab-link.active,
 .view-switcher .view-tab-link.active,
@@ -148,9 +153,14 @@
 .view-switcher .view-tab-link.is-expanded,
 .p-ticket-tabs .p-ticket-tab.is-expanded,
 .filter-tabs .filter-tab.is-expanded {
-    color: var(--p-primary, #ed842c);
-    background: #f1f5f9; /* Background abu-abu / muted */
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    width: auto;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 16px !important;
+    gap: 8px;
+    color: var(--p-primary, #ed842c) !important;
+    background: #f1f5f9 !important; /* Background pill abu-abu halus */
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
 .tabs-container .tab-btn.active i,
@@ -164,7 +174,7 @@
 .p-ticket-tabs .p-ticket-tab.is-expanded i,
 .filter-tabs .filter-tab.is-expanded i {
     color: var(--p-primary, #ed842c);
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
 /* Melebar (Expand) ke max-w-[250px] opacity-100 saat aktif */
@@ -190,16 +200,15 @@
 .filter-tabs .filter-tab.is-expanded .tab-text {
     max-width: 250px;
     opacity: 1;
-    margin-left: 8px;
 }
 
-/* 3. Separator Garis Pemisah Vertikal */
+/* 5. Separator Garis Pemisah Vertikal */
 .tab-separator,
 .tabs-separator {
     width: 1px;
     height: 18px;
     background: #e2e8f0;
-    margin: 0 3px;
+    margin: 0 2px;
     flex-shrink: 0;
     transition: background-color 0.3s ease;
 }
@@ -254,7 +263,7 @@ body.dark-mode .view-switcher .view-tab-link:hover,
 body.dark-mode .p-ticket-tabs .p-ticket-tab:hover,
 body.dark-mode .filter-tabs .filter-tab:hover {
     color: var(--p-primary, #ed842c);
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 html[data-theme="dark"] .tabs-container .tab-btn.active,
@@ -277,8 +286,9 @@ body.dark-mode .tabs-container .tab-link.is-expanded,
 body.dark-mode .view-switcher .view-tab-link.is-expanded,
 body.dark-mode .p-ticket-tabs .p-ticket-tab.is-expanded,
 body.dark-mode .filter-tabs .filter-tab.is-expanded {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--p-primary, #ed842c);
+    background: #243046 !important;
+    color: var(--p-primary, #ed842c) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 html[data-theme="dark"] .tab-separator,

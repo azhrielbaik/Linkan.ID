@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/users.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>
 <body>
@@ -31,23 +31,7 @@
         </div>
 
         <div class="content-wrapper">
-            {{-- View Switcher Tabs --}}
-            <div class="view-switcher">
-                <a href="{{ route('platform-admin.users', ['view' => 'users']) }}"
-                   class="view-tab-link {{ $viewType === 'users' ? 'active' : '' }}">
-                    <i class="fas fa-users"></i> {{ __('platform.user_management') }}
-                </a>
-                <a href="{{ route('platform-admin.users', ['view' => 'appeals']) }}"
-                   class="view-tab-link {{ $viewType === 'appeals' ? 'active' : '' }}">
-                    <i class="fas fa-file-contract"></i> {{ __('platform.seller_appeals') }}
-                    @if($pendingAppealsCount > 0)
-                        <span class="tab-counter">{{ $pendingAppealsCount }}</span>
-                    @endif
-                </a>
-            </div>
-
-            @if($viewType === 'users')
-                {{-- Stats Row --}}
+            {{-- Stats Row --}}
                 <div class="stats-row">
                     <div class="stat-card total">
                         <div class="stat-icon-wrap"><i class="fas fa-users"></i></div>
@@ -74,7 +58,7 @@
 
                 {{-- Toolbar --}}
                 <div class="toolbar" style="display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap;">
-                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto;">
+                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <input type="hidden" name="view" value="users">
                         @if($filter && $filter !== 'all')
                             <input type="hidden" name="filter" value="{{ $filter }}">
@@ -84,6 +68,20 @@
                             <input type="text" name="search" placeholder="{{ __('platform.search_user_placeholder') }}" value="{{ $search ?? '' }}" data-autocomplete-type="users" data-suggest-url="{{ route('platform-admin.users.suggest') }}" list="autocomplete-users">
                             <datalist id="autocomplete-users"></datalist>
                         </div>
+
+                        <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Daftar">
+                            <i class="fas fa-calendar-alt date-picker-icon"></i>
+                            <span class="date-range-display">Tanggal Daftar</span>
+                            <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                            <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                            <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                        </div>
+
+                        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
+
+                        @if($search || $startDate || $endDate)
+                            <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => $filter ?? 'all']) }}" class="btn-reset"><i class="fas fa-rotate-left"></i> {{ __('platform.reset') }}</a>
+                        @endif
                     </form>
 
                     <div class="filter-tabs">
@@ -189,6 +187,24 @@
                                                 <i class="fas fa-ban"></i> {{ __('platform.suspend') }}
                                             </button>
                                         @endif
+
+                                        {{-- Tombol Detail Banding (hanya jika ada banding pending) --}}
+                                        @php $pendingAppeal = $user->suspensionAppeals->first(); @endphp
+                                        @if ($pendingAppeal)
+                                            <button type="button" class="btn-action btn-appeal"
+                                                    onclick="openAppealDetailModal({{ json_encode([
+                                                        'id'            => $pendingAppeal->id,
+                                                        'user_name'     => $user->name,
+                                                        'user_email'    => \App\Models\ActivityLog::maskEmail($user->email),
+                                                        'appeal_reason' => $pendingAppeal->appeal_reason,
+                                                        'submitted_at'  => $pendingAppeal->created_at->format('d M Y, H:i'),
+                                                        'attempt'       => \App\Models\SuspensionAppeal::where('user_id', $user->id)->where('id', '<=', $pendingAppeal->id)->count(),
+                                                        'approve_url'   => route('platform-admin.users.appeals.approve', $pendingAppeal->id),
+                                                        'reject_url'    => route('platform-admin.users.appeals.reject', $pendingAppeal->id),
+                                                    ]) }})">
+                                                <i class="fas fa-file-contract"></i> Detail Banding
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -209,114 +225,7 @@
                     @endif
                 </div>
 
-            @elseif($viewType === 'appeals')
-                {{-- Appeals View --}}
-                <div class="table-card">
-                    @if ($appeals->count() > 0)
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Seller</th>
-                                <th>{{ __('platform.appeal_reason') }}</th>
-                                <th>{{ __('platform.time') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th>{{ __('platform.action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($appeals as $i => $appeal)
-                            <tr>
-                                <td style="color:#94a3b8; font-weight:600; font-size:13px;">
-                                    {{ $appeals->firstItem() + $i }}
-                                </td>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-avatar">
-                                            @if ($appeal->user && $appeal->user->avatar)
-                                                <img src="{{ Str::startsWith($appeal->user->avatar, ['http://', 'https://']) ? $appeal->user->avatar : asset('storage/' . $appeal->user->avatar) }}" alt="{{ $appeal->user->name }}">
-                                            @else
-                                                {{ strtoupper(substr($appeal->user->name ?? 'User', 0, 2)) }}
-                                            @endif
-                                        </div>
-                                        <div>
-                                            @php
-                                                $userAppealAttempt = \App\Models\SuspensionAppeal::where('user_id', $appeal->user_id)
-                                                    ->where('id', '<=', $appeal->id)
-                                                    ->count();
-                                            @endphp
-                                            <div class="user-name" style="display: flex; align-items: center; gap: 6px;">
-                                                <span>{{ $appeal->user->name ?? 'User Telah Dihapus' }}</span>
-                                                <span style="font-size: 10px; font-weight: 800; background: #fff0e2; color: #ED842C; padding: 1px 6px; border-radius: 4px;">Ke-{{ $userAppealAttempt }}/3</span>
-                                            </div>
-                                            <div class="user-email">{{ \App\Models\ActivityLog::maskEmail($appeal->user->email ?? null) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div style="font-size: 13px; color: #1e293b; line-height: 1.4; max-width: 380px;">
-                                        {{ $appeal->appeal_reason }}
-                                    </div>
-                                    @if($appeal->admin_notes)
-                                        <div style="font-size: 11px; color: #64748b; margin-top: 6px; background: #f8fafc; padding: 4px 8px; border-radius: 6px; border-left: 3px solid #ED842C;">
-                                            <strong>{{ __('platform.admin_notes') }}:</strong> {{ $appeal->admin_notes }}
-                                        </div>
-                                    @endif
-                                </td>
-                                <td style="color:#64748b; font-size:12px; white-space: nowrap;">
-                                    {{ $appeal->created_at->format('d M Y, H:i') }}
-                                </td>
-                                <td>
-                                    @if($appeal->status === 'approved')
-                                        <span class="badge badge-active">
-                                            <i class="fas fa-check-circle"></i> {{ __('platform.appeal_approved') }}
-                                        </span>
-                                    @elseif($appeal->status === 'rejected')
-                                        <span class="badge badge-suspended">
-                                            <i class="fas fa-times-circle"></i> {{ __('platform.appeal_rejected') }}
-                                        </span>
-                                    @else
-                                        <span class="badge badge-pending">
-                                            <i class="fas fa-clock"></i> {{ __('platform.pending_review') }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($appeal->status === 'pending')
-                                        <div class="action-group">
-                                            <form action="{{ route('platform-admin.users.appeals.approve', $appeal->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <button type="button" class="btn-action btn-approve" onclick="confirmApproveAppeal(this.form, '{{ addslashes($appeal->user->name ?? 'Seller') }}')">
-                                                    <i class="fas fa-check"></i> {{ __('platform.approve_appeal') }}
-                                                </button>
-                                            </form>
-                                            <button type="button" class="btn-action btn-reject" onclick="openRejectAppealModal({{ $appeal->id }}, '{{ addslashes($appeal->user->name ?? 'Seller') }}')">
-                                                <i class="fas fa-times"></i> {{ __('platform.reject_appeal') }}
-                                            </button>
-                                        </div>
-                                    @else
-                                        <span style="font-size: 12px; color: #94a3b8; font-weight: 600;">Selesai Ditinjau</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
 
-                    @if ($appeals->hasPages())
-                        <div class="pagination-wrap">
-                            {{ $appeals->links() }}
-                        </div>
-                    @endif
-                    @else
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>{{ __('platform.no_appeals_found') }}</p>
-                    </div>
-                    @endif
-                </div>
-
-            @endif
 
         </div>
     </div>
@@ -402,6 +311,22 @@
         </div>
     </div>
 
+    <!-- Modal Detail Permohonan Banding Seller -->
+    <div id="appealDetailModal" class="modal">
+        <div class="modal-container modal-container-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-contract" style="color: #ED842C;"></i> Detail Permohonan Banding</h3>
+                <button type="button" class="modal-close" onclick="closeAppealDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="appealDetailBody">
+                {{-- Filled by JS --}}
+            </div>
+            <div class="modal-footer" id="appealDetailFooter">
+                <button type="button" class="btn-modal-cancel" onclick="closeAppealDetailModal()">{{ __('platform.close') }}</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Tolak Permintaan Reset Password -->
     <!-- Modal Detail / Inspeksi Lengkap Seller -->
     <div id="sellerModal" class="modal">
@@ -411,9 +336,85 @@
                 <button type="button" class="modal-close" onclick="closeSellerModal()">&times;</button>
             </div>
             <div class="modal-body" id="sellerModalBody">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
-                    {{ __('platform.loading_data') }}
+                <div class="seller-skeleton">
+                    <!-- Skeleton Banner -->
+                    <div class="seller-skeleton-banner">
+                        <div class="seller-skeleton-banner-left">
+                            <div class="skeleton-elem skeleton-avatar"></div>
+                            <div class="seller-skeleton-info">
+                                <div class="skeleton-elem" style="width: 150px; height: 18px; border-radius: 4px;"></div>
+                                <div class="skeleton-elem" style="width: 230px; height: 13px; border-radius: 4px;"></div>
+                                <div class="skeleton-elem" style="width: 120px; height: 12px; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="skeleton-elem" style="width: 80px; height: 26px; border-radius: 20px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton 4 Mini Financial Stats Grid -->
+                    <div class="modal-stats-grid">
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                        <div class="modal-stat-box" style="padding: 16px 12px;">
+                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Extra Details Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
+                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
+                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Tabs -->
+                    <div class="modal-tabs" style="margin-bottom: 16px; display: flex; gap: 10px;">
+                        <div class="skeleton-elem" style="width: 110px; height: 32px; border-radius: 8px;"></div>
+                        <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
+                        <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                    </div>
+
+                    <!-- Skeleton Mini Table -->
+                    <div style="border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; background: #fff;">
+                        <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; display: flex; gap: 16px;">
+                            <div class="skeleton-elem" style="width: 30%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 13px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="padding: 14px 16px; border-bottom: 1px solid #f8fafc; display: flex; gap: 16px; align-items: center;">
+                            <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                        <div style="padding: 14px 16px; display: flex; gap: 16px; align-items: center;">
+                            <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

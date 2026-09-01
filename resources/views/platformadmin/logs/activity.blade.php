@@ -137,9 +137,12 @@
                         </optgroup>
                     </select>
 
-                    <div class="date-picker-box">
+                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="{{ __('platform.filter_by_date') }}">
                         <i class="fas fa-calendar-alt date-picker-icon"></i>
-                        <input type="date" name="start_date" value="{{ $startDate ?? '' }}" class="date-input" title="{{ __('platform.filter_by_date') }}">
+                        <span class="date-range-display">{{ __('platform.filter_by_date') }}</span>
+                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                        <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                        <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
                     </div>
 
                     <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>

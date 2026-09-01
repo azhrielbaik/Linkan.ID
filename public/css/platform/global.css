@@ -11,7 +11,7 @@
     --platform-radius: 12px;
     --platform-border: 1px solid #e2e8f0;
     --platform-card-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-    --platform-card-padding: 16px 20px;
+    --platform-card-padding: 16px;
     --platform-control-height: 40px;
     --platform-summary-label-size: 11px;
     --platform-summary-value-size: 18px;
@@ -33,6 +33,8 @@
 .search-wrap input,
 .search-box input {
     min-height: var(--platform-control-height);
+    height: var(--platform-control-height);
+    box-sizing: border-box;
 }
 
 .btn-filter,
@@ -45,6 +47,112 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Modern Capsule Filter Button */
+.btn-filter {
+    background: linear-gradient(135deg, var(--p-primary, #ed842c) 0%, #f97316 100%);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 9999px; /* Capsule */
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(237, 132, 44, 0.25), 0 1px 2px rgba(15, 23, 42, 0.06);
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    text-decoration: none;
+    user-select: none;
+}
+
+.btn-filter i {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.btn-filter:hover {
+    background: linear-gradient(135deg, var(--p-primary-hover, #d9701a) 0%, #ea580c 100%);
+    box-shadow: 0 4px 14px rgba(237, 132, 44, 0.35);
+    transform: translateY(-1.5px);
+    color: #ffffff !important;
+}
+
+.btn-filter:hover i {
+    transform: rotate(-10deg) scale(1.1);
+}
+
+.btn-filter:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 1px 4px rgba(237, 132, 44, 0.2);
+}
+
+/* Modern Capsule Reset Button */
+.btn-reset {
+    background: #ffffff;
+    color: #64748b !important;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9999px; /* Capsule */
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.btn-reset i {
+    font-size: 11.5px;
+    transition: transform 0.3s ease;
+}
+
+.btn-reset:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+}
+
+.btn-reset:hover i {
+    transform: rotate(-45deg);
+}
+
+.btn-reset:active {
+    transform: scale(0.97);
+}
+
+/* Dark Mode for Filter & Reset buttons */
+html[data-theme="dark"] .btn-filter,
+body.dark-mode .btn-filter {
+    box-shadow: 0 3px 12px rgba(237, 132, 44, 0.35);
+}
+
+html[data-theme="dark"] .btn-reset,
+body.dark-mode .btn-reset {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #cbd5e1 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] .btn-reset:hover,
+body.dark-mode .btn-reset:hover {
+    background: #243046;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff !important;
 }
 
 /* Balanced typography for every platform summary card. */
@@ -197,7 +305,7 @@ body {
 .stat-card {
     background: #ffffff;
     border-radius: var(--platform-radius);
-    padding: 14px 18px;
+    padding: 16px;
     box-shadow: var(--platform-card-shadow);
     display: flex;
     align-items: center;

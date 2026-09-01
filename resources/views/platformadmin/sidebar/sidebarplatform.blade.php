@@ -206,4 +206,6 @@
 <script src="{{ asset('js/platform/tabs.js') }}?v={{ time() }}"></script>
 {{-- Modern Gooey Search Bar & Animated Autocomplete Engine --}}
 <script src="{{ asset('js/platform/gooey-search.js') }}?v={{ time() }}"></script>
+{{-- Modern Date Range Picker Engine --}}
+<script src="{{ asset('js/platform/custom-datepicker.js') }}?v={{ time() }}"></script>
 

@@ -86,51 +86,69 @@
 
             <!-- Filters Bar -->
             <div class="p-tickets-filters">
-                <div class="p-ticket-tabs">
-                    <a href="{{ route('platform-admin.tickets.index') }}" class="p-ticket-tab {{ empty($status) ? 'active' : '' }}">
-                        <i class="fas fa-inbox"></i> {{ __('platform.all_tickets') }} ({{ $totalCount }})
-                    </a>
-                    <a href="{{ route('platform-admin.tickets.index', ['status' => 'open']) }}" class="p-ticket-tab {{ $status === 'open' ? 'active' : '' }}">
-                        <i class="fas fa-envelope-open-text"></i> {{ __('platform.waiting_tickets') }} ({{ $openCount }})
-                    </a>
-                    <a href="{{ route('platform-admin.tickets.index', ['status' => 'in_progress']) }}" class="p-ticket-tab {{ $status === 'in_progress' ? 'active' : '' }}">
-                        <i class="fas fa-spinner"></i> {{ __('platform.in_process_tickets') }} ({{ $inProgressCount }})
-                    </a>
-                    <a href="{{ route('platform-admin.tickets.index', ['status' => 'resolved']) }}" class="p-ticket-tab {{ $status === 'resolved' ? 'active' : '' }}">
-                        <i class="fas fa-check-double"></i> {{ __('platform.status_resolved') }} ({{ $resolvedCount }})
-                    </a>
-                    <a href="{{ route('platform-admin.tickets.index', ['status' => 'closed']) }}" class="p-ticket-tab {{ $status === 'closed' ? 'active' : '' }}">
-                        <i class="fas fa-archive"></i> {{ __('platform.closed_tickets') }} ({{ $closedCount }})
-                    </a>
+                <!-- Row 1: Status Tabs -->
+                <div class="p-ticket-tabs-row">
+                    <div class="p-ticket-tabs">
+                        <a href="{{ route('platform-admin.tickets.index') }}" class="p-ticket-tab {{ empty($status) ? 'active' : '' }}">
+                            <i class="fas fa-inbox"></i> {{ __('platform.all_tickets') }} ({{ $totalCount }})
+                        </a>
+                        <a href="{{ route('platform-admin.tickets.index', ['status' => 'open']) }}" class="p-ticket-tab {{ $status === 'open' ? 'active' : '' }}">
+                            <i class="fas fa-envelope-open-text"></i> {{ __('platform.waiting_tickets') }} ({{ $openCount }})
+                        </a>
+                        <a href="{{ route('platform-admin.tickets.index', ['status' => 'in_progress']) }}" class="p-ticket-tab {{ $status === 'in_progress' ? 'active' : '' }}">
+                            <i class="fas fa-spinner"></i> {{ __('platform.in_process_tickets') }} ({{ $inProgressCount }})
+                        </a>
+                        <a href="{{ route('platform-admin.tickets.index', ['status' => 'resolved']) }}" class="p-ticket-tab {{ $status === 'resolved' ? 'active' : '' }}">
+                            <i class="fas fa-check-double"></i> {{ __('platform.status_resolved') }} ({{ $resolvedCount }})
+                        </a>
+                        <a href="{{ route('platform-admin.tickets.index', ['status' => 'closed']) }}" class="p-ticket-tab {{ $status === 'closed' ? 'active' : '' }}">
+                            <i class="fas fa-archive"></i> {{ __('platform.closed_tickets') }} ({{ $closedCount }})
+                        </a>
+                    </div>
                 </div>
 
-                <form action="{{ route('platform-admin.tickets.index') }}" method="GET" class="p-filter-inputs">
-                    @if($status)
-                        <input type="hidden" name="status" value="{{ $status }}">
-                    @endif
+                <!-- Row 2: Filter Inputs -->
+                <div class="p-filter-inputs-row">
+                    <form action="{{ route('platform-admin.tickets.index') }}" method="GET" class="p-filter-inputs" style="flex: 1;">
+                        @if($status)
+                            <input type="hidden" name="status" value="{{ $status }}">
+                        @endif
 
-                    <select name="priority" class="p-filter-select" onchange="this.form.submit()">
-                        <option value="">{{ __('platform.all_priorities') }}</option>
-                        <option value="urgent" {{ $priority === 'urgent' ? 'selected' : '' }}>Urgent</option>
-                        <option value="high" {{ $priority === 'high' ? 'selected' : '' }}>High</option>
-                        <option value="medium" {{ $priority === 'medium' ? 'selected' : '' }}>Medium</option>
-                        <option value="low" {{ $priority === 'low' ? 'selected' : '' }}>Low</option>
-                    </select>
+                        <select name="priority" class="p-filter-select" onchange="this.form.submit()">
+                            <option value="">{{ __('platform.all_priorities') }}</option>
+                            <option value="urgent" {{ $priority === 'urgent' ? 'selected' : '' }}>Urgent</option>
+                            <option value="high" {{ $priority === 'high' ? 'selected' : '' }}>High</option>
+                            <option value="medium" {{ $priority === 'medium' ? 'selected' : '' }}>Medium</option>
+                            <option value="low" {{ $priority === 'low' ? 'selected' : '' }}>Low</option>
+                        </select>
 
-                    <select name="category" class="p-filter-select" onchange="this.form.submit()">
-                        <option value="">{{ __('platform.all_categories') }}</option>
-                        <option value="payout" {{ $category === 'payout' ? 'selected' : '' }}>{{ __('platform.cat_payout') }}</option>
-                        <option value="product" {{ $category === 'product' ? 'selected' : '' }}>{{ __('platform.cat_product') }}</option>
-                        <option value="account" {{ $category === 'account' ? 'selected' : '' }}>{{ __('platform.cat_account') }}</option>
-                        <option value="general" {{ $category === 'general' ? 'selected' : '' }}>{{ __('platform.cat_general') }}</option>
-                    </select>
+                        <select name="category" class="p-filter-select" onchange="this.form.submit()">
+                            <option value="">{{ __('platform.all_categories') }}</option>
+                            <option value="payout" {{ $category === 'payout' ? 'selected' : '' }}>{{ __('platform.cat_payout') }}</option>
+                            <option value="product" {{ $category === 'product' ? 'selected' : '' }}>{{ __('platform.cat_product') }}</option>
+                            <option value="account" {{ $category === 'account' ? 'selected' : '' }}>{{ __('platform.cat_account') }}</option>
+                            <option value="general" {{ $category === 'general' ? 'selected' : '' }}>{{ __('platform.cat_general') }}</option>
+                        </select>
 
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="search" class="p-filter-search" placeholder="{{ __('platform.search_ticket_placeholder') }}" value="{{ $search }}">
-                    </div>
-                    <button type="submit" style="display: none;"></button>
-                </form>
+                        <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Tiket">
+                            <i class="fas fa-calendar-alt date-picker-icon"></i>
+                            <span class="date-range-display">Tanggal Tiket</span>
+                            <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
+                            <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                            <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                        </div>
+
+                        <div class="search-wrap">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" placeholder="{{ __('platform.search_ticket_placeholder') }}" value="{{ $search }}">
+                        </div>
+
+                        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
+                        @if($search || $priority || $category || $startDate || $endDate)
+                            <a href="{{ route('platform-admin.tickets.index', ['status' => $status]) }}" class="btn-reset"><i class="fas fa-rotate-left"></i> {{ __('platform.reset') }}</a>
+                        @endif
+                    </form>
+                </div>
             </div>
 
             <!-- Tickets Table -->

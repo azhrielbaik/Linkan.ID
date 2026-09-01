@@ -81,7 +81,19 @@ class ProductManagementController extends Controller
             $query->where('price', '<=', $maxPrice);
         }
 
-        // 7. Sort By
+        // 7. Filter Rentang Tanggal Upload
+        $startDate = $request->input('start_date') ?: $request->input('date', '');
+        $endDate   = $request->input('end_date', '');
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        // 8. Sort By
         $sortBy = $request->input('sort', 'latest');
         if ($sortBy === 'oldest') {
             $query->oldest();
@@ -125,6 +137,8 @@ class ProductManagementController extends Controller
             'verificationStatus',
             'minPrice',
             'maxPrice',
+            'startDate',
+            'endDate',
             'sortBy',
             'totalProductsCount',
             'activeProductsCount',

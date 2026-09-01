@@ -989,6 +989,48 @@ body.dark-mode .ptd-footer {
 }
 
 /* =========================================================
+   MOBILE RESPONSIVE — HEADER PROFILE & DROPDOWN
+   ========================================================= */
+
+@media (max-width: 600px) {
+    /* Sembunyikan nama user di hp kecil */
+    .header-user-btn span.user-name {
+        display: none;
+    }
+
+    /* Dropdown full-width di hp kecil, agar tidak overflow */
+    .platform-theme-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(20px) scale(1);
+        transform-origin: bottom center;
+        box-shadow: 0 -8px 30px rgba(15, 23, 42, 0.18);
+        z-index: 1100;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .platform-theme-dropdown.show {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    /* Pastikan dropdown tidak keluar layar di tablet */
+    .platform-theme-dropdown {
+        right: 0;
+        left: auto;
+        max-width: calc(100vw - 32px);
+    }
+}
+
+/* =========================================================
    SWEETALERT POPUP ADAPTATION IN DARK MODE
    ========================================================= */
 

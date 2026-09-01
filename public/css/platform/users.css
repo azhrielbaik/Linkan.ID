@@ -145,7 +145,7 @@ body {
 .stat-card {
     background: #ffffff;
     border-radius: 14px;
-    padding: 14px 18px;
+    padding: 16px;
     box-shadow: 0 2px 10px rgba(237, 132, 44, 0.08);
     display: flex;
     align-items: center;
@@ -556,6 +556,43 @@ tbody td {
     background: #bbf7d0;
 }
 
+.btn-activate {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.btn-activate:hover {
+    background: #bbf7d0;
+}
+
+.btn-approve {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.btn-approve:hover {
+    background: #bbf7d0;
+}
+
+.btn-reject {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-reject:hover {
+    background: #fecaca;
+}
+
+.btn-appeal {
+    background: #fff0e2;
+    color: #ED842C;
+    border: 1px solid #fdd5a8;
+}
+
+.btn-appeal:hover {
+    background: #fde3c4;
+}
+
 /* ---- Appeals Feed ---- */
 .appeals-list {
     display: flex;
@@ -572,7 +609,7 @@ tbody td {
 }
 
 .appeal-header {
-    padding: 14px 18px;
+    padding: 16px;
     background: #fafafa;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
@@ -690,7 +727,7 @@ tbody td {
 }
 
 .reset-card-header {
-    padding: 14px 18px;
+    padding: 16px;
     background: #fafafa;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
@@ -699,7 +736,7 @@ tbody td {
 }
 
 .reset-card-body {
-    padding: 18px;
+    padding: 16px;
 }
 
 .btn-approve-reset {
@@ -1115,6 +1152,77 @@ nav[role="navigation"] a:hover {
     color: #334155;
 }
 
+/* =========================================================
+   SKELETON LOADING (SELLER DETAIL MODAL)
+   ========================================================= */
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-elem {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+html[data-theme="dark"] .skeleton-elem,
+body.dark-mode .skeleton-elem {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+}
+
+.seller-skeleton {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    animation: fadeIn 0.25s ease-in;
+}
+
+.seller-skeleton-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+html[data-theme="dark"] .seller-skeleton-banner,
+body.dark-mode .seller-skeleton-banner {
+    background: #0f172a;
+    border-color: #1e293b;
+}
+
+.seller-skeleton-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.seller-skeleton-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skeleton-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+}
+
 .mode-selector {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1200,20 +1308,34 @@ nav[role="navigation"] a:hover {
         margin-left: 0;
     }
 
+    .hamburger-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .content-wrapper {
-        padding: 16px;
+        padding: 16px 14px;
     }
 
     .stats-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
     .platform-header {
-        padding: 14px 16px;
+        padding: 12px 16px;
     }
 
     .toolbar {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-form {
+        max-width: 100%;
+        min-width: 0;
+        width: 100%;
     }
 
     .modal-stats-grid {
@@ -1224,3 +1346,74 @@ nav[role="navigation"] a:hover {
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 600px) {
+    .platform-header {
+        padding: 10px 12px;
+    }
+
+    .platform-header h1 {
+        font-size: 17px;
+    }
+
+    .content-wrapper {
+        padding: 12px 10px;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .stat-icon-wrap {
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+
+    .stat-info .value {
+        font-size: 18px;
+    }
+
+    .filter-tabs {
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        flex: 1;
+        text-align: center;
+    }
+
+    .toolbar {
+        padding: 10px 14px;
+    }
+
+    .modal-container,
+    .modal-container-large {
+        width: calc(100vw - 24px);
+        max-width: 100%;
+        margin: 12px;
+        border-radius: 16px;
+    }
+
+    .modal-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .action-group {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .btn-action {
+        font-size: 11px;
+        padding: 5px 9px;
+        min-height: 32px;
+    }
+}
