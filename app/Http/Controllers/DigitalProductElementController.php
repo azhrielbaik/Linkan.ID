@@ -68,17 +68,41 @@ class DigitalProductElementController extends Controller
 
         // Handle Deliverable
         $digitalProduct->deliverable_type = $request->deliverable_type; // 'upload', 'gdrive', 'other'
-        if ($digitalProduct->deliverable_type === 'upload' && $request->hasFile('deliverable_file')) {
-            $file = $request->file('deliverable_file');
-            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('digital_products/deliverables', $filename, 'public');
-            $digitalProduct->deliverable_url = $filePath;
+        if ($digitalProduct->deliverable_type === 'upload') {
+            if ($request->hasFile('deliverable_file')) {
+                // Delete old file if exists
+                if ($digitalProduct->deliverable_url) Storage::disk('public')->delete($digitalProduct->deliverable_url);
+                
+                $file = $request->file('deliverable_file');
+                $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+                $filePath = $file->storeAs('digital_products/deliverables', $filename, 'public');
+                $digitalProduct->deliverable_url = $filePath;
+            } else if ($request->has('remove_deliverable_file') && $request->remove_deliverable_file == 1) {
+                if ($digitalProduct->deliverable_url) Storage::disk('public')->delete($digitalProduct->deliverable_url);
+                $digitalProduct->deliverable_url = null;
+            }
         } else if ($request->deliverable_type !== 'upload') {
             $digitalProduct->deliverable_url = $request->deliverable_url;
         }
 
         // Handle Media Files (Array of files)
-        $mediaFiles = $digitalProduct->media_files ?? [];
+        $oldMediaFiles = $digitalProduct->media_files ?? [];
+        $mediaFiles = [];
+        
+        if ($request->has('existing_media')) {
+            $existingMedia = json_decode($request->existing_media, true);
+            if (is_array($existingMedia)) {
+                $keptUrls = array_column($existingMedia, 'url');
+                foreach ($oldMediaFiles as $old) {
+                    if (in_array($old['url'], $keptUrls)) {
+                        $mediaFiles[] = $old;
+                    } else if (isset($old['path'])) {
+                        Storage::disk('public')->delete($old['path']);
+                    }
+                }
+            }
+        }
+
         if ($request->has('media_count')) {
             $count = (int)$request->media_count;
             for ($i = 0; $i < $count; $i++) {
@@ -107,6 +131,8 @@ class DigitalProductElementController extends Controller
         if (count($mediaFiles) > 0 && empty($digitalProduct->image) && str_starts_with($mediaFiles[0]['type'], 'image/')) {
             $digitalProduct->image = str_replace('digital_products/media/', 'product_images/', $mediaFiles[0]['path']); 
             // Just saving the path to image column for compatibility if needed
+        } else if (count($mediaFiles) === 0) {
+            $digitalProduct->image = null;
         }
 
         $digitalProduct->button_text = 'Beli Sekarang';

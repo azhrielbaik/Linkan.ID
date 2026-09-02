@@ -863,11 +863,23 @@
             existingMedia = [{url: '/storage/' + product.image}];
         }
         dpFormState.existingFiles = existingMedia;
-        dpFormState.existingPlatformFile = product.platform_file || null;
+        dpFormState.existingPlatformFile = product.platform_file || product.deliverable_url || null;
         
         dpFormState.deliverableType = product.deliverable_type || 'upload';
         dpFormState.deliverableFile = null;
         dpFormState.deliverableUrl = product.deliverable_url || '';
+        
+        if (dpFormState.deliverableType === 'upload' && dpFormState.existingPlatformFile && dpFormState.existingPlatformFile !== '') {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            const nameSpan = document.getElementById('dpDeliverableFileName');
+            if (preview && nameSpan) {
+                preview.style.display = 'flex';
+                nameSpan.innerText = dpFormState.existingPlatformFile.split('/').pop();
+            }
+        } else {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            if (preview) preview.style.display = 'none';
+        }
         dpFormState.priceType = product.pricing_type || 'fixed';
         dpFormState.priceFixed = product.price || '';
         dpFormState.priceMin = product.price_min || '';
@@ -995,7 +1007,7 @@
                 item.style.justifyContent = 'center';
                 
                 const img = document.createElement('img');
-                img.src = file.url;
+                img.src = file.url.startsWith('http') || file.url.startsWith('/') ? file.url : '/storage/' + file.url;
                 img.style.width = '100%';
                 img.style.height = '100%';
                 img.style.objectFit = 'cover';
@@ -1013,6 +1025,28 @@
                 badge.style.fontSize = '10px';
                 badge.style.padding = '2px 0';
                 item.appendChild(badge);
+                
+                // Remove Button for Existing File
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.style.position = 'absolute';
+                removeBtn.style.top = '4px';
+                removeBtn.style.right = '4px';
+                removeBtn.style.background = 'rgba(239, 68, 68, 0.9)'; // Red-500
+                removeBtn.style.color = 'white';
+                removeBtn.style.border = 'none';
+                removeBtn.style.borderRadius = '50%';
+                removeBtn.style.width = '20px';
+                removeBtn.style.height = '20px';
+                removeBtn.style.cursor = 'pointer';
+                removeBtn.style.display = 'flex';
+                removeBtn.style.alignItems = 'center';
+                removeBtn.style.justifyContent = 'center';
+                removeBtn.onclick = () => {
+                    dpFormState.existingFiles.splice(index, 1);
+                    renderDpFilePreviews();
+                };
+                item.appendChild(removeBtn);
                 
                 container.appendChild(item);
             });
@@ -1130,6 +1164,7 @@
 
     function removeDpDeliverableFile() {
         dpFormState.deliverableFile = null;
+        dpFormState.existingPlatformFile = null;
         document.getElementById('dpDeliverableFile').value = '';
         document.getElementById('dpDeliverableFilePreview').style.display = 'none';
     }
@@ -1339,10 +1374,19 @@
 
         // Deliverable
         formData.append('deliverable_type', dpFormState.deliverableType || 'upload');
-        if (dpFormState.deliverableType === 'upload' && dpFormState.deliverableFile) {
-            formData.append('deliverable_file', dpFormState.deliverableFile);
+        if (dpFormState.deliverableType === 'upload') {
+            if (dpFormState.deliverableFile) {
+                formData.append('deliverable_file', dpFormState.deliverableFile);
+            } else if (!dpFormState.existingPlatformFile) {
+                formData.append('remove_deliverable_file', 1);
+            }
         } else if (dpFormState.deliverableUrl) {
             formData.append('deliverable_url', dpFormState.deliverableUrl);
+        }
+
+        // Send existing media
+        if (dpFormState.existingFiles) {
+            formData.append('existing_media', JSON.stringify(dpFormState.existingFiles));
         }
 
         // Send via fetch
