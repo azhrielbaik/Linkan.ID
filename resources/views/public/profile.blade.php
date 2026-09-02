@@ -606,6 +606,7 @@
                         }
 
                         $productData = [
+                            'id' => $digitalProduct->id,
                             'title' => $digitalProduct->title,
                             'description' => $digitalProduct->description,
                             'pricing' => [

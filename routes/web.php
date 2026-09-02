@@ -82,6 +82,7 @@ Route::get('/profile/{username}', [PublicPageController::class, 'show'])->name('
 // Public product & checkout (no auth required to browse/buy)
 Route::get('/product/{id}', [DigitalProductController::class, 'show'])->name('product.show');
 Route::match(['get', 'post'], '/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
+Route::get('/checkout/{id}/success', [DigitalProductController::class, 'checkoutSuccess'])->name('checkout.success');
 Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty'])->name('cart.updateQty');
 
 // Digital product payment flow (public callbacks & result pages)

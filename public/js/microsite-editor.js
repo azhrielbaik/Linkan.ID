@@ -9,7 +9,11 @@
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            alert('Tautan berhasil disalin ke clipboard!');
+            if (typeof window.showSuccessToast === 'function') {
+                window.showSuccessToast('Tautan berhasil disalin!');
+            } else {
+                alert('Tautan berhasil disalin ke clipboard!');
+            }
         }).catch(err => {
             console.error('Gagal menyalin teks: ', err);
         });
@@ -568,6 +572,34 @@
             profileForm.dataset.initialized = 'true';
             profileForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                
+                if (typeof syncProfileName === 'function') syncProfileName();
+                if (typeof syncProfileBio === 'function') syncProfileBio();
+                
+                const nameInput = document.getElementById('inputProfileName');
+                const bioInput = document.getElementById('inputProfileBio');
+                
+                let nameWords = nameInput && nameInput.value.trim() !== '' ? nameInput.value.replace(/<[^>]*>?/gm, '').trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+                let bioWords = bioInput && bioInput.value.trim() !== '' ? bioInput.value.replace(/<[^>]*>?/gm, '').trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+                
+                let valid = true;
+                if (nameWords > 50) {
+                    const charErrorName = document.getElementById('charErrorProfileName');
+                    const charCountName = document.getElementById('charCountProfileName');
+                    if (charErrorName) charErrorName.style.display = 'block';
+                    if (charCountName) charCountName.style.color = '#ef4444';
+                    valid = false;
+                }
+                if (bioWords > 250) {
+                    const charErrorBio = document.getElementById('charErrorProfileBio');
+                    const charCountBio = document.getElementById('charCountProfileBio');
+                    if (charErrorBio) charErrorBio.style.display = 'block';
+                    if (charCountBio) charCountBio.style.color = '#ef4444';
+                    valid = false;
+                }
+                
+                if (!valid) return;
+
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const origText = submitBtn ? submitBtn.innerText : 'Simpan Perubahan';
 
@@ -576,8 +608,6 @@
                     submitBtn.innerText = 'Menyimpan...';
                 }
 
-                if (typeof syncProfileName === 'function') syncProfileName();
-                if (typeof syncProfileBio === 'function') syncProfileBio();
                 const formData = new FormData(this);
 
                 fetch(document.getElementById('micrositeEditorUrls').dataset.routeAppearanceUpdate, {
@@ -720,11 +750,12 @@
             const editor = document.getElementById(editorId);
             if (editor) {
                 editor.focus();
-                const range = document.createRange();
-                range.selectNodeContents(editor);
+                
                 const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
+                if (window.savedSelectionRange) {
+                    selection.removeAllRanges();
+                    selection.addRange(window.savedSelectionRange);
+                }
             }
         }
 
@@ -750,13 +781,43 @@
     function syncProfileName() {
         const editor = document.getElementById('editorProfileName');
         const input = document.getElementById('inputProfileName');
-        if (editor && input) input.value = editor.innerHTML;
+        if (editor && input) {
+            input.value = editor.innerHTML;
+            const rawText = editor.innerText.trim();
+            const wordCount = rawText === '' ? 0 : rawText.split(/\s+/).filter(word => word.length > 0).length;
+            const charCount = document.getElementById('charCountProfileName');
+            const charError = document.getElementById('charErrorProfileName');
+            if (charCount) {
+                charCount.textContent = wordCount + '/50 Kata';
+                if (wordCount > 50) {
+                    charCount.style.color = '#ef4444';
+                } else {
+                    charCount.style.color = '#6b7280';
+                    if (charError) charError.style.display = 'none';
+                }
+            }
+        }
     }
 
     function syncProfileBio() {
         const editor = document.getElementById('editorProfileBio');
         const input = document.getElementById('inputProfileBio');
-        if (editor && input) input.value = editor.innerHTML;
+        if (editor && input) {
+            input.value = editor.innerHTML;
+            const rawText = editor.innerText.trim();
+            const wordCount = rawText === '' ? 0 : rawText.split(/\s+/).filter(word => word.length > 0).length;
+            const charCount = document.getElementById('charCountProfileBio');
+            const charError = document.getElementById('charErrorProfileBio');
+            if (charCount) {
+                charCount.textContent = wordCount + '/250 Kata';
+                if (wordCount > 250) {
+                    charCount.style.color = '#ef4444';
+                } else {
+                    charCount.style.color = '#6b7280';
+                    if (charError) charError.style.display = 'none';
+                }
+            }
+        }
     }
 
     // Wait for DOM to add modal listeners
@@ -1162,8 +1223,9 @@
             editor.focus();
 
             const selection = window.getSelection();
-            if (selection.toString().length === 0) {
-                document.execCommand('selectAll', false, null);
+            if (window.savedSelectionRange) {
+                selection.removeAllRanges();
+                selection.addRange(window.savedSelectionRange);
             }
 
             document.execCommand(command, false, value);
@@ -1219,6 +1281,21 @@
         const liveDiv = document.getElementById('live_' + id);
 
         if (editor) {
+            // Update word count
+            const rawText = editor.innerText.trim();
+            const wordCount = rawText === '' ? 0 : rawText.split(/\s+/).filter(word => word.length > 0).length;
+            const charCount = document.getElementById('charCount_' + id);
+            const charError = document.getElementById('charError_' + id);
+            if (charCount) {
+                charCount.textContent = wordCount + '/250 Kata';
+                if (wordCount > 250) {
+                    charCount.style.color = '#ef4444';
+                } else {
+                    charCount.style.color = '#6b7280';
+                    if (charError) charError.style.display = 'none';
+                }
+            }
+
             // [Refactor] Sync list item marker size with inner text font-size
             const lis = editor.querySelectorAll('li');
             lis.forEach(li => {
@@ -1302,6 +1379,18 @@
         const editor = document.getElementById('editorContent_' + id);
 
         if (!editor) return;
+        
+        // Validasi jumlah kata sebelum simpan
+        const charError = document.getElementById('charError_' + id);
+        const charCount = document.getElementById('charCount_' + id);
+        const rawText = editor.innerText.trim();
+        const wordCount = rawText === '' ? 0 : rawText.split(/\s+/).filter(word => word.length > 0).length;
+        
+        if (wordCount > 250) {
+            if (charError) charError.style.display = 'block';
+            if (charCount) charCount.style.color = '#ef4444';
+            return; // Batalkan proses simpan
+        }
 
         const formData = new FormData();
         formData.append('content', editor.innerHTML);
@@ -2281,6 +2370,15 @@
             else if (type === 'Video') toggleVideoEditForm(id, forceOpen);
             else if (type === 'Social') toggleSocialEditForm(id, forceOpen);
             else if (type === 'DigitalProduct') toggleDigitalProductEditForm(id, forceOpen);
+
+            // Auto-scroll preview element (hanya untuk tampilan desktop)
+            if (window.innerWidth > 1024) {
+                let liveElementId = type === 'Profile' ? 'liveProfileSection' : 'live_' + id;
+                const liveElement = document.getElementById(liveElementId);
+                if (liveElement) {
+                    liveElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         }
 
         if ((target = e.target.closest('.js-remove-element'))) {
@@ -2495,6 +2593,18 @@
     });
 
     document.addEventListener('input', function (e) {
+        if (e.target.matches('.js-format-profile-text-val') && e.target.type === 'color') {
+            if (typeof formatText === 'function') {
+                formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
+            }
+        }
+        
+        if (e.target.matches('.js-exec-cmd-value') && e.target.type === 'color') {
+            if (typeof execCmd === 'function') {
+                execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
+            }
+        }
+
         if (e.target.matches('.js-update-image-link')) {
             if (typeof updateDynamicImageLink === 'function') {
                 updateDynamicImageLink(e.target.dataset.targetId, e.target.value);
@@ -2523,6 +2633,20 @@
             if (typeof formatText === 'function') {
                 formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
             }
+        }
+    });
+
+    document.addEventListener('mousedown', function (e) {
+        if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default') || e.target.closest('.toolbar-color-picker') || e.target.closest('.toolbar-select') || e.target.closest('.toolbar-dropdown')) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                window.savedSelectionRange = selection.getRangeAt(0);
+            }
+        }
+
+        // Mencegah hilangnya fokus pada contenteditable saat mengklik tombol toolbar biasa
+        if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default')) {
+            e.preventDefault();
         }
     });
 

@@ -216,12 +216,31 @@ public function show($id)
 {
     $request->validate([
         'product_id' => 'required|integer',
-        'qty' => 'required|integer|min:1'
+        'qty' => 'required|integer|min:1',
+        'price' => 'nullable|numeric|min:0'
     ]);
 
     session()->put("cart.qty.{$request->product_id}", $request->qty);
+    if ($request->has('price')) {
+        session()->put("cart.price.{$request->product_id}", $request->price);
+    }
 
     return response()->json(['status' => 'success']);
+}
+
+public function checkoutSuccess(Request $request, $id)
+{
+    $product = DigitalProduct::findOrFail($id);
+    
+    // Ambil data transaksi terakhir dari sesi atau DB (opsional)
+    // Untuk saat ini kita passing product dan order_id jika ada
+    $orderId = $request->query('order_id');
+    $transaction = null;
+    if ($orderId) {
+        $transaction = \App\Models\Transaction::where('order_id', $orderId)->first();
+    }
+
+    return view('public.checkout-success', compact('product', 'transaction'));
 }
 
 public function checkout(Request $request, $id)
@@ -241,36 +260,45 @@ public function checkout(Request $request, $id)
         ? $request->qty
         : session("cart.qty.$id", 1);
 
-    // Konfigurasi Midtrans
-    \Midtrans\Config::$serverKey = 'SB-Mid-server-qbA7U8pOrHFCGy-0LlFclqIG';
-    \Midtrans\Config::$isProduction = false;
-    \Midtrans\Config::$isSanitized = true;
-    \Midtrans\Config::$is3ds = true;
+    $customPrice = session("cart.price.$id");
+    $itemPrice = $product->price;
+    if ($product->pricing_type === 'pwyw' && $customPrice && $customPrice >= $product->price_min) {
+        $itemPrice = $customPrice;
+    }
 
-    // Generate Snap Token
+    $totalPrice = $itemPrice * $qty;
+    $snapToken = null;
     $orderId = 'ORDER-' . uniqid();
 
-    $params = [
-        'transaction_details' => [
-            'order_id' => $orderId,
-            'gross_amount' => $product->price * $qty,
-        ],
-        'customer_details' => [
-            'first_name' => $request->input('name', 'Guest'),
-            'email' => $request->input('email', 'guest@example.com'),
-        ],
-        'item_details' => [[
-            'id' => $product->id,
-            'price' => $product->price,
-            'quantity' => $qty,
-            'name' => $product->title,
-        ]],
-    ];
+    if ($totalPrice > 0) {
+        // Konfigurasi Midtrans
+        \Midtrans\Config::$serverKey = 'SB-Mid-server-qbA7U8pOrHFCGy-0LlFclqIG';
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
 
-    try {
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-    } catch (\Exception $e) {
-        return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => $totalPrice,
+            ],
+            'customer_details' => [
+                'first_name' => $request->input('name', 'Guest'),
+                'email' => $request->input('email', 'guest@example.com'),
+            ],
+            'item_details' => [[
+                'id' => $product->id,
+                'price' => $itemPrice,
+                'quantity' => $qty,
+                'name' => $product->title,
+            ]],
+        ];
+
+        try {
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
+        }
     }
 
     if ($request->isMethod('post')) {
@@ -280,21 +308,44 @@ public function checkout(Request $request, $id)
             'qty' => 'required|integer|min:1',
         ]);
 
+        if ($totalPrice == 0) {
+            $status = 'success';
+        } else {
+            $status = 'pending';
+        }
+
         // Simpan transaksi ke database setelah validasi
-        Transaction::create([
+        $transaction = Transaction::create([
             'order_id' => $orderId,
             'product_id' => $product->id,
             'buyer_name' => $request->name,
             'buyer_email' => $request->email,
             'qty' => $qty,
-            'total_price' => $product->price * $qty,
-            'status' => 'pending'
+            'total_price' => $totalPrice,
+            'status' => $status
         ]);
+        
+        if ($totalPrice == 0) {
+            \Illuminate\Support\Facades\Mail::to($transaction->buyer_email)->send(
+                new \App\Mail\SendDigitalProductMail($product, $transaction->buyer_name, $transaction)
+            );
+            $redirectUrl = null;
+            $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
+            if ($buyerUser) {
+                $redirectUrl = route('public.profile', ['username' => $buyerUser->username]);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk gratis berhasil didapatkan & email terkirim',
+                'redirect' => $redirectUrl
+            ]);
+        }
 
         return view('public.checkout', [
             'product' => $product,
             'snapToken' => $snapToken,
             'savedQty' => $qty,
+            'itemPrice' => $itemPrice
         ]);
     }
 
@@ -302,6 +353,7 @@ public function checkout(Request $request, $id)
         'product' => $product,
         'snapToken' => $snapToken,
         'savedQty' => $qty,
+        'itemPrice' => $itemPrice
     ]);
 }
 public function midtransCallback(Request $request)

@@ -3353,10 +3353,6 @@ input:checked+.segment-btn {
     line-height: 1.5;
 }
 
-.text-editor-area * {
-    font-size: 14px !important;
-    color: inherit !important;
-}
 
 .text-editor-area[contenteditable="true"]:empty:before {
     content: "Teks Anda di sini...";

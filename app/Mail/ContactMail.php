@@ -21,9 +21,9 @@ class ContactMail extends Mailable
 
     public function build()
     {
-        return $this->from('dhefajar0410@gmail.com', $this->data['name']) // Nama pengirim = dari form
+        return $this->from('sense.xj@gmail.com', $this->data['name']) // Nama pengirim = dari form
                     ->replyTo($this->data['email'], $this->data['name']) // Agar penerima bisa balas ke email user
-                    ->subject('New Contact Message')
+                    ->subject('Pesan Baru dari ' . $this->data['name'])
                     ->view('emails.contact')
                     ->with('data', $this->data);
     }

@@ -401,6 +401,22 @@
                         .dp-stepper-line {
                             margin: 0 8px;
                         }
+                        
+                        /* Fix row box layout for mobile */
+                        .dp-form-row-box {
+                            grid-template-columns: 1fr;
+                            align-items: flex-start;
+                            gap: 8px;
+                            padding: 12px 14px;
+                        }
+                        .dp-row-label {
+                            margin-bottom: 4px;
+                        }
+                        
+                        /* Stack platform cards on mobile */
+                        .dp-platform-cards-grid {
+                            grid-template-columns: 1fr;
+                        }
                     }
                 </style>
 
@@ -441,7 +457,7 @@
                                 
                                 <div class="dp-form-row-box">
                                     <span class="dp-row-label">Nama Produk:</span>
-                                    <input type="text" id="dpTitle" class="dp-row-input" placeholder="Misal: Template Undangan..." oninput="updateDpTitle(this.value)" required>
+                                    <input type="text" id="dpTitle" class="dp-row-input" placeholder="Misal: Template Undangan..." oninput="updateDpTitle(this.value)" required maxlength="200" pattern="[^<>]*" title="Karakter &lt; dan &gt; tidak diperbolehkan untuk mencegah injeksi">
                                 </div>
 
                                 <div class="dp-form-row-box" style="display: block;">
@@ -534,7 +550,7 @@
                                 <div id="dpDeliverableUrlSection" style="display: none;">
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">URL Akses:</span>
-                                        <input type="url" id="dpDeliverableUrl" class="dp-row-input" placeholder="https://..." oninput="updateDpDeliverableUrl(this.value)">
+                                        <input type="url" id="dpDeliverableUrl" class="dp-row-input" placeholder="https://..." oninput="updateDpDeliverableUrl(this.value)" maxlength="255" pattern="https?://.*" title="Harus berupa URL yang valid (http:// atau https://)">
                                     </div>
                                 </div>
 
@@ -708,7 +724,16 @@
 
     // Initialize Quill Editor
     let dpQuill;
-    document.addEventListener("DOMContentLoaded", function() {
+    
+    function initDpQuill() {
+        const editorElement = document.getElementById('dpDescriptionEditor');
+        if (!editorElement) return;
+        
+        // Cek apakah Quill sudah diinisialisasi sebelumnya untuk mencegah duplikasi toolbar
+        if (editorElement.previousSibling && editorElement.previousSibling.classList && editorElement.previousSibling.classList.contains('ql-toolbar')) {
+            return; 
+        }
+
         var toolbarOptions = [
             [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
             ['bold', 'italic', 'underline'],
@@ -727,13 +752,24 @@
         });
 
         // Listen for changes and update state
-        dpQuill.on('text-change', function() {
-            // Get HTML content. If empty (just <p><br></p>), save as empty string
-            let html = dpQuill.root.innerHTML;
-            if (html === '<p><br></p>') html = '';
-            dpFormState.description = html;
+        dpQuill.on('text-change', function(delta, oldDelta, source) {
+            let text = dpQuill.getText().trim();
+            let words = text === '' ? [] : text.split(/\s+/).filter(word => word.length > 0);
+            
+            if (words.length > 250) {
+                // Approximate character limit based on 250 words
+                // Quill's deleteText requires an index and length
+                // We'll just show a toast, as truncating exact words in Quill delta is complex
+                if (typeof showToast === 'function') {
+                    showToast('Maksimal 250 kata untuk deskripsi', 'warning');
+                }
+            }
+            dpFormState.description = dpQuill.root.innerHTML;
         });
-    });
+    }
+
+    document.addEventListener("DOMContentLoaded", initDpQuill);
+    document.addEventListener("turbo:load", initDpQuill);
 
     function openDigitalProductWizard() {
         // Hide add element panel
@@ -758,6 +794,8 @@
         dpFormState.title = '';
         dpFormState.description = '';
         dpFormState.files = [];
+        dpFormState.existingFiles = [];
+        dpFormState.existingPlatformFile = null;
         dpFormState.deliverableType = 'upload';
         dpFormState.deliverableFile = null;
         dpFormState.deliverableUrl = '';
@@ -816,10 +854,32 @@
         dpFormState.element_id = product.id;
         dpFormState.title = product.title || '';
         dpFormState.description = product.description || '';
-        dpFormState.files = []; // Existing media not fully supported via frontend state yet without pre-fetching files, but we preserve them in backend
+        dpFormState.files = []; 
+        
+        let existingMedia = [];
+        if (product.media_files) {
+            existingMedia = typeof product.media_files === 'string' ? JSON.parse(product.media_files) : product.media_files;
+        } else if (product.image) {
+            existingMedia = [{url: '/storage/' + product.image}];
+        }
+        dpFormState.existingFiles = existingMedia;
+        dpFormState.existingPlatformFile = product.platform_file || product.deliverable_url || null;
+        
         dpFormState.deliverableType = product.deliverable_type || 'upload';
         dpFormState.deliverableFile = null;
         dpFormState.deliverableUrl = product.deliverable_url || '';
+        
+        if (dpFormState.deliverableType === 'upload' && dpFormState.existingPlatformFile && dpFormState.existingPlatformFile !== '') {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            const nameSpan = document.getElementById('dpDeliverableFileName');
+            if (preview && nameSpan) {
+                preview.style.display = 'flex';
+                nameSpan.innerText = dpFormState.existingPlatformFile.split('/').pop();
+            }
+        } else {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            if (preview) preview.style.display = 'none';
+        }
         dpFormState.priceType = product.pricing_type || 'fixed';
         dpFormState.priceFixed = product.price || '';
         dpFormState.priceMin = product.price_min || '';
@@ -849,6 +909,15 @@
         document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
         changeDpPriceType(dpFormState.priceType);
         changeDpQtyLimitType(product.has_quantity_limit ? 'limited' : 'unlimited');
+
+        if (dpFormState.existingPlatformFile && dpFormState.deliverableType === 'upload') {
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            const nameEl = document.getElementById('dpDeliverableFileName');
+            nameEl.innerText = dpFormState.existingPlatformFile.split('/').pop() + " (Sudah diupload)";
+            preview.style.display = 'flex';
+        } else {
+            document.getElementById('dpDeliverableFilePreview').style.display = 'none';
+        }
 
         document.getElementById('dpEnableSchedule').checked = dpFormState.isScheduled;
         document.getElementById('dpStartTime').value = dpFormState.startTime;
@@ -920,6 +989,68 @@
     function renderDpFilePreviews() {
         const container = document.getElementById('dpFilesPreview');
         container.innerHTML = ''; // Clear container
+        
+        // Render existing files first
+        if (dpFormState.existingFiles && dpFormState.existingFiles.length > 0) {
+            dpFormState.existingFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.style.position = 'relative';
+                item.style.width = '80px';
+                item.style.height = '80px';
+                item.style.borderRadius = '8px';
+                item.style.overflow = 'hidden';
+                item.style.border = '1px solid #e2e8f0';
+                item.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                item.style.backgroundColor = '#f1f5f9';
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.justifyContent = 'center';
+                
+                const img = document.createElement('img');
+                img.src = file.url.startsWith('http') || file.url.startsWith('/') ? file.url : '/storage/' + file.url;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                item.appendChild(img);
+                
+                // Overlay text indicating existing
+                const badge = document.createElement('div');
+                badge.innerText = 'Tersimpan';
+                badge.style.position = 'absolute';
+                badge.style.bottom = '0';
+                badge.style.width = '100%';
+                badge.style.textAlign = 'center';
+                badge.style.background = 'rgba(0,0,0,0.5)';
+                badge.style.color = 'white';
+                badge.style.fontSize = '10px';
+                badge.style.padding = '2px 0';
+                item.appendChild(badge);
+                
+                // Remove Button for Existing File
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.style.position = 'absolute';
+                removeBtn.style.top = '4px';
+                removeBtn.style.right = '4px';
+                removeBtn.style.background = 'rgba(239, 68, 68, 0.9)'; // Red-500
+                removeBtn.style.color = 'white';
+                removeBtn.style.border = 'none';
+                removeBtn.style.borderRadius = '50%';
+                removeBtn.style.width = '20px';
+                removeBtn.style.height = '20px';
+                removeBtn.style.cursor = 'pointer';
+                removeBtn.style.display = 'flex';
+                removeBtn.style.alignItems = 'center';
+                removeBtn.style.justifyContent = 'center';
+                removeBtn.onclick = () => {
+                    dpFormState.existingFiles.splice(index, 1);
+                    renderDpFilePreviews();
+                };
+                item.appendChild(removeBtn);
+                
+                container.appendChild(item);
+            });
+        }
         
         dpFormState.files.forEach((file, index) => {
             const item = document.createElement('div');
@@ -1033,6 +1164,7 @@
 
     function removeDpDeliverableFile() {
         dpFormState.deliverableFile = null;
+        dpFormState.existingPlatformFile = null;
         document.getElementById('dpDeliverableFile').value = '';
         document.getElementById('dpDeliverableFilePreview').style.display = 'none';
     }
@@ -1242,10 +1374,19 @@
 
         // Deliverable
         formData.append('deliverable_type', dpFormState.deliverableType || 'upload');
-        if (dpFormState.deliverableType === 'upload' && dpFormState.deliverableFile) {
-            formData.append('deliverable_file', dpFormState.deliverableFile);
+        if (dpFormState.deliverableType === 'upload') {
+            if (dpFormState.deliverableFile) {
+                formData.append('deliverable_file', dpFormState.deliverableFile);
+            } else if (!dpFormState.existingPlatformFile) {
+                formData.append('remove_deliverable_file', 1);
+            }
         } else if (dpFormState.deliverableUrl) {
             formData.append('deliverable_url', dpFormState.deliverableUrl);
+        }
+
+        // Send existing media
+        if (dpFormState.existingFiles) {
+            formData.append('existing_media', JSON.stringify(dpFormState.existingFiles));
         }
 
         // Send via fetch

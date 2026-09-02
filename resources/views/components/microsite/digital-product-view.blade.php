@@ -151,14 +151,12 @@
             </div>
 
             @php
-                $deliverable = $product['deliverable'] ?? ['type' => 'link', 'url' => '#', 'file' => ''];
                 $ctaOnclick = '';
-                if ($deliverable['type'] === 'upload' && !empty($deliverable['file'])) {
-                    $fileUrl = asset('storage/' . $deliverable['file']);
-                    $ctaOnclick = "event.preventDefault(); const a = document.createElement('a'); a.href = '{$fileUrl}'; a.download = ''; a.click();";
+                if ($isPreview) {
+                    $ctaOnclick = "event.preventDefault(); alert('Ini adalah mode preview, fungsi checkout dinonaktifkan.');";
                 } else {
-                    $link = $deliverable['url'] ?? '#';
-                    $ctaOnclick = "event.preventDefault(); window.open('{$link}', '_blank');";
+                    $productId = $product['id'] ?? 0;
+                    $ctaOnclick = "event.preventDefault(); processDpCheckout('{$uniqueId}', {$productId});";
                 }
             @endphp
 
@@ -208,6 +206,49 @@ function closeDpModal(id) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
     }, 300); // Wait for transition
+}
+
+if (typeof window.processDpCheckout === 'undefined') {
+    window.processDpCheckout = function(uniqueId, productId) {
+        if (!productId || productId == 0) {
+            alert('Produk tidak valid.');
+            return;
+        }
+        const qtyInput = document.getElementById('qtyInput_' + uniqueId);
+        const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+        
+        const priceInput = document.getElementById('priceInput_' + uniqueId);
+        const price = priceInput ? parseFloat(priceInput.value) : null;
+        
+        let bodyData = {
+            product_id: productId,
+            qty: qty
+        };
+        if (price !== null) {
+            bodyData.price = price;
+        }
+        
+        fetch('{{ route("cart.updateQty") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(bodyData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = '/checkout/' + productId;
+            } else {
+                alert('Gagal memproses pesanan.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan koneksi.');
+        });
+    }
 }
 
 function updateDpQty(id, change, min, max) {
