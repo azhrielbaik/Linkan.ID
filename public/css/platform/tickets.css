@@ -89,7 +89,9 @@
     padding: 0;
     margin-bottom: 20px;
     box-shadow: var(--platform-card-shadow);
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 20;
 }
 
 /* Row 1 — Status Tabs */
@@ -143,6 +145,15 @@
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.p-filter-inputs .custom-dropdown-wrapper,
+.p-filter-inputs .p-filter-select,
+.p-filter-inputs .date-picker-box,
+.p-filter-inputs .search-wrap,
+.p-filter-inputs .btn-filter,
+.p-filter-inputs .btn-reset {
+    flex-shrink: 0;
 }
 
 /* Search input standalone (no wrapper needed, avoids gooey JS) */
