@@ -41,13 +41,18 @@
         .navbar-pill {
             background: #FFFFFF;
             border-radius: 50px;
-            padding: 10px 14px 10px 28px;
+            padding: 8px 16px 8px 24px;
             width: 100%;
-            max-width: 960px;
+            max-width: 1040px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            white-space: nowrap;
+        }
+
+        .nav-logo {
+            flex-shrink: 0;
         }
 
         .nav-logo img {
@@ -58,19 +63,68 @@
 
         .nav-links {
             display: flex;
-            gap: 28px;
+            gap: 24px;
             align-items: center;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .nav-link {
             font-size: 14.5px;
             font-weight: 600;
-            color: #1E293B;
-            transition: color 0.2s;
+            color: #4B5563;
+            transition: color 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap !important;
+            flex-shrink: 0;
         }
 
-        .nav-link:hover {
-            color: #515cf6;
+        .nav-link:hover,
+        .nav-link.active,
+        .scramble-link:hover,
+        .scramble-link.active {
+            color: #000000 !important;
+        }
+
+        .scramble-link {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.3em;
+            vertical-align: middle;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-box {
+            display: inline-block;
+            overflow: hidden;
+            height: 1.3em;
+            line-height: 1.3em;
+            vertical-align: top;
+            position: relative;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-col {
+            display: flex;
+            flex-direction: column;
+            will-change: transform;
+            white-space: nowrap !important;
+        }
+
+        .scramble-char-item {
+            display: block;
+            height: 1.3em;
+            line-height: 1.3em;
+            text-align: center;
+            white-space: nowrap !important;
         }
 
         .btn-signup {
@@ -355,10 +409,10 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ url('/') }}#pricing" class="nav-link">{{ __('layout.pricing') }}</a>
-                <a href="{{ url('/') }}#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
-                <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
+                <a href="{{ url('/') }}#pricing" class="nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+                <a href="{{ url('/') }}#digital-marketing" class="nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+                <a href="{{ route('FAQ') }}" class="nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+                <a href="{{ route('login') }}" class="nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
             </div>
         </div>
@@ -460,10 +514,124 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>
-                <a href="{{ route('contact.form') }}" class="footer-link active">{{ __('layout.contact_us') }}</a>
+                <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}" class="footer-link scramble-link active" data-value="{{ __('layout.contact_us') }}">{{ __('layout.contact_us') }}</a>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const scrambleLinks = document.querySelectorAll('.scramble-link');
+
+            scrambleLinks.forEach(link => {
+                if (!link.dataset.value) {
+                    link.dataset.value = link.innerText.trim();
+                }
+
+                let timeoutId = null;
+
+                link.addEventListener('mouseenter', () => {
+                    const originalText = link.dataset.value;
+                    if (!originalText) return;
+
+                    clearTimeout(timeoutId);
+
+                    // Ensure link never drops or wraps
+                    link.style.whiteSpace = 'nowrap';
+                    link.style.display = 'inline-block';
+
+                    // Measure original letter widths
+                    link.innerHTML = '';
+                    const tempSpans = [];
+                    originalText.split('').forEach(char => {
+                        const s = document.createElement('span');
+                        s.style.display = 'inline-block';
+                        s.style.whiteSpace = 'nowrap';
+                        s.style.visibility = 'hidden';
+                        s.textContent = char === ' ' ? '\u00A0' : char;
+                        link.appendChild(s);
+                        tempSpans.push({ span: s, char });
+                    });
+
+                    const charWidths = tempSpans.map(({ span, char }) => {
+                        return { char, width: Math.ceil(span.getBoundingClientRect().width * 10) / 10 };
+                    });
+
+                    // Build character boxes with locked widths
+                    link.innerHTML = '';
+                    const charBoxes = [];
+
+                    charWidths.forEach(({ char, width }, i) => {
+                        if (char === ' ') {
+                            const space = document.createElement('span');
+                            space.style.display = 'inline-block';
+                            space.style.whiteSpace = 'nowrap';
+                            space.style.width = `${width}px`;
+                            space.innerHTML = '&nbsp;';
+                            link.appendChild(space);
+                            return;
+                        }
+
+                        const box = document.createElement('span');
+                        box.className = 'scramble-char-box';
+                        box.style.display = 'inline-block';
+                        box.style.overflow = 'hidden';
+                        box.style.whiteSpace = 'nowrap';
+                        box.style.width = `${width}px`;
+                        box.style.height = '1.3em';
+                        box.style.lineHeight = '1.3em';
+                        box.style.verticalAlign = 'top';
+                        box.style.textAlign = 'center';
+
+                        const col = document.createElement('span');
+                        col.className = 'scramble-char-col';
+                        col.style.display = 'flex';
+                        col.style.flexDirection = 'column';
+                        col.style.width = '100%';
+                        col.style.whiteSpace = 'nowrap';
+
+                        const r1 = letters[Math.floor(Math.random() * letters.length)];
+                        const r2 = letters[Math.floor(Math.random() * letters.length)];
+                        const r3 = letters[Math.floor(Math.random() * letters.length)];
+
+                        const charList = [char, r1, r2, r3, char];
+
+                        charList.forEach(c => {
+                            const item = document.createElement('span');
+                            item.className = 'scramble-char-item';
+                            item.style.display = 'block';
+                            item.style.height = '1.3em';
+                            item.style.lineHeight = '1.3em';
+                            item.style.width = '100%';
+                            item.style.textAlign = 'center';
+                            item.style.whiteSpace = 'nowrap';
+                            item.textContent = c;
+                            col.appendChild(item);
+                        });
+
+                        col.style.transform = 'translateY(-80%)';
+                        box.appendChild(col);
+                        link.appendChild(box);
+                        charBoxes.push({ col, index: i });
+                    });
+
+                    void link.offsetWidth;
+
+                    charBoxes.forEach(({ col, index }) => {
+                        col.style.transition = `transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms`;
+                        col.style.transform = 'translateY(0%)';
+                    });
+
+                    const totalDuration = 450 + (originalText.length * 35) + 50;
+                    timeoutId = setTimeout(() => {
+                        link.innerText = originalText;
+                        link.style.whiteSpace = '';
+                    }, totalDuration);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -38,7 +38,6 @@ Route::get('lang/{locale}', function ($locale) {
 
 // Static pages
 Route::view('/pricing', 'pricing')->name('pricing');
-Route::view('/service', 'service')->name('service');
 Route::view('/faq', 'faq')->name('FAQ');
 Route::view('/about', 'about')->name('about');
 
