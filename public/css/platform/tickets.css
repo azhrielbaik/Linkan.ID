@@ -166,14 +166,19 @@
 }
 
 .p-filter-select {
-    height: var(--platform-control-height);
+    height: 40px;
     padding: 0 12px;
-    border: var(--platform-border);
-    border-radius: var(--platform-radius);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     font-size: 13px;
     color: #334155;
     outline: none;
     background: #ffffff;
+    box-sizing: border-box;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .p-filter-search {
@@ -463,4 +468,3 @@
         padding: 12px;
     }
 }
-

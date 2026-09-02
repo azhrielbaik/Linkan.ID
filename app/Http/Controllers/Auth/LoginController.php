@@ -8,6 +8,7 @@ use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -143,8 +144,8 @@ class LoginController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-            \Log::info('Google User Data: ', [
+            $googleUser = Socialite::driver('google')->user();
+            Log::info('Google User Data: ', [
                 'id' => $googleUser->id,
                 'name' => $googleUser->name,
                 'email' => $googleUser->email
@@ -175,7 +176,7 @@ class LoginController extends Controller
             }
 
             Auth::login($user);
-            
+
             // Catat Log Aktivitas Login Google
             ActivityLogger::log(
                 'user_login',
@@ -190,10 +191,10 @@ class LoginController extends Controller
             } elseif ($user->role === 'admin_platform') {
                 return redirect()->route('platform-admin.dashboard');
             }
-            
+
             // Default redirect jika role tidak sesuai
             return redirect()->route('login')->with('error', 'Role tidak valid.');
-            
+
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
         }
