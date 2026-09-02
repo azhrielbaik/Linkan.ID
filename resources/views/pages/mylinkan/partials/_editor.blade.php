@@ -401,6 +401,22 @@
                         .dp-stepper-line {
                             margin: 0 8px;
                         }
+                        
+                        /* Fix row box layout for mobile */
+                        .dp-form-row-box {
+                            grid-template-columns: 1fr;
+                            align-items: flex-start;
+                            gap: 8px;
+                            padding: 12px 14px;
+                        }
+                        .dp-row-label {
+                            margin-bottom: 4px;
+                        }
+                        
+                        /* Stack platform cards on mobile */
+                        .dp-platform-cards-grid {
+                            grid-template-columns: 1fr;
+                        }
                     }
                 </style>
 
@@ -708,7 +724,16 @@
 
     // Initialize Quill Editor
     let dpQuill;
-    document.addEventListener("DOMContentLoaded", function() {
+    
+    function initDpQuill() {
+        const editorElement = document.getElementById('dpDescriptionEditor');
+        if (!editorElement) return;
+        
+        // Cek apakah Quill sudah diinisialisasi sebelumnya untuk mencegah duplikasi toolbar
+        if (editorElement.previousSibling && editorElement.previousSibling.classList && editorElement.previousSibling.classList.contains('ql-toolbar')) {
+            return; 
+        }
+
         var toolbarOptions = [
             [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
             ['bold', 'italic', 'underline'],
@@ -733,7 +758,10 @@
             if (html === '<p><br></p>') html = '';
             dpFormState.description = html;
         });
-    });
+    }
+
+    document.addEventListener("DOMContentLoaded", initDpQuill);
+    document.addEventListener("turbo:load", initDpQuill);
 
     function openDigitalProductWizard() {
         // Hide add element panel
