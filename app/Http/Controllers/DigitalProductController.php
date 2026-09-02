@@ -228,6 +228,21 @@ public function show($id)
     return response()->json(['status' => 'success']);
 }
 
+public function checkoutSuccess(Request $request, $id)
+{
+    $product = DigitalProduct::findOrFail($id);
+    
+    // Ambil data transaksi terakhir dari sesi atau DB (opsional)
+    // Untuk saat ini kita passing product dan order_id jika ada
+    $orderId = $request->query('order_id');
+    $transaction = null;
+    if ($orderId) {
+        $transaction = \App\Models\Transaction::where('order_id', $orderId)->first();
+    }
+
+    return view('public.checkout-success', compact('product', 'transaction'));
+}
+
 public function checkout(Request $request, $id)
 {
     $product = DigitalProduct::findOrFail($id);

@@ -30,7 +30,7 @@
 
         <div style="margin-bottom: 15px;">
             <strong>Deskripsi:</strong>
-            <div style="padding-left: 15px;">{{ $product->description }}</div>
+            <div style="padding-left: 15px; margin-top: 5px;">{!! $product->description !!}</div>
         </div>
 
         <div style="border-top: 2px dashed #ff7a00; margin: 30px 0; padding-top: 15px;">
@@ -51,11 +51,41 @@
             </div>
         </div>
 
-        @if ($product->platform_type === 'upload')
-            <p><strong>Link Download:</strong> <a href="{{ asset('storage/' . $product->platform_file) }}" target="_blank" style="color:#ff7a00; text-decoration:none;">Klik di sini untuk mengunduh file</a></p>
-        @else
-            <p><strong>Link Akses:</strong> <a href="{{ $product->platform_url }}" target="_blank" style="color:#ff7a00; text-decoration:none;">Klik di sini untuk mengakses</a></p>
-        @endif
+        <div style="text-align: center; margin: 30px 0;">
+            @php
+                $isUpload = ($product->deliverable_type === 'upload' || $product->platform_type === 'upload');
+                
+                $downloadLink = '';
+                if ($isUpload) {
+                    $filePath = $product->deliverable_url ?: $product->platform_file;
+                    if ($filePath) {
+                        $downloadLink = asset('storage/' . $filePath);
+                    }
+                } else {
+                    $url = $product->deliverable_url ?: $product->platform_url;
+                    if ($url && !preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                        $url = "https://" . $url;
+                    }
+                    $downloadLink = $url;
+                }
+            @endphp
+            
+            @if ($isUpload)
+                <p style="margin-bottom: 15px;"><strong>File Produk:</strong></p>
+                @if($downloadLink)
+                    <a href="{{ $downloadLink }}" target="_blank" style="display: inline-block; padding: 12px 24px; background-color: #ff7a00; color: white; text-decoration: none; font-weight: bold; border-radius: 8px;">Download File Produk</a>
+                @else
+                    <p style="color: #666; font-style: italic; background-color: #f3f4f6; padding: 10px; border-radius: 8px; display: inline-block;">File produk belum tersedia atau belum diunggah.</p>
+                @endif
+            @else
+                <p style="margin-bottom: 15px;"><strong>Akses Produk:</strong></p>
+                @if($downloadLink)
+                    <a href="{{ $downloadLink }}" target="_blank" style="display: inline-block; padding: 12px 24px; background-color: #ff7a00; color: white; text-decoration: none; font-weight: bold; border-radius: 8px;">Akses Produk Sekarang</a>
+                @else
+                    <p style="color: #666; font-style: italic; background-color: #f3f4f6; padding: 10px; border-radius: 8px; display: inline-block;">Tautan akses belum tersedia.</p>
+                @endif
+            @endif
+        </div>
 
         <hr style="border-color: #ff7a00; margin: 20px 0;">
 

@@ -9,15 +9,19 @@ class TextElementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'content' => 'nullable|string',
+            'content' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                if (str_word_count(strip_tags(html_entity_decode($value))) > 250) {
+                    $fail('Isi teks konten tidak boleh lebih dari 250 kata.');
+                }
+            }],
             'element_id' => 'nullable|integer',
             'has_button' => 'nullable|boolean',
-            'button_text' => 'nullable|string',
-            'button_link' => 'nullable|string',
-            'button_color' => 'nullable|string',
-            'button_icon_type' => 'nullable|string',
-            'button_icon_url' => 'nullable|string',
-            'button_icon_emoji' => 'nullable|string',
+            'button_text' => 'nullable|string|max:50',
+            'button_link' => 'nullable|string|max:255',
+            'button_color' => 'nullable|string|max:20',
+            'button_icon_type' => 'nullable|string|max:50',
+            'button_icon_url' => 'nullable|string|max:255',
+            'button_icon_emoji' => 'nullable|string|max:30',
             'button_icon_upload' => 'nullable|image|max:5120',
         ]);
 

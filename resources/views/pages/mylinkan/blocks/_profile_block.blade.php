@@ -143,6 +143,14 @@
                                                 </div>
                                                 <div id="editorProfileName" contenteditable="true" class="text-editor-body editor-name-body js-sync-profile-name" placeholder="Masukkan nama profil Anda..." >{!! old('name', $appearance->name ?? Auth::user()->name) !!}</div>
                                                 <input type="hidden" name="name" id="inputProfileName" value="{{ old('name', $appearance->name ?? Auth::user()->name) }}">
+                                                <div class="text-editor-counter-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                                                    <span id="charErrorProfileName" class="char-error" style="color: #ef4444; font-size: 12px; display: none; font-weight: 500;">Maksimal 50 kata! Gagal disimpan.</span>
+                                                    @php
+                                                        $rawName = strip_tags(html_entity_decode(old('name', $appearance->name ?? Auth::user()->name)));
+                                                        $wordCountName = $rawName === '' ? 0 : str_word_count($rawName);
+                                                    @endphp
+                                                    <span id="charCountProfileName" class="char-counter" style="font-size: 12px; color: #6b7280; text-align: right; flex-grow: 1;">{{ $wordCountName }}/50 Kata</span>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -172,6 +180,14 @@
                                                 </div>
                                                 <div id="editorProfileBio" contenteditable="true" class="text-editor-body editor-bio-body js-sync-profile-bio" placeholder="Tulis deskripsi singkat profil Anda..." >{!! old('bio', $appearance->bio ?? '') !!}</div>
                                                 <input type="hidden" name="bio" id="inputProfileBio" value="{{ old('bio', $appearance->bio ?? '') }}">
+                                                <div class="text-editor-counter-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                                                    <span id="charErrorProfileBio" class="char-error" style="color: #ef4444; font-size: 12px; display: none; font-weight: 500;">Maksimal 250 kata! Gagal disimpan.</span>
+                                                    @php
+                                                        $rawBio = strip_tags(html_entity_decode(old('bio', $appearance->bio ?? '')));
+                                                        $wordCountBio = $rawBio === '' ? 0 : str_word_count($rawBio);
+                                                    @endphp
+                                                    <span id="charCountProfileBio" class="char-counter" style="font-size: 12px; color: #6b7280; text-align: right; flex-grow: 1;">{{ $wordCountBio }}/250</span>
+                                                </div>
                                             </div>
                                         </div>
 

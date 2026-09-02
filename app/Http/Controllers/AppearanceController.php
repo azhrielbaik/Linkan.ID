@@ -23,8 +23,16 @@ class AppearanceController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'bio' => 'nullable|string|max:500',
+            'name' => ['required', 'string', function ($attribute, $value, $fail) {
+                if (str_word_count(strip_tags(html_entity_decode($value))) > 50) {
+                    $fail('Nama profil tidak boleh lebih dari 50 kata.');
+                }
+            }],
+            'bio' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                if (str_word_count(strip_tags(html_entity_decode($value))) > 250) {
+                    $fail('Deskripsi / Bio profil tidak boleh lebih dari 250 kata.');
+                }
+            }],
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'profile_shape' => 'nullable|string|in:circle,rounded,square',

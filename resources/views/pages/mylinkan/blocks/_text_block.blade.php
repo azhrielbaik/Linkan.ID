@@ -51,7 +51,10 @@
                                                     <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertUnorderedList" title="Bullet List"><i class="fas fa-list-ul"></i></button>
                                                     <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertOrderedList" title="Numbered List"><i class="fas fa-list-ol"></i></button>
                                                     <span class="toolbar-divider"></span>
-                                                    <input type="color" class="toolbar-color-picker js-exec-cmd-value" data-target-id="{{ $elementId }}" data-cmd="foreColor" title="Text Color" value="#000000">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna Teks" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 4px; color: #4b5563; transition: all 0.2s;">
+                                                        <i class="fas fa-eye-dropper"></i>
+                                                        <input type="color" class="hidden-color-input js-exec-cmd-value" data-target-id="{{ $elementId }}" data-cmd="foreColor" title="Text Color" value="#000000" style="opacity: 0; position: absolute; width: 0; height: 0;">
+                                                    </label>
                                                     <span class="toolbar-divider"></span>
                                                     <div class="toolbar-dropdown">
                                                         <select data-target-id="{{ $elementId }}" class="toolbar-select js-change-text-size" id="textSizeSelect_{{ $elementId }}">
@@ -67,6 +70,14 @@
                                                     <button type="button" class="toolbar-btn-text js-apply-custom-size" data-target-id="{{ $elementId }}">Terapkan</button>
                                                 </div>
                                                 <div id="editorContent_{{ $elementId }}" class="text-editor-area text-editor-area-styled js-update-text-preview" contenteditable="true" data-target-id="{{ $elementId }}">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
+                                                <div class="text-editor-counter-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                                                    <span id="charError_{{ $elementId }}" class="char-error" style="color: #ef4444; font-size: 12px; display: none; font-weight: 500;">Maksimal 250 kata! Teks gagal disimpan.</span>
+                                                    @php
+                                                        $rawText = strip_tags(html_entity_decode($textEl->content ?? 'Teks Anda di sini...'));
+                                                        $wordCount = $rawText === '' ? 0 : str_word_count($rawText);
+                                                    @endphp
+                                                    <span id="charCount_{{ $elementId }}" class="char-counter" style="font-size: 12px; color: #6b7280; text-align: right; flex-grow: 1;">{{ $wordCount }}/250 Kata</span>
+                                                </div>
                                             </div>
                                             </div>
 
@@ -82,7 +93,7 @@
                                                     <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
                                                         <div class="dp-form-row-box" style="margin-bottom: 0; padding: 12px 15px;">
                                                             <label class="dp-row-label">Teks Tombol</label>
-                                                            <input type="text" id="buttonText_{{ $elementId }}" class="dp-row-input" placeholder="Contoh: Baca Selengkapnya" value="{{ $textEl->button_text ?? '' }}">
+                                                            <input type="text" id="buttonText_{{ $elementId }}" class="dp-row-input" placeholder="Contoh: Baca Selengkapnya" value="{{ $textEl->button_text ?? '' }}" maxlength="50" pattern="[^<>]*" title="Karakter &lt; dan &gt; tidak diperbolehkan untuk mencegah injeksi keamanan.">
                                                         </div>
                                                         <div class="dp-form-row-box" style="margin-bottom: 0; padding: 12px 15px;">
                                                             <label class="dp-row-label">Warna Tombol</label>
@@ -238,7 +249,7 @@
                     <i class="fas fa-lightbulb emoji-cat-icon js-scroll-cat" data-target-id="{{ $elementId }}" data-cat="c8308b1eba7ba926a61b8fd802194386" title="Objects"></i>
                 </div>
                 <div class="profile-form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="buttonIconEmoji_{{ $elementId }}" class="profile-input js-emoji-search" data-target-id="{{ $elementId }}" placeholder="🔍 Cari emoji..." value="{{ ($textEl->button_icon_type ?? '') === 'emoji' ? ($textEl->button_icon_value ?? '') : '' }}" style="padding: 8px 12px; font-size: 13px;">
+                    <input type="text" id="buttonIconEmoji_{{ $elementId }}" class="profile-input js-emoji-search" data-target-id="{{ $elementId }}" placeholder="🔍 Cari emoji..." value="{{ ($textEl->button_icon_type ?? '') === 'emoji' ? ($textEl->button_icon_value ?? '') : '' }}" style="padding: 8px 12px; font-size: 13px;" maxlength="30" pattern="[^<>]*" title="Karakter &lt; dan &gt; tidak diperbolehkan untuk mencegah injeksi keamanan.">
                 </div>
                 <div class="emoji-scroll-container" id="emojiScroll_{{ $elementId }}">
                     <div class="emoji-section-title" id="cat_4c2fe5cabef81537c1921551e7e7b679_{{ $elementId }}">Smileys & Emotion</div>
@@ -992,13 +1003,13 @@
             <div id="advSubTab_fontawesome_{{ $elementId }}" style="display: {{ $isFa ? 'block' : 'none' }};">
                 <div class="profile-form-group" style="margin-bottom: 0;">
                     <label class="profile-form-label">Class FontAwesome (contoh: fas fa-home)</label>
-                    <input type="text" id="buttonIconFa_{{ $elementId }}" class="profile-input js-update-text-preview" placeholder="fas fa-home" value="{{ ($textEl->button_icon_type ?? '') === 'fontawesome' ? ($textEl->button_icon_value ?? '') : '' }}">
+                    <input type="text" id="buttonIconFa_{{ $elementId }}" class="profile-input js-update-text-preview" placeholder="fas fa-home" value="{{ ($textEl->button_icon_type ?? '') === 'fontawesome' ? ($textEl->button_icon_value ?? '') : '' }}" maxlength="50" pattern="[a-zA-Z0-9\-\s]+" title="Hanya huruf, angka, spasi, dan strip yang diperbolehkan untuk nama class ikon">
                 </div>
             </div>
             <div id="advSubTab_url_{{ $elementId }}" style="display: {{ $isUrl ? 'block' : 'none' }};">
                 <div class="profile-form-group" style="margin-bottom: 0;">
                     <label class="profile-form-label">URL Gambar Ikon</label>
-                    <input type="url" id="buttonIconUrl_{{ $elementId }}" class="profile-input js-update-text-preview" placeholder="https://contoh.com/ikon.png" value="{{ ($textEl->button_icon_type ?? '') === 'url' ? ($textEl->button_icon_value ?? '') : '' }}">
+                    <input type="url" id="buttonIconUrl_{{ $elementId }}" class="profile-input js-update-text-preview" placeholder="https://contoh.com/ikon.png" value="{{ ($textEl->button_icon_type ?? '') === 'url' ? ($textEl->button_icon_value ?? '') : '' }}" maxlength="255" pattern="https?://.*" title="Harus berupa URL yang valid (http:// atau https://)">
                 </div>
             </div>
         </div>

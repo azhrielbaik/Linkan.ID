@@ -15,16 +15,20 @@ class UpdateDigitalProductRequest extends FormRequest
     {
         return [
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'title' => 'required|string|max:200',
+            'description' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                if (str_word_count(strip_tags(html_entity_decode($value))) > 250) {
+                    $fail('Deskripsi produk tidak boleh lebih dari 250 kata.');
+                }
+            }],
             'platform_type' => 'required|string|in:upload,dropbox,gdrive,other',
-            'platform_url' => 'nullable|url|required_if:platform_type,dropbox,gdrive,other',
+            'platform_url' => 'nullable|url|max:255|required_if:platform_type,dropbox,gdrive,other',
             'platform_file' => 'nullable|file|mimes:pdf,zip,rar',
             'price_raw' => 'required|numeric',
             'sale_price_raw' => 'nullable|numeric',
             'has_quantity_limit' => 'nullable|boolean',
             'quantity' => 'nullable|integer|min:1',
-            'button_text' => 'required|string',
+            'button_text' => 'required|string|max:50',
         ];
     }
 }
