@@ -8,6 +8,7 @@ use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -17,11 +18,27 @@ class LoginController extends Controller
     protected $redirectTo = '/admin/dashboard';
 
     /**
-     * Buat kunci unik per IP untuk rate limiter login.
+     * Buat identifier unik berdasarkan kombinasi email dan IP.
      */
     protected function throttleKey(Request $request): string
     {
-        return 'login|' . $request->ip();
+        return Str::lower(trim((string) $request->input('email', ''))) . '|' . $request->ip();
+    }
+
+    /**
+     * Kunci untuk status lockout.
+     */
+    protected function lockoutKey(Request $request): string
+    {
+        return 'login_lockout|' . $this->throttleKey($request);
+    }
+
+    /**
+     * Kunci untuk menghitung akumulasi percobaan gagal.
+     */
+    protected function attemptsKey(Request $request): string
+    {
+        return 'login_attempts|' . $this->throttleKey($request);
     }
 
     public function showLoginForm()
@@ -34,16 +51,17 @@ class LoginController extends Controller
                 return redirect()->route('platform-admin.dashboard');
             }
         }
-        return view('login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $key = $this->throttleKey($request);
+        $lockoutKey = $this->lockoutKey($request);
+        $attemptsKey = $this->attemptsKey($request);
 
         // Cek apakah sedang dalam masa lockout
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            $seconds = RateLimiter::availableIn($key);
+        if (RateLimiter::tooManyAttempts($lockoutKey, 1)) {
+            $seconds = max(1, RateLimiter::availableIn($lockoutKey));
             return back()->withErrors([
                 'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik sebelum mencoba kembali.",
             ])->with('lockout_seconds', $seconds)->onlyInput('email');
@@ -57,8 +75,9 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // Login berhasil — reset rate limiter
-            RateLimiter::clear($key);
+            // Login berhasil — bersihkan seluruh rate limiter
+            RateLimiter::clear($lockoutKey);
+            RateLimiter::clear($attemptsKey);
             $request->session()->regenerate();
 
             // Catat Log Aktivitas Login
@@ -76,23 +95,27 @@ class LoginController extends Controller
             }
         }
 
-        // Login gagal — catat percobaan dengan decay 30 detik
-        RateLimiter::hit($key, 30);
+        // Login gagal — akumulasikan percobaan (disimpan selama 5 menit / 300 detik agar tidak reset di tengah proses mencoba)
+        RateLimiter::hit($attemptsKey, 300);
 
-        $attempts = RateLimiter::attempts($key);
-        $remaining = max(0, 5 - $attempts);
+        $attempts = RateLimiter::attempts($attemptsKey);
+        $maxAttempts = 5;
 
-        if ($remaining > 0) {
+        if ($attempts >= $maxAttempts) {
+            // Sudah 5 kali gagal — aktifkan lockout selama 30 detik & bersihkan counter percobaan
+            RateLimiter::hit($lockoutKey, 30);
+            RateLimiter::clear($attemptsKey);
+
+            $seconds = max(1, RateLimiter::availableIn($lockoutKey));
             return back()->withErrors([
-                'email' => "Email atau password yang Anda masukkan salah. Sisa percobaan: {$remaining} kali.",
-            ])->onlyInput('email');
+                'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik sebelum mencoba kembali.",
+            ])->with('lockout_seconds', $seconds)->onlyInput('email');
         }
 
-        // Sudah habis 5 kali, kena lockout
-        $seconds = RateLimiter::availableIn($key);
+        $remaining = $maxAttempts - $attempts;
         return back()->withErrors([
-            'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik sebelum mencoba kembali.",
-        ])->with('lockout_seconds', $seconds)->onlyInput('email');
+            'email' => "Email atau password yang Anda masukkan salah. Sisa percobaan: {$remaining} kali.",
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -121,8 +144,8 @@ class LoginController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-            \Log::info('Google User Data: ', [
+            $googleUser = Socialite::driver('google')->user();
+            Log::info('Google User Data: ', [
                 'id' => $googleUser->id,
                 'name' => $googleUser->name,
                 'email' => $googleUser->email
@@ -153,7 +176,7 @@ class LoginController extends Controller
             }
 
             Auth::login($user);
-            
+
             // Catat Log Aktivitas Login Google
             ActivityLogger::log(
                 'user_login',
@@ -168,10 +191,10 @@ class LoginController extends Controller
             } elseif ($user->role === 'admin_platform') {
                 return redirect()->route('platform-admin.dashboard');
             }
-            
+
             // Default redirect jika role tidak sesuai
             return redirect()->route('login')->with('error', 'Role tidak valid.');
-            
+
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
         }

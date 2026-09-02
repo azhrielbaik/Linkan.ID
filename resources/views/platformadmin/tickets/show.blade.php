@@ -52,10 +52,10 @@
 
             <!-- Thread Grid -->
             <div class="p-thread-grid">
-                
+
                 <!-- Main Chat Conversation -->
                 <div class="p-thread-main">
-                    
+
                     <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px;">
                         <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
                             {{ $ticket->subject }}
@@ -69,7 +69,7 @@
                     <div class="p-bubble p-bubble-seller">
                         <div class="bubble-header">
                             <div class="bubble-author">
-                                <i class="fas fa-user-circle" style="color: #64748b;"></i> 
+                                <i class="fas fa-user-circle" style="color: #64748b;"></i>
                                 {{ $ticket->user->name ?? 'User' }} (Seller)
                             </div>
                             <div class="bubble-time">
@@ -87,7 +87,7 @@
                             <div class="p-bubble p-bubble-admin">
                                 <div class="bubble-header">
                                     <div class="bubble-author">
-                                        <i class="fas fa-shield-alt" style="color: #ED842C;"></i> 
+                                        <i class="fas fa-shield-alt" style="color: #ED842C;"></i>
                                         {{ $r->user->name ?? 'Platform Admin' }} [Admin Platform]
                                     </div>
                                     <div class="bubble-time">
@@ -110,7 +110,7 @@
                             <div class="p-bubble p-bubble-seller">
                                 <div class="bubble-header">
                                     <div class="bubble-author">
-                                        <i class="fas fa-user-circle" style="color: #64748b;"></i> 
+                                        <i class="fas fa-user-circle" style="color: #64748b;"></i>
                                         {{ $ticket->user->name ?? 'Seller' }}
                                     </div>
                                     <div class="bubble-time">
@@ -136,14 +136,14 @@
                     <div class="p-reply-area">
                         <form action="{{ route('platform-admin.tickets.reply', $ticket->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <div style="font-size: 13px; font-weight: 700; color: #1e293b;">
                                     <i class="fas fa-reply" style="color: #ED842C;"></i> {{ __('platform.type_admin_reply') }}
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label for="status_select" style="font-size: 12px; font-weight: 600; color: #64748b;">{{ __('platform.change_status') }}</label>
-                                    <select name="status" id="status_select" class="p-filter-select" style="font-size: 12px; padding: 4px 8px;">
+                                    <select name="status" id="status_select" class="p-filter-select">
                                         <option value="in_progress" {{ $ticket->status === 'in_progress' ? 'selected' : '' }}>{{ __('platform.status_in_progress') }}</option>
                                         <option value="resolved" {{ $ticket->status === 'resolved' ? 'selected' : '' }}>{{ __('platform.status_resolved') }}</option>
                                         <option value="open" {{ $ticket->status === 'open' ? 'selected' : '' }}>{{ __('platform.status_waiting_open') }}</option>
@@ -174,7 +174,7 @@
 
                 <!-- Right Sidebar: Ticket Metadata & Seller Details -->
                 <div class="p-thread-sidebar">
-                    
+
                     <!-- Seller Card -->
                     <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
                         <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px;">

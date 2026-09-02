@@ -29,12 +29,6 @@
             top: 0;
         }
 
-        /* Accessibility: High Visibility Focus */
-        *:focus-visible {
-            outline: 3px solid #FFD700 !important;
-            outline-offset: 2px !important;
-        }
-
         body {
             background-color: #5A5BF1;
             min-height: 100vh;
@@ -62,13 +56,18 @@
         .navbar-pill {
             background: #FFFFFF;
             border-radius: 50px;
-            padding: 8px 12px 8px 24px;
+            padding: 8px 16px 8px 24px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1040px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            white-space: nowrap;
+        }
+
+        .nav-logo {
+            flex-shrink: 0;
         }
 
         .nav-logo img {
@@ -81,21 +80,66 @@
             display: flex;
             gap: 24px;
             align-items: center;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .nav-link {
             font-size: 14px;
             font-weight: 600;
-            color: #333333;
-            transition: color 0.2s;
+            color: #4B5563;
+            transition: color 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap !important;
+            flex-shrink: 0;
         }
 
-        .nav-link:hover {
-            color: #EE8025;
+        .nav-link:hover,
+        .nav-link.active,
+        .scramble-link:hover,
+        .scramble-link.active {
+            color: #000000 !important;
         }
 
-        .nav-link.active {
-            color: #EE8025;
+        .scramble-link {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.3em;
+            vertical-align: middle;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-box {
+            display: inline-block;
+            overflow: hidden;
+            height: 1.3em;
+            line-height: 1.3em;
+            vertical-align: top;
+            position: relative;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-col {
+            display: flex;
+            flex-direction: column;
+            will-change: transform;
+            white-space: nowrap !important;
+        }
+
+        .scramble-char-item {
+            display: block;
+            height: 1.3em;
+            line-height: 1.3em;
+            text-align: center;
+            white-space: nowrap !important;
         }
 
         .btn-signup {
@@ -147,56 +191,222 @@
             margin-bottom: 24px;
         }
 
-        .kb-search-wrapper {
-            display: flex;
-            align-items: center;
-            background: #6B6DFF;
-            border-radius: 50px;
-            padding: 6px 6px 6px 24px;
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            box-shadow: 0 4px 20px rgba(90, 91, 241, 0.25);
-        }
-
-        .kb-search-container {
+        /* =========================================================
+           GOOEY ANIMATED SEARCH BAR (2-STATE: BUTTON -> INPUT)
+           ========================================================= */
+        .kb-search-outer {
             display: flex;
             justify-content: center;
+            align-items: center;
             width: 100%;
+            margin-top: 14px;
+            position: relative;
         }
 
-        .kb-search-input {
-            background: transparent;
+        .goo-search-container {
+            filter: url(#goo-effect);
+            -webkit-filter: url(#goo-effect);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* State 1 (Button): Initially small rounded capsule */
+        .goo-search-bar {
+            position: relative;
+            width: 135px;
+            height: 52px;
+            background: #5a5bf1;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        background-color 0.3s ease,
+                        box-shadow 0.3s ease,
+                        transform 0.2s ease;
+            box-shadow: 0 6px 22px rgba(90, 91, 241, 0.32);
+            user-select: none;
+            z-index: 2;
+        }
+
+        .goo-search-bar:hover:not(.expanded) {
+            background: #4e4ff0;
+            transform: scale(1.04);
+        }
+
+        /* State 2 (Input): Expanded width */
+        .goo-search-bar.expanded {
+            width: 440px;
+            max-width: 78vw;
+            background: #5152ea;
+            cursor: default;
+            justify-content: flex-start;
+            padding: 0 16px 0 22px;
+            box-shadow: 0 10px 32px rgba(90, 91, 241, 0.42);
+            transform: none;
+        }
+
+        /* State 1: Button label */
+        .goo-btn-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #FFFFFF;
-            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: opacity 0.25s ease, transform 0.35s ease;
+            pointer-events: none;
+        }
+
+        .goo-search-bar.expanded .goo-btn-content {
+            opacity: 0;
+            transform: scale(0.6) translateX(-25px);
+            pointer-events: none;
+        }
+
+        /* State 2: Input wrap */
+        .goo-input-wrap {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-15px);
+            transition: opacity 0.35s ease 0.15s, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+        }
+
+        .goo-search-bar.expanded .goo-input-wrap {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .goo-input {
             flex: 1;
+            background: transparent;
+            border: none;
+            outline: none !important;
+            box-shadow: none !important;
+            color: #FFFFFF;
             font-size: 15px;
             font-weight: 500;
-            outline: none;
+            font-family: inherit;
             min-width: 0;
         }
 
-        .kb-search-input::placeholder {
-            color: rgba(255, 255, 255, 0.75);
+        .goo-input:focus,
+        .goo-input:focus-visible,
+        .goo-search-bar:focus,
+        .goo-search-bar:focus-visible,
+        .goo-clear-btn:focus,
+        .goo-clear-btn:focus-visible,
+        .goo-search-icon-blob:focus,
+        .goo-search-icon-blob:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .goo-input::placeholder {
+            color: rgba(255, 255, 255, 0.72);
             font-weight: 500;
         }
 
-        .kb-search-btn {
-            background: #5455E2;
-            color: #FFFFFF;
+        .goo-clear-btn {
+            background: rgba(255, 255, 255, 0.22);
             border: none;
-            border-radius: 50px;
-            padding: 12px 28px;
-            font-size: 15px;
-            font-weight: 700;
+            color: #FFFFFF;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            margin-right: 4px;
             flex-shrink: 0;
             transition: background 0.2s, transform 0.2s;
         }
 
-        .kb-search-btn:hover {
-            background: #4142D6;
-            transform: scale(1.03);
+        .goo-clear-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .goo-clear-btn.visible {
+            display: flex;
+        }
+
+        /* Splitting Magnifying Glass Icon (Gooey Blob on the Right) */
+        .goo-search-icon-blob {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #4648ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            margin-left: -52px;
+            transform: translateX(0) scale(0);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity 0.3s ease,
+                        background-color 0.2s ease;
+            z-index: 3;
+        }
+
+        /* When expanded: Split / pop out to the right with liquid gooey detachment */
+        .goo-search-container.is-expanded .goo-search-icon-blob {
+            transform: translateX(64px) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .goo-search-icon-blob:hover {
+            background: #393adb;
+            transform: translateX(64px) scale(1.08);
+        }
+
+        .goo-search-icon-blob:active {
+            transform: translateX(64px) scale(0.94);
+        }
+
+        @media (max-width: 600px) {
+            .goo-search-bar.expanded {
+                width: 310px;
+                max-width: 62vw;
+                height: 48px;
+                padding: 0 12px 0 16px;
+            }
+            .goo-search-bar {
+                height: 48px;
+            }
+            .goo-search-icon-blob {
+                width: 48px;
+                height: 48px;
+                margin-left: -48px;
+            }
+            .goo-search-container.is-expanded .goo-search-icon-blob {
+                transform: translateX(54px) scale(1);
+            }
+            .goo-search-icon-blob:hover {
+                transform: translateX(54px) scale(1.06);
+            }
+            .goo-input {
+                font-size: 13.5px;
+            }
         }
 
         /* SECTION TITLE */
@@ -531,16 +741,24 @@
             .links-section {
                 grid-template-columns: 1fr;
             }
-            .kb-search-wrapper {
-                padding: 5px 5px 5px 18px;
+            .gooey-search-wrapper {
+                height: 52px;
                 max-width: 100%;
             }
-            .kb-search-input {
-                font-size: 14px;
+            .gooey-search-content {
+                padding: 4px 4px 4px 14px;
             }
-            .kb-search-btn {
-                padding: 10px 20px;
-                font-size: 14px;
+            .gooey-input {
+                font-size: 13.5px;
+            }
+            .gooey-search-btn {
+                padding: 9px 16px;
+                font-size: 13px;
+                gap: 4px;
+            }
+            .gooey-blob.blob-btn {
+                width: 85px;
+                height: 44px;
             }
             .footer-pill {
                 flex-direction: column;
@@ -559,10 +777,10 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
-                <a href="{{ url('/') }}#pricing" class="nav-link">{{ __('layout.pricing') }}</a>
-                <a href="{{ url('/') }}#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
-                <a href="{{ route('FAQ') }}" class="nav-link active">{{ __('layout.faq') }}</a>
-                <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
+                <a href="{{ url('/') }}#pricing" class="nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+                <a href="{{ url('/') }}#digital-marketing" class="nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+                <a href="{{ route('FAQ') }}" class="nav-link scramble-link active" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+                <a href="{{ route('login') }}" class="nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
             </div>
             <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobileNavOverlay">
@@ -576,23 +794,62 @@
     <!-- MOBILE NAVIGATION OVERLAY -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
         <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
-            <a href="{{ url('/') }}#pricing" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
-            <a href="{{ url('/') }}#digital-marketing" class="mobile-nav-link">{{ __('layout.service') }}</a>
-            <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>
-            <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('layout.sign_in') }}</a>
+            <a href="{{ url('/') }}#pricing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+            <a href="{{ url('/') }}#digital-marketing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+            <a href="{{ route('FAQ') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+            <a href="{{ route('login') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
             <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
         </nav>
     </div>
+
+    <!-- SVG GOOEY FILTER (ID: goo-effect) -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+        <defs>
+            <filter id="goo-effect">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="
+                    1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+        </defs>
+    </svg>
 
     <main id="main-content">
     <!-- KNOWLEDGE BASE CARD -->
     <div class="kb-card">
         <h1 class="kb-title">Linkan.id Knowledge Base</h1>
         <p class="kb-subtitle">Discover what Linkan.id can do to help you achieve your goals</p>
-        <div class="kb-search-container">
-            <div class="kb-search-wrapper">
-                <input type="text" class="kb-search-input" id="kbSearchInput" placeholder="e.g. custom domain" aria-label="Search Knowledge Base" autocomplete="new-password" spellcheck="false">
-                <button class="kb-search-btn">Search</button>
+        <div class="kb-search-outer">
+            <div class="goo-search-container" id="gooSearchContainer">
+                <!-- State 1 & State 2 Main Bar -->
+                <div class="goo-search-bar" id="gooSearchBar" role="button" tabindex="0" aria-expanded="false" aria-label="Search Knowledge Base">
+                    <!-- State 1: Button Content -->
+                    <div class="goo-btn-content" id="gooBtnContent">
+                        <span class="goo-btn-text">Search</span>
+                    </div>
+
+                    <!-- State 2: Input Content -->
+                    <div class="goo-input-wrap" id="gooInputWrap">
+                        <input type="text" class="goo-input" id="kbSearchInput" placeholder="e.g. custom domain, produk digital..." aria-label="Search Knowledge Base" autocomplete="off" spellcheck="false">
+                        <button type="button" class="goo-clear-btn" id="gooClearBtn" aria-label="Clear search" title="Hapus pencarian">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Splitting Magnifying Glass Icon (Gooey Blob on the Right) -->
+                <button type="button" class="goo-search-icon-blob" id="gooSearchIconBtn" aria-label="Execute search" title="Cari">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -721,8 +978,8 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">{{ __('layout.contact_us') }}</a>
+                <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}" class="footer-link scramble-link" data-value="{{ __('layout.contact_us') }}">{{ __('layout.contact_us') }}</a>
             </div>
         </div>
     </footer>
@@ -781,19 +1038,240 @@
                     });
                 });
             }
-        // Disable browser autocomplete on search input
-        const kbInput = document.getElementById('kbSearchInput');
-        if (kbInput) {
-            kbInput.setAttribute('autocomplete', 'off');
-            kbInput.setAttribute('autocomplete', 'new-password');
-            kbInput.addEventListener('focus', function() {
-                this.setAttribute('autocomplete', 'new-password');
+        // 2-State Gooey Search Bar Interactions & Live FAQ Filtering
+        const gooContainer = document.getElementById('gooSearchContainer');
+        const gooSearchBar = document.getElementById('gooSearchBar');
+        const searchInput = document.getElementById('kbSearchInput');
+        const clearBtn = document.getElementById('gooClearBtn');
+        const searchIconBtn = document.getElementById('gooSearchIconBtn');
+        const faqGridItems = document.querySelectorAll('.faq-item');
+        const linkItems = document.querySelectorAll('.link-item');
+
+        if (gooSearchBar && gooContainer && searchInput) {
+            // Expand from State 1 (Button) to State 2 (Input)
+            const expandSearch = () => {
+                if (!gooSearchBar.classList.contains('expanded')) {
+                    gooSearchBar.classList.add('expanded');
+                    gooContainer.classList.add('is-expanded');
+                    gooSearchBar.setAttribute('aria-expanded', 'true');
+                    setTimeout(() => {
+                        searchInput.focus();
+                    }, 150);
+                }
+            };
+
+            // Collapse back to State 1 (Button) if empty
+            const collapseSearch = () => {
+                if (searchInput.value.trim() === '') {
+                    gooSearchBar.classList.remove('expanded');
+                    gooContainer.classList.remove('is-expanded');
+                    gooSearchBar.setAttribute('aria-expanded', 'false');
+                    if (clearBtn) clearBtn.classList.remove('visible');
+                    handleSearch();
+                }
+            };
+
+            // Click button to expand
+            gooSearchBar.addEventListener('click', (e) => {
+                if (!gooSearchBar.classList.contains('expanded')) {
+                    expandSearch();
+                }
             });
-            // Prevent autofill
-            setTimeout(function() {
-                kbInput.value = '';
-            }, 100);
+
+            gooSearchBar.addEventListener('keydown', (e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && !gooSearchBar.classList.contains('expanded')) {
+                    e.preventDefault();
+                    expandSearch();
+                }
+            });
+
+            // Click outside to collapse if empty
+            document.addEventListener('click', (e) => {
+                if (!gooContainer.contains(e.target)) {
+                    collapseSearch();
+                }
+            });
+
+            // Escape key collapses
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && gooSearchBar.classList.contains('expanded')) {
+                    searchInput.value = '';
+                    collapseSearch();
+                }
+            });
+
+            // Real-time live search filter
+            const handleSearch = () => {
+                const query = searchInput.value.toLowerCase().trim();
+                
+                if (query.length > 0) {
+                    if (clearBtn) clearBtn.classList.add('visible');
+                } else {
+                    if (clearBtn) clearBtn.classList.remove('visible');
+                }
+
+                // Filter FAQ Questions
+                faqGridItems.forEach(item => {
+                    const questionText = item.querySelector('.faq-question')?.innerText.toLowerCase() || '';
+                    const answerText = item.querySelector('.faq-answer')?.innerText.toLowerCase() || '';
+                    
+                    if (!query || questionText.includes(query) || answerText.includes(query)) {
+                        item.style.display = '';
+                        if (query.length >= 2 && (questionText.includes(query) || answerText.includes(query))) {
+                            item.classList.add('open');
+                            item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'true');
+                        }
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('open');
+                        item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // Filter Knowledge Base Links
+                linkItems.forEach(link => {
+                    const linkText = link.innerText.toLowerCase();
+                    if (!query || linkText.includes(query)) {
+                        link.style.display = '';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                });
+            };
+
+            searchInput.addEventListener('input', handleSearch);
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    searchInput.value = '';
+                    handleSearch();
+                    searchInput.focus();
+                });
+            }
+
+            if (searchIconBtn) {
+                searchIconBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleSearch();
+                    const firstMatch = document.querySelector('.faq-item:not([style*="display: none"])');
+                    if (firstMatch) {
+                        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }
         }
+
+        // Vertical Top-to-Bottom Scramble Text Effect on Navigation Links (Fixed Widths, No Layout Shift, No Drop)
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const scrambleLinks = document.querySelectorAll('.scramble-link');
+
+        scrambleLinks.forEach(link => {
+            if (!link.dataset.value) {
+                link.dataset.value = link.innerText.trim();
+            }
+
+            let timeoutId = null;
+
+            link.addEventListener('mouseenter', () => {
+                const originalText = link.dataset.value;
+                if (!originalText) return;
+
+                clearTimeout(timeoutId);
+
+                // Ensure link never drops or wraps
+                link.style.whiteSpace = 'nowrap';
+                link.style.display = 'inline-block';
+
+                // Measure original letter widths
+                link.innerHTML = '';
+                const tempSpans = [];
+                originalText.split('').forEach(char => {
+                    const s = document.createElement('span');
+                    s.style.display = 'inline-block';
+                    s.style.whiteSpace = 'nowrap';
+                    s.style.visibility = 'hidden';
+                    s.textContent = char === ' ' ? '\u00A0' : char;
+                    link.appendChild(s);
+                    tempSpans.push({ span: s, char });
+                });
+
+                const charWidths = tempSpans.map(({ span, char }) => {
+                    return { char, width: Math.ceil(span.getBoundingClientRect().width * 10) / 10 };
+                });
+
+                // Build character boxes with locked widths
+                link.innerHTML = '';
+                const charBoxes = [];
+
+                charWidths.forEach(({ char, width }, i) => {
+                    if (char === ' ') {
+                        const space = document.createElement('span');
+                        space.style.display = 'inline-block';
+                        space.style.whiteSpace = 'nowrap';
+                        space.style.width = `${width}px`;
+                        space.innerHTML = '&nbsp;';
+                        link.appendChild(space);
+                        return;
+                    }
+
+                    const box = document.createElement('span');
+                    box.className = 'scramble-char-box';
+                    box.style.display = 'inline-block';
+                    box.style.overflow = 'hidden';
+                    box.style.whiteSpace = 'nowrap';
+                    box.style.width = `${width}px`;
+                    box.style.height = '1.3em';
+                    box.style.lineHeight = '1.3em';
+                    box.style.verticalAlign = 'top';
+                    box.style.textAlign = 'center';
+
+                    const col = document.createElement('span');
+                    col.className = 'scramble-char-col';
+                    col.style.display = 'flex';
+                    col.style.flexDirection = 'column';
+                    col.style.width = '100%';
+                    col.style.whiteSpace = 'nowrap';
+
+                    const r1 = letters[Math.floor(Math.random() * letters.length)];
+                    const r2 = letters[Math.floor(Math.random() * letters.length)];
+                    const r3 = letters[Math.floor(Math.random() * letters.length)];
+
+                    const charList = [char, r1, r2, r3, char];
+
+                    charList.forEach(c => {
+                        const item = document.createElement('span');
+                        item.className = 'scramble-char-item';
+                        item.style.display = 'block';
+                        item.style.height = '1.3em';
+                        item.style.lineHeight = '1.3em';
+                        item.style.width = '100%';
+                        item.style.textAlign = 'center';
+                        item.style.whiteSpace = 'nowrap';
+                        item.textContent = c;
+                        col.appendChild(item);
+                    });
+
+                    col.style.transform = 'translateY(-80%)';
+                    box.appendChild(col);
+                    link.appendChild(box);
+                    charBoxes.push({ col, index: i });
+                });
+
+                void link.offsetWidth;
+
+                charBoxes.forEach(({ col, index }) => {
+                    col.style.transition = `transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms`;
+                    col.style.transform = 'translateY(0%)';
+                });
+
+                const totalDuration = 450 + (originalText.length * 35) + 50;
+                timeoutId = setTimeout(() => {
+                    link.innerText = originalText;
+                    link.style.whiteSpace = '';
+                }, totalDuration);
+            });
+        });
         });
     </script>
 </body>

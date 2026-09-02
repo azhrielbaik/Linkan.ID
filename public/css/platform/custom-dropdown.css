@@ -10,7 +10,8 @@
 /* Container */
 .custom-dropdown-wrapper {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    flex-shrink: 0;
     vertical-align: middle;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     user-select: none;

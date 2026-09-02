@@ -89,7 +89,9 @@
     padding: 0;
     margin-bottom: 20px;
     box-shadow: var(--platform-card-shadow);
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 20;
 }
 
 /* Row 1 — Status Tabs */
@@ -145,6 +147,15 @@
     flex-wrap: wrap;
 }
 
+.p-filter-inputs .custom-dropdown-wrapper,
+.p-filter-inputs .p-filter-select,
+.p-filter-inputs .date-picker-box,
+.p-filter-inputs .search-wrap,
+.p-filter-inputs .btn-filter,
+.p-filter-inputs .btn-reset {
+    flex-shrink: 0;
+}
+
 /* Search input standalone (no wrapper needed, avoids gooey JS) */
 .p-filter-search-standalone {
     padding-left: 34px !important;
@@ -155,14 +166,19 @@
 }
 
 .p-filter-select {
-    height: var(--platform-control-height);
+    height: 40px;
     padding: 0 12px;
-    border: var(--platform-border);
-    border-radius: var(--platform-radius);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     font-size: 13px;
     color: #334155;
     outline: none;
     background: #ffffff;
+    box-sizing: border-box;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .p-filter-search {
@@ -452,4 +468,3 @@
         padding: 12px;
     }
 }
-

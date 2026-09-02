@@ -37,12 +37,6 @@
             top: 0;
         }
 
-        /* Accessibility: High Visibility Focus */
-        *:focus-visible {
-            outline: 3px solid #FFD700 !important;
-            outline-offset: 2px !important;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -55,8 +49,8 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             background: linear-gradient(
-                180deg, 
-                #5A5BF1 0%, 
+                180deg,
+                #5A5BF1 0%,
                 #91E7DA 100%
             );
             min-height: 100vh;
@@ -110,11 +104,12 @@
             border-radius: 50px;
             padding: 8px 12px 8px 24px;
             width: 90%;
-            max-width: 1000px;
+            max-width: 1020px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            white-space: nowrap;
         }
 
         .nav-logo {
@@ -126,6 +121,7 @@
             align-items: center;
             gap: 6px;
             letter-spacing: -0.5px;
+            flex-shrink: 0;
         }
 
         .logo-img {
@@ -138,32 +134,162 @@
             display: flex;
             gap: 24px;
             align-items: center;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .nav-link {
             font-size: 14px;
             font-weight: 600;
-            color: #333;
-            transition: color 0.2s;
+            color: #4B5563;
+            transition: color 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap !important;
+            flex-shrink: 0;
         }
-        
-        .nav-link:hover {
-            color: var(--orange);
+
+        .nav-link:hover,
+        .nav-link.active,
+        .scramble-link:hover,
+        .scramble-link.active {
+            color: #000000 !important;
+        }
+
+        .scramble-link {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.3em;
+            vertical-align: middle;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-box {
+            display: inline-block;
+            overflow: hidden;
+            height: 1.3em;
+            line-height: 1.3em;
+            vertical-align: top;
+            position: relative;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+        }
+
+        .scramble-char-col {
+            display: flex;
+            flex-direction: column;
+            will-change: transform;
+            white-space: nowrap !important;
+        }
+
+        .scramble-char-item {
+            display: block;
+            height: 1.3em;
+            line-height: 1.3em;
+            text-align: center;
+            white-space: nowrap !important;
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        /* =========================================================
+           ORIGIN-AWARE INTERACTIVE BUTTONS (CIRCLE FILL HOVER EFFECT)
+           ========================================================= */
+        .relative { position: relative; }
+        .overflow-hidden { overflow: hidden; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-xl { border-radius: 14px; }
+        .border { border: 1px solid transparent; }
+        .z-10 { z-index: 10; }
+
+        .origin-btn {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            isolation: isolate;
+            --x: 50%;
+            --y: 50%;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+
+        .origin-btn .btn-bg {
+            position: absolute;
+            top: var(--y, 50%);
+            left: var(--x, 50%);
+            width: 250%;
+            aspect-ratio: 1 / 1;
+            border-radius: 9999px;
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .origin-btn:hover .btn-bg,
+        .origin-btn.group-hover .btn-bg {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .origin-btn .btn-text {
+            position: relative;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            pointer-events: none;
+            transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .origin-btn:active {
+            transform: scale(0.97);
         }
 
         .btn-signup {
             background: #000000;
-            color: #fff;
             padding: 10px 24px;
             border-radius: 50px;
             font-size: 14px;
             font-weight: 700;
-            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
         }
-
+        .btn-signup .btn-bg {
+            background: #FFFFFF;
+        }
+        .btn-signup .btn-text {
+            color: #FFFFFF;
+        }
         .btn-signup:hover {
-            background: #222222;
-            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+            border-color: #000000;
+            transform: translateY(-2px);
+        }
+        .btn-signup:hover .btn-text {
+            color: #000000;
         }
 
         /* MAIN SECTIONS */
@@ -293,19 +419,27 @@
 
         .btn-create {
             background: #FFFFFF;
-            color: var(--dark);
-            border: none;
             padding: 14px 36px;
             border-radius: 50px;
             font-weight: 800;
             font-size: 16px;
-            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
         }
-
+        .btn-create .btn-bg {
+            background: var(--dark);
+        }
+        .btn-create .btn-text {
+            color: var(--dark);
+            font-weight: 800;
+        }
         .btn-create:hover {
-            transform: scale(1.05);
+            border-color: var(--dark);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+            transform: translateY(-2px);
+        }
+        .btn-create:hover .btn-text {
+            color: #FFFFFF;
         }
 
         /* FEATURES SECTION */
@@ -346,7 +480,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.05);
             transition: transform 0.2s;
         }
-        
+
         .feature-pill:hover {
             transform: translateY(-5px);
         }
@@ -358,7 +492,7 @@
             display: flex;
             justify-content: center;
         }
-        
+
         .feature-mockup-img {
             max-width: 100%;
             height: auto;
@@ -411,19 +545,27 @@
 
         .btn-service {
             background: #FFFFFF;
-            color: var(--orange);
-            border: none;
             padding: 14px 36px;
             border-radius: 50px;
             font-weight: 800;
             font-size: 16px;
-            cursor: pointer;
+            border: 1px solid rgba(90, 91, 241, 0.2);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
         }
-
+        .btn-service .btn-bg {
+            background: var(--orange);
+        }
+        .btn-service .btn-text {
+            color: var(--orange);
+            font-weight: 800;
+        }
         .btn-service:hover {
-            transform: scale(1.05);
+            border-color: var(--orange);
+            box-shadow: 0 12px 30px rgba(90, 91, 241, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-service:hover .btn-text {
+            color: #FFFFFF;
         }
 
         .marketing-image-wrapper {
@@ -449,7 +591,7 @@
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 5px;
             max-width: 900px;
             margin: 0 auto;
             width: 100%;
@@ -469,6 +611,7 @@
             position: relative;
             z-index: 1;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 500px;
         }
 
         .pricing-card:hover {
@@ -476,11 +619,16 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
 
+        .pricing-card:not(.popular) {
+            min-height: 620px;
+        }
+
         .pricing-card.popular {
-            border: 2px solid var(--orange);
+            border: 5px solid var(--orange);
             background: #FFFFFF;
             box-shadow: 0 20px 40px rgba(90, 91, 241, 0.15);
             z-index: 2;
+            min-height: 650px;
         }
 
         .pricing-card.popular:hover {
@@ -528,7 +676,7 @@
             align-items: baseline;
             gap: 4px;
         }
-        
+
         .pricing-price span {
             font-size: 12px;
             font-weight: 600;
@@ -536,22 +684,52 @@
         }
 
         .btn-pricing {
-            display: block;
+            display: flex;
+            width: 100%;
             text-align: center;
-            background: var(--orange);
-            color: #FFFFFF;
-            padding: 12px;
+            padding: 13px 20px;
             border-radius: 12px;
             font-weight: 700;
             font-size: 14px;
             margin-bottom: 25px;
-            transition: transform 0.2s, background 0.2s;
+        }
+        .btn-pricing-basic {
+            background: #E8E8FF;
+            border: 1px solid rgba(90, 91, 241, 0.25);
+        }
+        .btn-pricing-basic .btn-bg {
+            background: var(--dark);
+        }
+        .btn-pricing-basic .btn-text {
+            color: var(--orange);
+        }
+        .btn-pricing-basic:hover {
+            border-color: var(--dark);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            transform: translateY(-2px);
+        }
+        .btn-pricing-basic:hover .btn-text {
+            color: #FFFFFF;
         }
 
-        .btn-pricing:hover {
-            transform: scale(1.02);
+        .btn-pricing-primary {
+            background: var(--orange);
+            border: 1px solid transparent;
+            box-shadow: 0 6px 20px rgba(90, 91, 241, 0.25);
+        }
+        .btn-pricing-primary .btn-bg {
+            background: var(--dark);
+        }
+        .btn-pricing-primary .btn-text {
             color: #FFFFFF;
-            background: #4647D9;
+        }
+        .btn-pricing-primary:hover {
+            box-shadow: 0 10px 30px rgba(18, 18, 18, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .btn-pricing-primary:hover .btn-text {
+            color: #FFFFFF;
         }
 
         .pricing-features-title {
@@ -901,13 +1079,13 @@
             transform: translateY(-2px) scale(1.05) !important;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.16);
         }
-        
+
         .anime-tag {
             opacity: 0;
             pointer-events: none;
             z-index: 20;
         }
-        
+
         .anime-tag.active {
             pointer-events: auto;
         }
@@ -915,13 +1093,13 @@
         /* Position tags relative to the image container */
         .tag-1 { top: 27%; left: 80%; }
         .tag-1.active { animation: float-tag-1 3.5s ease-in-out infinite; }
-        
+
         .tag-2 { top: 37%; right: -20%; }
         .tag-2.active { animation: float-tag-2 4.2s ease-in-out infinite; }
-        
+
         .tag-3 { top: 57%; right: -25%; }
         .tag-3.active { animation: float-tag-3 3.8s ease-in-out infinite; }
-        
+
         .tag-4 { bottom: 20%; left: 84%; }
         .tag-4.active { animation: float-tag-4 4.6s ease-in-out infinite; }
 
@@ -1064,7 +1242,7 @@
         .navbar-wrapper.scrolled {
             padding: 12px 24px;
         }
-        
+
         .navbar-wrapper.scrolled .navbar-pill {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -1164,21 +1342,29 @@
 
         .mobile-btn-signup {
             background: #000000;
-            color: #fff;
             padding: 14px 40px;
             border-radius: 50px;
             font-size: 18px;
             font-weight: 700;
             width: 100%;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: transform 0.2s, background 0.2s;
             margin-top: 10px;
         }
-
+        .mobile-btn-signup .btn-bg {
+            background: #FFFFFF;
+        }
+        .mobile-btn-signup .btn-text {
+            color: #FFFFFF;
+        }
         .mobile-btn-signup:hover {
-            background: #222222;
-            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+            border-color: #000000;
+            transform: translateY(-2px);
+        }
+        .mobile-btn-signup:hover .btn-text {
+            color: #000000;
         }
 
         /* Responsive */
@@ -1425,19 +1611,22 @@
     <!-- NAVBAR -->
     <header class="navbar-wrapper" id="navbarWrapper">
         <nav class="navbar-pill" aria-label="Main Navigation">
-            <a href="{{ url('/') }}" class="nav-logo">
+            <a href="{{ url('/') }}" class="nav-logo" aria-label="Linkan.ID Home">
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" class="logo-img">
             </a>
-                        <div class="nav-links">
-                <div class="lang-toggle-pill">
+            <div class="nav-links">
+                <div class="lang-toggle-pill" style="margin-right: 4px;">
                     <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
                     <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
                 </div>
-                <a href="#pricing" class="nav-link">{{ __('layout.pricing') }}</a>
-                <a href="#digital-marketing" class="nav-link">{{ __('layout.service') }}</a>
-                <a href="{{ route('FAQ') }}" class="nav-link">{{ __('layout.faq') }}</a>
-                <a href="{{ route('login') }}" class="nav-link">{{ __('layout.sign_in') }}</a>
-                <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
+                <a href="#pricing" class="nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+                <a href="#digital-marketing" class="nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+                <a href="{{ route('FAQ') }}" class="nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+                <a href="{{ route('login') }}" class="nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
+                <a href="{{ route('register') }}" class="btn-signup origin-btn relative overflow-hidden rounded-full border">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text relative z-10">{{ __('layout.sign_up_free') }}</span>
+                </a>
             </div>
             <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobileNavOverlay">
                 <span class="hamburger-line"></span>
@@ -1454,11 +1643,14 @@
                 <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
                 <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
             </div>
-            <a href="#pricing" class="mobile-nav-link">{{ __('layout.pricing') }}</a>
-            <a href="#digital-marketing" class="mobile-nav-link">{{ __('layout.service') }}</a>
-            <a href="{{ route('FAQ') }}" class="mobile-nav-link">{{ __('layout.faq') }}</a>
-            <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('layout.sign_in') }}</a>
-            <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
+            <a href="#pricing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+            <a href="#digital-marketing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+            <a href="{{ route('FAQ') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+            <a href="{{ route('login') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
+            <a href="{{ route('register') }}" class="mobile-btn-signup origin-btn relative overflow-hidden rounded-full border">
+                <span class="btn-bg"></span>
+                <span class="btn-text relative z-10">{{ __('layout.sign_up_free') }}</span>
+            </a>
         </nav>
     </div>
 
@@ -1475,13 +1667,16 @@
                 <p class="hero-subtitle">
                     {{ __('public.hero_subtitle') }}
                 </p>
-                
+
                 <form action="{{ route('register') }}" method="GET" class="claim-wrapper">
                     <div class="claim-input-pill">
                         <span class="claim-prefix">Linkan.id/</span>
                         <input type="text" name="username" class="claim-input" placeholder="{{ __('public.claim_placeholder') }}" autocomplete="off" aria-label="Claim your username">
                     </div>
-                    <button type="submit" class="btn-create">{{ __('public.btn_create') }}</button>
+                    <button type="submit" class="btn-create origin-btn relative overflow-hidden rounded-full border">
+                        <span class="btn-bg"></span>
+                        <span class="btn-text relative z-10">{{ __('public.btn_create') }}</span>
+                    </button>
                 </form>
             </div>
             <div class="hero-image-wrapper">
@@ -1494,7 +1689,7 @@
     <section class="features-section reveal">
         <h2 class="section-title" id="changing-title" style="min-height: 48px; overflow: hidden; position: relative;">{{ __('public.features_title') }}</h2>
         <p class="section-subtitle">{{ __('public.features_subtitle') }}</p>
-        
+
         <div class="feature-pills">
             <div class="feature-pill">{{ __('public.feat_digital_product') }}</div>
             <div class="feature-pill">{{ __('public.feat_donations') }}</div>
@@ -1514,7 +1709,10 @@
                 <p class="marketing-subtitle">
                     {{ __('public.marketing_subtitle') }}
                 </p>
-                <a href="{{ route('service') }}" class="btn-service">{{ __('public.btn_service') }}</a>
+                <a href="{{ route('register') }}" class="btn-service origin-btn relative overflow-hidden rounded-full border">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text relative z-10">{{ __('public.btn_service') }}</span>
+                </a>
             </div>
             <div class="marketing-image-wrapper">
                 <img src="{{ asset('images/landing page/handphone_besar.webp') }}" alt="Digital Marketing" class="marketing-img">
@@ -1532,7 +1730,10 @@
                 </div>
                 <div class="pricing-body">
                     <div class="pricing-price">Gratis</div>
-                    <a href="{{ route('register') }}" class="btn-pricing" style="background: #E8E8FF; color: var(--orange);">{{ __('public.btn_get_started') }}</a>
+                    <a href="{{ route('register') }}" class="btn-pricing btn-pricing-basic origin-btn relative overflow-hidden rounded-xl border">
+                        <span class="btn-bg"></span>
+                        <span class="btn-text relative z-10">{{ __('public.btn_get_started') }}</span>
+                    </a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
                         <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
@@ -1552,7 +1753,10 @@
                 </div>
                 <div class="pricing-body">
                     <div class="pricing-price">Rp 99.000 <span>{{ __('public.pricing_month') }}</span></div>
-                    <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
+                    <a href="{{ route('register') }}" class="btn-pricing btn-pricing-primary origin-btn relative overflow-hidden rounded-xl border">
+                        <span class="btn-bg"></span>
+                        <span class="btn-text relative z-10">{{ __('public.btn_get_started') }}</span>
+                    </a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
                         <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
@@ -1575,7 +1779,10 @@
                 </div>
                 <div class="pricing-body">
                     <div class="pricing-price">Rp 449.000 <span>{{ __('public.pricing_month') }}</span></div>
-                    <a href="{{ route('register') }}" class="btn-pricing">{{ __('public.btn_get_started') }}</a>
+                    <a href="{{ route('register') }}" class="btn-pricing btn-pricing-primary origin-btn relative overflow-hidden rounded-xl border">
+                        <span class="btn-bg"></span>
+                        <span class="btn-text relative z-10">{{ __('public.btn_get_started') }}</span>
+                    </a>
                     <div class="pricing-features-title">{{ __('public.pricing_everything') }}</div>
                     <ul class="pricing-features">
                         <li><span class="pricing-check"></span> {{ __('public.feat_unlimited_link') }}</li>
@@ -1608,7 +1815,7 @@
                 {{ app()->getLocale() == 'id' ? 'Dipercaya oleh ribuan kreator, pebisnis online, dan profesional di seluruh Indonesia' : 'Trusted by thousands of creators, online sellers, and professionals' }}
             </p>
         </div>
-        
+
         <div class="testimonials-marquee-wrapper">
             <!-- ROW 1: SLIDE LEFT -->
             <div class="testi-marquee-row">
@@ -2278,7 +2485,7 @@
     <section class="creator-showcase-section reveal">
         <div class="showcase-container">
             <img src="{{ asset('images/landing page/wanita_laptop.webp') }}" alt="Linkan Creator Showcase" class="showcase-img" loading="lazy">
-            
+
             <div class="floating-tag anime-tag tag-1">{{ __('public.creator_tag_1') }}</div>
             <div class="floating-tag anime-tag tag-2">{{ __('public.creator_tag_2') }}</div>
             <div class="floating-tag anime-tag tag-3">{{ __('public.creator_tag_3') }}</div>
@@ -2299,8 +2506,8 @@
                 </div>
             </div>
             <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link">{{ __('layout.about_us') }}</a>
-                <a href="{{ route('contact.form') }}" class="footer-link">{{ __('layout.contact_us') }}</a>
+                <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>
+                <a href="{{ route('contact.form') }}" class="footer-link scramble-link" data-value="{{ __('layout.contact_us') }}">{{ __('layout.contact_us') }}</a>
             </div>
         </div>
     </footer>
@@ -2309,7 +2516,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const reveals = document.querySelectorAll('.reveal, .reveal-scale');
-            
+
             const revealOptions = {
                 threshold: 0.15,
                 rootMargin: "0px 0px -50px 0px"
@@ -2324,7 +2531,7 @@
                         const cRect = container.getBoundingClientRect();
                         const cx = cRect.width / 2;
                         const cy = cRect.height / 2;
-                        
+
                         tags.forEach(tag => {
                             const ex = tag.offsetLeft + (tag.offsetWidth / 2);
                             const ey = tag.offsetTop + (tag.offsetHeight / 2);
@@ -2351,7 +2558,7 @@
             reveals.forEach(reveal => {
                 revealOnScroll.observe(reveal);
             });
-            
+
             // Trigger immediately for elements already in viewport on load
             setTimeout(() => {
                 reveals.forEach(reveal => {
@@ -2410,7 +2617,7 @@
             const mobileNavOverlay = document.getElementById('mobileNavOverlay');
             if (mobileNavToggle && mobileNavOverlay) {
                 const mobileNavLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-link');
-                
+
                 function toggleMenu() {
                     const isActive = mobileNavToggle.classList.toggle('active');
                     mobileNavOverlay.classList.toggle('active');
@@ -2435,6 +2642,135 @@
                     });
                 });
             }
+
+            // Origin-aware interactive magnetic circle buttons
+            const originBtns = document.querySelectorAll('.origin-btn');
+            originBtns.forEach(btn => {
+                const updateCoords = (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    btn.style.setProperty('--x', `${x}px`);
+                    btn.style.setProperty('--y', `${y}px`);
+                };
+
+                btn.addEventListener('mouseenter', updateCoords);
+                btn.addEventListener('mousemove', updateCoords);
+            });
+
+            // Vertical Top-to-Bottom Scramble Text Effect on Navigation Links (Fixed Widths, No Layout Shift, No Drop)
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const scrambleLinks = document.querySelectorAll('.scramble-link');
+
+            scrambleLinks.forEach(link => {
+                if (!link.dataset.value) {
+                    link.dataset.value = link.innerText.trim();
+                }
+
+                let timeoutId = null;
+
+                link.addEventListener('mouseenter', () => {
+                    const originalText = link.dataset.value;
+                    if (!originalText) return;
+
+                    clearTimeout(timeoutId);
+
+                    // Ensure link never drops or wraps
+                    link.style.whiteSpace = 'nowrap';
+                    link.style.display = 'inline-block';
+
+                    // Measure original letter widths
+                    link.innerHTML = '';
+                    const tempSpans = [];
+                    originalText.split('').forEach(char => {
+                        const s = document.createElement('span');
+                        s.style.display = 'inline-block';
+                        s.style.whiteSpace = 'nowrap';
+                        s.style.visibility = 'hidden';
+                        s.textContent = char === ' ' ? '\u00A0' : char;
+                        link.appendChild(s);
+                        tempSpans.push({ span: s, char });
+                    });
+
+                    const charWidths = tempSpans.map(({ span, char }) => {
+                        return { char, width: Math.ceil(span.getBoundingClientRect().width * 10) / 10 };
+                    });
+
+                    // Build character boxes with locked widths
+                    link.innerHTML = '';
+                    const charBoxes = [];
+
+                    charWidths.forEach(({ char, width }, i) => {
+                        if (char === ' ') {
+                            const space = document.createElement('span');
+                            space.style.display = 'inline-block';
+                            space.style.whiteSpace = 'nowrap';
+                            space.style.width = `${width}px`;
+                            space.innerHTML = '&nbsp;';
+                            link.appendChild(space);
+                            return;
+                        }
+
+                        const box = document.createElement('span');
+                        box.className = 'scramble-char-box';
+                        box.style.display = 'inline-block';
+                        box.style.overflow = 'hidden';
+                        box.style.whiteSpace = 'nowrap';
+                        box.style.width = `${width}px`;
+                        box.style.height = '1.3em';
+                        box.style.lineHeight = '1.3em';
+                        box.style.verticalAlign = 'top';
+                        box.style.textAlign = 'center';
+
+                        const col = document.createElement('span');
+                        col.className = 'scramble-char-col';
+                        col.style.display = 'flex';
+                        col.style.flexDirection = 'column';
+                        col.style.width = '100%';
+                        col.style.whiteSpace = 'nowrap';
+
+                        const r1 = letters[Math.floor(Math.random() * letters.length)];
+                        const r2 = letters[Math.floor(Math.random() * letters.length)];
+                        const r3 = letters[Math.floor(Math.random() * letters.length)];
+
+                        // Items from top to bottom: [Target char, Random 1, Random 2, Random 3, Start char]
+                        const charList = [char, r1, r2, r3, char];
+
+                        charList.forEach(c => {
+                            const item = document.createElement('span');
+                            item.className = 'scramble-char-item';
+                            item.style.display = 'block';
+                            item.style.height = '1.3em';
+                            item.style.lineHeight = '1.3em';
+                            item.style.width = '100%';
+                            item.style.textAlign = 'center';
+                            item.style.whiteSpace = 'nowrap';
+                            item.textContent = c;
+                            col.appendChild(item);
+                        });
+
+                        col.style.transform = 'translateY(-80%)';
+                        box.appendChild(col);
+                        link.appendChild(box);
+                        charBoxes.push({ col, index: i });
+                    });
+
+                    // Force browser reflow
+                    void link.offsetWidth;
+
+                    // Animate downward (atas ke bawah) with staggered easing
+                    charBoxes.forEach(({ col, index }) => {
+                        col.style.transition = `transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms`;
+                        col.style.transform = 'translateY(0%)';
+                    });
+
+                    const totalDuration = 450 + (originalText.length * 35) + 50;
+                    timeoutId = setTimeout(() => {
+                        link.innerText = originalText;
+                        link.style.whiteSpace = '';
+                    }, totalDuration);
+                });
+            });
         });
     </script>
 
@@ -2447,10 +2783,10 @@
             if (navbarWrapper) {
                 let lastScrollY = window.scrollY;
                 let isNavbarVisible = true;
-                
+
                 window.addEventListener('scroll', () => {
                     const currentScrollY = window.scrollY;
-                    
+
                     // Compact styling check
                     if (currentScrollY > 20) {
                         navbarWrapper.classList.add('scrolled');
@@ -2469,7 +2805,7 @@
                                 ease: 'outQuad'
                             });
                         }
-                    } 
+                    }
                     // Show when scrolling up
                     else if (currentScrollY < lastScrollY) {
                         if (!isNavbarVisible) {
@@ -2568,7 +2904,7 @@
                         }, stagger(150, { from: 'center' }));
                     });
                 }
-                
+
                 // AnimeJS event listener for showcase tags
                 window.addEventListener('showcase-revealed', () => {
                     const tags = document.querySelectorAll('.anime-tag');

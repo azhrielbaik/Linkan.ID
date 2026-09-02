@@ -16,7 +16,7 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $googleData = session('google_data');
-        return view('register', compact('googleData'));
+        return view('auth.register', compact('googleData'));
     }
 
     public function register(Request $request)
