@@ -26,7 +26,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         // Dapatkan semua statistik dari Service
         $data = $this->dashboardService->getDashboardStats($user);
 
@@ -169,7 +169,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Fungsi untuk mencatat CLICK 
+    // Fungsi untuk mencatat CLICK
     // Catatan: Idealnya fungsi ini dipindah ke PublicController, namun dipertahankan di sini untuk kompatibilitas rute sementara.
     public function trackClick(Request $request)
     {
@@ -208,6 +208,21 @@ class DashboardController extends Controller
         }
 
         return response()->json($this->dashboardService->fetchSellerNotificationsData($user));
+    }
+
+    public function markNotificationRead(Request $request)
+    {
+        $data = $request->validate(['notification_key' => 'required|string|max:100']);
+        $this->dashboardService->markNotificationRead($request->user(), $data['notification_key']);
+
+        return response()->json(['status' => 'success']);
+    }
+
+    public function markAllNotificationsRead(Request $request)
+    {
+        $this->dashboardService->markAllNotificationsRead($request->user());
+
+        return response()->json(['status' => 'success']);
     }
 
     /**

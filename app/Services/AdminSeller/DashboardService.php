@@ -43,7 +43,7 @@ class DashboardService
         $totalWithdrawn = (float)DB::table('payout_transactions')
             ->where('user_id', $user->id)
             ->sum('amount');
-            
+
         $totalEarnings = $totalEarnings - $totalWithdrawn;
 
         $currentBalance = (float)(DB::table('users')->where('id', $user->id)->value('balance') ?? 0);
@@ -305,10 +305,38 @@ class DashboardService
             return $b['timestamp'] - $a['timestamp'];
         });
 
+        $readKeys = DB::table('notification_reads')
+            ->where('user_id', $user->id)
+            ->whereIn('notification_key', array_column($notifications, 'id'))
+            ->pluck('notification_key')
+            ->all();
+        $readKeys = array_flip($readKeys);
+        foreach ($notifications as &$notification) {
+            $notification['is_read'] = isset($readKeys[$notification['id']]);
+        }
+        unset($notification);
+        $unreadCount = count(array_filter($notifications, fn ($notification) => !$notification['is_read']));
+
         return [
             'status'        => 'success',
-            'unread_count'  => count($notifications),
+            'unread_count'  => $unreadCount,
             'notifications' => array_slice($notifications, 0, 20)
         ];
+    }
+
+    public function markNotificationRead(User $user, string $notificationKey): void
+    {
+        DB::table('notification_reads')->updateOrInsert(
+            ['user_id' => $user->id, 'notification_key' => $notificationKey],
+            ['updated_at' => now(), 'created_at' => now()]
+        );
+    }
+
+    public function markAllNotificationsRead(User $user): void
+    {
+        $data = $this->fetchSellerNotificationsData($user);
+        foreach ($data['notifications'] as $notification) {
+            $this->markNotificationRead($user, $notification['id']);
+        }
     }
 }

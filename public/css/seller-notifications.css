@@ -23,7 +23,7 @@
 
 .action-icon.seller-notif-btn:hover,
 .action-icon.seller-notif-btn.active {
-    color: #5A5BF1;
+    color: #5a5bf1;
     background: transparent;
 }
 
@@ -114,18 +114,35 @@
 }
 
 .seller-notif-title i {
-    color: #5A5BF1;
+    color: #5a5bf1;
     font-size: 16px;
 }
 
 .seller-notif-pill {
-    background: #EEF0FE;
-    color: #5A5BF1;
+    background: #eef0fe;
+    color: #5a5bf1;
     font-size: 11px;
     font-weight: 800;
     padding: 3px 10px;
     border-radius: 20px;
     letter-spacing: 0.02em;
+}
+
+.seller-notif-read-all,
+.notif-read-all {
+    margin-left: 8px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #5a5bf1;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.seller-notif-item.is-read {
+    opacity: 0.62;
 }
 
 /* Filter Tabs */
@@ -153,12 +170,12 @@
 }
 
 .seller-notif-tab:hover {
-    color: #5A5BF1;
+    color: #5a5bf1;
     background: #eef0fe;
 }
 
 .seller-notif-tab.active {
-    background: #5A5BF1;
+    background: #5a5bf1;
     color: #ffffff;
 }
 
@@ -245,8 +262,8 @@
 }
 
 .badge-product-approved {
-    background: #EEF0FE;
-    color: #5A5BF1;
+    background: #eef0fe;
+    color: #5a5bf1;
 }
 
 .badge-product-rejected {
@@ -275,8 +292,8 @@
 }
 
 .badge-broadcast {
-    background: #EEF0FE;
-    color: #5A5BF1;
+    background: #eef0fe;
+    color: #5a5bf1;
 }
 
 .seller-notif-item-msg {
@@ -329,7 +346,7 @@
 }
 
 .seller-notif-footer a {
-    color: #5A5BF1;
+    color: #5a5bf1;
     text-decoration: none;
     display: inline-flex;
     align-items: center;

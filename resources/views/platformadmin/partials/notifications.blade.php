@@ -12,7 +12,10 @@
                 <div class="notif-dropdown-title">
                     <i class="fas fa-bell"></i> Notifikasi Seller
                 </div>
-                <span class="notif-total-pill" id="platformNotifTotal">0 Baru</span>
+                <div>
+                    <span class="notif-total-pill" id="platformNotifTotal">0 Baru</span>
+                    <button type="button" class="notif-read-all" onclick="markAllPlatformNotifsRead(event)">Tandai dibaca</button>
+                </div>
             </div>
 
             <div class="notif-filter-tabs">
@@ -47,5 +50,7 @@
 
 <script>
     window.PlatformNotifEndpoint = "{{ route('platform-admin.notifications') }}";
+    window.PlatformNotifReadEndpoint = "{{ route('platform-admin.notifications.read') }}";
+    window.PlatformNotifReadAllEndpoint = "{{ route('platform-admin.notifications.read-all') }}";
     window.PlatformNotifSSEEndpoint = "{{ route('platform-admin.notifications.stream') }}";
 </script>

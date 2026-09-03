@@ -40,7 +40,7 @@
             flex-direction: column;
             transition: margin-left 0.3s ease;
         }
-        
+
         body.mini-sidebar .main-content {
             margin-left: 80px;
         }
@@ -54,7 +54,7 @@
             border-bottom: 1px solid #f0f2f5 !important;
             min-height: 56px !important;
         }
-        
+
         .content-wrapper {
             padding: 24px 40px !important;
             flex: 1;
@@ -220,8 +220,8 @@
         }
 
         @media (max-width: 600px) {
-            .header { 
-                padding: 12px 16px !important; 
+            .header {
+                padding: 12px 16px !important;
             }
             .header-left {
                 gap: 12px;
@@ -230,15 +230,15 @@
                 margin-right: 0 !important;
                 font-size: 22px;
             }
-            .header h1 { 
-                font-size: 15px !important; 
+            .header h1 {
+                font-size: 15px !important;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 max-width: 110px;
             }
-            .header-right { 
-                gap: 12px !important; 
+            .header-right {
+                gap: 12px !important;
             }
             .header-actions {
                 gap: 12px !important;
@@ -246,9 +246,9 @@
             .action-icon {
                 font-size: 18px !important;
             }
-            .top-profile { 
-                padding-left: 12px !important; 
-                gap: 0 !important; 
+            .top-profile {
+                padding-left: 12px !important;
+                gap: 0 !important;
                 border-left: 1px solid #eaeaea !important;
             }
             .top-user-name, .top-profile-arrow { display: none !important; }
@@ -305,11 +305,11 @@
                     <i class="fas fa-bars hamburger-menu" onclick="toggleSidebar()"></i>
                     <h1>@yield('page_title', 'URL SHORTENER')</h1>
                 </div>
-                
+
                 <div class="header-right">
                     <div class="header-actions">
                         <a href="{{ route('admin.settings') }}" class="action-icon" title="Pengaturan"><i class="fas fa-cog"></i></a>
-                        
+
                         {{-- Seller Notification Bell & Dropdown --}}
                         <div class="seller-notif-wrapper">
                             <button type="button" class="action-icon seller-notif-btn" id="sellerNotifBtn" onclick="toggleSellerNotif(event)" title="Notifikasi" aria-label="Notifikasi">
@@ -323,7 +323,10 @@
                                     <div class="seller-notif-title">
                                         <i class="fas fa-bell"></i> Notifikasi
                                     </div>
-                                    <span class="seller-notif-pill" id="sellerNotifTotal">0 Baru</span>
+                                    <div>
+                                        <span class="seller-notif-pill" id="sellerNotifTotal">0 Baru</span>
+                                        <button type="button" class="seller-notif-read-all" onclick="markAllSellerNotifsRead(event)">Tandai dibaca</button>
+                                    </div>
                                 </div>
 
                                 <div class="seller-notif-filter-tabs">
@@ -349,7 +352,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="top-profile" onclick="toggleProfileDropdown()">
                         @php
                             $name = Auth::check() ? Auth::user()->name : 'User';
@@ -362,7 +365,7 @@
                             <span class="top-user-name">{{ $name }}</span>
                             <i class="fas fa-caret-down top-profile-arrow"></i>
                         </div>
-                        
+
                         <!-- Dropdown Menu -->
                         <div class="profile-dropdown" id="profileDropdown">
                             <a href="{{ route('admin.account') }}">
@@ -394,6 +397,8 @@
 
     <script>
         window.SellerNotifEndpoint = "{{ route('admin.notifications') }}";
+        window.SellerNotifReadEndpoint = "{{ route('admin.notifications.read') }}";
+        window.SellerNotifReadAllEndpoint = "{{ route('admin.notifications.read-all') }}";
         window.SellerNotifSSEEndpoint = "{{ route('admin.notifications.stream') }}";
     </script>
     <script src="{{ asset('js/seller-notifications.js') }}?v={{ time() }}"></script>
@@ -404,7 +409,7 @@
                 sidebar.classList.toggle('show');
             }
         }
-        
+
         function toggleMinimize() {
             document.body.classList.toggle('mini-sidebar');
             const isMini = document.body.classList.contains('mini-sidebar');
