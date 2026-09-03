@@ -45,6 +45,35 @@
             color: inherit;
         }
 
+        .lang-toggle-pill {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 3px;
+            background: #f1f1f1;
+            border-radius: 20px;
+        }
+
+        .lang-btn {
+            padding: 6px 10px;
+            border-radius: 16px;
+            color: #666;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: #fff;
+            color: #121212;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .mobile-lang-toggle {
+            margin-bottom: 4px;
+            transform: scale(1.1);
+        }
+
         /* NAVBAR */
         .navbar-wrapper {
             width: 100%;
@@ -71,7 +100,7 @@
         }
 
         .nav-logo img {
-            height: 35px;
+            height: 30px;
             width: auto;
             display: block;
         }
@@ -432,7 +461,7 @@
 
         .faq-item {
             background: #FFFFFF;
-            border-radius: 16px; 
+            border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -449,7 +478,7 @@
             cursor: pointer;
             font-weight: 800;
             font-size: 14px;
-            color: #0062E6; 
+            color: #0062E6;
             user-select: none;
             text-align: center;
             border: none;
@@ -466,7 +495,7 @@
         }
 
         .faq-item.open {
-            border-radius: 16px; 
+            border-radius: 16px;
         }
 
         .faq-item.open .faq-answer {
@@ -481,14 +510,14 @@
             font-weight: 500;
             text-align: center;
         }
-        
+
         .faq-centered {
             display: flex;
             justify-content: center;
             width: 100%;
             margin-bottom: 60px;
         }
-        
+
         .faq-centered .faq-item {
             max-width: 440px;
         }
@@ -514,7 +543,7 @@
             font-weight: 700;
             color: #FFFFFF;
         }
-        
+
         .link-list {
             display: flex;
             flex-direction: column;
@@ -777,6 +806,10 @@
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
+                <div class="lang-toggle-pill" aria-label="Language selector">
+                    <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                    <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+                </div>
                 <a href="{{ url('/') }}#pricing" class="nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
                 <a href="{{ url('/') }}#digital-marketing" class="nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link scramble-link active" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
@@ -794,6 +827,10 @@
     <!-- MOBILE NAVIGATION OVERLAY -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
         <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
+            <div class="lang-toggle-pill mobile-lang-toggle" aria-label="Language selector">
+                <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+            </div>
             <a href="{{ url('/') }}#pricing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
             <a href="{{ url('/') }}#digital-marketing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
             <a href="{{ route('FAQ') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
@@ -899,7 +936,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Item 5 Centered -->
     <div class="faq-centered">
         <div class="faq-item">
@@ -990,7 +1027,7 @@
 
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
-                
+
                 question.addEventListener('click', () => {
                     const isOpen = item.classList.contains('open');
 
@@ -1013,7 +1050,7 @@
             const mobileNavOverlay = document.getElementById('mobileNavOverlay');
             if (mobileNavToggle && mobileNavOverlay) {
                 const mobileNavLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-link, .mobile-btn-signup');
-                
+
                 function toggleMenu() {
                     const isActive = mobileNavToggle.classList.toggle('active');
                     mobileNavOverlay.classList.toggle('active');
@@ -1103,7 +1140,7 @@
             // Real-time live search filter
             const handleSearch = () => {
                 const query = searchInput.value.toLowerCase().trim();
-                
+
                 if (query.length > 0) {
                     if (clearBtn) clearBtn.classList.add('visible');
                 } else {
@@ -1114,7 +1151,7 @@
                 faqGridItems.forEach(item => {
                     const questionText = item.querySelector('.faq-question')?.innerText.toLowerCase() || '';
                     const answerText = item.querySelector('.faq-answer')?.innerText.toLowerCase() || '';
-                    
+
                     if (!query || questionText.includes(query) || answerText.includes(query)) {
                         item.style.display = '';
                         if (query.length >= 2 && (questionText.includes(query) || answerText.includes(query))) {

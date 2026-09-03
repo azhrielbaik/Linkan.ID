@@ -30,6 +30,35 @@
             color: inherit;
         }
 
+        .lang-toggle-pill {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 3px;
+            background: #f1f1f1;
+            border-radius: 20px;
+        }
+
+        .lang-btn {
+            padding: 6px 10px;
+            border-radius: 16px;
+            color: #666;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: #fff;
+            color: #121212;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .mobile-lang-toggle {
+            margin-bottom: 4px;
+            transform: scale(1.1);
+        }
+
         /* NAVBAR */
         .navbar-wrapper {
             width: 100%;
@@ -56,7 +85,7 @@
         }
 
         .nav-logo img {
-            height: 45px;
+            height: 30px;
             width: auto;
             display: block;
         }
@@ -313,6 +342,75 @@
             color: #EE8025;
         }
 
+        .mobile-nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 110;
+        }
+
+        .hamburger-line {
+            width: 100%;
+            height: 2px;
+            background-color: #333;
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .mobile-nav-toggle.active .hamburger-line:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .mobile-nav-toggle.active .hamburger-line:nth-child(2) { opacity: 0; }
+        .mobile-nav-toggle.active .hamburger-line:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        .mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.98);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-nav-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            width: 80%;
+            max-width: 320px;
+        }
+
+        .mobile-nav-link {
+            color: #333;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .mobile-btn-signup {
+            width: 100%;
+            padding: 14px 40px;
+            border-radius: 50px;
+            background: #000;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+        }
+
         /* Responsive design */
         @media (max-width: 900px) {
             .features-grid {
@@ -323,6 +421,12 @@
         }
 
         @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+            }
             .navbar-pill {
                 padding: 8px 16px;
             }
@@ -345,9 +449,6 @@
         }
 
         @media (max-width: 480px) {
-            .nav-links {
-                display: none; /* Hide links on navbar on very small screens */
-            }
             .navbar-pill {
                 justify-content: space-between;
             }
@@ -357,18 +458,41 @@
 <body>
     <!-- NAVBAR -->
     <div class="navbar-wrapper">
-        <div class="navbar-pill">
+        <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
             <div class="nav-links">
+                <div class="lang-toggle-pill" aria-label="Language selector">
+                    <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                    <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+                </div>
                 <a href="{{ url('/') }}#pricing" class="nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
                 <a href="{{ url('/') }}#digital-marketing" class="nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
                 <a href="{{ route('FAQ') }}" class="nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
                 <a href="{{ route('login') }}" class="nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
                 <a href="{{ route('register') }}" class="btn-signup">{{ __('layout.sign_up_free') }}</a>
             </div>
-        </div>
+            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobileNavOverlay">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </nav>
+    </div>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+        <nav class="mobile-nav-menu" aria-label="Mobile Navigation">
+            <div class="lang-toggle-pill mobile-lang-toggle" aria-label="Language selector">
+                <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+                <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+            </div>
+            <a href="{{ url('/') }}#pricing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.pricing') }}">{{ __('layout.pricing') }}</a>
+            <a href="{{ url('/') }}#digital-marketing" class="mobile-nav-link scramble-link" data-value="{{ __('layout.service') }}">{{ __('layout.service') }}</a>
+            <a href="{{ route('FAQ') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.faq') }}">{{ __('layout.faq') }}</a>
+            <a href="{{ route('login') }}" class="mobile-nav-link scramble-link" data-value="{{ __('layout.sign_in') }}">{{ __('layout.sign_in') }}</a>
+            <a href="{{ route('register') }}" class="mobile-btn-signup">{{ __('layout.sign_up_free') }}</a>
+        </nav>
     </div>
 
     <!-- ABOUT CONTENT CONTAINER -->
@@ -436,6 +560,29 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const mobileNavToggle = document.getElementById('mobileNavToggle');
+            const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+
+            if (mobileNavToggle && mobileNavOverlay) {
+                const closeMenu = () => {
+                    mobileNavToggle.classList.remove('active');
+                    mobileNavOverlay.classList.remove('active');
+                    mobileNavToggle.setAttribute('aria-expanded', 'false');
+                    mobileNavOverlay.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                };
+
+                mobileNavToggle.addEventListener('click', () => {
+                    const isActive = mobileNavToggle.classList.toggle('active');
+                    mobileNavOverlay.classList.toggle('active', isActive);
+                    mobileNavToggle.setAttribute('aria-expanded', isActive);
+                    mobileNavOverlay.setAttribute('aria-hidden', !isActive);
+                    document.body.style.overflow = isActive ? 'hidden' : '';
+                });
+
+                mobileNavOverlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+            }
+
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const scrambleLinks = document.querySelectorAll('.scramble-link');
 
