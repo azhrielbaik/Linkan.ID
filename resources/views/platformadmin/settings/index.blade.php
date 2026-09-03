@@ -32,7 +32,7 @@
 
         <div class="content-wrapper">
             <div class="settings-grid">
-                
+
                 {{-- Card 1: Pengaturan Komisi & Withdraw --}}
                 <div class="setting-card">
                     <div class="setting-card-header">
@@ -43,12 +43,12 @@
                     <form id="financialSettingsForm" action="{{ route('platform-admin.settings.update') }}" method="POST">
                         @csrf
                         <input type="hidden" name="admin_password" id="form_admin_password">
-                        
+
                         {{-- Set Persentase Komisi --}}
                         <div class="form-group">
                             <label for="commission_percent">{{ __('platform.platform_commission_percent') }}</label>
                             <div class="input-group">
-                                <input type="number" step="0.1" min="0" max="100" id="commission_percent" name="commission_percent" 
+                                <input type="number" step="0.1" min="0" max="100" id="commission_percent" name="commission_percent"
                                        value="{{ old('commission_percent', $commissionPercent) }}" class="form-control has-suffix" required>
                                 <span class="input-suffix">%</span>
                             </div>
@@ -60,7 +60,7 @@
                             <label for="min_withdraw">{{ __('platform.min_withdraw_amount') }}</label>
                             <div class="input-group">
                                 <span class="input-prefix">Rp</span>
-                                <input type="number" step="1000" min="0" id="min_withdraw" name="min_withdraw" 
+                                <input type="number" step="1000" min="0" id="min_withdraw" name="min_withdraw"
                                        value="{{ old('min_withdraw', $minWithdrawAmount) }}" class="form-control has-prefix" required>
                             </div>
                             <div class="form-hint">{{ __('platform.min_withdraw_hint') }}</div>
@@ -81,7 +81,7 @@
 
                     <form action="{{ route('platform-admin.settings.broadcast.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="broadcast-form-grid">
                             <div class="form-group">
                                 <label for="ann_title">{{ __('platform.announcement_title') }}</label>
@@ -90,7 +90,7 @@
 
                             <div class="form-group">
                                 <label for="ann_type">{{ __('platform.announcement_type') }}</label>
-                                <select id="ann_type" name="type" class="form-control" required>
+                                <select id="ann_type" name="type" class="form-control filter-select" required>
                                     <option value="info">{{ __('platform.type_info') }}</option>
                                     <option value="warning">{{ __('platform.type_warning') }}</option>
                                     <option value="success">{{ __('platform.type_success') }}</option>
@@ -228,8 +228,8 @@
                         <i class="fas fa-key" style="color: #ED842C;"></i> {{ __('platform.admin_password_label') }}
                     </label>
                     <div style="position: relative;">
-                        <input type="password" id="modal_admin_password" class="form-control" 
-                               placeholder="{{ __('platform.admin_password_placeholder') }}" 
+                        <input type="password" id="modal_admin_password" class="form-control"
+                               placeholder="{{ __('platform.admin_password_placeholder') }}"
                                style="width: 100%; padding: 10px 40px 10px 14px; box-sizing: border-box;"
                                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); submitFinancialSettings(); }">
                         <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer;">
