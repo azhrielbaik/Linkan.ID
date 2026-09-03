@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
 
 class DigitalProductElementController extends Controller
 {
@@ -17,8 +17,8 @@ class DigitalProductElementController extends Controller
             'element_id' => 'nullable|integer',
         ]);
 
-        $user = auth()->user();
-        
+        $user = $request->user();
+
         $digitalProduct = null;
         if ($request->element_id) {
             $digitalProduct = DigitalProduct::where('id', $request->element_id)->where('user_id', $user->id)->first();
@@ -33,7 +33,7 @@ class DigitalProductElementController extends Controller
 
         $digitalProduct->title = $request->title;
         $digitalProduct->description = $request->description;
-        
+
         // Handle Pricing
         $digitalProduct->pricing_type = $request->pricing_type ?? 'fixed';
         if ($digitalProduct->pricing_type === 'fixed') {
@@ -72,7 +72,7 @@ class DigitalProductElementController extends Controller
             if ($request->hasFile('deliverable_file')) {
                 // Delete old file if exists
                 if ($digitalProduct->deliverable_url) Storage::disk('public')->delete($digitalProduct->deliverable_url);
-                
+
                 $file = $request->file('deliverable_file');
                 $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
                 $filePath = $file->storeAs('digital_products/deliverables', $filename, 'public');
@@ -88,7 +88,7 @@ class DigitalProductElementController extends Controller
         // Handle Media Files (Array of files)
         $oldMediaFiles = $digitalProduct->media_files ?? [];
         $mediaFiles = [];
-        
+
         if ($request->has('existing_media')) {
             $existingMedia = json_decode($request->existing_media, true);
             if (is_array($existingMedia)) {
@@ -109,11 +109,11 @@ class DigitalProductElementController extends Controller
                 if ($request->hasFile("media_$i")) {
                     $file = $request->file("media_$i");
                     $mime = $file->getMimeType();
-                    
+
                     if (str_starts_with($mime, 'image/')) {
                         $filename = 'digital_products/media/' . time() . '_' . Str::random(10) . '.webp';
-                        $image = Image::decode($file)->scaleDown(width: 1200);
-                        $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                        $image = ImageManager::gd()->read($file)->scaleDown(width: 1200);
+                        $encoded = $image->toWebp(80);
                         Storage::disk('public')->put($filename, (string) $encoded);
                         $mediaFiles[] = ['url' => $filename, 'type' => $mime, 'path' => $filename];
                     } else if (str_starts_with($mime, 'video/')) {
@@ -124,12 +124,12 @@ class DigitalProductElementController extends Controller
                 }
             }
         }
-        
+
         $digitalProduct->media_files = $mediaFiles;
-        
+
         // Ensure image has the first media file for fallback in other views
         if (count($mediaFiles) > 0 && empty($digitalProduct->image) && str_starts_with($mediaFiles[0]['type'], 'image/')) {
-            $digitalProduct->image = str_replace('digital_products/media/', 'product_images/', $mediaFiles[0]['path']); 
+            $digitalProduct->image = str_replace('digital_products/media/', 'product_images/', $mediaFiles[0]['path']);
             // Just saving the path to image column for compatibility if needed
         } else if (count($mediaFiles) === 0) {
             $digitalProduct->image = null;
@@ -137,7 +137,7 @@ class DigitalProductElementController extends Controller
 
         $digitalProduct->button_text = 'Beli Sekarang';
         $digitalProduct->platform_type = 'other'; // Compatibility with old column
-        
+
         $digitalProduct->save();
 
         return response()->json([
@@ -147,9 +147,9 @@ class DigitalProductElementController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $user = auth()->user();
+        $user = $request->user();
         $element = DigitalProduct::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
             // Cleanup media if necessary

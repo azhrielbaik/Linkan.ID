@@ -2,133 +2,163 @@
 
 let sellerNotifsData = {
     unread_count: 0,
-    notifications: []
+    notifications: [],
 };
 
-let currentSellerNotifFilter = 'all';
-window.sellerEventSource = null;
+let currentSellerNotifFilter = "all";
+let sellerNotifTimer = null;
+let isFetchingSellerNotifs = false;
 
 function toggleSellerNotif(event) {
     if (event) {
         event.stopPropagation();
     }
-    const dropdown = document.getElementById('sellerNotifDropdown');
-    const btn = document.getElementById('sellerNotifBtn');
+    const dropdown = document.getElementById("sellerNotifDropdown");
+    const btn = document.getElementById("sellerNotifBtn");
     if (!dropdown) return;
 
-    const isOpen = dropdown.classList.contains('show');
+    const isOpen = dropdown.classList.contains("show");
     if (isOpen) {
-        dropdown.classList.remove('show');
-        if (btn) btn.classList.remove('active');
+        dropdown.classList.remove("show");
+        if (btn) btn.classList.remove("active");
     } else {
         // Close profile dropdown if open
-        const profileDropdown = document.getElementById('profileDropdown');
-        if (profileDropdown) profileDropdown.classList.remove('show');
+        const profileDropdown = document.getElementById("profileDropdown");
+        if (profileDropdown) profileDropdown.classList.remove("show");
 
-        dropdown.classList.add('show');
-        if (btn) btn.classList.add('active');
-        // Because SSE updates the data continuously, we don't need to manually fetch here.
-        // But we can re-render to ensure it's up to date.
-        renderSellerNotifs(currentSellerNotifFilter);
+        dropdown.classList.add("show");
+        if (btn) btn.classList.add("active");
+        fetchSellerNotifs();
     }
 }
 
 function updateSellerUI(data) {
     if (!data) return;
     sellerNotifsData = data;
-    const badge = document.getElementById('sellerNotifBadge');
-    const totalPill = document.getElementById('sellerNotifTotal');
+    const badge = document.getElementById("sellerNotifBadge");
+    const totalPill = document.getElementById("sellerNotifTotal");
 
     // Update badge counter
     const count = data.unread_count || 0;
     if (badge) {
         if (count > 0) {
-            badge.innerText = count > 99 ? '99+' : count;
-            badge.style.display = 'flex';
+            badge.innerText = count > 99 ? "99+" : count;
+            badge.style.display = "flex";
         } else {
-            badge.style.display = 'none';
+            badge.style.display = "none";
         }
     }
 
     if (totalPill) {
-        totalPill.innerText = count + ' Baru';
+        totalPill.innerText = count + " Baru";
     }
 
     renderSellerNotifs(currentSellerNotifFilter);
 }
 
-function getSellerStreamEndpoint() {
-    // Gunakan rute SSE
-    return '/admin/notifications/stream';
+function getSellerEndpoint() {
+    // Selalu gunakan root-relative path agar aman dari Mixed Content / Cloudflare Tunnel / CORS
+    return "/admin/notifications";
 }
 
-function startSellerRealtimeSSE() {
-    if (window.sellerEventSource) {
-        window.sellerEventSource.close();
-    }
-    
-    window.sellerEventSource = new EventSource(getSellerStreamEndpoint());
+function fetchSellerNotifs() {
+    if (isFetchingSellerNotifs) return;
+    isFetchingSellerNotifs = true;
 
-    window.sellerEventSource.addEventListener('notifications', function(e) {
-        try {
-            const data = JSON.parse(e.data);
+    const endpoint = getSellerEndpoint();
+    const listContainer = document.getElementById("sellerNotifList");
+
+    fetch(endpoint, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            Accept: "application/json",
+            "Cache-Control": "no-cache",
+        },
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+        })
+        .then((data) => {
             updateSellerUI(data);
-        } catch (err) {
-            console.error('Error parsing SSE notifications:', err);
-        }
-    });
-
-    window.sellerEventSource.onerror = function(e) {
-        console.warn('SSE connection lost. Browser will try to reconnect automatically.');
-        const listContainer = document.getElementById('sellerNotifList');
-        // Show offline indicator only if we have no existing data
-        if (listContainer && (!sellerNotifsData.notifications || sellerNotifsData.notifications.length === 0)) {
-            listContainer.innerHTML = `
+        })
+        .catch((err) => {
+            console.warn("Failed to load seller notifications:", err);
+            if (
+                listContainer &&
+                (!sellerNotifsData.notifications ||
+                    sellerNotifsData.notifications.length === 0)
+            ) {
+                listContainer.innerHTML = `
                 <div class="seller-notif-empty">
                     <i class="fas fa-wifi" style="color: #f59e0b;"></i>
                     <p>Menghubungkan ulang ke server...</p>
                 </div>
             `;
-        }
-    };
+            }
+        })
+        .finally(() => {
+            isFetchingSellerNotifs = false;
+        });
 }
+
+function startSellerRealtimePolling() {
+    if (sellerNotifTimer) clearInterval(sellerNotifTimer);
+
+    // Polling cepat setiap 2.5 detik saat tab aktif
+    sellerNotifTimer = setInterval(() => {
+        if (document.visibilityState === "visible") {
+            fetchSellerNotifs();
+        }
+    }, 2500);
+}
+
+// Pause saat tab disembunyikan, langsung fetch saat tab kembali aktif
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
+        fetchSellerNotifs();
+    }
+});
 
 function filterSellerNotif(type, buttonElem) {
     currentSellerNotifFilter = type;
-    
+
     // Update active tab class
-    const tabs = document.querySelectorAll('.seller-notif-filter-tabs .seller-notif-tab');
-    tabs.forEach(tab => tab.classList.remove('active'));
+    const tabs = document.querySelectorAll(
+        ".seller-notif-filter-tabs .seller-notif-tab",
+    );
+    tabs.forEach((tab) => tab.classList.remove("active"));
     if (buttonElem) {
-        buttonElem.classList.add('active');
+        buttonElem.classList.add("active");
     }
 
     renderSellerNotifs(type);
 }
 
 function renderSellerNotifs(filterType) {
-    const listContainer = document.getElementById('sellerNotifList');
+    const listContainer = document.getElementById("sellerNotifList");
     if (!listContainer) return;
 
     let items = sellerNotifsData.notifications || [];
-    if (filterType && filterType !== 'all') {
-        items = items.filter(item => item.type === filterType);
+    if (filterType && filterType !== "all") {
+        items = items.filter((item) => item.type === filterType);
     }
 
     if (items.length === 0) {
         listContainer.innerHTML = `
             <div class="seller-notif-empty">
                 <i class="far fa-bell-slash"></i>
-                <p>Tidak ada notifikasi ${filterType !== 'all' ? 'untuk kategori ini' : 'baru'}.</p>
+                <p>Tidak ada notifikasi ${filterType !== "all" ? "untuk kategori ini" : "baru"}.</p>
             </div>
         `;
         return;
     }
 
-    let html = '';
-    items.forEach(item => {
+    let html = "";
+    items.forEach((item) => {
         html += `
-            <a href="${item.url}" class="seller-notif-item">
+            <a href="${item.url}" class="seller-notif-item ${item.is_read ? "is-read" : "is-unread"}" onclick="markSellerNotifRead(event, '${item.id}')">
                 <div class="seller-notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">
                     <i class="${item.icon}"></i>
                 </div>
@@ -149,25 +179,55 @@ function renderSellerNotifs(filterType) {
     listContainer.innerHTML = html;
 }
 
+function markSellerNotifRead(event, notificationKey) {
+    event.preventDefault();
+    fetch(window.SellerNotifReadEndpoint, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                .content,
+            Accept: "application/json",
+        },
+        body: new URLSearchParams({ notification_key: notificationKey }),
+    }).finally(() => {
+        window.location.href = event.currentTarget.href;
+    });
+}
+
+function markAllSellerNotifsRead(event) {
+    event.stopPropagation();
+    fetch(window.SellerNotifReadAllEndpoint, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                .content,
+            Accept: "application/json",
+        },
+    }).then(() => fetchSellerNotifs());
+}
+
 // Global click-outside listener
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('sellerNotifDropdown');
-    const btn = document.getElementById('sellerNotifBtn');
+document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("sellerNotifDropdown");
+    const btn = document.getElementById("sellerNotifBtn");
     if (!dropdown) return;
 
-    if (!dropdown.contains(event.target) && (!btn || !btn.contains(event.target))) {
-        dropdown.classList.remove('show');
-        if (btn) btn.classList.remove('active');
+    if (
+        !dropdown.contains(event.target) &&
+        (!btn || !btn.contains(event.target))
+    ) {
+        dropdown.classList.remove("show");
+        if (btn) btn.classList.remove("active");
     }
 });
 
 // Close on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const dropdown = document.getElementById('sellerNotifDropdown');
-        const btn = document.getElementById('sellerNotifBtn');
-        if (dropdown) dropdown.classList.remove('show');
-        if (btn) btn.classList.remove('active');
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        const dropdown = document.getElementById("sellerNotifDropdown");
+        const btn = document.getElementById("sellerNotifBtn");
+        if (dropdown) dropdown.classList.remove("show");
+        if (btn) btn.classList.remove("active");
     }
 });
 
@@ -176,13 +236,13 @@ function initSellerNotifs() {
     startSellerRealtimeSSE();
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSellerNotifs);
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSellerNotifs);
 } else {
     initSellerNotifs();
 }
 
-window.addEventListener('beforeunload', function() {
+window.addEventListener("beforeunload", function () {
     if (window.sellerEventSource) {
         window.sellerEventSource.close();
     }

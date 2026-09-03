@@ -35,8 +35,8 @@
 
 .action-icon.notif-bell-btn:hover,
 .action-icon.notif-bell-btn.active {
-    color: #ED842C;
-    border-color: #ED842C;
+    color: #ed842c;
+    border-color: #ed842c;
     background: #fff8f2;
     box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.15);
 }
@@ -62,9 +62,15 @@
 }
 
 @keyframes notifPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Dropdown Panel */
@@ -75,7 +81,9 @@
     width: 380px;
     background: #ffffff;
     border-radius: 18px;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.04);
+    box-shadow:
+        0 16px 40px rgba(15, 23, 42, 0.14),
+        0 4px 12px rgba(15, 23, 42, 0.04);
     border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
@@ -116,18 +124,39 @@
 }
 
 .notif-dropdown-title i {
-    color: #ED842C;
+    color: #ed842c;
     font-size: 16px;
 }
 
 .notif-total-pill {
     background: #fff0e2;
-    color: #ED842C;
+    color: #ed842c;
     font-size: 11px;
     font-weight: 800;
     padding: 3px 10px;
     border-radius: 20px;
     letter-spacing: 0.02em;
+}
+
+.notif-read-all {
+    margin-left: 8px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #ed842c;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.notif-read-all:hover {
+    text-decoration: underline;
+}
+
+.notif-item.is-read {
+    opacity: 0.62;
 }
 
 /* Filter Tabs */
@@ -155,12 +184,12 @@
 }
 
 .notif-tab:hover {
-    color: #ED842C;
+    color: #ed842c;
     background: #fff0e2;
 }
 
 .notif-tab.active {
-    background: #ED842C;
+    background: #ed842c;
     color: #ffffff;
 }
 
@@ -241,9 +270,18 @@
     letter-spacing: 0.04em;
 }
 
-.badge-product { background: #fff0e2; color: #ED842C; }
-.badge-payout  { background: #fef3c7; color: #d97706; }
-.badge-appeal  { background: #fee2e2; color: #dc2626; }
+.badge-product {
+    background: #fff0e2;
+    color: #ed842c;
+}
+.badge-payout {
+    background: #fef3c7;
+    color: #d97706;
+}
+.badge-appeal {
+    background: #fee2e2;
+    color: #dc2626;
+}
 
 .notif-item-msg {
     font-size: 12px;
@@ -295,7 +333,7 @@
 }
 
 .notif-dropdown-footer a {
-    color: #ED842C;
+    color: #ed842c;
     text-decoration: none;
     display: inline-flex;
     align-items: center;

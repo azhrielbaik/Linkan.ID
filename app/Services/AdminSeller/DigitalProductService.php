@@ -93,7 +93,7 @@ class DigitalProductService
     {
         $productTitle = $product->title;
         $productId = $product->id;
-        
+
         if ($product->transactions()->exists()) {
             $product->delete();
             $msg = 'Produk berhasil dihapus (soft delete).';
@@ -114,14 +114,14 @@ class DigitalProductService
     private function handleImageUpload($file): string
     {
         $filename = 'product_images/' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
-        
-        $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+
+        $image = \Intervention\Image\ImageManager::gd()->read($file)
             ->scaleDown(width: 1200);
-        
-        $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
-            
+
+        $encoded = $image->toWebp(80);
+
         Storage::disk('public')->put($filename, (string) $encoded);
-        
+
         return $filename;
     }
 

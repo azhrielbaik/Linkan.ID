@@ -341,7 +341,53 @@ class PlatformAdminController extends Controller
         ];
     }
 
+    // Endpoint JSON notifikasi standar untuk Platform Admin
+    public function getNotifications(Request $request)
+    {
+        return response()->json($this->withNotificationReadState($this->fetchNotificationsData(), $request->user()));
+    }
 
+    public function markNotificationRead(Request $request)
+    {
+        $data = $request->validate(['notification_key' => 'required|string|max:100']);
+        DB::table('notification_reads')->updateOrInsert(
+            ['user_id' => $request->user()->id, 'notification_key' => $data['notification_key']],
+            ['updated_at' => now(), 'created_at' => now()]
+        );
+
+        return response()->json(['status' => 'success']);
+    }
+
+    public function markAllNotificationsRead(Request $request)
+    {
+        $data = $this->withNotificationReadState($this->fetchNotificationsData(), $request->user());
+        foreach ($data['notifications'] as $notification) {
+            DB::table('notification_reads')->updateOrInsert(
+                ['user_id' => $request->user()->id, 'notification_key' => $notification['id']],
+                ['updated_at' => now(), 'created_at' => now()]
+            );
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
+    private function withNotificationReadState(array $data, User $user): array
+    {
+        $readKeys = DB::table('notification_reads')
+            ->where('user_id', $user->id)
+            ->whereIn('notification_key', array_column($data['notifications'], 'id'))
+            ->pluck('notification_key')
+            ->all();
+        $readKeys = array_flip($readKeys);
+
+        foreach ($data['notifications'] as &$notification) {
+            $notification['is_read'] = isset($readKeys[$notification['id']]);
+        }
+        unset($notification);
+        $data['unread_count'] = count(array_filter($data['notifications'], fn ($notification) => !$notification['is_read']));
+
+        return $data;
+    }
 
     /**
      * Server-Sent Events (SSE) Stream endpoint untuk Platform Admin.
