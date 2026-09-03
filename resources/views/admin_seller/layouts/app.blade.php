@@ -375,7 +375,7 @@
                                 <i class="fas fa-cog"></i> Settings
                             </a>
                             <!-- Logout uses a form, so we create a simple button looking like a link -->
-                            <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
+                            <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;" onsubmit="if(window.sellerEventSource) window.sellerEventSource.close();">
                                 @csrf
                                 <button type="submit" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 10px 14px; font-size: 14px; font-weight: 600; color: #E53935; display: flex; align-items: center; gap: 12px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='transparent'">
                                     <i class="fas fa-sign-out-alt" style="color: #E53935;"></i> Logout
@@ -393,7 +393,7 @@
     </div>
 
     <script>
-        window.SellerNotifEndpoint = "{{ route('admin.notifications') }}";
+
         window.SellerNotifSSEEndpoint = "{{ route('admin.notifications.stream') }}";
     </script>
     <script src="{{ asset('js/seller-notifications.js') }}?v={{ time() }}"></script>

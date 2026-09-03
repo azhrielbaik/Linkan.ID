@@ -1,4 +1,4 @@
-// Seller Admin Notifications Scripts with Fast Non-Blocking Polling
+// Seller Admin Notifications Scripts using Server-Sent Events (SSE)
 
 let sellerNotifsData = {
     unread_count: 0,
@@ -6,8 +6,7 @@ let sellerNotifsData = {
 };
 
 let currentSellerNotifFilter = 'all';
-let sellerNotifTimer = null;
-let isFetchingSellerNotifs = false;
+window.sellerEventSource = null;
 
 function toggleSellerNotif(event) {
     if (event) {
@@ -28,7 +27,9 @@ function toggleSellerNotif(event) {
 
         dropdown.classList.add('show');
         if (btn) btn.classList.add('active');
-        fetchSellerNotifs();
+        // Because SSE updates the data continuously, we don't need to manually fetch here.
+        // But we can re-render to ensure it's up to date.
+        renderSellerNotifs(currentSellerNotifFilter);
     }
 }
 
@@ -56,66 +57,41 @@ function updateSellerUI(data) {
     renderSellerNotifs(currentSellerNotifFilter);
 }
 
-function getSellerEndpoint() {
-    // Selalu gunakan root-relative path agar aman dari Mixed Content / Cloudflare Tunnel / CORS
-    return '/admin/notifications';
+function getSellerStreamEndpoint() {
+    // Gunakan rute SSE
+    return '/admin/notifications/stream';
 }
 
-function fetchSellerNotifs() {
-    if (isFetchingSellerNotifs) return;
-    isFetchingSellerNotifs = true;
+function startSellerRealtimeSSE() {
+    if (window.sellerEventSource) {
+        window.sellerEventSource.close();
+    }
+    
+    window.sellerEventSource = new EventSource(getSellerStreamEndpoint());
 
-    const endpoint = getSellerEndpoint();
-    const listContainer = document.getElementById('sellerNotifList');
-
-    fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
+    window.sellerEventSource.addEventListener('notifications', function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            updateSellerUI(data);
+        } catch (err) {
+            console.error('Error parsing SSE notifications:', err);
         }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-    })
-    .then(data => {
-        updateSellerUI(data);
-    })
-    .catch(err => {
-        console.warn('Failed to load seller notifications:', err);
+    });
+
+    window.sellerEventSource.onerror = function(e) {
+        console.warn('SSE connection lost. Browser will try to reconnect automatically.');
+        const listContainer = document.getElementById('sellerNotifList');
+        // Show offline indicator only if we have no existing data
         if (listContainer && (!sellerNotifsData.notifications || sellerNotifsData.notifications.length === 0)) {
             listContainer.innerHTML = `
                 <div class="seller-notif-empty">
-                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
-                    <p>Gagal memuat notifikasi.</p>
+                    <i class="fas fa-wifi" style="color: #f59e0b;"></i>
+                    <p>Menghubungkan ulang ke server...</p>
                 </div>
             `;
         }
-    })
-    .finally(() => {
-        isFetchingSellerNotifs = false;
-    });
+    };
 }
-
-function startSellerRealtimePolling() {
-    if (sellerNotifTimer) clearInterval(sellerNotifTimer);
-    
-    // Polling cepat setiap 2.5 detik saat tab aktif
-    sellerNotifTimer = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-            fetchSellerNotifs();
-        }
-    }, 2500);
-}
-
-// Pause saat tab disembunyikan, langsung fetch saat tab kembali aktif
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        fetchSellerNotifs();
-    }
-});
 
 function filterSellerNotif(type, buttonElem) {
     currentSellerNotifFilter = type;
@@ -195,10 +171,9 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Jalankan langsung dan aktifkan timer polling
+// Start the SSE connection when page loads
 function initSellerNotifs() {
-    fetchSellerNotifs();
-    startSellerRealtimePolling();
+    startSellerRealtimeSSE();
 }
 
 if (document.readyState === 'loading') {
@@ -206,3 +181,9 @@ if (document.readyState === 'loading') {
 } else {
     initSellerNotifs();
 }
+
+window.addEventListener('beforeunload', function() {
+    if (window.sellerEventSource) {
+        window.sellerEventSource.close();
+    }
+});

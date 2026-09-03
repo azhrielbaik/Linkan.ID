@@ -46,6 +46,6 @@
 </div>
 
 <script>
-    window.PlatformNotifEndpoint = "{{ route('platform-admin.notifications') }}";
+
     window.PlatformNotifSSEEndpoint = "{{ route('platform-admin.notifications.stream') }}";
 </script>

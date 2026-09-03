@@ -341,11 +341,7 @@ class PlatformAdminController extends Controller
         ];
     }
 
-    // Endpoint JSON notifikasi standar untuk Platform Admin
-    public function getNotifications(Request $request)
-    {
-        return response()->json($this->fetchNotificationsData());
-    }
+
 
     /**
      * Server-Sent Events (SSE) Stream endpoint untuk Platform Admin.
@@ -354,6 +350,9 @@ class PlatformAdminController extends Controller
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
+        }
+        if ($request->hasSession()) {
+            $request->session()->save();
         }
 
         return response()->stream(function () {
@@ -364,32 +363,13 @@ class PlatformAdminController extends Controller
             }
             flush();
 
-            $maxCycles = 10;
-            $lastHash = null;
+            $data = $this->fetchNotificationsData();
 
-            for ($i = 0; $i < $maxCycles; $i++) {
-                if (connection_aborted()) {
-                    break;
-                }
-
-                $data = $this->fetchNotificationsData();
-                $currentHash = md5(json_encode($data));
-
-                if ($lastHash !== $currentHash || $i === 0) {
-                    echo "event: notifications\n";
-                    echo "data: " . json_encode($data) . "\n\n";
-                    $lastHash = $currentHash;
-                } else {
-                    echo ": ping\n\n";
-                }
-
-                if (ob_get_level()) {
-                    @ob_flush();
-                }
-                flush();
-
-                sleep(3);
-            }
+            // Mengirimkan retry interval ke browser (misal: 3000ms)
+            echo "retry: 3000\n";
+            echo "event: notifications\n";
+            echo "data: " . json_encode($data) . "\n\n";
+            flush();
         }, 200, [
             'Content-Type'      => 'text/event-stream',
             'Cache-Control'     => 'no-cache, no-store, must-revalidate',
