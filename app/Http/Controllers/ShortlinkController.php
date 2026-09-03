@@ -108,7 +108,7 @@ class ShortlinkController extends Controller
 
     public function create()
     {
-        return view('homeadminS.shortlink.create');
+        return view('admin_seller.features.shortlinks.create');
     }
 
     public function store(Request $request)
@@ -216,7 +216,7 @@ class ShortlinkController extends Controller
             abort(410, 'Tautan ini telah kedaluwarsa.');
         }
 
-        return view('shortlink.password', compact('shortlink'));
+        return view('public.shortlinks.password', compact('shortlink'));
     }
 
     public function verifyPassword(Request $request, $slug)
@@ -265,7 +265,7 @@ class ShortlinkController extends Controller
 
         $shortlinks = $query->paginate(6);
 
-        return view('homeadminS.shortlink.create', compact('shortlinks'));
+        return view('admin_seller.features.shortlinks.create', compact('shortlinks'));
     }
 
     public function analytics(Request $request, Shortlink $shortlink)
@@ -277,7 +277,7 @@ class ShortlinkController extends Controller
         $totalClicks = $shortlink->clicks()->count();
         $sources = $this->sourceSummary($shortlink);
 
-        return view('homeadminS.shortlink.analytics', [
+        return view('admin_seller.features.shortlinks.analytics', [
             'shortlink' => $shortlink,
             'totalClicks' => $totalClicks,
             'sources' => $sources,

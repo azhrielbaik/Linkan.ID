@@ -7,10 +7,6 @@ use App\Models\DigitalProduct;
 
 class AdminController extends Controller
 {
-    public function beranda()
-    {
-        return view('homeadminS.beranda');
-    }
 
     public function myLinkan(Request $request)
     {
@@ -32,7 +28,7 @@ class AdminController extends Controller
 
         $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
 
-        return view('pages.mylinkan.index', compact(
+        return view('admin_seller.features.mylinkan.index', compact(
             'digitalProducts',
             'appearance',
             'imageElements',
@@ -90,7 +86,7 @@ class AdminController extends Controller
             ->get();
         // Ambil produk digital unik yang sudah dibeli user
         $purchasedProducts = $purchases->pluck('product')->unique('id')->values();
-        return view('homeadminS.mypurchase', [
+        return view('admin_seller.features.purchases.index', [
             'purchases' => $purchases,
             'purchasedProducts' => $purchasedProducts
         ]);

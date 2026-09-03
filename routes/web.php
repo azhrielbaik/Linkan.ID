@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminSeller\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppearanceController;
 use App\Http\Controllers\ImageElementController;
@@ -8,16 +8,17 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminSeller\DashboardController;
 use App\Http\Controllers\DigitalProductController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
+use App\Http\Controllers\AdminSeller\OrderController;
+use App\Http\Controllers\AdminSeller\PayoutController;
 use App\Http\Controllers\PlatformAdmin\VerifikasiController;
 use App\Http\Controllers\PlatformAdminController;
 use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\AdminSeller\SettingController;
 use App\Http\Controllers\ShortlinkController;
-use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\AdminSeller\StatisticController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn () => view('welcome'))->name('welcome');
+Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
 
 Route::get('lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'id'])) {
@@ -38,8 +39,8 @@ Route::get('lang/{locale}', function ($locale) {
 
 // Static pages
 Route::view('/pricing', 'pricing')->name('pricing');
-Route::view('/faq', 'faq')->name('FAQ');
-Route::view('/about', 'about')->name('about');
+Route::view('/faq', 'public.pages.faq')->name('FAQ');
+Route::view('/about', 'public.pages.about')->name('about');
 
 // Auth
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -103,7 +104,7 @@ Route::post('/p/{slug}', [ShortlinkController::class, 'verifyPassword'])->name('
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
 
     // Dashboard / Beranda
-    Route::get('/dashboard', [DashboardController::class, 'beranda'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/get-chart-data', [DashboardController::class, 'getChartData'])->name('chart-data');
     Route::get('/notifications', [DashboardController::class, 'getNotifications'])->name('notifications');
     Route::get('/notifications/stream', [DashboardController::class, 'streamNotifications'])->name('notifications.stream');
@@ -175,16 +176,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'getOrderDetail'])->name('orders.detail');
 
-    // Digital Products (CRUD resource)
-    Route::resource('digital-products', DigitalProductController::class)->names([
-        'index'   => 'digital-products.index',
-        'create'  => 'digital-products.create',
-        'store'   => 'digital-products.store',
-        'show'    => 'digital-products.show',
-        'edit'    => 'digital-products.edit',
-        'update'  => 'digital-products.update',
-        'destroy' => 'digital-products.destroy',
-    ]);
+    // Digital Products Seller CRUD
+    Route::get('digital-products', [AdminDigitalProductController::class, 'index'])->name('digital-products.index');
+    Route::get('digital-products/create', [AdminDigitalProductController::class, 'create'])->name('digital-products.create');
+    Route::post('digital-products', [AdminDigitalProductController::class, 'store'])->name('digital-products.store');
+    Route::get('digital-products/{digital_product}/edit', [AdminDigitalProductController::class, 'edit'])->name('digital-products.edit');
+    Route::put('digital-products/{digital_product}', [AdminDigitalProductController::class, 'update'])->name('digital-products.update');
+    Route::delete('digital-products/{digital_product}', [AdminDigitalProductController::class, 'destroy'])->name('digital-products.destroy');
+
+    // Digital Products Public Show
+    Route::get('digital-products/{digital_product}', [DigitalProductController::class, 'show'])->name('digital-products.show');
 
     // Digital product payment flow (initiated from admin context)
     Route::prefix('digital-products')->name('digital-products.')->group(function () {

@@ -50,7 +50,7 @@ class SupportTicketController extends Controller
             ->latest()
             ->first();
 
-        return view('homeadminS.tickets.index', compact(
+        return view('admin_seller.features.tickets.index', compact(
             'tickets',
             'totalTickets',
             'openTickets',
@@ -160,7 +160,7 @@ class SupportTicketController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        return view('homeadminS.tickets.show', compact('ticket'));
+        return view('admin_seller.features.tickets.show', compact('ticket'));
     }
 
     /**

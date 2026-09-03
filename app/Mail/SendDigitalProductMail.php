@@ -25,7 +25,10 @@ class SendDigitalProductMail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.send-digital-product')
+        $orderId = $this->transaction ? $this->transaction->order_id : time();
+        
+        return $this->subject('Pesanan Produk Digital Anda: ' . $this->product->title . ' [#' . $orderId . ']')
+                    ->view('emails.send-digital-product')
                     ->with([
                         'product' => $this->product,
                         'buyerName' => $this->buyerName,
