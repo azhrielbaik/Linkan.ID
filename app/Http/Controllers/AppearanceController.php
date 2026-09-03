@@ -122,11 +122,11 @@ $appearance->discord = $request->discord;
             }
             $file = $request->file('banner');
             $bannerPath = 'appearances/banners/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
-            
-            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+
+            $image = \Intervention\Image\ImageManager::gd()->read($file)
                 ->scaleDown(width: 1200);
-            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
-                
+            $encoded = $image->toWebp(80);
+
             Storage::disk('public')->put($bannerPath, (string) $encoded);
             $appearance->banner = $bannerPath;
         }
@@ -138,11 +138,11 @@ $appearance->discord = $request->discord;
             }
             $file = $request->file('profile_image');
             $profilePath = 'appearances/profiles/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
-            
-            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+
+            $image = \Intervention\Image\ImageManager::gd()->read($file)
                 ->scaleDown(width: 500);
-            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
-                
+            $encoded = $image->toWebp(80);
+
             Storage::disk('public')->put($profilePath, (string) $encoded);
             $appearance->profile_image = $profilePath;
         }

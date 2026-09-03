@@ -25,8 +25,8 @@ class TextElementController extends Controller
             'button_icon_upload' => 'nullable|image|max:5120',
         ]);
 
-        $user = auth()->user();
-        
+        $user = $request->user();
+
         $textElement = null;
         if ($request->element_id) {
             $textElement = \App\Models\TextElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
@@ -44,10 +44,10 @@ class TextElementController extends Controller
         $textElement->button_text = $request->button_text;
         $textElement->button_link = $request->button_link;
         $textElement->button_color = $request->button_color;
-        
+
         if ($request->has('button_icon_type')) {
             $textElement->button_icon_type = $request->button_icon_type;
-            
+
             if ($request->button_icon_type === 'emoji' || $request->button_icon_type === 'fontawesome') {
                 $textElement->button_icon_value = $request->button_icon_emoji;
             } elseif ($request->button_icon_type === 'url') {
@@ -60,11 +60,11 @@ class TextElementController extends Controller
 
                 $file = $request->file('button_icon_upload');
                 $filename = 'text_icons/' . time() . '_' . \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
-                
-                $image = \Intervention\Image\Laravel\Facades\Image::decode($file)->scaleDown(width: 200);
-                $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+
+                $image = \Intervention\Image\ImageManager::gd()->read($file)->scaleDown(width: 200);
+                $encoded = $image->toWebp(80);
                 \Illuminate\Support\Facades\Storage::disk('public')->put($filename, (string) $encoded);
-                
+
                 $textElement->button_icon_value = $filename;
             } elseif ($request->button_icon_type === 'none') {
                 $textElement->button_icon_value = null;
@@ -86,9 +86,9 @@ class TextElementController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $user = auth()->user();
+        $user = $request->user();
         $element = \App\Models\TextElement::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
             $element->delete();

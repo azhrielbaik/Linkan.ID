@@ -17,8 +17,8 @@ class ImageElementController extends Controller
             'element_id' => 'nullable|integer'
         ]);
 
-        $user = auth()->user();
-        
+        $user = $request->user();
+
         $imageElement = null;
         if ($request->element_id) {
             $imageElement = ImageElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
@@ -35,18 +35,18 @@ class ImageElementController extends Controller
             if ($imageElement->image_path) {
                 Storage::disk('public')->delete($imageElement->image_path);
             }
-            
+
             $file = $request->file('image');
             $filename = 'elements/images/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
-            
+
             // Sintaks Intervention Image v4
-            $image = \Intervention\Image\Laravel\Facades\Image::decode($file)
+            $image = \Intervention\Image\ImageManager::gd()->read($file)
                 ->scaleDown(width: 1200);
-            
-            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
-                
+
+            $encoded = $image->toWebp(80);
+
             Storage::disk('public')->put($filename, (string) $encoded);
-            
+
             $imageElement->image_path = $filename;
         }
 
@@ -60,9 +60,9 @@ class ImageElementController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $user = auth()->user();
+        $user = $request->user();
         $element = ImageElement::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
             if ($element->image_path) {
@@ -80,7 +80,7 @@ class ImageElementController extends Controller
             'blocks_order' => 'required|string'
         ]);
 
-        $user = auth()->user();
+        $user = $request->user();
         $appearance = Appearance::firstOrCreate(
             ['user_id' => $user->id],
             ['name' => $user->name ?? 'My Linkan']
