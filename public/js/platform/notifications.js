@@ -1,21 +1,19 @@
-// Platform Admin Notifications Scripts with Fast Non-Blocking Polling
+// Platform Admin Notifications Scripts using Server-Sent Events (SSE)
 
 let platformNotifsData = {
     unread_count: 0,
-    counts: { products: 0, payouts: 0, appeals: 0 },
     notifications: []
 };
 
-let currentNotifFilter = 'all';
-let platformNotifTimer = null;
-let isFetchingPlatformNotifs = false;
+let currentPlatformNotifFilter = 'all';
+window.platformEventSource = null;
 
 function togglePlatformNotif(event) {
     if (event) {
         event.stopPropagation();
     }
-    const dropdown = document.getElementById('platformNotifDropdown');
-    const btn = document.getElementById('platformNotifBtn');
+    const dropdown = document.getElementById('notifDropdown');
+    const btn = document.getElementById('notifBtn');
     if (!dropdown) return;
 
     const isOpen = dropdown.classList.contains('show');
@@ -23,17 +21,23 @@ function togglePlatformNotif(event) {
         dropdown.classList.remove('show');
         if (btn) btn.classList.remove('active');
     } else {
+        // Close profile dropdown if open
+        const profileDropdown = document.getElementById('profileDropdown');
+        if (profileDropdown) profileDropdown.classList.remove('show');
+
         dropdown.classList.add('show');
         if (btn) btn.classList.add('active');
-        fetchPlatformNotifs();
+        // Because SSE updates the data continuously, we don't need to manually fetch here.
+        // But we can re-render to ensure it's up to date.
+        renderPlatformNotifs(currentPlatformNotifFilter);
     }
 }
 
 function updatePlatformUI(data) {
     if (!data) return;
     platformNotifsData = data;
-    const badge = document.getElementById('platformNotifBadge');
-    const totalPill = document.getElementById('platformNotifTotal');
+    const badge = document.getElementById('notifBadge');
+    const totalPill = document.getElementById('notifTotal');
 
     // Update badge counter
     const count = data.unread_count || 0;
@@ -50,72 +54,47 @@ function updatePlatformUI(data) {
         totalPill.innerText = count + ' Baru';
     }
 
-    renderPlatformNotifs(currentNotifFilter);
+    renderPlatformNotifs(currentPlatformNotifFilter);
 }
 
-function getPlatformEndpoint() {
-    // Selalu gunakan root-relative path agar aman dari Mixed Content / Cloudflare Tunnel / CORS
-    return '/platform-admin/notifications';
+function getPlatformStreamEndpoint() {
+    // Gunakan rute SSE
+    return '/platformadmin/notifications/stream';
 }
 
-function fetchPlatformNotifs() {
-    if (isFetchingPlatformNotifs) return;
-    isFetchingPlatformNotifs = true;
+function startPlatformRealtimeSSE() {
+    if (window.platformEventSource) {
+        window.platformEventSource.close();
+    }
+    
+    window.platformEventSource = new EventSource(getPlatformStreamEndpoint());
 
-    const endpoint = getPlatformEndpoint();
-    const listContainer = document.getElementById('platformNotifList');
-
-    fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
+    window.platformEventSource.addEventListener('notifications', function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            updatePlatformUI(data);
+        } catch (err) {
+            console.error('Error parsing SSE notifications:', err);
         }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-    })
-    .then(data => {
-        updatePlatformUI(data);
-    })
-    .catch(err => {
-        console.warn('Failed to load platform notifications:', err);
+    });
+
+    window.platformEventSource.onerror = function(e) {
+        console.warn('SSE connection lost. Browser will try to reconnect automatically.');
+        const listContainer = document.getElementById('notifList');
+        // Show offline indicator only if we have no existing data
         if (listContainer && (!platformNotifsData.notifications || platformNotifsData.notifications.length === 0)) {
             listContainer.innerHTML = `
                 <div class="notif-empty">
-                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
-                    <p>Gagal memuat notifikasi.</p>
+                    <i class="fas fa-wifi" style="color: #f59e0b;"></i>
+                    <p>Menghubungkan ulang ke server...</p>
                 </div>
             `;
         }
-    })
-    .finally(() => {
-        isFetchingPlatformNotifs = false;
-    });
+    };
 }
-
-function startPlatformRealtimePolling() {
-    if (platformNotifTimer) clearInterval(platformNotifTimer);
-    
-    // Polling cepat setiap 2.5 detik saat tab aktif
-    platformNotifTimer = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-            fetchPlatformNotifs();
-        }
-    }, 2500);
-}
-
-// Pause saat tab disembunyikan, langsung fetch saat tab kembali aktif
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        fetchPlatformNotifs();
-    }
-});
 
 function filterPlatformNotif(type, buttonElem) {
-    currentNotifFilter = type;
+    currentPlatformNotifFilter = type;
     
     // Update active tab class
     const tabs = document.querySelectorAll('.notif-filter-tabs .notif-tab');
@@ -128,7 +107,7 @@ function filterPlatformNotif(type, buttonElem) {
 }
 
 function renderPlatformNotifs(filterType) {
-    const listContainer = document.getElementById('platformNotifList');
+    const listContainer = document.getElementById('notifList');
     if (!listContainer) return;
 
     let items = platformNotifsData.notifications || [];
@@ -153,7 +132,7 @@ function renderPlatformNotifs(filterType) {
                 <div class="notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">
                     <i class="${item.icon}"></i>
                 </div>
-                <div class="notif-item-body">
+                <div class="notif-body">
                     <div class="notif-item-top">
                         <div class="notif-item-title">${item.title}</div>
                         <span class="notif-tag ${item.badge_class}">${item.badge}</span>
@@ -172,8 +151,8 @@ function renderPlatformNotifs(filterType) {
 
 // Global click-outside listener
 document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('platformNotifDropdown');
-    const btn = document.getElementById('platformNotifBtn');
+    const dropdown = document.getElementById('notifDropdown');
+    const btn = document.getElementById('notifBtn');
     if (!dropdown) return;
 
     if (!dropdown.contains(event.target) && (!btn || !btn.contains(event.target))) {
@@ -185,17 +164,16 @@ document.addEventListener('click', function(event) {
 // Close on Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        const dropdown = document.getElementById('platformNotifDropdown');
-        const btn = document.getElementById('platformNotifBtn');
+        const dropdown = document.getElementById('notifDropdown');
+        const btn = document.getElementById('notifBtn');
         if (dropdown) dropdown.classList.remove('show');
         if (btn) btn.classList.remove('active');
     }
 });
 
-// Jalankan langsung dan aktifkan timer polling
+// Start the SSE connection when page loads
 function initPlatformNotifs() {
-    fetchPlatformNotifs();
-    startPlatformRealtimePolling();
+    startPlatformRealtimeSSE();
 }
 
 if (document.readyState === 'loading') {
@@ -203,3 +181,9 @@ if (document.readyState === 'loading') {
 } else {
     initPlatformNotifs();
 }
+
+window.addEventListener('beforeunload', function() {
+    if (window.platformEventSource) {
+        window.platformEventSource.close();
+    }
+});

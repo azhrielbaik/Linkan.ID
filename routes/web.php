@@ -106,7 +106,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Dashboard / Beranda
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/get-chart-data', [DashboardController::class, 'getChartData'])->name('chart-data');
-    Route::get('/notifications', [DashboardController::class, 'getNotifications'])->name('notifications');
+
     Route::get('/notifications/stream', [DashboardController::class, 'streamNotifications'])->name('notifications.stream');
     Route::post('/appeal', [DashboardController::class, 'submitAppeal'])->name('appeal.store');
 
@@ -241,7 +241,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Komisi & Notifikasi (API endpoint realtime & SSE stream)
     Route::get('/commissions', [PlatformAdminController::class, 'getCommissions'])->name('commissions');
-    Route::get('/notifications', [PlatformAdminController::class, 'getNotifications'])->name('notifications');
+
     Route::get('/notifications/stream', [PlatformAdminController::class, 'streamNotifications'])->name('notifications.stream');
 
     // Verifikasi (role-gated, sudah dalam group ini)
