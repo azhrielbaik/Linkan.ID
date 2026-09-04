@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('public.faq_title', ['default' => 'FAQ - Frequently Asked Questions | Linkan.id']) }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -594,7 +594,7 @@
         .faq-grid-content {
             display: grid;
             grid-template-rows: 0fr;
-            transition: grid-template-rows 300ms ease-in-out;
+            transition: all 300ms ease-in-out;
         }
 
         .faq-item.is-open .faq-grid-content {
@@ -711,10 +711,10 @@
     <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
         <!-- Top Central Glowing Aura -->
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[480px] bg-gradient-to-br from-white/15 via-indigo-300/20 to-purple-300/20 rounded-full blur-3xl opacity-60"></div>
-        
+
         <!-- Center-Left Ambient Glow -->
         <div class="absolute top-1/3 -left-36 w-[480px] h-[480px] bg-gradient-to-tr from-cyan-300/15 via-white/10 to-indigo-300/15 rounded-full blur-3xl opacity-50"></div>
-        
+
         <!-- Center-Right Ambient Glow -->
         <div class="absolute top-2/3 -right-36 w-[520px] h-[520px] bg-gradient-to-bl from-purple-300/20 via-pink-300/15 to-white/10 rounded-full blur-3xl opacity-50"></div>
     </div>
@@ -776,7 +776,7 @@
 
     <!-- MAIN CONTENT -->
     <main id="main-content" class="w-full max-w-4xl mx-auto flex flex-col items-center">
-        
+
         <!-- =========================================================
              1. HEADER SECTION (KNOWLEDGE BASE CARD + GOOEY SEARCH BAR)
              - Teks subtitle bergradasi (bg-clip-text text-transparent bg-gradient-to-r)
@@ -787,14 +787,6 @@
         <div class="kb-card">
             <!-- Glow effect behind header card -->
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-36 bg-primary/20 rounded-full blur-3xl opacity-50 -z-10 pointer-events-none" aria-hidden="true"></div>
-
-            <!-- Subtitle with Gradient Text -->
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/5 border border-primary/15 mb-3">
-                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                <span class="text-xs font-bold uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-600 to-purple-600">
-                    Pusat Bantuan & FAQ
-                </span>
-            </div>
 
             <!-- Main Title Large & Bold -->
             <h1 class="kb-title">
@@ -848,51 +840,51 @@
              ========================================================= -->
         <section class="w-full px-4 mb-8" aria-label="Kategori Pertanyaan">
             <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3" id="faqCategoryTabs" role="tablist">
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="true" 
-                    data-category="all" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="true"
+                    data-category="all"
                     class="faq-tab-btn active px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 bg-primary text-white border-2 border-white ring-2 ring-primary shadow-lg shadow-black/10 cursor-pointer">
                     Semua Kategori
                 </button>
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="false" 
-                    data-category="general" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    data-category="general"
                     class="faq-tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 bg-white shadow-sm cursor-pointer">
                     Umum
                 </button>
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="false" 
-                    data-category="payment" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    data-category="payment"
                     class="faq-tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 bg-white shadow-sm cursor-pointer">
                     Pembayaran & Komisi
                 </button>
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="false" 
-                    data-category="product" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    data-category="product"
                     class="faq-tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 bg-white shadow-sm cursor-pointer">
                     Produk Digital
                 </button>
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="false" 
-                    data-category="account" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    data-category="account"
                     class="faq-tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 bg-white shadow-sm cursor-pointer">
                     Akun & Keamanan
                 </button>
-                <button 
-                    type="button" 
-                    role="tab" 
-                    aria-selected="false" 
-                    data-category="integration" 
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    data-category="integration"
                     class="faq-tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 bg-white shadow-sm cursor-pointer">
                     Integrasi & Fitur
                 </button>
@@ -918,7 +910,7 @@
 
                     <!-- Item 1.1 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="general">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Apa itu Linkan.id ?
                             </span>
@@ -928,7 +920,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Linkan.id adalah platform bio-link all-in-one yang dirancang untuk kreator konten, pebisnis online, dan profesional. Dengan Linkan.id, Anda dapat menampilkan semua tautan penting, menjual produk digital, menerima donasi, dan mengarahkan audiens dengan satu tautan simpel yang berkelas.
@@ -939,8 +931,8 @@
 
                     <!-- Item 1.2 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="general">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
-                            <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
+                                     <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Apa saja fitur unggulan Linkan.id ?
                             </span>
                             <span class="faq-icon-badge flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300">
@@ -949,7 +941,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Fitur unggulan Linkan.id meliputi:
@@ -967,7 +959,7 @@
 
                     <!-- Item 1.3 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="general">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Tips memilih username yang baik di Linkan.id
                             </span>
@@ -977,7 +969,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Pilihlah username yang singkat, mudah diingat, dan konsisten dengan akun media sosial utama Anda (misalnya Instagram, TikTok, atau Twitter). Hindari penggunaan karakter tanda hubung atau angka berlebihan agar audiens mudah mengetik tautan Anda.
@@ -988,7 +980,7 @@
 
                     <!-- Item 1.4 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="general">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Apakah saya bisa menggunakan Custom Domain sendiri?
                             </span>
@@ -998,7 +990,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Ya! Pengguna paket Pro/Unlimited dapat menghubungkan nama domain pribadi (misal: <code>links.namabrand.com</code>). Cukup arahkan CNAME record DNS domain Anda ke server Linkan.id sesuai panduan yang tersedia di dashboard.
@@ -1017,7 +1009,7 @@
 
                     <!-- Item 2.1 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="payment">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana sistem pembayaran untuk pembeli?
                             </span>
@@ -1027,7 +1019,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Linkan.id terhubung secara otomatis dengan payment gateway berizin resmi. Pembeli dapat membayar menggunakan QRIS (semua e-wallet dan m-banking), Virtual Account (BCA, Mandiri, BNI, BRI), serta dompet digital (GoPay, OVO, ShopeePay, DANA) dengan konfirmasi pembayaran instan 24/7.
@@ -1038,7 +1030,7 @@
 
                     <!-- Item 2.2 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="payment">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana sistem pembagian komisi di Linkan.id?
                             </span>
@@ -1048,7 +1040,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Admin Platform hanya mengenakan komisi platform transparan sebesar 5% dari setiap transaksi produk digital yang sukses. Biaya ini dipotong secara otomatis saat penarikan saldo, tanpa ada biaya langganan tersembunyi.
@@ -1059,7 +1051,7 @@
 
                     <!-- Item 2.3 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="payment">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana cara menarik dana (payout) ke rekening saya?
                             </span>
@@ -1069,7 +1061,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Buka menu <strong>Finansial > Penarikan Saldo</strong> di dashboard Anda. Daftarkan nomor rekening bank atau e-wallet Anda yang valid. Setelah diverifikasi, Anda dapat mengajukan permintaan payout yang diproses dalam 1x24 jam kerja.
@@ -1080,7 +1072,7 @@
 
                     <!-- Item 2.4 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="payment">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Pembayaran QRIS terpotong namun produk belum diterima?
                             </span>
@@ -1090,7 +1082,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Sistem payment gateway umumnya memperbarui status dalam 1-5 menit. Jika setelah 15 menit status transaksi belum berubah, silakan hubungi tim dukungan kami melalui halaman Kontak dengan menyertakan bukti pembayaran dan kode transaksi untuk verifikasi manual cepat.
@@ -1109,7 +1101,7 @@
 
                     <!-- Item 3.1 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="product">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Produk digital apa saja yang dapat saya jual?
                             </span>
@@ -1119,7 +1111,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Anda dapat menjual hampir semua tipe produk digital seperti:
@@ -1137,7 +1129,7 @@
 
                     <!-- Item 3.2 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="product">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana pembeli mengakses file produk setelah membayar?
                             </span>
@@ -1147,7 +1139,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Setelah pembayaran berhasil, pembeli langsung diarahkan ke halaman invoice sukses dengan tombol unduh instan. Selain itu, sistem Linkan.id juga otomatis mengirimkan email konfirmasi berisi link akses unduhan ke alamat email pembeli.
@@ -1158,7 +1150,7 @@
 
                     <!-- Item 3.3 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="product">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Apakah bisa mengirim custom pesan setelah pembelian?
                             </span>
@@ -1168,7 +1160,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Tentu saja! Pada saat membuat atau mengedit produk, Anda bisa mengisi formulir "Pesan Kustom Pasca Pembelian" yang akan ditampilkan langsung kepada pembeli, seperti instruksi cara menggunakan produk atau link grup privat.
@@ -1187,7 +1179,7 @@
 
                     <!-- Item 4.1 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="account">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Cara ganti atau mereset password akun Linkan.id
                             </span>
@@ -1197,7 +1189,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Jika lupa password, klik tautan <em>"Lupa Password?"</em> pada halaman login, lalu masukkan alamat email akun Anda. Kami akan mengirimkan tautan pemulihan aman ke email Anda untuk membuat password baru.
@@ -1208,7 +1200,7 @@
 
                     <!-- Item 4.2 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="account">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana cara membatalkan langganan paket Unlimited?
                             </span>
@@ -1218,7 +1210,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Masuk ke <strong>Dashboard > Pengaturan Akun > Langganan</strong>. Klik tombol <em>"Batalkan Langganan"</em>. Akun Anda akan tetap aktif menikmati seluruh fitur paket hingga akhir periode tagihan berjalan.
@@ -1229,7 +1221,7 @@
 
                     <!-- Item 4.3 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="account">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Bagaimana cara mengumpulkan kontak database email pembeli?
                             </span>
@@ -1239,7 +1231,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Setiap kali ada transaksi atau unduhan freebie (produk gratis), data nama, nomor WhatsApp, dan email pembeli otomatis tersimpan di menu <strong>Pelanggan / Leads</strong>. Anda dapat mengunduh database tersebut dalam format CSV kapan saja.
@@ -1258,7 +1250,7 @@
 
                     <!-- Item 5.1 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="integration">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Cara memasang Google Analytics 4 (GA4) di Linkan.id
                             </span>
@@ -1268,7 +1260,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Buka menu <strong>Pengaturan > Integrasi Pelacakan</strong>. Salin kode Measurement ID Google Analytics Anda (berawalan <code>G-XXXXXXXXXX</code>) lalu tempelkan pada kolom Google Analytics ID. Data pengunjung akan mulai terekam secara otomatis.
@@ -1279,7 +1271,7 @@
 
                     <!-- Item 5.2 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="integration">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Cara memasang Meta Pixel (Facebook) & TikTok Pixel
                             </span>
@@ -1289,7 +1281,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Di menu Integrasi Pelacakan, masukkan ID Meta Pixel atau TikTok Pixel Anda. Linkan.id otomatis memicu standard events seperti <em>PageView</em>, <em>ViewContent</em>, <em>InitiateCheckout</em>, dan <em>Purchase</em> untuk optimasi iklan Anda.
@@ -1300,7 +1292,7 @@
 
                     <!-- Item 5.3 -->
                     <div class="faq-item border border-white/80 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all" data-category="integration">
-                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false">
+                        <button type="button" class="faq-accordion-header w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none cursor-pointer group" aria-expanded="false" onclick="event.stopPropagation(); const item = this.closest('.faq-item'); const isOpen = item.classList.contains('is-open'); item.classList.toggle('is-open', !isOpen); this.setAttribute('aria-expanded', String(!isOpen));">
                             <span class="font-bold text-slate-800 text-base md:text-lg group-hover:text-primary transition-colors duration-200 pr-4">
                                 Apakah tersedia Webhook untuk otomatisasi ke sistem lain?
                             </span>
@@ -1310,7 +1302,7 @@
                                 </span>
                             </span>
                         </button>
-                        <div class="faq-grid-content overflow-hidden">
+                        <div class="faq-grid-content overflow-hidden transition-all duration-300 ease-in-out">
                             <div class="overflow-hidden">
                                 <div class="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed text-sm md:text-base border-t border-slate-100 pt-4">
                                     Ya, Linkan.id mendukung Webhook URL. Anda bisa menghubungkannya dengan platform seperti Zapier, Make, atau backend aplikasi kustom Anda untuk menerima payload JSON seketika saat order berstatus sukses.
@@ -1367,10 +1359,6 @@
             <a href="{{ url('/') }}" class="footer-logo">
                 <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
             </a>
-            <div class="footer-links">
-                <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>
-                <a href="{{ route('contact.form') }}" class="footer-link scramble-link" data-value="{{ __('layout.contact_us') }}">{{ __('layout.contact_us') }}</a>
-            </div>
         </div>
     </footer>
 
@@ -1386,45 +1374,10 @@
          - Navbar scramble text effect & Mobile menu toggle
          ========================================================= -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function () {
             // -------------------------------------------------------------
             // A. ACCORDION TOGGLE (Vanilla JS)
             // -------------------------------------------------------------
-            const faqHeaders = document.querySelectorAll('.faq-accordion-header');
-
-            faqHeaders.forEach(header => {
-                header.addEventListener('click', function () {
-                    const currentItem = header.closest('.faq-item');
-                    if (!currentItem) return;
-
-                    const isOpen = currentItem.classList.contains('is-open');
-                    
-                    // Cari parent kategori atau container terdekat untuk menutup akordion lain
-                    const parentGroup = currentItem.closest('.faq-category-group') || document;
-                    const siblingItems = parentGroup.querySelectorAll('.faq-item');
-
-                    // Tutup semua akordion lain di kategori yang sama
-                    siblingItems.forEach(item => {
-                        if (item !== currentItem && item.classList.contains('is-open')) {
-                            item.classList.remove('is-open');
-                            const sibHeader = item.querySelector('.faq-accordion-header');
-                            if (sibHeader) {
-                                sibHeader.setAttribute('aria-expanded', 'false');
-                            }
-                        }
-                    });
-
-                    // Toggle status item yang diklik
-                    if (isOpen) {
-                        currentItem.classList.remove('is-open');
-                        header.setAttribute('aria-expanded', 'false');
-                    } else {
-                        currentItem.classList.add('is-open');
-                        header.setAttribute('aria-expanded', 'true');
-                    }
-                });
-            });
-
             // -------------------------------------------------------------
             // B. TAB SWITCHER (Vanilla JS)
             // -------------------------------------------------------------
@@ -1464,7 +1417,7 @@
                         group.style.display = 'block';
                         group.style.opacity = '0';
                         group.style.transform = 'translateY(6px)';
-                        
+
                         // Tutup akordion yang terbuka saat berpindah tab
                         group.querySelectorAll('.faq-item.is-open').forEach(item => {
                             item.classList.remove('is-open');
@@ -1789,7 +1742,7 @@
                     }, totalDuration);
                 });
             });
-        });
+        })();
     </script>
 </body>
 </html>
