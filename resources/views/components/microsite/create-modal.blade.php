@@ -138,9 +138,18 @@
                 <div class="wizard-step-content" id="wizardStep2" style="display: none;">
                     <div class="step-fields-container">
                         
-                        <div class="form-field-item">
+                        <div class="form-field-item card-title-row">
                             <label class="field-label">{{ __('admin.microsite_title_label') }} <span class="required-asterisk">*</span></label>
-                            <input type="text" name="name" id="micrositeNameInput" class="form-control-input" placeholder="{{ __('admin.microsite_title_placeholder') }}" value="{{ old('name', Auth::user()->name) }}" required>
+                            <input type="text" name="title" id="micrositeNameInput" class="form-control-input" placeholder="{{ __('admin.microsite_title_placeholder') }}" value="{{ old('title', Auth::user()->name) }}" required>
+                        </div>
+
+                        <div class="form-field-item form-field-margin">
+                            <label class="field-label">Alamat Microsite <span class="required-asterisk">*</span></label>
+                            <div style="display: flex; align-items: stretch; width: 100%;">
+                                <span style="background-color: #f3f4f6; border: 1px solid #d1d5db; border-right: none; border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #4b5563; font-size: 0.875rem; white-space: nowrap; display: flex; align-items: center;">linkan.id/</span>
+                                <input type="text" name="alias" id="micrositeAliasInput" class="form-control-input" style="border-top-left-radius: 0; border-bottom-left-radius: 0; flex: 1;" placeholder="alamat-anda" maxlength="12" value="{{ old('alias', Auth::user()->username) }}" required>
+                            </div>
+                            <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">Maksimal 12 karakter. Hanya huruf, angka, dan tanda hubung (-).</small>
                         </div>
 
                         <div class="form-field-item form-field-margin">
@@ -164,3 +173,35 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('micrositeNameInput');
+    const aliasInput = document.getElementById('micrositeAliasInput');
+
+    if (nameInput && aliasInput) {
+        // Hanya auto-generate jika alias masih sama dengan default/kosong
+        let isManuallyEdited = false;
+        
+        aliasInput.addEventListener('input', function() {
+            isManuallyEdited = true;
+            let slug = this.value
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-');
+            this.value = slug.substring(0, 12);
+        });
+
+        nameInput.addEventListener('input', function() {
+            if (!isManuallyEdited) {
+                let slug = this.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                aliasInput.value = slug.substring(0, 12);
+            }
+        });
+    }
+});
+</script>

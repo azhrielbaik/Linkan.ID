@@ -51,19 +51,20 @@
 
 <div id="micrositeEditorUrls" style="display: none;"
     data-route-image-delete="{{ url('/admin/elements/image') }}"
-    data-route-image-store="{{ route('admin.elements.image.store') }}"
+    data-route-image-store="{{ route('admin.elements.image.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-divider-delete="{{ url('/admin/elements/divider') }}"
-    data-route-divider-store="{{ route('admin.elements.divider.store') }}"
+    data-route-divider-store="{{ route('admin.elements.divider.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-text-delete="{{ url('/admin/elements/text') }}"
-    data-route-text-store="{{ route('admin.elements.text.store') }}"
+    data-route-text-store="{{ route('admin.elements.text.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-video-delete="{{ url('/admin/elements/video') }}"
-    data-route-video-store="{{ route('admin.elements.video.store') }}"
+    data-route-video-store="{{ route('admin.elements.video.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-social-delete="{{ url('/admin/elements/social') }}"
-    data-route-social-store="{{ route('admin.elements.social.store') }}"
-    data-route-order-update="{{ route('admin.elements.order.update') }}"
-    data-route-appearance-update="{{ route('admin.appearance.update') }}"
-    data-route-design-settings-update="{{ route('admin.appearance.design-settings.update') }}"
-    data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}">
+    data-route-social-store="{{ route('admin.elements.social.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-order-update="{{ route('admin.elements.order.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-appearance-update="{{ route('admin.appearance.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-design-settings-update="{{ route('admin.appearance.design-settings.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}"
+    data-appearance-id="{{ isset($appearance) ? $appearance->id : '' }}">
 </div>
 
 <script>

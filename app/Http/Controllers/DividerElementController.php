@@ -13,7 +13,8 @@ class DividerElementController extends Controller
         $request->validate([
             'type' => 'required|string|in:line,space',
             'size' => 'required|integer|min:1|max:200',
-            'element_id' => 'nullable|integer'
+            'element_id' => 'nullable|integer',
+            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
         $user = auth()->user();
@@ -26,7 +27,8 @@ class DividerElementController extends Controller
         if (!$dividerElement) {
             $dividerElement = new DividerElement();
             $dividerElement->user_id = $user->id;
-            $maxOrder = DividerElement::where('user_id', $user->id)->max('order_position');
+            $dividerElement->appearance_id = $request->appearance_id;
+            $maxOrder = DividerElement::where('appearance_id', $request->appearance_id)->max('order_position');
             $dividerElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
         }
 

@@ -23,6 +23,7 @@ class AppearanceController extends Controller
         $user = Auth::user();
 
         $request->validate([
+            'appearance_id' => 'required|integer|exists:appearances,id',
             'name' => ['required', 'string', function ($attribute, $value, $fail) {
                 if (str_word_count(strip_tags(html_entity_decode($value))) > 50) {
                     $fail('Nama profil tidak boleh lebih dari 50 kata.');
@@ -54,12 +55,8 @@ class AppearanceController extends Controller
             'discord' => 'nullable|url|max:255',
         ]);
 
-        // Cari atau buat record appearance
-        $appearance = Appearance::where('user_id', $user->id)->first();
-        if (!$appearance) {
-            $appearance = new Appearance();
-            $appearance->user_id = $user->id;
-        }
+        // Cari record appearance spesifik
+        $appearance = Appearance::where('user_id', $user->id)->findOrFail($request->appearance_id);
 
         // Cek jika ada request untuk menghapus banner
         if ($request->input('delete_banner') == 1) {
@@ -187,16 +184,14 @@ $appearance->discord = $request->discord;
     public function updateDesignSettings(Request $request)
     {
         $request->validate([
+            'appearance_id' => 'required|integer|exists:appearances,id',
             'background_type' => 'nullable|string|in:color,image',
             'background_color' => 'nullable|string|max:100',
             'profile_layout'  => 'nullable|string|in:classic,title-top,side',
             'block_shape'     => 'nullable|string|in:sharp,rounded,pill',
         ]);
 
-        $appearance = Appearance::where('user_id', Auth::id())->firstOrCreate(
-            ['user_id' => Auth::id()],
-            ['name' => Auth::user()->name]
-        );
+        $appearance = Appearance::where('user_id', Auth::id())->findOrFail($request->appearance_id);
 
         $appearance->fill($request->only(
             'background_type',

@@ -481,6 +481,7 @@
         const originalBtnText = document.getElementById('btnText_' + elementId);
 
         let formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         if (fileInput && fileInput.files && fileInput.files[0]) {
             formData.append('image', fileInput.files[0]);
         }
@@ -568,7 +569,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ blocks_order: blocksOrderStr }),
+            body: JSON.stringify({ blocks_order: blocksOrderStr, appearance_id: document.getElementById('micrositeEditorUrls').dataset.appearanceId }),
             keepalive: true
         });
     }
@@ -691,6 +692,7 @@
                 }
 
                 const formData = new FormData(this);
+                formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
 
                 fetch(document.getElementById('micrositeEditorUrls').dataset.routeAppearanceUpdate, {
                     method: "POST",
@@ -1035,6 +1037,7 @@
 
         // Auto-save the default divider to the database
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('type', 'line');
         formData.append('size', '20');
 
@@ -1149,6 +1152,7 @@
         const dbId = block.getAttribute('data-db-id');
 
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('type', typeVal);
         formData.append('size', sizeVal);
         if (dbId) {
@@ -1250,6 +1254,7 @@
         toggleTextEditForm(tempId, true);
 
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('content', 'Teks Anda di sini...');
 
         // Auto-save the default text to the database
@@ -1475,6 +1480,7 @@
         }
 
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('content', editor.innerHTML);
         if (dbId) {
             formData.append('element_id', dbId);
@@ -1606,6 +1612,7 @@
         toggleVideoEditForm(tempId, true);
 
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('video_url', '');
         formData.append('is_autoplay', '0');
 
@@ -1708,6 +1715,7 @@
         if (!urlInput) return;
 
         const formData = new FormData();
+        formData.append('appearance_id', document.getElementById('micrositeEditorUrls').dataset.appearanceId);
         formData.append('video_url', urlInput.value.trim());
         formData.append('is_autoplay', autoplayToggle && autoplayToggle.checked ? '1' : '0');
 
@@ -2098,6 +2106,7 @@
             },
             body: JSON.stringify({
                 element_id: dbId,
+                    appearance_id: document.getElementById('micrositeEditorUrls').dataset.appearanceId,
                 platforms: platformsData
             })
         })

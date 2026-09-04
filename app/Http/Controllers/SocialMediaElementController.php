@@ -12,7 +12,8 @@ class SocialMediaElementController extends Controller
     {
         $request->validate([
             'platforms' => 'nullable|array',
-            'element_id' => 'nullable|integer'
+            'element_id' => 'nullable|integer',
+            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
         $user = auth()->user();
@@ -25,6 +26,7 @@ class SocialMediaElementController extends Controller
         if (!$element) {
             $element = new SocialMediaElement();
             $element->user_id = $user->id;
+            $element->appearance_id = $request->appearance_id;
             $element->is_active = true;
         } 
         
@@ -72,7 +74,7 @@ class SocialMediaElementController extends Controller
     {
         $element = SocialMediaElement::where('user_id', auth()->id())->find($id);
         if ($element) {
-            $appearance = Appearance::where('user_id', auth()->id())->first();
+            $appearance = Appearance::find($element->appearance_id);
             if ($appearance && $appearance->blocks_order) {
                 $order = json_decode($appearance->blocks_order, true);
                 if (is_array($order)) {

@@ -13,7 +13,8 @@ class VideoElementController extends Controller
         $request->validate([
             'video_url' => 'nullable|string',
             'is_autoplay' => 'nullable',
-            'element_id' => 'nullable|integer'
+            'element_id' => 'nullable|integer',
+            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
         $user = auth()->user();
@@ -26,6 +27,7 @@ class VideoElementController extends Controller
         if (!$element) {
             $element = new VideoElement();
             $element->user_id = $user->id;
+            $element->appearance_id = $request->appearance_id;
             $element->is_active = true;
         }
 
@@ -67,7 +69,7 @@ class VideoElementController extends Controller
         $element = VideoElement::where('user_id', auth()->id())->find($id);
         if ($element) {
             // Also need to remove it from blocks_order in Appearance
-            $appearance = Appearance::where('user_id', auth()->id())->first();
+            $appearance = Appearance::find($element->appearance_id);
             if ($appearance && $appearance->blocks_order) {
                 $order = json_decode($appearance->blocks_order, true);
                 if (is_array($order)) {

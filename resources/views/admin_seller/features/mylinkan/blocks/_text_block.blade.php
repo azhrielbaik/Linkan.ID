@@ -105,7 +105,6 @@
                                                     </div>
 
                                                     <style>
-<style>
 /* Advanced Icon Picker Styles */
 .adv-icon-picker {
     border: 1px solid #e2e8f0;

@@ -11,22 +11,43 @@ class AdminController extends Controller
     public function myLinkan(Request $request)
     {
         $user = auth()->user();
+        $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
+
         $digitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
-        $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
-        $imageElements = \App\Models\ImageElement::where('user_id', $user->id)->get();
-        $dividerElements = \App\Models\DividerElement::where('user_id', $user->id)->get();
-        $textElements = \App\Models\TextElement::where('user_id', $user->id)->get();
-        $videoElements = \App\Models\VideoElement::where('user_id', $user->id)->get();
-        $socialMediaElements = \App\Models\SocialMediaElement::where('user_id', $user->id)->get();
-
-        // Total page views for user's microsite
-        $totalViews = \Illuminate\Support\Facades\DB::table('link_views')
-            ->where('user_id', $user->id)
-            ->count();
-
         $totalProducts = $digitalProducts->where('is_active', 1)->where('verification_status', 'approved')->count();
 
-        $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
+        // Mode Gallery: Tampilkan semua microsite
+        if ($viewMode == 'gallery') {
+            $appearances = \App\Models\Appearance::where('user_id', $user->id)->latest()->get();
+            // Total page views per alias
+            $viewsData = \Illuminate\Support\Facades\DB::table('link_views')
+                ->select('link_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                ->where('user_id', $user->id)
+                ->groupBy('link_id')
+                ->pluck('total', 'link_id');
+
+            return view('admin_seller.features.mylinkan.index', compact(
+                'digitalProducts',
+                'appearances',
+                'viewsData',
+                'totalProducts',
+                'viewMode'
+            ));
+        }
+
+        // Mode Edit: Harus ada ID microsite
+        $appearanceId = $request->query('id');
+        if (!$appearanceId) {
+            return redirect()->route('admin.mylinkan', ['mode' => 'gallery'])->with('error', 'Pilih microsite yang ingin diedit.');
+        }
+
+        $appearance = \App\Models\Appearance::where('user_id', $user->id)->findOrFail($appearanceId);
+        
+        $imageElements = \App\Models\ImageElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
+        $dividerElements = \App\Models\DividerElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
+        $textElements = \App\Models\TextElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
+        $videoElements = \App\Models\VideoElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
+        $socialMediaElements = \App\Models\SocialMediaElement::where('appearance_id', $appearance->id)->get();
 
         return view('admin_seller.features.mylinkan.index', compact(
             'digitalProducts',
@@ -36,7 +57,6 @@ class AdminController extends Controller
             'textElements',
             'videoElements',
             'socialMediaElements',
-            'totalViews',
             'totalProducts',
             'viewMode'
         ));
@@ -47,7 +67,8 @@ class AdminController extends Controller
         $user = auth()->user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'alias' => 'required|string|max:12|alpha_dash|unique:appearances,alias',
             'purpose' => 'required|string|in:portofolio,marketing,affiliate,lainnya',
             'bio' => 'nullable|string|max:1000',
         ]);
@@ -61,19 +82,18 @@ class AdminController extends Controller
 
         $themeColor = $themeColors[$request->purpose] ?? '#FF9040';
 
-        $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
-        if (!$appearance) {
-            $appearance = new \App\Models\Appearance();
-            $appearance->user_id = $user->id;
-        }
-
-        $appearance->name = $request->name;
+        // Selalu buat microsite baru
+        $appearance = new \App\Models\Appearance();
+        $appearance->user_id = $user->id;
+        $appearance->title = $request->title;
+        $appearance->alias = strtolower($request->alias);
+        $appearance->name = $user->name; // Default profile name
         $appearance->bio = $request->bio;
         $appearance->theme_color = $themeColor;
         $appearance->save();
 
-        return redirect()->route('admin.mylinkan', ['mode' => 'edit'])
-            ->with('success', 'Microsite baru "' . $request->name . '" berhasil dibuat! Silakan kustomisasi blok & konten Anda.');
+        return redirect()->route('admin.mylinkan', ['mode' => 'edit', 'id' => $appearance->id])
+            ->with('success', 'Microsite baru "' . $request->title . '" berhasil dibuat! Alamat Anda sekarang: linkan.id/' . $appearance->alias);
     }
 
     public function myPurchase()
