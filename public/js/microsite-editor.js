@@ -248,11 +248,15 @@
         }
     }
 
+    let profileCropper = null;
+
     function previewProfileAvatar(input, maxMb = 2) {
+        console.log("previewProfileAvatar called");
         const errorDiv = document.getElementById('avatarSizeError');
         if (errorDiv) errorDiv.style.display = 'none';
 
         if (input.files && input.files[0]) {
+            console.log("File detected", input.files[0]);
             if (input.files[0].size > maxMb * 1024 * 1024) {
                 if (errorDiv) errorDiv.style.display = 'block';
                 input.value = '';
@@ -260,39 +264,117 @@
             }
             const reader = new FileReader();
             reader.onload = function (e) {
-                const avatarContainer = document.getElementById('avatarPreviewContainer');
-                let img = document.getElementById('avatarPreviewImg');
-                const placeholder = document.getElementById('avatarPreviewPlaceholder');
-
-                if (placeholder) placeholder.style.display = 'none';
-                if (!img) {
-                    img = document.createElement('img');
-                    img.id = 'avatarPreviewImg';
-                    img.className = 'w-full h-full object-cover';
-                    avatarContainer.appendChild(img);
+                console.log("FileReader loaded");
+                // Tampilkan modal cropper
+                const modal = document.getElementById('cropperModal');
+                const imageTarget = document.getElementById('cropperImageTarget');
+                
+                if (modal && imageTarget) {
+                    console.log("Modal and imageTarget found");
+                    imageTarget.src = e.target.result;
+                    modal.style.display = 'flex';
+                    modal.classList.add('active');
+                    
+                    if (profileCropper) {
+                        profileCropper.destroy();
+                    }
+                    
+                    try {
+                        profileCropper = new Cropper(imageTarget, {
+                            aspectRatio: 1, // Profile picture
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            dragMode: 'move',
+                        });
+                        console.log("Cropper initialized");
+                    } catch (err) {
+                        console.error("Cropper initialization failed:", err);
+                    }
+                } else {
+                    console.error("cropperModal or cropperImageTarget not found in DOM");
                 }
-                img.src = e.target.result;
-
-                const liveAvatarImg = document.getElementById('livePhoneAvatarImg');
-                const liveAvatarPlaceholder = document.getElementById('livePhoneAvatarPlaceholder');
-                const liveAvatarContainer = document.getElementById('livePhoneAvatarContainer');
-
-                if (liveAvatarPlaceholder) liveAvatarPlaceholder.style.display = 'none';
-                if (liveAvatarImg) {
-                    liveAvatarImg.src = e.target.result;
-                } else if (liveAvatarContainer) {
-                    const newImg = document.createElement('img');
-                    newImg.id = 'livePhoneAvatarImg';
-                    newImg.style.width = '100%';
-                    newImg.style.height = '100%';
-                    newImg.style.objectFit = 'cover';
-                    newImg.src = e.target.result;
-                    liveAvatarContainer.appendChild(newImg);
-                }
+                
+                // Reset to allow re-selection
+                input.value = ''; 
             }
             reader.readAsDataURL(input.files[0]);
+        } else {
+            console.log("No files selected");
         }
     }
+
+    // Handle Cropper Modal Actions
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.js-apply-crop')) {
+            if (profileCropper) {
+                const canvas = profileCropper.getCroppedCanvas({
+                    width: 500,
+                    height: 500,
+                });
+                
+                if (canvas) {
+                    const base64Data = canvas.toDataURL('image/webp', 0.9);
+                    
+                    const hiddenInput = document.getElementById('inputAvatarBase64');
+                    if (hiddenInput) {
+                        hiddenInput.value = base64Data;
+                    }
+                    
+                    const avatarContainer = document.getElementById('avatarPreviewContainer');
+                    let img = document.getElementById('avatarPreviewImg');
+                    const placeholder = document.getElementById('avatarPreviewPlaceholder');
+
+                    if (placeholder) placeholder.style.display = 'none';
+                    if (!img) {
+                        img = document.createElement('img');
+                        img.id = 'avatarPreviewImg';
+                        img.className = 'w-full h-full object-cover';
+                        avatarContainer.appendChild(img);
+                    }
+                    img.style.display = 'block';
+                    img.src = base64Data;
+
+                    const liveAvatarImg = document.getElementById('livePhoneAvatarImg');
+                    const liveAvatarPlaceholder = document.getElementById('livePhoneAvatarPlaceholder');
+                    const liveAvatarContainer = document.getElementById('livePhoneAvatarContainer');
+
+                    if (liveAvatarPlaceholder) liveAvatarPlaceholder.style.display = 'none';
+                    if (liveAvatarImg) {
+                        liveAvatarImg.src = base64Data;
+                    } else if (liveAvatarContainer) {
+                        const newImg = document.createElement('img');
+                        newImg.id = 'livePhoneAvatarImg';
+                        newImg.style.width = '100%';
+                        newImg.style.height = '100%';
+                        newImg.style.objectFit = 'cover';
+                        newImg.src = base64Data;
+                        liveAvatarContainer.appendChild(newImg);
+                    }
+                }
+                
+                const modal = document.getElementById('cropperModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    setTimeout(() => { modal.style.display = 'none'; }, 300);
+                }
+                profileCropper.destroy();
+                profileCropper = null;
+            }
+        }
+        
+        if (e.target.closest('.js-close-cropper-modal')) {
+            const modal = document.getElementById('cropperModal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
+            }
+            if (profileCropper) {
+                profileCropper.destroy();
+                profileCropper = null;
+            }
+        }
+    });
+
 
     function updateProfileShape(shape) {
         const liveAvatarContainer = document.getElementById('livePhoneAvatarContainer');

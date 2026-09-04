@@ -66,6 +66,7 @@
                                             <label class="profile-form-label">Foto Profil</label>
                                             <div class="upload-dropzone avatar-dropzone">
                                                 <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input js-preview-profile-avatar" >
+                                                <input type="hidden" name="profile_image_base64" id="inputAvatarBase64">
                                                 
                                                 <div class="avatar-dropzone-inner">
                                                     <div id="avatarPreviewContainer" class="avatar-preview-container">

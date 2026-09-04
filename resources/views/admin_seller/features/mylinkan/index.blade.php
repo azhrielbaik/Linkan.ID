@@ -4,8 +4,8 @@
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/mylinkan.css') }}?v={{ filemtime(public_path('css/pages/mylinkan.css')) }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 @endpush
-
 @section("content")
 <div class="dashboard-mylinkan-page">
 
@@ -34,6 +34,8 @@
 @push("scripts")
 <!-- Include SortableJS for robust drag and drop -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- Include Cropper.js for image cropping -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <script>
     window.MicrositeConfig = {

@@ -132,7 +132,27 @@ $appearance->discord = $request->discord;
         }
 
         // Handle profile image upload
-        if ($request->hasFile('profile_image')) {
+        if ($request->has('profile_image_base64') && !empty($request->profile_image_base64)) {
+            if ($appearance->profile_image) {
+                Storage::delete('public/' . $appearance->profile_image);
+            }
+            
+            // Mengambil base64 string
+            $image_parts = explode(";base64,", $request->profile_image_base64);
+            $image_type_aux = explode("image/", $image_parts[0]);
+            $image_type = $image_type_aux[1] ?? 'webp';
+            $image_base64 = base64_decode($image_parts[1]);
+
+            $profilePath = 'appearances/profiles/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
+            
+            // Proses dengan Intervention Image
+            $image = \Intervention\Image\Laravel\Facades\Image::decode($image_base64)
+                ->scaleDown(width: 500);
+            $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+                
+            Storage::disk('public')->put($profilePath, (string) $encoded);
+            $appearance->profile_image = $profilePath;
+        } else if ($request->hasFile('profile_image')) {
             if ($appearance->profile_image) {
                 Storage::delete('public/' . $appearance->profile_image);
             }

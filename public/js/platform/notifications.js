@@ -162,7 +162,7 @@ function renderPlatformNotifs(filterType) {
                         <div class="notif-item-title">${item.title}</div>
                         <span class="notif-tag ${item.badge_class}">${item.badge}</span>
                     </div>
-                    <div class="notif-item-msg">${item.message}</div>
+                    <div class="notif-item-msg">${messageHtml}</div>
                     <div class="notif-item-time">
                         <i class="far fa-clock"></i> ${item.time_ago}
                     </div>

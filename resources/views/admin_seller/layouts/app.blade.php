@@ -395,6 +395,7 @@
         </div>
     </div>
 
+    @vite(['resources/js/app.js'])
     <script>
         window.SellerNotifEndpoint = "{{ route('admin.notifications') }}";
         window.SellerNotifReadEndpoint = "{{ route('admin.notifications.read') }}";

@@ -230,6 +230,7 @@
         </div>
     </div>
 
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
 </body>
 </html>

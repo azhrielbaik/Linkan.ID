@@ -55,7 +55,22 @@ class DigitalProduct extends Model
         return $this->belongsTo(User::class);
     }
     public function transactions()
-{
-    return $this->hasMany(Transaction::class, 'product_id');
-}
+    {
+        return $this->hasMany(Transaction::class, 'product_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            broadcast(new \App\Events\PlatformNotificationEvent());
+        });
+
+        static::updated(function ($model) {
+            if ($model->isDirty('verification_status')) {
+                broadcast(new \App\Events\PlatformNotificationEvent());
+            }
+        });
+    }
 }

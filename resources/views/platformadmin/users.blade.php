@@ -444,6 +444,7 @@
             }
         };
     </script>
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/users.js') }}?v={{ time() }}"></script>
 </body>

@@ -199,58 +199,5 @@ class DashboardController extends Controller
 
 
 
-    public function markNotificationRead(Request $request)
-    {
-        $data = $request->validate(['notification_key' => 'required|string|max:100']);
-        $this->dashboardService->markNotificationRead($request->user(), $data['notification_key']);
 
-        return response()->json(['status' => 'success']);
-    }
-
-    public function markAllNotificationsRead(Request $request)
-    {
-        $this->dashboardService->markAllNotificationsRead($request->user());
-
-        return response()->json(['status' => 'success']);
-    }
-
-    /**
-     * Server-Sent Events (SSE) Stream endpoint untuk Seller (Admin Seller).
-     */
-    public function streamNotifications(Request $request)
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['status' => 'error'], 401);
-        }
-
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_write_close();
-        }
-        if ($request->hasSession()) {
-            $request->session()->save();
-        }
-
-        return response()->stream(function () use ($user) {
-            @set_time_limit(0);
-            @ini_set('implicit_flush', 1);
-            if (ob_get_level()) {
-                @ob_end_flush();
-            }
-            flush();
-
-            $data = $this->dashboardService->fetchSellerNotificationsData($user);
-            
-            // Mengirimkan retry interval ke browser (misal: 3000ms)
-            echo "retry: 3000\n";
-            echo "event: notifications\n";
-            echo "data: " . json_encode($data) . "\n\n";
-            flush();
-        }, 200, [
-            'Content-Type'      => 'text/event-stream',
-            'Cache-Control'     => 'no-cache, no-store, must-revalidate',
-            'Connection'        => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-        ]);
-    }
 }

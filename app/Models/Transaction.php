@@ -32,5 +32,18 @@ class Transaction extends Model
     {
         return ['success', 'pending', 'failed'];
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($model) {
+            if ($model->isDirty('status')) {
+                if ($model->product && $model->product->user_id) {
+                    broadcast(new \App\Events\SellerNotificationEvent($model->product->user_id));
+                }
+            }
+        });
+    }
 }
 

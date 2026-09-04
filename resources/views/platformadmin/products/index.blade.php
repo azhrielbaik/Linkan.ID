@@ -365,6 +365,7 @@
             restoreProductText: '{{ __('platform.restore_product') }}'
         };
     </script>
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/products.js') }}"></script>
 </body>

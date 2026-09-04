@@ -159,6 +159,7 @@
             csrfToken: '{{ csrf_token() }}'
         };
     </script>
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
 <script src="{{ asset('js/platform/activity.js') }}"></script>

@@ -208,7 +208,15 @@
 
         snap.pay('{{ $snapToken }}', {
             onSuccess: function(result) {
-                Swal.fire('Sukses', 'Pembayaran berhasil!', 'success');
+                Swal.fire({
+                    title: 'Memproses Pembayaran...',
+                    text: 'Mohon tunggu sebentar, kami sedang menyiapkan pesanan Anda.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
                 paymentSelected = true;
                 transactionResult = result;
 
@@ -233,15 +241,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                            Swal.fire({
-                                title: 'Memproses...',
-                                text: 'Mengalihkan ke halaman sukses.',
-                                icon: 'info',
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id=' + transactionData.order_id;
-                            });
+                        window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id=' + transactionData.order_id;
                     } else {
                         Swal.fire('Error', data.message, 'error');
                     }
