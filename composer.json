@@ -9,6 +9,7 @@
         "php": "^8.2",
         "intervention/image-laravel": "^4.1",
         "laravel/framework": "^11.31",
+        "laravel/reverb": "^1.0",
         "laravel/socialite": "*",
         "laravel/tinker": "^2.9",
         "midtrans/midtrans-php": "^2.6"

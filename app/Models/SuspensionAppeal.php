@@ -31,4 +31,19 @@ class SuspensionAppeal extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            broadcast(new \App\Events\PlatformNotificationEvent());
+        });
+
+        static::updated(function ($model) {
+            if ($model->isDirty('status')) {
+                broadcast(new \App\Events\PlatformNotificationEvent());
+            }
+        });
+    }
 }

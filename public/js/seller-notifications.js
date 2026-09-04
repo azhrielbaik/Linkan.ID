@@ -6,7 +6,6 @@ let sellerNotifsData = {
 };
 
 let currentSellerNotifFilter = 'all';
-window.sellerEventSource = null;
 
 function toggleSellerNotif(event) {
     if (event) {
@@ -57,40 +56,20 @@ function updateSellerUI(data) {
     renderSellerNotifs(currentSellerNotifFilter);
 }
 
-function getSellerStreamEndpoint() {
-    // Gunakan rute SSE
-    return '/admin/notifications/stream';
-}
-
 function startSellerRealtimeSSE() {
-    if (window.sellerEventSource) {
-        window.sellerEventSource.close();
+    if (typeof Echo === 'undefined' || !window.Laravel || !window.Laravel.userId) {
+        console.warn('Laravel Echo is not loaded or user ID is missing.');
+        return;
     }
-    
-    window.sellerEventSource = new EventSource(getSellerStreamEndpoint());
 
-    window.sellerEventSource.addEventListener('notifications', function(e) {
-        try {
-            const data = JSON.parse(e.data);
-            updateSellerUI(data);
-        } catch (err) {
-            console.error('Error parsing SSE notifications:', err);
-        }
-    });
-
-    window.sellerEventSource.onerror = function(e) {
-        console.warn('SSE connection lost. Browser will try to reconnect automatically.');
-        const listContainer = document.getElementById('sellerNotifList');
-        // Show offline indicator only if we have no existing data
-        if (listContainer && (!sellerNotifsData.notifications || sellerNotifsData.notifications.length === 0)) {
-            listContainer.innerHTML = `
-                <div class="seller-notif-empty">
-                    <i class="fas fa-wifi" style="color: #f59e0b;"></i>
-                    <p>Menghubungkan ulang ke server...</p>
-                </div>
-            `;
-        }
-    };
+    Echo.private('seller-notifications.' + window.Laravel.userId)
+        .listen('.notifications', function(e) {
+            try {
+                updateSellerUI(e);
+            } catch (err) {
+                console.error('Error handling WebSocket notification:', err);
+            }
+        });
 }
 
 function filterSellerNotif(type, buttonElem) {
@@ -183,7 +162,7 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('beforeunload', function() {
-    if (window.sellerEventSource) {
-        window.sellerEventSource.close();
+    if (typeof Echo !== 'undefined' && window.Laravel && window.Laravel.userId) {
+        Echo.leave('seller-notifications.' + window.Laravel.userId);
     }
 });

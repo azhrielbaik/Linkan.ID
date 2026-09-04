@@ -6,7 +6,6 @@ let platformNotifsData = {
 };
 
 let currentPlatformNotifFilter = 'all';
-window.platformEventSource = null;
 
 function togglePlatformNotif(event) {
     if (event) {
@@ -57,40 +56,23 @@ function updatePlatformUI(data) {
     renderPlatformNotifs(currentPlatformNotifFilter);
 }
 
-function getPlatformStreamEndpoint() {
-    // Gunakan rute SSE
-    return '/platformadmin/notifications/stream';
-}
-
 function startPlatformRealtimeSSE() {
-    if (window.platformEventSource) {
-        window.platformEventSource.close();
+    if (typeof Echo === 'undefined') {
+        console.warn('Laravel Echo is not loaded. Ensure resources/js/app.js is compiled and included.');
+        return;
     }
-    
-    window.platformEventSource = new EventSource(getPlatformStreamEndpoint());
 
-    window.platformEventSource.addEventListener('notifications', function(e) {
-        try {
-            const data = JSON.parse(e.data);
-            updatePlatformUI(data);
-        } catch (err) {
-            console.error('Error parsing SSE notifications:', err);
-        }
-    });
-
-    window.platformEventSource.onerror = function(e) {
-        console.warn('SSE connection lost. Browser will try to reconnect automatically.');
-        const listContainer = document.getElementById('notifList');
-        // Show offline indicator only if we have no existing data
-        if (listContainer && (!platformNotifsData.notifications || platformNotifsData.notifications.length === 0)) {
-            listContainer.innerHTML = `
-                <div class="notif-empty">
-                    <i class="fas fa-wifi" style="color: #f59e0b;"></i>
-                    <p>Menghubungkan ulang ke server...</p>
-                </div>
-            `;
-        }
-    };
+    Echo.private('admin-notifications')
+        .listen('.notifications', function(e) {
+            try {
+                // Since broadcastWith returns the array directly, the event payload is the array itself.
+                // However, Echo wraps it in the event object properties. 
+                // We just pass 'e' directly as it should contain unread_count and notifications.
+                updatePlatformUI(e);
+            } catch (err) {
+                console.error('Error handling WebSocket notification:', err);
+            }
+        });
 }
 
 function filterPlatformNotif(type, buttonElem) {
@@ -127,6 +109,17 @@ function renderPlatformNotifs(filterType) {
 
     let html = '';
     items.forEach(item => {
+        let messageHtml = '';
+        if (item.type === 'product') {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan produk <em>"${item.product_name}"</em>.`;
+        } else if (item.type === 'payout') {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan withdraw <strong>Rp ${item.amount}</strong> via ${item.bank}.`;
+        } else if (item.type === 'appeal') {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan banding penangguhan akun.`;
+        } else {
+            messageHtml = item.message || '';
+        }
+
         html += `
             <a href="${item.url}" class="notif-item">
                 <div class="notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">
@@ -137,7 +130,7 @@ function renderPlatformNotifs(filterType) {
                         <div class="notif-item-title">${item.title}</div>
                         <span class="notif-tag ${item.badge_class}">${item.badge}</span>
                     </div>
-                    <div class="notif-item-msg">${item.message}</div>
+                    <div class="notif-item-msg">${messageHtml}</div>
                     <div class="notif-item-time">
                         <i class="far fa-clock"></i> ${item.time_ago}
                     </div>
@@ -183,7 +176,7 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('beforeunload', function() {
-    if (window.platformEventSource) {
-        window.platformEventSource.close();
+    if (typeof Echo !== 'undefined') {
+        Echo.leave('admin-notifications');
     }
 });

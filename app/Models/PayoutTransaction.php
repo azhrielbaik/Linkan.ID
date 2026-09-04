@@ -48,4 +48,19 @@ class PayoutTransaction extends Model
     {
         return $this->belongsTo(User::class, 'processed_by');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            broadcast(new \App\Events\PlatformNotificationEvent());
+        });
+
+        static::updated(function ($model) {
+            if ($model->isDirty('status')) {
+                broadcast(new \App\Events\PlatformNotificationEvent());
+            }
+        });
+    }
 }

@@ -521,4 +521,26 @@
             </div>
         </div>
     </div>
+    
+    <!-- Image Cropper Modal -->
+    <div id="cropperModal" class="custom-confirm-modal-overlay" style="display: none; z-index: 9999;">
+        <div class="custom-confirm-modal-box" style="max-width: 600px; width: 90%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h3 class="custom-confirm-title" style="margin: 0;">Sesuaikan Foto Profil</h3>
+                <button class="custom-confirm-close-btn js-close-cropper-modal" style="position: static;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div style="width: 100%; max-height: 400px; background-color: #f8fafc; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 20px;">
+                <img id="cropperImageTarget" src="" style="max-width: 100%; display: block;">
+            </div>
+            
+            <div class="custom-confirm-actions">
+                <button type="button" class="btn-custom-confirm-cancel js-close-cropper-modal">Batal</button>
+                <button type="button" class="btn-custom-confirm-submit js-apply-crop" style="background-color: #3b82f6; border-color: #3b82f6;">Gunakan Foto</button>
+            </div>
+        </div>
+    </div>
+
 

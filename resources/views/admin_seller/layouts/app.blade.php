@@ -392,9 +392,11 @@
         </div>
     </div>
 
+    @vite(['resources/js/app.js'])
     <script>
-
-        window.SellerNotifSSEEndpoint = "{{ route('admin.notifications.stream') }}";
+        window.Laravel = {
+            userId: {{ Auth::id() ?? 'null' }}
+        };
     </script>
     <script src="{{ asset('js/seller-notifications.js') }}?v={{ time() }}"></script>
     <script>

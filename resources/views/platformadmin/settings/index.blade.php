@@ -253,6 +253,7 @@
             deleteText: '{{ __('platform.delete') }}'
         };
     </script>
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/settings.js') }}"></script>
 </body>

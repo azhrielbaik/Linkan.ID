@@ -308,6 +308,7 @@
             approveText: '{{ __('platform.approve') }}'
         };
     </script>
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/payouts.js') }}"></script>
 </body>

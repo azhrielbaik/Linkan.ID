@@ -368,6 +368,7 @@
         </div>
     </div>
 
+    @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/platform/search-autocomplete.js') }}"></script>
     <script src="{{ asset('js/platform/activity.js') }}"></script>
