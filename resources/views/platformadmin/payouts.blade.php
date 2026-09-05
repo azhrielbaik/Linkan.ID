@@ -75,22 +75,22 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'all'])) }}"
                    class="tab-link {{ ($tab ?? 'all') === 'all' ? 'active' : '' }}">
-                    <i class="fas fa-money-bill-wave"></i> {{ __('platform.all_requests') }}
+                    <i class="fas fa-money-bill-wave"></i> <span class="tab-label">{{ __('platform.all_requests') }}</span>
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'pending'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'pending' ? 'active' : '' }}">
-                    <i class="fas fa-hourglass-half"></i> {{ __('platform.pending_verification') }}
+                    <i class="fas fa-hourglass-half"></i> <span class="tab-label">{{ __('platform.pending_verification') }}</span>
                     @if($totalPendingCount > 0)
                         <span class="tab-counter">{{ $totalPendingCount }}</span>
                     @endif
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'approved'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'approved' ? 'active' : '' }}">
-                    <i class="fas fa-check-circle"></i> {{ __('platform.approved_status') }}
+                    <i class="fas fa-check-circle"></i> <span class="tab-label">{{ __('platform.approved_status') }}</span>
                 </a>
                 <a href="{{ route('platform-admin.payouts.index', array_merge(request()->except('tab', 'page'), ['tab' => 'rejected'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'rejected' ? 'active' : '' }}">
-                    <i class="fas fa-times-circle"></i> {{ __('platform.rejected_status') }}
+                    <i class="fas fa-times-circle"></i> <span class="tab-label">{{ __('platform.rejected_status') }}</span>
                 </a>
             </div>
 

@@ -76,19 +76,19 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'all'])) }}"
                    class="tab-link {{ ($category ?? 'all') === 'all' ? 'active' : '' }}">
-                    <i class="fas fa-th-list"></i> {{ __('platform.all_activities') }}
+                    <i class="fas fa-th-list"></i> <span class="tab-label">{{ __('platform.all_activities') }}</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'admin'])) }}"
                    class="tab-link {{ ($category ?? '') === 'admin' ? 'active' : '' }}">
-                    <i class="fas fa-user-shield"></i> Aksi Admin Platform
+                    <i class="fas fa-user-shield"></i> <span class="tab-label">Aksi Admin Platform</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'auth'])) }}"
                    class="tab-link {{ ($category ?? '') === 'auth' ? 'active' : '' }}">
-                    <i class="fas fa-fingerprint"></i> Autentikasi Pengguna
+                    <i class="fas fa-fingerprint"></i> <span class="tab-label">Autentikasi Pengguna</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.activity', array_merge(request()->except('category', 'page'), ['category' => 'seller'])) }}"
                    class="tab-link {{ ($category ?? '') === 'seller' ? 'active' : '' }}">
-                    <i class="fas fa-store"></i> Aktivitas Seller
+                    <i class="fas fa-store"></i> <span class="tab-label">Aktivitas Seller</span>
                 </a>
             </div>
 

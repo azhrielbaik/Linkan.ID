@@ -77,19 +77,19 @@
             <div class="tabs-container">
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'all'])) }}"
                    class="tab-link {{ ($status ?? 'all') === 'all' ? 'active' : '' }}">
-                    <i class="fas fa-receipt"></i> {{ __('platform.all_transactions') }} ({{ $totalTransactionsCount }})
+                    <i class="fas fa-receipt"></i> <span class="tab-label">{{ __('platform.all_transactions') }} ({{ $totalTransactionsCount }})</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'success'])) }}"
                    class="tab-link {{ ($status ?? '') === 'success' ? 'active' : '' }}">
-                    <i class="fas fa-check-circle"></i> {{ __('platform.success_status') }} ({{ $totalSuccessCount }})
+                    <i class="fas fa-check-circle"></i> <span class="tab-label">{{ __('platform.success_status') }} ({{ $totalSuccessCount }})</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'pending'])) }}"
                    class="tab-link {{ ($status ?? '') === 'pending' ? 'active' : '' }}">
-                    <i class="fas fa-clock"></i> {{ __('platform.pending_status') }} ({{ $totalPendingCount }})
+                    <i class="fas fa-clock"></i> <span class="tab-label">{{ __('platform.pending_status') }} ({{ $totalPendingCount }})</span>
                 </a>
                 <a href="{{ route('platform-admin.logs.transactions', array_merge(request()->except('status', 'page'), ['status' => 'failed'])) }}"
                    class="tab-link {{ ($status ?? '') === 'failed' ? 'active' : '' }}">
-                    <i class="fas fa-times-circle"></i> {{ __('platform.failed_status') }} ({{ $totalFailedCount }})
+                    <i class="fas fa-times-circle"></i> <span class="tab-label">{{ __('platform.failed_status') }} ({{ $totalFailedCount }})</span>
                 </a>
             </div>
 

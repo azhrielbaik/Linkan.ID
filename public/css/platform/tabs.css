@@ -71,6 +71,7 @@
     cursor: pointer;
     outline: none;
     box-sizing: border-box;
+    overflow: hidden;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -101,6 +102,10 @@
 .filter-tabs .filter-tab:hover {
     color: var(--p-primary, #ed842c);
     background: #f8fafc;
+    width: auto;
+    min-width: 36px;
+    padding: 0 14px;
+    gap: 6px;
 }
 
 /* 3. Label Teks (Inaktif: max-w-0 opacity-0 overflow-hidden) */
@@ -177,7 +182,7 @@
     transform: scale(1.05);
 }
 
-/* Melebar (Expand) ke max-w-[250px] opacity-100 saat aktif */
+/* Melebar (Expand) ke max-w-[250px] opacity-100 saat aktif atau hover */
 .tabs-container .tab-btn.active .tab-label,
 .tabs-container .tab-link.active .tab-label,
 .view-switcher .view-tab-link.active .tab-label,
@@ -188,6 +193,11 @@
 .view-switcher .view-tab-link.is-expanded .tab-label,
 .p-ticket-tabs .p-ticket-tab.is-expanded .tab-label,
 .filter-tabs .filter-tab.is-expanded .tab-label,
+.tabs-container .tab-btn:hover .tab-label,
+.tabs-container .tab-link:hover .tab-label,
+.view-switcher .view-tab-link:hover .tab-label,
+.p-ticket-tabs .p-ticket-tab:hover .tab-label,
+.filter-tabs .filter-tab:hover .tab-label,
 .tabs-container .tab-btn.active .tab-text,
 .tabs-container .tab-link.active .tab-text,
 .view-switcher .view-tab-link.active .tab-text,
@@ -197,7 +207,12 @@
 .tabs-container .tab-link.is-expanded .tab-text,
 .view-switcher .view-tab-link.is-expanded .tab-text,
 .p-ticket-tabs .p-ticket-tab.is-expanded .tab-text,
-.filter-tabs .filter-tab.is-expanded .tab-text {
+.filter-tabs .filter-tab.is-expanded .tab-text,
+.tabs-container .tab-btn:hover .tab-text,
+.tabs-container .tab-link:hover .tab-text,
+.view-switcher .view-tab-link:hover .tab-text,
+.p-ticket-tabs .p-ticket-tab:hover .tab-text,
+.filter-tabs .filter-tab:hover .tab-text {
     max-width: 250px;
     opacity: 1;
 }

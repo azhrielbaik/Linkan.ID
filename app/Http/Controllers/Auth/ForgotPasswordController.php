@@ -231,12 +231,24 @@ class ForgotPasswordController extends Controller
             ->first();
 
         if (!$resetReq) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.'
+                ], 422);
+            }
             return back()->withInput()->withErrors([
                 'otp_code' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
             ]);
         }
 
         if ($resetReq->isExpired() || $resetReq->used_at) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.'
+                ], 422);
+            }
             return back()->withInput()->withErrors([
                 'otp_code' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.',
             ]);
@@ -244,6 +256,12 @@ class ForgotPasswordController extends Controller
 
         $otpKey = 'password-reset-otp|' . $request->ip() . '|' . $resetReq->id;
         if ($resetReq->attempts >= 5 || RateLimiter::tooManyAttempts($otpKey, 5)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.'
+                ], 422);
+            }
             return back()->withErrors([
                 'otp_code' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.',
             ]);
@@ -253,6 +271,12 @@ class ForgotPasswordController extends Controller
         RateLimiter::hit($otpKey, 900);
 
         if (!Hash::check(trim($request->otp_code), $resetReq->otp_hash)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kode OTP salah. Silakan periksa kembali.'
+                ], 422);
+            }
             return back()->withInput()->withErrors([
                 'otp_code' => 'Kode OTP salah. Silakan periksa kembali.',
             ]);
@@ -261,6 +285,13 @@ class ForgotPasswordController extends Controller
         // Simpan sesi verifikasi OTP untuk step 3
         RateLimiter::clear($otpKey);
         session(['otp_request_id' => $resetReq->id]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('password.create-new'),
+            ]);
+        }
 
         return redirect()->route('password.create-new');
     }
