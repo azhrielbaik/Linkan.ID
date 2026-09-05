@@ -20,6 +20,11 @@
             font-family: 'Plus Jakarta Sans', Arial, sans-serif;
         }
 
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             background-color: #ffffff;
             color: #333;

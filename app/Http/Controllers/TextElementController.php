@@ -15,6 +15,7 @@ class TextElementController extends Controller
                 }
             }],
             'element_id' => 'nullable|integer',
+            'appearance_id' => 'required|integer|exists:appearances,id',
             'has_button' => 'nullable|boolean',
             'button_text' => 'nullable|string|max:50',
             'button_link' => 'nullable|string|max:255',
@@ -35,7 +36,8 @@ class TextElementController extends Controller
         if (!$textElement) {
             $textElement = new \App\Models\TextElement();
             $textElement->user_id = $user->id;
-            $maxOrder = \App\Models\TextElement::where('user_id', $user->id)->max('order_position');
+            $textElement->appearance_id = $request->appearance_id;
+            $maxOrder = \App\Models\TextElement::where('appearance_id', $request->appearance_id)->max('order_position');
             $textElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
         }
 

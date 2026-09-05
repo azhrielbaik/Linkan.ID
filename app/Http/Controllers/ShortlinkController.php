@@ -180,7 +180,16 @@ class ShortlinkController extends Controller
 
     public function redirect($slug)
     {
-        $shortlink = Shortlink::where('slug', $slug)->firstOrFail();
+        $shortlink = Shortlink::where('slug', $slug)->first();
+
+        if (!$shortlink) {
+            // Coba cek apakah slug ini adalah alias dari sebuah microsite (Appearance)
+            $appearance = \App\Models\Appearance::where('alias', $slug)->first();
+            if ($appearance) {
+                return app(\App\Http\Controllers\PublicPageController::class)->show($slug);
+            }
+            abort(404, 'Tautan tidak ditemukan.');
+        }
 
         // Check Expiration
         if ($shortlink->expires_at && now()->greaterThan($shortlink->expires_at)) {

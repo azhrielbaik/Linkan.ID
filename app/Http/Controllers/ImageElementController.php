@@ -14,7 +14,8 @@ class ImageElementController extends Controller
         $request->validate([
             'image' => 'nullable|image|max:2048',
             'link_url' => 'nullable|url',
-            'element_id' => 'nullable|integer'
+            'element_id' => 'nullable|integer',
+            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
         $user = $request->user();
@@ -27,7 +28,8 @@ class ImageElementController extends Controller
         if (!$imageElement) {
             $imageElement = new ImageElement();
             $imageElement->user_id = $user->id;
-            $maxOrder = ImageElement::where('user_id', $user->id)->max('order_position');
+            $imageElement->appearance_id = $request->appearance_id;
+            $maxOrder = ImageElement::where('appearance_id', $request->appearance_id)->max('order_position');
             $imageElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
         }
 
@@ -77,14 +79,12 @@ class ImageElementController extends Controller
     public function updateOrder(Request $request)
     {
         $request->validate([
-            'blocks_order' => 'required|string'
+            'blocks_order' => 'required|string',
+            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
-        $user = $request->user();
-        $appearance = Appearance::firstOrCreate(
-            ['user_id' => $user->id],
-            ['name' => $user->name ?? 'My Linkan']
-        );
+        $user = auth()->user();
+        $appearance = Appearance::where('user_id', $user->id)->findOrFail($request->appearance_id);
 
         $appearance->blocks_order = $request->blocks_order;
         \Illuminate\Support\Facades\Log::info('Saving blocks_order: ' . $request->blocks_order);
