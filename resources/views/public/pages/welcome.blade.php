@@ -921,5 +921,7 @@
     <script src="{{ asset('js/pages/welcome.js') }}"></script>
 
     <script type="module" src="{{ asset('js/pages/welcome-animation.js') }}"></script>
+
+
 </body>
 </html>
