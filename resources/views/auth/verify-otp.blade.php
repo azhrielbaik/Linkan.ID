@@ -19,19 +19,29 @@
                     <span class="user-email">{{ $email }}</span>
                 </p>
 
-                <div class="otp-expiry-text">
-                    Kode berlaku selama <strong id="otpCountdown">--:--</strong>
+                <div class="otp-expiry-wrapper">
+                    <div class="otp-expiry-pill">
+                        <i class="fas fa-clock" style="font-size: 11px; color: #94a3b8;"></i>
+                        <span>Kode berlaku:</span>
+                        <strong id="otpCountdown">--:--</strong>
+                    </div>
                 </div>
 
-                @if (session('status'))
-                    <div class="status-box">
-                        <i class="fas fa-check-circle" style="margin-right: 4px;"></i> {{ session('status') }}
-                    </div>
-                @endif
+                {{-- Alert Notification Container (Clean & Single-Row) --}}
+                <div class="auth-alert-container">
+                    @if (session('status'))
+                        <div class="auth-alert auth-alert-success status-box" id="statusAlert">
+                            <div class="auth-alert-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="auth-alert-content">{{ session('status') }}</div>
+                            <button type="button" class="auth-alert-close" onclick="this.closest('.auth-alert').remove()" title="Tutup">&times;</button>
+                        </div>
+                    @endif
 
-                <div class="error-box" id="errorBox" style="{{ (isset($errors) && $errors->any()) ? '' : 'display: none;' }}">
-                    <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i>
-                    <span id="errorMessage">{{ (isset($errors) && $errors->any()) ? $errors->first() : '' }}</span>
+                    <div class="auth-alert auth-alert-error error-box" id="errorBox" style="{{ (isset($errors) && $errors->any()) ? '' : 'display: none;' }}">
+                        <div class="auth-alert-icon"><i class="fas fa-circle-exclamation"></i></div>
+                        <div class="auth-alert-content" id="errorMessage">{{ (isset($errors) && $errors->any()) ? $errors->first() : '' }}</div>
+                        <button type="button" class="auth-alert-close" onclick="this.closest('.auth-alert').style.display='none'" title="Tutup">&times;</button>
+                    </div>
                 </div>
 
                 <form method="POST" action="{{ route('password.verify-otp.submit') }}" id="otpForm">
@@ -146,11 +156,19 @@
         }
 
         function showOtpError(msg) {
+            const statusAlert = document.getElementById('statusAlert');
+            if (statusAlert) {
+                statusAlert.style.display = 'none';
+            }
+
             if (errorMessage) {
                 errorMessage.textContent = msg;
             }
             if (errorBox) {
-                errorBox.style.display = 'block';
+                errorBox.style.display = 'flex';
+                errorBox.style.animation = 'none';
+                void errorBox.offsetWidth;
+                errorBox.style.animation = '';
             }
 
             triggerShake();
@@ -213,6 +231,10 @@
                     }
                     if (errorBox) {
                         errorBox.style.display = 'none';
+                    }
+                    const statusAlert = document.getElementById('statusAlert');
+                    if (statusAlert) {
+                        statusAlert.style.display = 'none';
                     }
 
                     setTimeout(() => {

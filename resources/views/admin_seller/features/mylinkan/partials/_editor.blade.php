@@ -1389,22 +1389,27 @@
             formData.append('existing_media', JSON.stringify(dpFormState.existingFiles));
         }
 
+        // Append appearance_id (required by controller validation)
+        formData.append('appearance_id', '{{ isset($appearance) ? $appearance->id : '' }}');
+
         // Send via fetch
         fetch('{{ route('admin.elements.digital-product.store') }}', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
             },
             body: formData
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Untuk sementara, kita reload halaman untuk menampilkan produk baru.
-                alert('Produk digital berhasil disimpan!');
+                // Tutup wizard & reload untuk menampilkan produk baru
+                cancelDigitalProductWizard();
                 window.location.reload();
             } else {
-                alert('Terjadi kesalahan saat menyimpan produk.');
+                const errMsg = data.message || 'Terjadi kesalahan saat menyimpan produk.';
+                alert(errMsg);
                 if (btnSave) {
                     btnSave.disabled = false;
                     btnSave.innerHTML = 'Selesai';
@@ -1413,16 +1418,12 @@
         })
         .catch(err => {
             console.error(err);
-            alert('Gagal menghubungi server.');
+            alert('Gagal menghubungi server. Periksa koneksi Anda dan coba lagi.');
             if (btnSave) {
                 btnSave.disabled = false;
                 btnSave.innerHTML = 'Selesai';
             }
         });
-
-        // 4. Reset & Kembalikan UI
-        // cancelDigitalProductWizard already handles resetting the state and closing the wizard
-        cancelDigitalProductWizard();
     }
 
     function prevDigitalProductStep() {
