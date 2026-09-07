@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
+use App\Enums\TransactionStatus;
+use App\Enums\MidtransStatus;
 
 class CheckoutService
 {
@@ -77,12 +79,12 @@ class CheckoutService
         // PERBAIKAN: Untuk mencegah race condition dengan webhook, storeTransaction 
         // hanya menyimpan status 'pending' untuk transaksi berbayar.
         if ($data['total_price'] == 0) {
-            $status = 'success';
+            $status = TransactionStatus::SUCCESS;
         } else {
-            $status = 'pending';
+            $status = TransactionStatus::PENDING;
         }
 
-        Log::info('Store Transaction - Converted Status: ' . $status);
+        Log::info('Store Transaction - Converted Status: ' . $status->value);
 
         $transaction = Transaction::create([
             'order_id' => $data['order_id'],
@@ -118,10 +120,10 @@ class CheckoutService
         // Jika dipanggil oleh route webhook Midtrans secara standard
         $notif = new Notification();
 
-        $transactionStatus = $notif->transaction_status;
+        $transactionStatus = MidtransStatus::tryFrom($notif->transaction_status);
         $orderId = $notif->order_id;
 
-        Log::info('Midtrans Callback - Transaction Status: ' . $transactionStatus);
+        Log::info('Midtrans Callback - Transaction Status: ' . ($transactionStatus?->value ?? $notif->transaction_status));
         Log::info('Midtrans Callback - Order ID: ' . $orderId);
 
         $trx = Transaction::where('order_id', $orderId)->first();
@@ -133,14 +135,14 @@ class CheckoutService
 
         // Mekanisme Pengamanan: Jika transaksi sudah tercatat success di DB,
         // hentikan eksekusi agar tidak terjadi double penambahan saldo
-        if ($trx->status === 'success') {
+        if ($trx->status === TransactionStatus::SUCCESS) {
             Log::info('Midtrans Callback - Transaction already success for order ID: ' . $orderId . '. Skipping to prevent double balance.');
             return ['status' => 200, 'message' => 'Transaction already processed'];
         }
 
         // Ubah status dari Midtrans ke status yang kita gunakan
-        if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-            $trx->status = 'success';
+        if ($transactionStatus === MidtransStatus::CAPTURE || $transactionStatus === MidtransStatus::SETTLEMENT) {
+            $trx->status = TransactionStatus::SUCCESS;
             $trx->save();
 
             Log::info('Midtrans Callback - Updating transaction status to success');
@@ -170,11 +172,11 @@ class CheckoutService
                             ->subject('Produk Digital Anda');
                 });
             }
-        } elseif ($transactionStatus == 'cancel' || $transactionStatus == 'deny' || $transactionStatus == 'expire') {
-            $trx->status = 'failed';
+        } elseif ($transactionStatus === MidtransStatus::CANCEL || $transactionStatus === MidtransStatus::DENY || $transactionStatus === MidtransStatus::EXPIRE) {
+            $trx->status = TransactionStatus::FAILED;
             $trx->save();
-        } elseif ($transactionStatus == 'pending') {
-            $trx->status = 'pending';
+        } elseif ($transactionStatus === MidtransStatus::PENDING) {
+            $trx->status = TransactionStatus::PENDING;
             $trx->save();
         }
 

@@ -12,7 +12,8 @@ class Transaction extends Model
 
     protected $casts = [
         'total_price' => 'decimal:2',
-        'qty' => 'integer'
+        'qty' => 'integer',
+        'status' => \App\Enums\TransactionStatus::class
     ];
 
     protected $with = ['product']; // Eager load product relationship
@@ -27,11 +28,7 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'buyer_email', 'email');
     }
 
-    // Helper method untuk mendapatkan status yang valid
-    public static function getValidStatuses()
-    {
-        return ['success', 'pending', 'failed'];
-    }
+
 
     protected static function boot()
     {
