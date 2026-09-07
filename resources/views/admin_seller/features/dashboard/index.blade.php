@@ -210,7 +210,7 @@
                 </div>
                 <div class="start-creating">{{ __('admin.start_creating_now') }}</div>
                 <div class="action-buttons">
-                    <a href="{{ route('admin.mylinkan') }}" class="action-button">
+                    <a href="{{ route('admin.microsites.index') }}" class="action-button">
                         <i class="fas fa-qrcode"></i> {{ __('admin.add_linkan') }}
                     </a>
                     <a href="{{ route('admin.digital-products.create') }}" class="action-button">

@@ -24,7 +24,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($user)->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('homeadminS.beranda');
-        $response->assertSee(__('admin.overview_dashboard'));
+        $response->assertViewIs('admin_seller.features.dashboard.index');
+        $response->assertSee(__('admin.dashboard_title'));
     }
 }

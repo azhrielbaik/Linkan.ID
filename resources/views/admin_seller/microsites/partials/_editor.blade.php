@@ -1,6 +1,6 @@
     <!-- COMBINED HEADER & MODE SWITCH -->
     <div class="section-header microsite-main-header">
-        @include('admin_seller.features.mylinkan.partials._editor_header')
+        @include('admin_seller.microsites.partials._editor_header')
     </div>
 
         <!-- EDITOR VIEW MODE -->
@@ -81,44 +81,44 @@
                     </div>
 
                     <!-- 1. PROFILE BLOCK CARD (STATIC, NOT DRAGGABLE, PINNED AT TOP) -->
-                    @include('admin_seller.features.mylinkan.blocks._profile_block')
+                    @include('admin_seller.microsites.blocks._profile_block')
 
                         <!-- DRAGGABLE ELEMENT BLOCKS LIST CONTAINER -->
                         <div id="elementBlocksList" style="display: flex; flex-direction: column;">
 
                         @if(isset($imageElements))
                             @foreach($imageElements as $imageEl)
-                                @include('admin_seller.features.mylinkan.blocks._image_block')
+                                @include('admin_seller.microsites.blocks._image_block')
                             @endforeach
                         @endif
 
                         @if(isset($dividerElements))
                             @foreach($dividerElements as $dividerEl)
-                                @include('admin_seller.features.mylinkan.blocks._divider_block')
+                                @include('admin_seller.microsites.blocks._divider_block')
                             @endforeach
                         @endif
 
                         @if(isset($textElements) && $textElements->count() > 0)
                             @foreach($textElements as $textEl)
-                                @include('admin_seller.features.mylinkan.blocks._text_block')
+                                @include('admin_seller.microsites.blocks._text_block')
                             @endforeach
                         @endif
 
                         @if(isset($videoElements) && $videoElements->count() > 0)
                             @foreach($videoElements as $videoEl)
-                                @include('admin_seller.features.mylinkan.blocks._video_block')
+                                @include('admin_seller.microsites.blocks._video_block')
                             @endforeach
                         @endif
 
                         @if(isset($socialMediaElements) && $socialMediaElements->count() > 0)
                             @foreach($socialMediaElements as $socialEl)
-                                @include('admin_seller.features.mylinkan.blocks._social_block')
+                                @include('admin_seller.microsites.blocks._social_block')
                             @endforeach
                         @endif
 
                         @if(isset($digitalProducts) && $digitalProducts->count() > 0)
                             @foreach($digitalProducts as $digitalProduct)
-                                @include('admin_seller.features.mylinkan.blocks._digital_product_block')
+                                @include('admin_seller.microsites.blocks._digital_product_block')
                             @endforeach
                         @endif
 
@@ -132,9 +132,9 @@
                      ============================================================ --}}
                 <div id="editorPanelPengaturan" role="tabpanel" aria-labelledby="tab-btn-pengaturan" hidden>
 
-                    @include('admin_seller.features.mylinkan.settings._background')
-                    @include('admin_seller.features.mylinkan.settings._layout')
-                    @include('admin_seller.features.mylinkan.settings._shape')
+                    @include('admin_seller.microsites.settings._background')
+                    @include('admin_seller.microsites.settings._layout')
+                    @include('admin_seller.microsites.settings._shape')
                 </div> {{-- Closes #editorPanelPengaturan --}}
 
                 {{-- ============================================================

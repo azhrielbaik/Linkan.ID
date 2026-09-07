@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('admin.microsite.store') }}" method="POST" id="newMicrositeForm">
+            <form action="{{ route('admin.microsites.store') }}" method="POST" id="newMicrositeForm">
                 @csrf
                 <input type="hidden" name="purpose" id="selectedPurpose" value="">
 

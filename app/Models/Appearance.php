@@ -11,6 +11,7 @@ class Appearance extends Model
 
     protected $fillable = [
         'user_id',
+        'alias',
         'title',
         'banner',
         'profile_image',

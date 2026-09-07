@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateDigitalProductQtyRequest;
+use App\Http\Requests\CheckoutDigitalProductRequest;
+use App\Http\Requests\StoreTransactionRequest;
 use Illuminate\Support\Str;
 use Midtrans\Snap;
 
@@ -47,13 +50,9 @@ class DigitalProductController extends Controller
 }
 
 
-    public function updateQty(Request $request)
+    public function updateQty(UpdateDigitalProductQtyRequest $request)
 {
-    $request->validate([
-        'product_id' => 'required|integer',
-        'qty' => 'required|integer|min:1',
-        'price' => 'nullable|numeric|min:0'
-    ]);
+    $validated = $request->validated();
 
     session()->put("cart.qty.{$request->product_id}", $request->qty);
     if ($request->has('price')) {
@@ -92,7 +91,7 @@ public function checkoutSuccess(Request $request, $id)
     return view('public.checkout-success', compact('product', 'transaction', 'micrositeUrl'));
 }
 
-public function checkout(Request $request, $id)
+    public function checkout(CheckoutDigitalProductRequest $request, $id)
 {
     $product = DigitalProduct::findOrFail($id);
 
@@ -130,11 +129,7 @@ public function checkout(Request $request, $id)
     $orderId = $checkoutData['orderId'];
 
     if ($request->isMethod('post')) {
-        $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string',
-            'qty' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         if ($totalPrice == 0) {
             // Langsung store untuk transaksi gratis (status otomatis success)
@@ -186,17 +181,9 @@ public function midtransCallback(Request $request)
 
     return response()->json(['message' => $result['message']], 200);
 }
-public function storeTransaction(Request $request)
+public function storeTransaction(StoreTransactionRequest $request)
 {
-    $data = $request->validate([
-        'order_id' => 'required|string|unique:transactions',
-        'transaction_status' => 'required|string',
-        'product_id' => 'required|integer|exists:digital_products,id',
-        'buyer_email' => 'required|email',
-        'buyer_name' => 'required|string',
-        'qty' => 'required|integer|min:1',
-        'total_price' => 'required|numeric'
-    ]);
+    $data = $request->validated();
 
     $transaction = $this->checkoutService->storeTransaction($data);
 

@@ -1,6 +1,6 @@
     <!-- COMBINED HEADER & MODE SWITCH -->
     <div class="section-header microsite-main-header">
-        @include('admin_seller.features.mylinkan.partials._gallery_header')
+        @include('admin_seller.microsites.partials._gallery_header')
     </div>
 
         <!-- GALLERY LIST VIEW -->
@@ -68,7 +68,7 @@
                             <a href="{{ url('/' . $appearance->alias) }}" target="_blank" class="btn-action-secondary">
                                 <i class="fa-solid fa-arrow-up-from-ground-water"></i> Kunjungi
                             </a>
-                            <a href="{{ route('admin.mylinkan', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary">
+                            <a href="{{ route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary">
                                 <i class="fas fa-pen"></i> {{ __('admin.edit_block') }}
                             </a>
 
@@ -76,7 +76,7 @@
                                 <i class="fas fa-copy"></i> {{ __('admin.copy_link') }}
                             </button>
 
-                            <form action="{{ route('admin.microsite.destroy', $appearance->id) }}" method="POST" class="m-0 w-full" onsubmit="return confirm('Apakah Anda yakin ingin menghapus microsite ini? Tindakan ini tidak dapat dibatalkan.');">
+                            <form action="{{ route('admin.microsites.destroy', $appearance->id) }}" method="POST" class="m-0 w-full" onsubmit="return confirm('Apakah Anda yakin ingin menghapus microsite ini? Tindakan ini tidak dapat dibatalkan.');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-action-secondary !text-red-500 hover:!bg-red-50 w-full">

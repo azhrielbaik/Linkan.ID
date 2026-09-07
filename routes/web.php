@@ -111,9 +111,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/appeal', [DashboardController::class, 'submitAppeal'])->name('appeal.store');
 
     // My Linkan (microsite builder)
-    Route::get('/mylinkan', [AdminController::class, 'myLinkan'])->name('mylinkan');
-    Route::post('/microsite/create', [AdminController::class, 'storeMicrosite'])->name('microsite.store');
-    Route::delete('/microsite/{id}', [AdminController::class, 'destroyMicrosite'])->name('microsite.destroy');
+    Route::get('/microsites', [\App\Http\Controllers\MicrositeController::class, 'index'])->name('microsites.index');
+    Route::post('/microsites', [\App\Http\Controllers\MicrositeController::class, 'store'])->name('microsites.store');
+    Route::delete('/microsites/{id}', [\App\Http\Controllers\MicrositeController::class, 'destroy'])->name('microsites.destroy');
 
     // Appearance (Profile Block settings)
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
@@ -178,12 +178,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/orders/{id}', [OrderController::class, 'getOrderDetail'])->name('orders.detail');
 
     // Digital Products Seller CRUD
-    Route::get('digital-products', [AdminDigitalProductController::class, 'index'])->name('digital-products.index');
-    Route::get('digital-products/create', [AdminDigitalProductController::class, 'create'])->name('digital-products.create');
-    Route::post('digital-products', [AdminDigitalProductController::class, 'store'])->name('digital-products.store');
-    Route::get('digital-products/{digital_product}/edit', [AdminDigitalProductController::class, 'edit'])->name('digital-products.edit');
-    Route::put('digital-products/{digital_product}', [AdminDigitalProductController::class, 'update'])->name('digital-products.update');
-    Route::delete('digital-products/{digital_product}', [AdminDigitalProductController::class, 'destroy'])->name('digital-products.destroy');
+    Route::resource('digital-products', AdminDigitalProductController::class)->except(['show']);
 
     // Digital Products Public Show
     Route::get('digital-products/{digital_product}', [DigitalProductController::class, 'show'])->name('digital-products.show');

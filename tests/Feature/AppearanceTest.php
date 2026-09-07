@@ -19,7 +19,14 @@ class AppearanceTest extends TestCase
             'role' => 'admin_seller',
         ]);
 
+        $appearance = \App\Models\Appearance::create([
+            'user_id' => $user->id,
+            'alias' => $user->username,
+            'name' => 'Old Name',
+        ]);
+
         $response = $this->actingAs($user)->post(route('admin.appearance.update'), [
+            'appearance_id' => $appearance->id,
             'name' => 'Custom Display Name',
             'bio' => 'This is a test bio',
             'theme_color' => '#ffffff',
