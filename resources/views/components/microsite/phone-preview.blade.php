@@ -42,7 +42,7 @@
                                     background-image: none;
                                     background-color: {{ $appearance->background_color }};
                                 @else
-                                    background-image: url('{{ $appearance && $appearance->background_color ? asset('images/background/' . $appearance->background_color) : '' }}');
+                                    background-image: {{ $appearance && $appearance->background_color ? "url('" . asset('images/background/' . $appearance->background_color) . "')" : 'none' }};
                                     background-color: #ffffff;
                                 @endif
                             ">
@@ -149,7 +149,7 @@
                                 </div>
 
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
-                                <div id="liveProfileSection" class="live-profile-section live-element-pointer js-toggle-edit-form" style="display: none;" data-type="Profile" data-force-open="true">
+                                <div id="liveProfileSection" class="live-profile-section live-element-pointer js-toggle-edit-form {{ ($appearance && $appearance->banner) ? 'has-banner' : '' }}" style="display: none;" data-type="Profile" data-force-open="true">
                                     <div id="livePhoneBannerContainer" class="live-phone-banner-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
                                         <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" class="live-phone-banner-img">
                                     </div>
@@ -429,18 +429,18 @@
 
                         <!-- CENTER: ELEGANT VERTICAL DOMAIN PATH -->
                         <div class="vertical-domain-path">
-                            <span class="domain-prefix">linkan.id/</span><span class="domain-username">{{ Auth::user()->username }}</span>
+                            <span class="domain-prefix">linkan.id/</span><span class="domain-username">{{ $appearance->alias ?? Auth::user()->username }}</span>
                         </div>
 
                         <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
                         <div class="vertical-action-stack">
                             <!-- Copy Button -->
-                            <button class="js-copy-url btn-vertical-action btn-copy" type="button" data-url="{{ url('/linkan.id/' . Auth::user()->username) }}" title="Salin Tautan Microsite">
+                            <button class="js-copy-url btn-vertical-action btn-copy" type="button" data-url="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" title="Salin Tautan Microsite">
                                 <i class="fas fa-copy"></i>
                             </button>
                             
                             <!-- Open External Link Button -->
-                            <a href="{{ url('/linkan.id/' . Auth::user()->username) }}" target="_blank" class="btn-vertical-action btn-external" title="Buka Microsite di Tab Baru">
+                            <a href="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" target="_blank" class="btn-vertical-action btn-external" title="Buka Microsite di Tab Baru">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>

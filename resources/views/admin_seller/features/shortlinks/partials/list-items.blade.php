@@ -31,7 +31,15 @@
             </div>
 
             <div class="eng-info">
-                <h4>{{ $link->title ?: __('shortlink.untitled') . ' (' . $link->slug . ')' }}</h4>
+                <h4>
+                    {{ $link->title ?: __('shortlink.untitled') . ' (' . $link->slug . ')' }}
+                    @if($link->password)
+                        <i class="fa-solid fa-lock" style="margin-left: 6px; color: #6b7280; font-size: 0.85em;" title="Password Protected"></i>
+                    @endif
+                    @if($link->expires_at)
+                        <i class="fa-solid fa-clock" style="margin-left: 6px; color: #6b7280; font-size: 0.85em;" title="Time Limited"></i>
+                    @endif
+                </h4>
                 <a href="{{ url('/' . $link->slug) }}" target="_blank" class="eng-link">Linkan.id/{{ $link->slug }}</a>
                 <p>{{ Str::limit($link->destination, 60) }}</p>
                 @if($link->description)

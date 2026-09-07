@@ -46,6 +46,6 @@
 </div>
 
 <script>
-
-    window.PlatformNotifSSEEndpoint = "{{ route('platform-admin.notifications.stream') }}";
+    // Route intentionally removed to prevent 500 error since it is not defined yet.
+    // window.PlatformNotifSSEEndpoint = "";
 </script>

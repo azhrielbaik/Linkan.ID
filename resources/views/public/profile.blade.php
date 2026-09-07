@@ -351,6 +351,12 @@
 </head>
 <body>
     <div class="content-wrapper">
+        @if(session('error'))
+            <div style="background-color: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 12px 16px; margin: 16px; border-radius: 8px; font-size: 14px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i> {{ session('error') }}
+            </div>
+        @endif
+        
         @php
             $blocksOrder = [];
             if ($appearance && $appearance->blocks_order) {
@@ -387,12 +393,6 @@
             if (isset($socialMediaElements)) {
                 foreach($socialMediaElements as $el) {
                     $id = 'social_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($products)) {
-                foreach($products as $el) {
-                    $id = 'digitalproduct_' . $el->id;
                     if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
             }

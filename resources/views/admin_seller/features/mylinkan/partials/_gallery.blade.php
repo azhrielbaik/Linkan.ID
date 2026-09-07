@@ -75,6 +75,14 @@
                             <button type="button" class="btn-action-secondary" onclick="copyToClipboard('{{ url('/' . $appearance->alias) }}')">
                                 <i class="fas fa-copy"></i> {{ __('admin.copy_link') }}
                             </button>
+
+                            <form action="{{ route('admin.microsite.destroy', $appearance->id) }}" method="POST" class="m-0 w-full" onsubmit="return confirm('Apakah Anda yakin ingin menghapus microsite ini? Tindakan ini tidak dapat dibatalkan.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-action-secondary !text-red-500 hover:!bg-red-50 w-full">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -83,8 +91,9 @@
             @else
                 <div class="text-center p-8 bg-white rounded-xl border border-dashed border-gray-300 col-span-full">
                     <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-layer-group text-2xl text-gray-400"></i>
                     </div>
+                    <br>
+                    <br>
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">Belum Ada Microsite</h3>
                     <p class="text-gray-500 mb-6 max-w-md mx-auto">Anda belum membuat microsite apapun. Klik tombol "Buat Microsite" di pojok kanan atas untuk mulai membangun halaman profil dan tautan Anda.</p>
                 </div>

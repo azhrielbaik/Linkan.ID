@@ -13,11 +13,12 @@ class AdminController extends Controller
         $user = auth()->user();
         $viewMode = $request->query('mode', 'gallery'); // 'gallery' or 'edit'
 
-        $digitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
-        $totalProducts = $digitalProducts->where('is_active', 1)->where('verification_status', 'approved')->count();
+        $allDigitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
+        $totalProducts = $allDigitalProducts->where('is_active', 1)->where('verification_status', 'approved')->count();
 
         // Mode Gallery: Tampilkan semua microsite
         if ($viewMode == 'gallery') {
+            $digitalProducts = $allDigitalProducts;
             $appearances = \App\Models\Appearance::where('user_id', $user->id)->latest()->get();
             // Total page views per alias
             $viewsData = \Illuminate\Support\Facades\DB::table('link_views')
@@ -43,6 +44,16 @@ class AdminController extends Controller
 
         $appearance = \App\Models\Appearance::where('user_id', $user->id)->findOrFail($appearanceId);
         
+        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+        $productIds = [];
+        foreach ($blocksOrder as $block) {
+            if (str_starts_with($block, 'digitalproduct_')) {
+                $productIds[] = str_replace('digitalproduct_', '', $block);
+            }
+        }
+        
+        $digitalProducts = $allDigitalProducts->whereIn('id', $productIds);
+
         $imageElements = \App\Models\ImageElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
         $dividerElements = \App\Models\DividerElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
         $textElements = \App\Models\TextElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
@@ -94,6 +105,42 @@ class AdminController extends Controller
 
         return redirect()->route('admin.mylinkan', ['mode' => 'edit', 'id' => $appearance->id])
             ->with('success', 'Microsite baru "' . $request->title . '" berhasil dibuat! Alamat Anda sekarang: linkan.id/' . $appearance->alias);
+    }
+
+    public function destroyMicrosite($id)
+    {
+        $user = auth()->user();
+        $appearance = \App\Models\Appearance::where('user_id', $user->id)->findOrFail($id);
+        
+        $title = $appearance->title ?? $appearance->name;
+
+        // Clean up digital products associated with this microsite
+        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+        foreach ($blocksOrder as $block) {
+            if (str_starts_with($block, 'digitalproduct_')) {
+                $productId = str_replace('digitalproduct_', '', $block);
+                $product = \App\Models\DigitalProduct::where('id', $productId)->where('user_id', $user->id)->first();
+                if ($product) {
+                    if ($product->media_files) {
+                        $mediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
+                        if (is_array($mediaFiles)) {
+                            foreach ($mediaFiles as $media) {
+                                if (isset($media['path'])) \Illuminate\Support\Facades\Storage::disk('public')->delete($media['path']);
+                            }
+                        }
+                    }
+                    if ($product->deliverable_type === 'upload' && $product->deliverable_url) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($product->deliverable_url);
+                    }
+                    $product->delete();
+                }
+            }
+        }
+
+        $appearance->delete();
+
+        return redirect()->route('admin.mylinkan', ['mode' => 'gallery'])
+            ->with('success', 'Microsite "' . $title . '" berhasil dihapus.');
     }
 
     public function myPurchase()

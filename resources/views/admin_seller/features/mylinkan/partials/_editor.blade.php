@@ -592,7 +592,7 @@
                                 <div id="dpFixedPriceSection">
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Harga (Rp):</span>
-                                        <input type="number" id="dpFixedPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('fixed', this.value)">
+                                        <input type="text" id="dpFixedPrice" class="dp-row-input" value="0" oninput="formatRupiahInput(this, 'fixed')">
                                     </div>
                                 </div>
 
@@ -600,11 +600,11 @@
                                 <div id="dpPwywSection" style="display: none;">
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Min. Harga (Rp):</span>
-                                        <input type="number" id="dpMinPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('min', this.value)">
+                                        <input type="text" id="dpMinPrice" class="dp-row-input" value="0" oninput="formatRupiahInput(this, 'min')">
                                     </div>
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Maks. Harga (Rp):</span>
-                                        <input type="number" id="dpMaxPrice" class="dp-row-input" placeholder="Tak Terbatas" min="0" oninput="updateDpPriceField('max', this.value)">
+                                        <input type="text" id="dpMaxPrice" class="dp-row-input" placeholder="Tak Terbatas" oninput="formatRupiahInput(this, 'max')">
                                     </div>
                                     <div style="font-size: 12px; color: #9ca3af; margin-top: -5px; margin-bottom: 15px;">Kosongkan harga maksimal jika tidak ada batasan.</div>
                                 </div>
@@ -902,9 +902,9 @@
         changeDpDeliverableType(dpFormState.deliverableType);
 
         document.querySelector(`input[name="dpPriceType"][value="${dpFormState.priceType}"]`).checked = true;
-        document.getElementById('dpFixedPrice').value = dpFormState.priceFixed;
-        document.getElementById('dpMinPrice').value = dpFormState.priceMin;
-        document.getElementById('dpMaxPrice').value = dpFormState.priceMax;
+        document.getElementById('dpFixedPrice').value = formatNumberWithDot(dpFormState.priceFixed);
+        document.getElementById('dpMinPrice').value = formatNumberWithDot(dpFormState.priceMin);
+        document.getElementById('dpMaxPrice').value = formatNumberWithDot(dpFormState.priceMax);
         document.getElementById('dpMinQty').value = dpFormState.qtyMin;
         document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
         changeDpPriceType(dpFormState.priceType);
@@ -1188,6 +1188,27 @@
         }
     }
 
+    function formatNumberWithDot(number) {
+        if (number === null || number === undefined || number === '') return '';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function formatRupiahInput(input, fieldType) {
+        let rawValue = input.value.replace(/[^0-9]/g, '');
+        
+        if (rawValue === '') {
+            input.value = '';
+            updateDpPriceField(fieldType, '');
+            return;
+        }
+        
+        rawValue = parseInt(rawValue, 10).toString();
+        let formattedValue = formatNumberWithDot(rawValue);
+        
+        input.value = formattedValue;
+        updateDpPriceField(fieldType, rawValue);
+    }
+
     function updateDpPriceField(field, value) {
         if (field === 'fixed') dpFormState.priceFixed = value;
         else if (field === 'min') dpFormState.priceMin = value;
@@ -1389,6 +1410,12 @@
             formData.append('existing_media', JSON.stringify(dpFormState.existingFiles));
         }
 
+        // Add appearance_id so the controller knows which microsite to attach this to
+        const urlsEl = document.getElementById('micrositeEditorUrls');
+        if (urlsEl && urlsEl.dataset.appearanceId) {
+            formData.append('appearance_id', urlsEl.dataset.appearanceId);
+        }
+
         // Send via fetch
         fetch('{{ route('admin.elements.digital-product.store') }}', {
             method: 'POST',
@@ -1397,23 +1424,28 @@
             },
             body: formData
         })
-        .then(res => res.json())
+        .then(async res => {
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                if (res.status === 422 && errorData.errors) {
+                    const errorMessages = Object.values(errorData.errors).flat().join('\\n');
+                    throw new Error(errorMessages);
+                }
+                throw new Error(errorData.message || 'Gagal menghubungi server. Status: ' + res.status);
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
-                // Untuk sementara, kita reload halaman untuk menampilkan produk baru.
                 alert('Produk digital berhasil disimpan!');
                 window.location.reload();
             } else {
-                alert('Terjadi kesalahan saat menyimpan produk.');
-                if (btnSave) {
-                    btnSave.disabled = false;
-                    btnSave.innerHTML = 'Selesai';
-                }
+                throw new Error('Terjadi kesalahan saat menyimpan produk.');
             }
         })
         .catch(err => {
             console.error(err);
-            alert('Gagal menghubungi server.');
+            alert(err.message || 'Gagal menghubungi server.');
             if (btnSave) {
                 btnSave.disabled = false;
                 btnSave.innerHTML = 'Selesai';

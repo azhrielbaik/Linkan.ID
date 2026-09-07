@@ -77,7 +77,7 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 // Public microsite & link tracking
 Route::get('/linkan.id/{username}', [PublicPageController::class, 'show'])->name('track.view');
 Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
-Route::get('/profile/{username}', [PublicPageController::class, 'show'])->name('public.profile');
+// Route::get('/profile/{username}', [PublicPageController::class, 'show'])->name('public.profile'); // Moved to end of file as catch-all
 
 // Public product & checkout (no auth required to browse/buy)
 Route::get('/product/{id}', [DigitalProductController::class, 'show'])->name('product.show');
@@ -113,6 +113,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // My Linkan (microsite builder)
     Route::get('/mylinkan', [AdminController::class, 'myLinkan'])->name('mylinkan');
     Route::post('/microsite/create', [AdminController::class, 'storeMicrosite'])->name('microsite.store');
+    Route::delete('/microsite/{id}', [AdminController::class, 'destroyMicrosite'])->name('microsite.destroy');
 
     // Appearance (Profile Block settings)
     Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
@@ -307,3 +308,4 @@ Route::get('/test-email', fn () => view('emails.send-digital-product'));
 |--------------------------------------------------------------------------
 */
 Route::get('/{slug}', [ShortlinkController::class, 'redirect'])->name('shortlink.redirect');
+Route::get('/{username}', [ShortlinkController::class, 'redirect'])->name('public.profile');
