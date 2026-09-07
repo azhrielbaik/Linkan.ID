@@ -159,13 +159,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Account
     Route::get('/account', [AccountController::class, 'edit'])->name('account');
     Route::post('/account', [AccountController::class, 'update'])->name('account.update');
-    Route::delete('/account', [AccountController::class, 'delete'])->name('account.delete');
+    Route::delete('/account', [AccountController::class, 'delete'])->middleware('throttle:5,1')->name('account.delete');
 
     // Payout
     Route::prefix('payout')->name('payout.')->group(function () {
         Route::get('/', [PayoutController::class, 'index'])->name('index');
         Route::get('/withdraw', [PayoutController::class, 'showWithdrawForm'])->name('withdraw');
-        Route::post('/withdraw', [PayoutController::class, 'processWithdrawal'])->name('withdraw.process');
+        Route::post('/withdraw', [PayoutController::class, 'processWithdrawal'])->middleware('throttle:6,1')->name('withdraw.process');
         Route::get('/history', [PayoutController::class, 'showPayoutHistory'])->name('history');
         Route::get('/method', [PayoutController::class, 'showPayoutMethodForm'])->name('method');
         Route::post('/method', [PayoutController::class, 'savePayoutMethod'])->name('method.save');
@@ -224,14 +224,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 | Naming convention: platform-admin.<resource>.<action>
 */
 
-Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform'])->group(function () {
+Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform', 'admin.timeout'])->group(function () {
 
     Route::get('/dashboard', [PlatformAdminController::class, 'beranda'])->name('dashboard');
 
     // Verifikasi produk
     Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi');
-    Route::post('/verifikasi/bulk', [VerifikasiController::class, 'bulkVerify'])->name('verifikasi.bulk');
-    Route::post('/verifikasi/{id}', [VerifikasiController::class, 'verify'])->name('verifikasi.verify');
+    Route::post('/verifikasi/bulk', [VerifikasiController::class, 'bulkVerify'])->middleware('throttle:30,1')->name('verifikasi.bulk');
+    Route::post('/verifikasi/{id}', [VerifikasiController::class, 'verify'])->middleware('throttle:30,1')->name('verifikasi.verify');
 
     // Print / laporan & Export
     Route::match(['get', 'post'], '/print', [PlatformAdminController::class, 'print'])->name('print');
@@ -246,35 +246,35 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Verifikasi (role-gated, sudah dalam group ini)
     Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
-    Route::post('/verification/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('/verification/{id}', [VerificationController::class, 'verify'])->middleware('throttle:30,1')->name('verification.verify');
 
-    // Manajemen User & Banding Suspend
+    // Manajemen User & Banding Suspend (Aksi Kritis: Rate Limiting 15/menit)
     Route::get('/users', [PlatformAdminController::class, 'users'])->name('users');
     Route::get('/users/suggest', [PlatformAdminController::class, 'userSuggest'])->name('users.suggest');
     Route::get('/users/appeals', [PlatformAdminController::class, 'appeals'])->name('users.appeals');
     Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
-    Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->name('users.suspend');
-    Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->name('users.activate');
-    Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->name('users.appeals.approve');
-    Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->name('users.appeals.reject');
+    Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->middleware('throttle:15,1')->name('users.suspend');
+    Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->middleware('throttle:15,1')->name('users.activate');
+    Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->middleware('throttle:15,1')->name('users.appeals.approve');
+    Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->middleware('throttle:15,1')->name('users.appeals.reject');
 
     // Pusat Bantuan / Support Tickets (Platform Admin)
     Route::prefix('tickets')->name('tickets.')->group(function () {
         Route::get('/', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'index'])->name('index');
         Route::get('/{id}', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'show'])->name('show');
-        Route::post('/{id}/reply', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'reply'])->name('reply');
-        Route::post('/{id}/status', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'updateStatus'])->name('status');
+        Route::post('/{id}/reply', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'reply'])->middleware('throttle:20,1')->name('reply');
+        Route::post('/{id}/status', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'updateStatus'])->middleware('throttle:20,1')->name('status');
     });
 
-    // Manajemen Payout (Request Withdraw & Riwayat Global)
+    // Manajemen Payout (Request Withdraw & Riwayat Global - Aksi Kritis: Rate Limiting 15/menit)
     Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');
-    Route::post('/payouts/{id}/approve', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'approve'])->name('payouts.approve');
-    Route::post('/payouts/{id}/reject', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'reject'])->name('payouts.reject');
+    Route::post('/payouts/{id}/approve', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'approve'])->middleware('throttle:15,1')->name('payouts.approve');
+    Route::post('/payouts/{id}/reject', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'reject'])->middleware('throttle:15,1')->name('payouts.reject');
 
     // Manajemen Produk (Semua Produk, Takedown, Restore)
     Route::get('/products', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'index'])->name('products.index');
-    Route::post('/products/{id}/takedown', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'takedown'])->name('products.takedown');
-    Route::post('/products/{id}/restore', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'restore'])->name('products.restore');
+    Route::post('/products/{id}/takedown', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'takedown'])->middleware('throttle:20,1')->name('products.takedown');
+    Route::post('/products/{id}/restore', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'restore'])->middleware('throttle:20,1')->name('products.restore');
 
     // Log & Audit
     Route::get('/logs/activity', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activityLogs'])->name('logs.activity');
@@ -282,15 +282,15 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
     Route::get('/logs/transactions/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionSuggest'])->name('logs.transactions.suggest');
 
-    // Pengaturan Platform & Broadcast
+    // Pengaturan Platform & Broadcast (Aksi Kritis: Rate Limiting 10-15/menit)
     Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->name('settings.update');
-    Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->name('settings.broadcast.store');
-    Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->name('settings.broadcast.toggle');
-    Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->name('settings.broadcast.delete');
+    Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->middleware('throttle:10,1')->name('settings.update');
+    Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.store');
+    Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
+    Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');
 
     // Theme & Tampilan Platform Admin
-    Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->name('theme.update');
+    Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->middleware('throttle:20,1')->name('theme.update');
 });
 
 

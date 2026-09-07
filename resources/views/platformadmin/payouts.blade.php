@@ -64,9 +64,9 @@
                 <div class="stat-card commission">
                     <div class="stat-icon-wrapper"><i class="fas fa-coins"></i></div>
                     <div class="stat-info">
-                        <div class="stat-label">{{ __('platform.platform_commission_5') }}</div>
+                        <div class="stat-label">{{ __('platform.total_commission') }} ({{ $commissionPercent }}%)</div>
                         <div class="stat-val">Rp {{ number_format($totalCommissionEarned, 0, ',', '.') }}</div>
-                        <div class="stat-sub">{{ __('platform.total_commission') }}</div>
+                        <div class="stat-sub">{{ __('platform.platform_earnings_chart') }}</div>
                     </div>
                 </div>
             </div>

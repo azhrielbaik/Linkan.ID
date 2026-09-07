@@ -86,31 +86,12 @@
     background: #ffffff;
     border: var(--platform-border);
     border-radius: var(--platform-radius);
-    padding: 0;
+    padding: 14px 18px;
     margin-bottom: 20px;
     box-shadow: var(--platform-card-shadow);
     overflow: visible;
     position: relative;
     z-index: 20;
-}
-
-/* Row 1 — Status Tabs */
-.p-ticket-tabs-row {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    border-bottom: 1px solid #f1f5f9;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-/* Row 2 — Filter Inputs */
-.p-filter-inputs-row {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    gap: 10px;
-    flex-wrap: wrap;
 }
 
 .p-ticket-tabs {

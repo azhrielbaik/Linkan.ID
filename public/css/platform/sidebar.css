@@ -372,121 +372,239 @@
     }
 }
 
-/* SweetAlert2 Modal Customization for Linkan */
+/* SweetAlert2 Modal Customization for Linkan (Matches Reference Style & Animation) */
+.swal2-container {
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 99999 !important;
+}
+
 .linkan-swal-popup {
     font-family: "Plus Jakarta Sans", sans-serif !important;
     border-radius: 20px !important;
-    padding: 26px !important;
+    padding: 28px 32px !important;
+    width: 100% !important;
+    max-width: 440px !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    text-align: center !important;
+    border: none !important;
+    background: #ffffff !important;
 }
 
+/* Animasi Muncul & Keluar (Persis seperti modalScale di Akun Saya) */
 .linkan-swal-show {
-    animation: linkanSwalEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    animation: modalScale 0.2s ease-out both !important;
 }
 
 .linkan-swal-hide {
-    animation: linkanSwalExit 0.18s ease-in both !important;
+    animation: modalScaleOut 0.15s ease-in both !important;
 }
 
-.linkan-swal-popup .swal2-icon {
-    animation: linkanSwalIcon 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
-}
-
-@keyframes linkanSwalEnter {
+@keyframes modalScale {
     from {
         opacity: 0;
-        transform: translateY(14px) scale(0.94);
+        transform: scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: scale(1);
     }
 }
 
-@keyframes linkanSwalExit {
+@keyframes modalScaleOut {
     from {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: scale(1);
     }
     to {
         opacity: 0;
-        transform: translateY(6px) scale(0.98);
+        transform: scale(0.95);
     }
 }
 
-@keyframes linkanSwalIcon {
+/* Icon Circle Bulat (Sesuai .delete-icon-circle pada referensi notifikasi) */
+.linkan-swal-popup .swal2-icon,
+.swal2-popup.linkan-swal-popup .swal2-icon {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    min-height: 60px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    margin: 0 auto 16px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    animation: modalIconPop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) both !important;
+}
+
+.linkan-swal-popup .swal2-icon .swal2-icon-content {
+    font-size: 26px !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+}
+
+/* Sembunyikan elemen dekoratif default SweetAlert2 agar bersih */
+.linkan-swal-popup .swal2-icon::before,
+.linkan-swal-popup .swal2-icon::after,
+.linkan-swal-popup .swal2-icon .swal2-success-ring,
+.linkan-swal-popup .swal2-icon [class^="swal2-success-line"],
+.linkan-swal-popup .swal2-icon [class^="swal2-x-mark-line"] {
+    display: none !important;
+}
+
+/* Warna Icon: Merah / Peringatan Bahaya (Persis di gambar referensi) */
+.linkan-swal-popup .swal2-icon.swal2-warning,
+.linkan-swal-popup .swal2-icon.swal2-error {
+    background: #FEE2E2 !important;
+    color: #EF4444 !important;
+}
+.linkan-swal-popup .swal2-icon.swal2-warning .swal2-icon-content,
+.linkan-swal-popup .swal2-icon.swal2-error .swal2-icon-content {
+    color: #EF4444 !important;
+}
+
+/* Warna Icon: Hijau / Sukses */
+.linkan-swal-popup .swal2-icon.swal2-success {
+    background: #DCFCE7 !important;
+    color: #16A34A !important;
+}
+.linkan-swal-popup .swal2-icon.swal2-success .swal2-icon-content {
+    color: #16A34A !important;
+}
+
+/* Warna Icon: Oranye / Pertanyaan */
+.linkan-swal-popup .swal2-icon.swal2-question,
+.linkan-swal-popup .swal2-icon.swal2-info {
+    background: #FFEDD5 !important;
+    color: #ED842C !important;
+}
+.linkan-swal-popup .swal2-icon.swal2-question .swal2-icon-content,
+.linkan-swal-popup .swal2-icon.swal2-info .swal2-icon-content {
+    color: #ED842C !important;
+}
+
+@keyframes modalIconPop {
     from {
         opacity: 0;
-        transform: scale(0.65) rotate(-8deg);
+        transform: scale(0.65);
     }
     to {
         opacity: 1;
-        transform: scale(1) rotate(0);
+        transform: scale(1);
     }
 }
 
+/* Tipografi Judul & Isi */
 .linkan-swal-title {
-    font-size: 18px !important;
+    font-size: 20px !important;
     font-weight: 800 !important;
-    color: #1e293b !important;
-    margin-bottom: 8px !important;
+    color: #1E293B !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    letter-spacing: -0.3px !important;
 }
 
 .linkan-swal-html {
-    font-size: 13px !important;
-    color: #64748b !important;
+    font-size: 14px !important;
+    color: #64748B !important;
     line-height: 1.5 !important;
+    margin: 0 0 24px 0 !important;
+    padding: 0 !important;
 }
 
-.linkan-swal-confirm-btn {
-    background: #ed842c !important;
-    color: #ffffff !important;
-    padding: 10px 22px !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    border: none !important;
-    cursor: pointer !important;
-    margin-left: 10px !important;
-    transition: background 0.2s !important;
-    font-family: "Plus Jakarta Sans", sans-serif !important;
-}
-
-.linkan-swal-confirm-btn:hover {
-    background: #d9701a !important;
-}
-
-.linkan-swal-confirm-danger-btn {
-    background: #dc2626 !important;
-    color: #ffffff !important;
-    padding: 10px 22px !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    border: none !important;
-    cursor: pointer !important;
-    margin-left: 10px !important;
-    transition: background 0.2s !important;
-    font-family: "Plus Jakarta Sans", sans-serif !important;
-}
-
-.linkan-swal-confirm-danger-btn:hover {
-    background: #b91c1c !important;
+/* Tombol Aksi */
+.linkan-swal-actions,
+.linkan-swal-popup .swal2-actions {
+    display: flex !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    justify-content: center !important;
 }
 
 .linkan-swal-cancel-btn {
-    background: #f1f5f9 !important;
+    background: #F1F5F9 !important;
     color: #475569 !important;
-    padding: 10px 18px !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
     border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
     cursor: pointer !important;
-    transition: background 0.2s !important;
+    transition: all 0.2s !important;
+    flex: 1 !important;
+    margin: 0 !important;
     font-family: "Plus Jakarta Sans", sans-serif !important;
+    outline: none !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .linkan-swal-cancel-btn:hover {
-    background: #e2e8f0 !important;
+    background: #E2E8F0 !important;
+    color: #1E293B !important;
+}
+
+.linkan-swal-confirm-danger-btn {
+    background: #EF4444 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    flex: 1 !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    outline: none !important;
+    text-align: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+.linkan-swal-confirm-danger-btn:hover {
+    background: #DC2626 !important;
+    transform: translateY(-1px) !important;
+}
+
+.linkan-swal-confirm-btn {
+    background: #ED842C !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    flex: 1 !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 12px rgba(237, 132, 44, 0.25) !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    outline: none !important;
+    text-align: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+.linkan-swal-confirm-btn:hover {
+    background: #D9701A !important;
+    transform: translateY(-1px) !important;
 }
