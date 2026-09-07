@@ -17,27 +17,42 @@ class PayoutService
      */
     public function getPayoutOverview(User $user): array
     {
-        $myEarnings = (float)($user->balance ?? 0);
-
-        $totalWithdrawn = (float)DB::table('payout_transactions')
-            ->where('user_id', $user->id)
-            ->sum('amount');
-            
-        $myEarnings = $myEarnings - $totalWithdrawn;
-
-        // Sync balance if there's a discrepancy
-        $currentBalance = (float)($user->balance ?? 0);
-        if ($currentBalance != $myEarnings) {
-            DB::table('users')->where('id', $user->id)->update(['balance' => $myEarnings]);
-        }
-
-        $totalEarnings = (float)DB::table('transactions')
+        // 1. Total pendapatan kotor dari produk digital yang terjual sukses
+        $totalEarnings = (float) DB::table('transactions')
             ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
             ->where('digital_products.user_id', $user->id)
             ->where('transactions.status', 'success')
             ->sum('transactions.total_price');
 
-        $currentBalance = $totalEarnings - $totalWithdrawn;
+        // 2. Total penarikan bersih yang berhasil diterima user (approved/completed)
+        $totalWithdrawn = (float) DB::table('payout_transactions')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['approved', 'completed'])
+            ->sum('amount');
+
+        // 3. Total gross yang dipotong untuk payout yang sudah approved
+        $approvedGross = (float) DB::table('payout_transactions')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['approved', 'completed'])
+            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
+
+        // 4. Total gross yang sedang di-hold (status pending)
+        $pendingGross = (float) DB::table('payout_transactions')
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
+
+        // 5. Saldo yang dapat ditarik: total pendapatan dikurangi penarikan approved dan pending hold
+        // Catatan: Payout yang rejected TIDAK dihitung sebagai pengurang sehingga otomatis kembali ke saldo user
+        $currentBalance = max(0, $totalEarnings - $approvedGross - $pendingGross);
+
+        // Self-healing: sinkronkan nilai users.balance jika terdapat ketidaksesuaian
+        $userBalance = (float) ($user->balance ?? 0);
+        if ($userBalance != $currentBalance) {
+            DB::table('users')->where('id', $user->id)->update(['balance' => $currentBalance]);
+            $user->balance = $currentBalance;
+        }
+
         $payoutDetail = UserPayoutDetail::where('user_id', $user->id)->first();
 
         return [
@@ -56,8 +71,10 @@ class PayoutService
      */
     public function getWithdrawFormSettings(User $user): array
     {
+        $currentEarnings = (float) (DB::table('users')->where('id', $user->id)->value('balance') ?? 0);
+
         return [
-            'currentEarnings' => $user->balance ?? 0,
+            'currentEarnings' => $currentEarnings,
             'payoutDetail' => UserPayoutDetail::where('user_id', $user->id)->first(),
             'minWithdraw' => (float) PlatformSetting::get('min_withdraw_amount', 10000),
             'commissionPercent' => (float) PlatformSetting::get('platform_commission_percent', 5)
@@ -112,6 +129,11 @@ class PayoutService
         $amountAfterCommission = $amount - $commission;
 
         DB::transaction(function() use ($user, $data, $amount, $commission, $amountAfterCommission) {
+            $freshUser = DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
+            if (!$freshUser || (float) $freshUser->balance < $amount) {
+                throw new \Exception('Saldo Anda tidak mencukupi untuk melakukan penarikan ini.');
+            }
+
             DB::table('payout_transactions')->insert([
                 'user_id' => $user->id,
                 'amount' => $amountAfterCommission,

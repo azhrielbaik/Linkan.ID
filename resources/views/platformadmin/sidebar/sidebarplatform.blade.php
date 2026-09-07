@@ -132,11 +132,24 @@
         const isDanger = options.confirmDanger || false;
         const confirmBtnClass = isDanger ? 'linkan-swal-confirm-danger-btn' : 'linkan-swal-confirm-btn';
 
+        // Tentukan icon HTML dan class warna pendukung
+        let iconType = options.icon || (isDanger ? 'warning' : 'question');
+        let iconHtml = options.iconHtml || '';
+        if (!iconHtml) {
+            if (isDanger || iconType === 'warning' || iconType === 'error') {
+                iconHtml = '<i class="fas fa-exclamation-triangle"></i>';
+            } else if (iconType === 'success') {
+                iconHtml = '<i class="fas fa-check"></i>';
+            } else {
+                iconHtml = '<i class="fas fa-exclamation-triangle"></i>';
+            }
+        }
+
         Swal.fire({
             title: options.title || 'Konfirmasi Aksi',
             text: options.text || 'Apakah Anda yakin ingin melanjutkan tindakan ini?',
-            icon: options.icon || (isDanger ? 'warning' : 'question'),
-            iconColor: options.iconColor || (isDanger ? '#dc2626' : '#ED842C'),
+            icon: iconType,
+            iconHtml: iconHtml,
             showCancelButton: true,
             confirmButtonText: options.confirmText || (isDanger ? 'Ya, Lanjutkan' : 'Ya, Setujui'),
             cancelButtonText: options.cancelText || 'Batal',
@@ -145,7 +158,8 @@
                 title: 'linkan-swal-title',
                 htmlContainer: 'linkan-swal-html',
                 confirmButton: confirmBtnClass,
-                cancelButton: 'linkan-swal-cancel-btn'
+                cancelButton: 'linkan-swal-cancel-btn',
+                actions: 'linkan-swal-actions'
             },
             buttonsStyling: false,
             reverseButtons: true,
@@ -155,7 +169,7 @@
             hideClass: {
                 popup: 'linkan-swal-hide'
             },
-            backdrop: 'rgba(15, 23, 42, 0.45)'
+            backdrop: 'rgba(15, 23, 42, 0.65)'
         }).then((result) => {
             if (result.isConfirmed && typeof options.onConfirm === 'function') {
                 options.onConfirm();

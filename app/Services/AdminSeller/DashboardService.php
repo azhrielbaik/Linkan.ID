@@ -34,24 +34,36 @@ class DashboardService
             ->where('transactions.status', 'success')
             ->sum('transactions.qty');
 
-        $totalEarnings = (float)DB::table('transactions')
+        $totalSales = (float)DB::table('transactions')
             ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
             ->where('digital_products.user_id', $user->id)
             ->where('transactions.status', 'success')
             ->sum('transactions.total_price');
 
-        $totalWithdrawn = (float)DB::table('payout_transactions')
+        $approvedGross = (float)DB::table('payout_transactions')
             ->where('user_id', $user->id)
-            ->sum('amount');
+            ->whereIn('status', ['approved', 'completed'])
+            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
 
-        $totalEarnings = $totalEarnings - $totalWithdrawn;
+        $pendingGross = (float)DB::table('payout_transactions')
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
 
+        // Saldo yang tersedia: pendapatan kotor penjualan dikurangi payout yang approved dan pending
+        // Transaksi payout yang berstatus 'rejected' tidak dihitung sebagai pengurang sehingga otomatis kembali ke user
+        $availableBalance = max(0, $totalSales - $approvedGross - $pendingGross);
+
+        // Self-healing: sinkronkan nilai users.balance jika terjadi inkonsistensi
         $currentBalance = (float)(DB::table('users')->where('id', $user->id)->value('balance') ?? 0);
-        if ($currentBalance != $totalEarnings) {
+        if ($currentBalance != $availableBalance) {
             DB::table('users')
                 ->where('id', $user->id)
-                ->update(['balance' => $totalEarnings]);
+                ->update(['balance' => $availableBalance]);
+            $currentBalance = $availableBalance;
         }
+
+        $totalEarnings = $availableBalance;
 
         $appearance = \App\Models\Appearance::where('user_id', $user->id)->first();
         $totalShortlinks = \App\Models\Shortlink::where('user_id', $user->id)->count();
@@ -182,7 +194,7 @@ class DashboardService
 
         foreach ($payouts as $p) {
             $timeAgo = \Carbon\Carbon::parse($p->updated_at)->diffForHumans();
-            if ($p->status === 'completed' || $p->status === 'success') {
+            if ($p->status === 'completed' || $p->status === 'success' || $p->status === 'approved') {
                 $notifications[] = [
                     'id'          => 'pay_succ_' . $p->id,
                     'type'        => 'payout',
