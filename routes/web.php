@@ -228,7 +228,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 | Naming convention: platform-admin.<resource>.<action>
 */
 
-Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform'])->group(function () {
+Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform', 'admin.timeout'])->group(function () {
 
     Route::get('/dashboard', [PlatformAdminController::class, 'beranda'])->name('dashboard');
 

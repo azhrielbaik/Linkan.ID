@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PlatformAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PayoutTransaction;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,7 @@ class PayoutManagementController extends Controller
         $totalRejectedCount = PayoutTransaction::where('status', 'rejected')->count();
 
         $totalCommissionEarned = DB::table('platform_commissions')->sum('commission');
+        $commissionPercent = (float) PlatformSetting::get('platform_commission_percent', 5);
 
         return view('platformadmin.payouts', compact(
             'payouts',
@@ -80,7 +82,8 @@ class PayoutManagementController extends Controller
             'totalApprovedCount',
             'totalApprovedAmount',
             'totalRejectedCount',
-            'totalCommissionEarned'
+            'totalCommissionEarned',
+            'commissionPercent'
         ));
     }
 
@@ -89,37 +92,58 @@ class PayoutManagementController extends Controller
      */
     public function approve(Request $request, $id)
     {
-        $payout = PayoutTransaction::findOrFail($id);
+        $adminId = Auth::id();
 
-        if ($payout->status !== 'pending') {
-            return back()->with('error', 'Permintaan payout ini sudah diproses sebelumnya.');
+        try {
+            $payoutData = DB::transaction(function () use ($id, $adminId) {
+                // Kunci baris payout secara eksklusif (SELECT ... FOR UPDATE) untuk mencegah race condition / double approval
+                $payout = PayoutTransaction::where('id', $id)->lockForUpdate()->first();
+
+                if (!$payout) {
+                    throw new \Exception('Permintaan payout tidak ditemukan.');
+                }
+
+                if ($payout->status !== 'pending') {
+                    throw new \Exception('Permintaan payout ini sudah diproses sebelumnya.');
+                }
+
+                $commissionPercent = (float) PlatformSetting::get('platform_commission_percent', 5);
+                $grossAmount = $payout->gross_amount ?? ($commissionPercent < 100 ? ($payout->amount / (1 - ($commissionPercent / 100))) : $payout->amount);
+                $commission = $payout->commission > 0 ? $payout->commission : ($grossAmount * ($commissionPercent / 100));
+
+                // Update status payout
+                $payout->update([
+                    'status' => 'approved',
+                    'processed_at' => now(),
+                    'processed_by' => $adminId,
+                ]);
+
+                // Catat komisi ke tabel platform_commissions
+                DB::table('platform_commissions')->insert([
+                    'seller_id' => $payout->user_id,
+                    'platform_admin_id' => $adminId,
+                    'amount' => $grossAmount,
+                    'commission' => $commission,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Tambahkan komisi ke saldo admin platform
+                DB::table('users')->where('id', $adminId)->increment('balance', $commission);
+
+                return [
+                    'payout' => $payout,
+                    'gross_amount' => $grossAmount,
+                    'commission' => $commission,
+                ];
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
 
-        $adminId = Auth::id();
-        $grossAmount = $payout->gross_amount ?? ($payout->amount / 0.95);
-        $commission = $payout->commission > 0 ? $payout->commission : ($grossAmount * 0.05);
-
-        DB::transaction(function () use ($payout, $adminId, $grossAmount, $commission) {
-            // Update status payout
-            $payout->update([
-                'status' => 'approved',
-                'processed_at' => now(),
-                'processed_by' => $adminId,
-            ]);
-
-            // Catat komisi ke tabel platform_commissions
-            DB::table('platform_commissions')->insert([
-                'seller_id' => $payout->user_id,
-                'platform_admin_id' => $adminId,
-                'amount' => $grossAmount,
-                'commission' => $commission,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            // Tambahkan komisi ke saldo admin platform
-            DB::table('users')->where('id', $adminId)->increment('balance', $commission);
-        });
+        $payout = $payoutData['payout'];
+        $grossAmount = $payoutData['gross_amount'];
+        $commission = $payoutData['commission'];
 
         // Catat Log Aktivitas
         \App\Services\ActivityLogger::log(
@@ -151,37 +175,58 @@ class PayoutManagementController extends Controller
             'rejection_reason.required' => 'Alasan penolakan wajib diisi.',
         ]);
 
-        $payout = PayoutTransaction::findOrFail($id);
+        $adminId = Auth::id();
+        $reason = $request->input('rejection_reason');
 
-        if ($payout->status !== 'pending') {
-            return back()->with('error', 'Permintaan payout ini sudah diproses sebelumnya.');
+        try {
+            $payoutData = DB::transaction(function () use ($id, $adminId, $reason) {
+                // Kunci baris payout secara eksklusif (SELECT ... FOR UPDATE) untuk mencegah race condition / double refund
+                $payout = PayoutTransaction::where('id', $id)->lockForUpdate()->first();
+
+                if (!$payout) {
+                    throw new \Exception('Permintaan payout tidak ditemukan.');
+                }
+
+                if ($payout->status !== 'pending') {
+                    throw new \Exception('Permintaan payout ini sudah diproses sebelumnya.');
+                }
+
+                $commissionPercent = (float) PlatformSetting::get('platform_commission_percent', 5);
+                $refundAmount = $payout->gross_amount ?? ($commissionPercent < 100 ? ($payout->amount / (1 - ($commissionPercent / 100))) : $payout->amount);
+
+                // Update status payout jadi rejected
+                $payout->update([
+                    'status' => 'rejected',
+                    'rejection_reason' => $reason,
+                    'processed_at' => now(),
+                    'processed_by' => $adminId,
+                ]);
+
+                // Kembalikan saldo yang di-hold ke seller
+                DB::table('users')->where('id', $payout->user_id)->increment('balance', $refundAmount);
+
+                return [
+                    'payout' => $payout,
+                    'refund_amount' => $refundAmount,
+                ];
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
 
-        $refundAmount = $payout->gross_amount ?? ($payout->amount / 0.95);
-
-        DB::transaction(function () use ($payout, $refundAmount, $request) {
-            // Update status payout jadi rejected
-            $payout->update([
-                'status' => 'rejected',
-                'rejection_reason' => $request->input('rejection_reason'),
-                'processed_at' => now(),
-                'processed_by' => Auth::id(),
-            ]);
-
-            // Kembalikan saldo yang di-hold ke seller
-            DB::table('users')->where('id', $payout->user_id)->increment('balance', $refundAmount);
-        });
+        $payout = $payoutData['payout'];
+        $refundAmount = $payoutData['refund_amount'];
 
         // Catat Log Aktivitas
         \App\Services\ActivityLogger::log(
             'reject_payout',
-            "Menolak penarikan dana Rp " . number_format($payout->amount, 0, ',', '.') . " ke {$payout->account_name}. Alasan: {$request->input('rejection_reason')}",
+            "Menolak penarikan dana Rp " . number_format($payout->amount, 0, ',', '.') . " ke {$payout->account_name}. Alasan: {$reason}",
             [
                 'payout_id' => $payout->id,
                 'seller_id' => $payout->user_id,
                 'refund_amount' => $refundAmount,
                 'method' => $payout->method,
-                'rejection_reason' => $request->input('rejection_reason')
+                'rejection_reason' => $reason
             ]
         );
 

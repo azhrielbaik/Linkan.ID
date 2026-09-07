@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.suspended' => \App\Http\Middleware\CheckSuspended::class,
+            'admin.timeout' => \App\Http\Middleware\AdminIdleTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

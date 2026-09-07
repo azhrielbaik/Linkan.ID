@@ -56,9 +56,25 @@
                     </div>
                 </div>
 
-                {{-- Toolbar --}}
+                {{-- Tabs Navigation (Terpisah Mandiri) --}}
+                <div class="tabs-container">
+                    <a href="{{ route('platform-admin.users', array_merge(request()->except('filter', 'page'), ['filter' => 'all', 'view' => 'users'])) }}"
+                       class="tab-link {{ ($filter ?? 'all') === 'all' ? 'active' : '' }}">
+                        <i class="fas fa-users"></i> <span class="tab-label">{{ __('platform.all') }} ({{ $totalUsers }})</span>
+                    </a>
+                    <a href="{{ route('platform-admin.users', array_merge(request()->except('filter', 'page'), ['filter' => 'active', 'view' => 'users'])) }}"
+                       class="tab-link {{ ($filter ?? '') === 'active' ? 'active' : '' }}">
+                        <i class="fas fa-user-check"></i> <span class="tab-label">{{ __('platform.active') }} ({{ $totalActive }})</span>
+                    </a>
+                    <a href="{{ route('platform-admin.users', array_merge(request()->except('filter', 'page'), ['filter' => 'suspended', 'view' => 'users'])) }}"
+                       class="tab-link {{ ($filter ?? '') === 'suspended' ? 'active' : '' }}">
+                        <i class="fas fa-user-slash"></i> <span class="tab-label">{{ __('platform.suspended') }} ({{ $totalSuspended }})</span>
+                    </a>
+                </div>
+
+                {{-- Toolbar Filter & Search --}}
                 <div class="toolbar" style="display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap;">
-                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; flex: 0 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <form method="GET" action="{{ route('platform-admin.users') }}" class="search-form" style="max-width: none; width: 100%; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <input type="hidden" name="view" value="users">
                         @if($filter && $filter !== 'all')
                             <input type="hidden" name="filter" value="{{ $filter }}">
@@ -83,21 +99,6 @@
                             <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => $filter ?? 'all']) }}" class="btn-reset"><i class="fas fa-rotate-left"></i> {{ __('platform.reset') }}</a>
                         @endif
                     </form>
-
-                    <div class="filter-tabs">
-                        <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'all', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? 'all') === 'all' ? 'active' : '' }}">
-                            <i class="fas fa-users"></i> {{ __('platform.all') }}
-                        </a>
-                        <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'active', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? '') === 'active' ? 'active' : '' }}">
-                            <i class="fas fa-user-check"></i> {{ __('platform.active') }}
-                        </a>
-                        <a href="{{ route('platform-admin.users', ['view' => 'users', 'filter' => 'suspended', 'search' => $search]) }}"
-                           class="filter-tab {{ ($filter ?? '') === 'suspended' ? 'active' : '' }}">
-                            <i class="fas fa-user-slash"></i> {{ __('platform.suspended') }}
-                        </a>
-                    </div>
                 </div>
 
                 {{-- Users Table --}}
