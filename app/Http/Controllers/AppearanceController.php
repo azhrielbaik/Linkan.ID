@@ -4,24 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Appearance;
+use App\Models\DigitalProduct;
+use App\Http\Requests\UpdateAppearanceRequest;
+use App\Http\Requests\UpdateDesignSettingsRequest;
+use App\Services\AppearanceService;
 
 class AppearanceController extends Controller
 {
+    private AppearanceService $appearanceService;
+
+    public function __construct(AppearanceService $appearanceService)
+    {
+        $this->appearanceService = $appearanceService;
+    }
+
     public function index()
     {
         $user = Auth::user();
         $appearance = Appearance::where('user_id', $user->id)->first();
-        $digitalProducts = \App\Models\DigitalProduct::where('user_id', $user->id)->latest()->get();
+        $digitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
+        
         return view('homeadminS.appearance', compact('appearance', 'digitalProducts'));
     }
 
-
-    public function update(Request $request)
+    public function update(UpdateAppearanceRequest $request)
     {
-        $user = Auth::user();
+        // 1. Ekstrak data murni (tanpa membocorkan instance Request ke Service)
+        $payload = $request->validated();
+        $bannerFile = $request->file('banner');
+        $profileFile = $request->file('profile_image');
 
+<<<<<<< HEAD
         $request->validate([
             'appearance_id' => 'required|integer|exists:appearances,id',
             'name' => ['required', 'string', function ($attribute, $value, $fail) {
@@ -165,7 +179,17 @@ $appearance->discord = $request->discord;
         }
 
         $appearance->save();
+=======
+        // 2. Delegasikan ke Service
+        $appearance = $this->appearanceService->updateAppearance(
+            Auth::user(), 
+            $payload, 
+            $bannerFile, 
+            $profileFile
+        );
+>>>>>>> origin/second
 
+        // 3. Kembalikan HTTP Response
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -178,27 +202,20 @@ $appearance->discord = $request->discord;
     }
 
     /**
-     * Auto-save design settings (background, layout, block shape) via AJAX.
-     * Dipanggil dari panel "Pengaturan" di editor microsite tanpa reload halaman.
+     * Auto-save design settings via AJAX.
+     * Logika ini relatif ringan, namun bisa dipindah ke service yang sama jika dibutuhkan nanti.
      */
-    public function updateDesignSettings(Request $request)
+    public function updateDesignSettings(UpdateDesignSettingsRequest $request)
     {
-        $request->validate([
-            'appearance_id' => 'required|integer|exists:appearances,id',
-            'background_type' => 'nullable|string|in:color,image',
-            'background_color' => 'nullable|string|max:100',
-            'profile_layout'  => 'nullable|string|in:classic,title-top,side',
-            'block_shape'     => 'nullable|string|in:sharp,rounded,pill',
-        ]);
+        // Otorisasi kepemilikan sudah dilakukan di FormRequest (authorize method)
+        $appearance = Appearance::findOrFail($request->appearance_id);
 
-        $appearance = Appearance::where('user_id', Auth::id())->findOrFail($request->appearance_id);
-
-        $appearance->fill($request->only(
+        $appearance->fill($request->safe()->only([
             'background_type',
             'background_color',
             'profile_layout',
             'block_shape'
-        ))->save();
+        ]))->save();
 
         return response()->json([
             'success'    => true,

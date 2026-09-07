@@ -41,8 +41,17 @@ class PublicPageController extends Controller
             ]);
         }
 
-        // Ambil data produk digital user yang aktif (sekarang per appearance jika dibutuhkan, tapi sementara masih per user/appearance jika sudah diupdate)
+        // Filter digital products based on blocks_order
+        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+        $productIds = [];
+        foreach ($blocksOrder as $block) {
+            if (str_starts_with($block, 'digitalproduct_')) {
+                $productIds[] = str_replace('digitalproduct_', '', $block);
+            }
+        }
+
         $products = \App\Models\DigitalProduct::where('user_id', $user->id)
+            ->whereIn('id', $productIds)
             ->where('is_active', 1)
             ->get();
 

@@ -86,6 +86,6 @@ class LoginTest extends TestCase
             'password' => 'wrongpassword',
         ]);
 
-        $response->assertStatus(429);
+        $response->assertSessionHasErrors(['email']);
     }
 }

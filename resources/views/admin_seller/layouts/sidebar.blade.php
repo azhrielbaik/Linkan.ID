@@ -27,8 +27,8 @@
             $lockStyle = $isSuspended ? 'opacity: 0.45; cursor: not-allowed;' : '';
         @endphp
 
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.mylinkan') }}" 
-           class="{{ (request()->routeIs('admin.mylinkan') || request()->routeIs('admin.digital-products.*')) ? 'active' : '' }}"
+        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.microsites.index') }}" 
+           class="{{ (request()->routeIs('admin.microsites.index') || request()->routeIs('admin.digital-products.*')) ? 'active' : '' }}"
            style="{{ $lockStyle }}"
            @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
             <i class="fa-solid {{ $isSuspended ? 'fa-lock' : 'fa-pager' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>

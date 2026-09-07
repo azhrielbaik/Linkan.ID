@@ -1,6 +1,6 @@
     <!-- COMBINED HEADER & MODE SWITCH -->
     <div class="section-header microsite-main-header">
-        @include('admin_seller.features.mylinkan.partials._editor_header')
+        @include('admin_seller.microsites.partials._editor_header')
     </div>
 
         <!-- EDITOR VIEW MODE -->
@@ -81,44 +81,44 @@
                     </div>
 
                     <!-- 1. PROFILE BLOCK CARD (STATIC, NOT DRAGGABLE, PINNED AT TOP) -->
-                    @include('admin_seller.features.mylinkan.blocks._profile_block')
+                    @include('admin_seller.microsites.blocks._profile_block')
 
                         <!-- DRAGGABLE ELEMENT BLOCKS LIST CONTAINER -->
                         <div id="elementBlocksList" style="display: flex; flex-direction: column;">
 
                         @if(isset($imageElements))
                             @foreach($imageElements as $imageEl)
-                                @include('admin_seller.features.mylinkan.blocks._image_block')
+                                @include('admin_seller.microsites.blocks._image_block')
                             @endforeach
                         @endif
 
                         @if(isset($dividerElements))
                             @foreach($dividerElements as $dividerEl)
-                                @include('admin_seller.features.mylinkan.blocks._divider_block')
+                                @include('admin_seller.microsites.blocks._divider_block')
                             @endforeach
                         @endif
 
                         @if(isset($textElements) && $textElements->count() > 0)
                             @foreach($textElements as $textEl)
-                                @include('admin_seller.features.mylinkan.blocks._text_block')
+                                @include('admin_seller.microsites.blocks._text_block')
                             @endforeach
                         @endif
 
                         @if(isset($videoElements) && $videoElements->count() > 0)
                             @foreach($videoElements as $videoEl)
-                                @include('admin_seller.features.mylinkan.blocks._video_block')
+                                @include('admin_seller.microsites.blocks._video_block')
                             @endforeach
                         @endif
 
                         @if(isset($socialMediaElements) && $socialMediaElements->count() > 0)
                             @foreach($socialMediaElements as $socialEl)
-                                @include('admin_seller.features.mylinkan.blocks._social_block')
+                                @include('admin_seller.microsites.blocks._social_block')
                             @endforeach
                         @endif
 
                         @if(isset($digitalProducts) && $digitalProducts->count() > 0)
                             @foreach($digitalProducts as $digitalProduct)
-                                @include('admin_seller.features.mylinkan.blocks._digital_product_block')
+                                @include('admin_seller.microsites.blocks._digital_product_block')
                             @endforeach
                         @endif
 
@@ -132,9 +132,9 @@
                      ============================================================ --}}
                 <div id="editorPanelPengaturan" role="tabpanel" aria-labelledby="tab-btn-pengaturan" hidden>
 
-                    @include('admin_seller.features.mylinkan.settings._background')
-                    @include('admin_seller.features.mylinkan.settings._layout')
-                    @include('admin_seller.features.mylinkan.settings._shape')
+                    @include('admin_seller.microsites.settings._background')
+                    @include('admin_seller.microsites.settings._layout')
+                    @include('admin_seller.microsites.settings._shape')
                 </div> {{-- Closes #editorPanelPengaturan --}}
 
                 {{-- ============================================================
@@ -592,7 +592,7 @@
                                 <div id="dpFixedPriceSection">
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Harga (Rp):</span>
-                                        <input type="number" id="dpFixedPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('fixed', this.value)">
+                                        <input type="text" id="dpFixedPrice" class="dp-row-input" value="0" oninput="formatRupiahInput(this, 'fixed')">
                                     </div>
                                 </div>
 
@@ -600,11 +600,11 @@
                                 <div id="dpPwywSection" style="display: none;">
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Min. Harga (Rp):</span>
-                                        <input type="number" id="dpMinPrice" class="dp-row-input" value="0" min="0" oninput="updateDpPriceField('min', this.value)">
+                                        <input type="text" id="dpMinPrice" class="dp-row-input" value="0" oninput="formatRupiahInput(this, 'min')">
                                     </div>
                                     <div class="dp-form-row-box">
                                         <span class="dp-row-label">Maks. Harga (Rp):</span>
-                                        <input type="number" id="dpMaxPrice" class="dp-row-input" placeholder="Tak Terbatas" min="0" oninput="updateDpPriceField('max', this.value)">
+                                        <input type="text" id="dpMaxPrice" class="dp-row-input" placeholder="Tak Terbatas" oninput="formatRupiahInput(this, 'max')">
                                     </div>
                                     <div style="font-size: 12px; color: #9ca3af; margin-top: -5px; margin-bottom: 15px;">Kosongkan harga maksimal jika tidak ada batasan.</div>
                                 </div>
@@ -902,9 +902,9 @@
         changeDpDeliverableType(dpFormState.deliverableType);
 
         document.querySelector(`input[name="dpPriceType"][value="${dpFormState.priceType}"]`).checked = true;
-        document.getElementById('dpFixedPrice').value = dpFormState.priceFixed;
-        document.getElementById('dpMinPrice').value = dpFormState.priceMin;
-        document.getElementById('dpMaxPrice').value = dpFormState.priceMax;
+        document.getElementById('dpFixedPrice').value = formatNumberWithDot(dpFormState.priceFixed);
+        document.getElementById('dpMinPrice').value = formatNumberWithDot(dpFormState.priceMin);
+        document.getElementById('dpMaxPrice').value = formatNumberWithDot(dpFormState.priceMax);
         document.getElementById('dpMinQty').value = dpFormState.qtyMin;
         document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
         changeDpPriceType(dpFormState.priceType);
@@ -1188,6 +1188,27 @@
         }
     }
 
+    function formatNumberWithDot(number) {
+        if (number === null || number === undefined || number === '') return '';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function formatRupiahInput(input, fieldType) {
+        let rawValue = input.value.replace(/[^0-9]/g, '');
+        
+        if (rawValue === '') {
+            input.value = '';
+            updateDpPriceField(fieldType, '');
+            return;
+        }
+        
+        rawValue = parseInt(rawValue, 10).toString();
+        let formattedValue = formatNumberWithDot(rawValue);
+        
+        input.value = formattedValue;
+        updateDpPriceField(fieldType, rawValue);
+    }
+
     function updateDpPriceField(field, value) {
         if (field === 'fixed') dpFormState.priceFixed = value;
         else if (field === 'min') dpFormState.priceMin = value;
@@ -1401,7 +1422,17 @@
             },
             body: formData
         })
-        .then(res => res.json())
+        .then(async res => {
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                if (res.status === 422 && errorData.errors) {
+                    const errorMessages = Object.values(errorData.errors).flat().join('\\n');
+                    throw new Error(errorMessages);
+                }
+                throw new Error(errorData.message || 'Gagal menghubungi server. Status: ' + res.status);
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
                 // Tutup wizard & reload untuk menampilkan produk baru

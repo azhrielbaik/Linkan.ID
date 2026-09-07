@@ -22,7 +22,7 @@ class DigitalProductController extends Controller
     {
         // Route ini biasanya tidak digunakan karena tabel product ada di dashboard atau halaman tersendiri
         // Jika ada halaman khusus index product, bisa render view di sini
-        return redirect()->route('mylinkan');
+        return redirect()->route('admin.microsites.index');
     }
 
     public function create()
@@ -49,7 +49,7 @@ class DigitalProductController extends Controller
             $request->file('platform_file')
         );
 
-        return redirect()->route('mylinkan')->with('success', 'Digital product added successfully!');
+        return redirect()->route('admin.microsites.index')->with('success', 'Digital product added successfully!');
     }
 
     public function edit($id)
@@ -80,7 +80,7 @@ class DigitalProductController extends Controller
             $request->file('platform_file')
         );
 
-        return redirect()->route('mylinkan')->with('success', 'Produk berhasil diperbarui!');
+        return redirect()->route('admin.microsites.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
     public function destroy($id)

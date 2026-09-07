@@ -19,6 +19,12 @@ class MyLinkanShortlinksTest extends TestCase
 
     public function test_public_profile_page_displays_all_user_shortlinks()
     {
+        \App\Models\Appearance::create([
+            'user_id' => $this->user->id,
+            'alias' => $this->user->username,
+            'name' => 'Test User'
+        ]);
+
         // Create a shortlink for the user
         Shortlink::create([
             'user_id' => $this->user->id,

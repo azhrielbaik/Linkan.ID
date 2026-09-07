@@ -108,7 +108,7 @@ class ShortlinkController extends Controller
 
     public function create()
     {
-        return view('admin_seller.features.shortlinks.create');
+        return view('admin_seller.shortlinks.create');
     }
 
     public function store(Request $request)
@@ -274,7 +274,7 @@ class ShortlinkController extends Controller
 
         $shortlinks = $query->paginate(6);
 
-        return view('admin_seller.features.shortlinks.create', compact('shortlinks'));
+        return view('admin_seller.shortlinks.index', compact('shortlinks'));
     }
 
     public function analytics(Request $request, Shortlink $shortlink)
@@ -286,7 +286,7 @@ class ShortlinkController extends Controller
         $totalClicks = $shortlink->clicks()->count();
         $sources = $this->sourceSummary($shortlink);
 
-        return view('admin_seller.features.shortlinks.analytics', [
+        return view('admin_seller.shortlinks.analytics', [
             'shortlink' => $shortlink,
             'totalClicks' => $totalClicks,
             'sources' => $sources,

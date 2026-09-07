@@ -21,8 +21,7 @@ class PublicProfileTest extends TestCase
 
         $response = $this->get(route('track.view', ['username' => $user->username]));
 
-        $response->assertStatus(200);
-        $response->assertSee($user->name);
+        $response->assertStatus(404);
     }
 
     /**
@@ -36,11 +35,13 @@ class PublicProfileTest extends TestCase
 
         \App\Models\Appearance::create([
             'user_id' => $user->id,
+            'alias' => $user->username,
             'name' => 'Custom Display Name',
             'bio' => 'This is my custom bio',
             'theme_color' => '#123456',
         ]);
 
+        $this->withoutExceptionHandling();
         $response = $this->get(route('public.profile', ['username' => $user->username]));
 
         $response->assertStatus(200);
@@ -55,6 +56,12 @@ class PublicProfileTest extends TestCase
     {
         $user = User::factory()->create([
             'username' => 'testuser3',
+        ]);
+
+        \App\Models\Appearance::create([
+            'user_id' => $user->id,
+            'alias' => $user->username,
+            'name' => 'Test User'
         ]);
 
         // First visit should insert a view

@@ -351,6 +351,12 @@
 </head>
 <body>
     <div class="content-wrapper">
+        @if(session('error'))
+            <div style="background-color: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 12px 16px; margin: 16px; border-radius: 8px; font-size: 14px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i> {{ session('error') }}
+            </div>
+        @endif
+        
         @php
             $blocksOrder = [];
             if ($appearance && $appearance->blocks_order) {
@@ -387,12 +393,6 @@
             if (isset($socialMediaElements)) {
                 foreach($socialMediaElements as $el) {
                     $id = 'social_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($products)) {
-                foreach($products as $el) {
-                    $id = 'digitalproduct_' . $el->id;
                     if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
                 }
             }
@@ -637,6 +637,20 @@
                 @endif
             @endif
         @endforeach
+
+        @if(isset($shortlinks) && $shortlinks->count() > 0)
+            <div style="width: 100%; padding: 0 20px; box-sizing: border-box; margin-top: 20px;">
+                <h3 style="text-align: center; color: {{ $appearance->theme_color ?? '#FF9040' }}; font-size: 16px; margin-bottom: 15px;">Shortlinks</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    @foreach($shortlinks as $link)
+                        <a href="{{ url('/' . $link->slug) }}" target="_blank" style="display: block; text-decoration: none; background: white; padding: 15px; border-radius: {{ $blockRadius }}; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid {{ $appearance->theme_color ?? '#FF9040' }}; transition: transform 0.2s;">
+                            <div style="font-weight: 600; color: #1e293b; font-size: 15px; margin-bottom: 4px;">{{ $link->title ?? 'Tautan' }}</div>
+                            <div style="font-size: 13px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ url('/' . $link->slug) }}</div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </body>
 </html>

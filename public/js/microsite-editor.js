@@ -241,8 +241,11 @@
 
                 const liveBannerContainer = document.getElementById('livePhoneBannerContainer');
                 const liveBannerImg = document.getElementById('livePhoneBannerImg');
+                const liveProfileSection = document.getElementById('liveProfileSection');
+                
                 if (liveBannerContainer) liveBannerContainer.style.display = 'block';
                 if (liveBannerImg) liveBannerImg.src = e.target.result;
+                if (liveProfileSection) liveProfileSection.classList.add('has-banner');
             }
             reader.readAsDataURL(input.files[0]);
         }
@@ -590,34 +593,47 @@
         // Sort blocks based on DB order
         const list = document.getElementById('elementBlocksList');
         const dbOrderStr = document.getElementById('micrositeEditorUrls').dataset.appearanceBlocksOrder || '';
-        if (list && dbOrderStr) {
-            const dbOrder = dbOrderStr.split(',');
-            dbOrder.forEach(blockId => {
-                let el = null;
-                if (blockId === 'profile') {
-                    // Profile is statically positioned outside the list, do nothing
-                    return;
-                } else if (blockId.startsWith('image_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="image"]`);
-                } else if (blockId.startsWith('divider_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="divider"]`);
-                } else if (blockId.startsWith('text_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="text"]`);
-                } else if (blockId.startsWith('video_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="video"]`);
-                } else if (blockId.startsWith('social_') || blockId.startsWith('socialBlock_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
-                } else if (blockId.startsWith('digitalproduct_')) {
-                    const dbId = blockId.split('_')[1];
-                    el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="digital_product"]`);
-                }
-                if (el) {
-                    list.appendChild(el);
+        if (list) {
+            const allBlocks = Array.from(list.querySelectorAll('.draggable-element-block'));
+            const sortedBlocks = new Set();
+            
+            if (dbOrderStr) {
+                const dbOrder = dbOrderStr.split(',');
+                dbOrder.forEach(blockId => {
+                    let el = null;
+                    if (blockId === 'profile') {
+                        // Profile is statically positioned outside the list, do nothing
+                        return;
+                    } else if (blockId.startsWith('image_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="image"]`);
+                    } else if (blockId.startsWith('divider_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="divider"]`);
+                    } else if (blockId.startsWith('text_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="text"]`);
+                    } else if (blockId.startsWith('video_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="video"]`);
+                    } else if (blockId.startsWith('social_') || blockId.startsWith('socialBlock_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="social"]`);
+                    } else if (blockId.startsWith('digitalproduct_')) {
+                        const dbId = blockId.split('_')[1];
+                        el = document.querySelector(`.draggable-element-block[data-db-id="${dbId}"][data-element-type="digital_product"]`);
+                    }
+                    if (el) {
+                        list.appendChild(el);
+                        sortedBlocks.add(el);
+                    }
+                });
+            }
+            
+            // Append unsorted elements (e.g. newly created ones) to the bottom of the list
+            allBlocks.forEach(block => {
+                if (!sortedBlocks.has(block)) {
+                    list.appendChild(block);
                 }
             });
         }
@@ -804,22 +820,17 @@
 
 
     function updatePhonePreviewVisibility() {
-        const card = document.getElementById('profileBlockCard');
         const liveProfile = document.getElementById('liveProfileSection');
         const emptyState = document.getElementById('phoneEmptyState');
 
-        let isProfileActive = false;
-        if (card) {
-            const computedDisplay = window.getComputedStyle(card).display;
-            isProfileActive = (card.style.display !== 'none') && (computedDisplay !== 'none');
-        }
-
+        // The profile block is always active as it's a mandatory pinned block.
         if (liveProfile) {
-            liveProfile.style.display = isProfileActive ? 'block' : 'none';
+            liveProfile.style.display = 'block';
         }
 
+        // The empty state should be hidden because the profile block is always present as the first element.
         if (emptyState) {
-            emptyState.style.display = isProfileActive ? 'none' : 'flex';
+            emptyState.style.display = 'none';
         }
     }
 
@@ -2366,6 +2377,13 @@
             
         }
 
+        function updateFormBodyHeight(id) {
+            const formBody = document.getElementById('formBody_' + id);
+            if (formBody && formBody.classList.contains('open')) {
+                formBody.style.maxHeight = (formBody.scrollHeight + 300) + 'px';
+            }
+        }
+
         if (e.target.matches('.js-adv-tab') || e.target.closest('.js-adv-tab')) {
             const btn = e.target.matches('.js-adv-tab') ? e.target : e.target.closest('.js-adv-tab');
             const id = btn.dataset.targetId;
@@ -2392,6 +2410,7 @@
                 hiddenType.dispatchEvent(new Event('change', { bubbles: true }));
             }
             
+            updateFormBodyHeight(id);
         }
 
         if (e.target.matches('.js-adv-subtab') || e.target.closest('.js-adv-subtab')) {
@@ -2415,6 +2434,7 @@
                 hiddenType.dispatchEvent(new Event('change', { bubbles: true }));
             }
             
+            updateFormBodyHeight(id);
         }
 
         if (e.target.matches('.js-scroll-cat') || e.target.closest('.js-scroll-cat')) {
@@ -2588,6 +2608,7 @@
             const fields = document.getElementById('buttonFields_' + id);
             if (fields) {
                 fields.style.display = e.target.checked ? 'block' : 'none';
+                updateFormBodyHeight(id);
             }
         }
 

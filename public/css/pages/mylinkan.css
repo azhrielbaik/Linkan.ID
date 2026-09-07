@@ -2099,7 +2099,7 @@ font[face="Verdana"] {
     width: 68px;
     height: 68px;
     overflow: hidden;
-    margin: -34px auto 10px;
+    margin: 24px auto 10px; /* Default margin when no banner */
     background: #e5e7eb;
     display: flex;
     align-items: center;
@@ -2111,6 +2111,9 @@ font[face="Verdana"] {
     z-index: 2;
 }
 
+.live-profile-section.has-banner .live-phone-avatar-container {
+    margin: -34px auto 10px; /* Pull up to overlap with banner */
+}
 .live-phone-avatar-img {
     width: 100%;
     height: 100%;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DigitalProduct;
+use App\Models\Appearance;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
@@ -15,7 +16,6 @@ class DigitalProductElementController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'element_id' => 'nullable|integer',
-            'appearance_id' => 'required|integer|exists:appearances,id'
         ]);
 
         $user = $request->user();
@@ -25,9 +25,11 @@ class DigitalProductElementController extends Controller
             $digitalProduct = DigitalProduct::where('id', $request->element_id)->where('user_id', $user->id)->first();
         }
 
+        $isNew = false;
         if (!$digitalProduct) {
             $digitalProduct = new DigitalProduct();
             $digitalProduct->user_id = $user->id;
+            $isNew = true;
             // Since DigitalProduct isn't originally an ordered microsite element in a specific table,
             // its sorting will be managed purely by Appearance::blocks_order via its prefix 'DigitalProduct_'
         }
@@ -141,6 +143,15 @@ class DigitalProductElementController extends Controller
 
         $digitalProduct->save();
 
+        if ($isNew && $request->has('appearance_id')) {
+            $appearance = Appearance::where('id', $request->appearance_id)->where('user_id', $user->id)->first();
+            if ($appearance) {
+                $order = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+                $order[] = 'digitalproduct_' . $digitalProduct->id;
+                $appearance->blocks_order = implode(',', $order);
+                $appearance->save();
+            }
+        }
         return response()->json([
             'success' => true,
             'id' => $digitalProduct->id,
@@ -153,20 +164,7 @@ class DigitalProductElementController extends Controller
         $user = $request->user();
         $element = DigitalProduct::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
-            $appearances = \App\Models\Appearance::where('user_id', $user->id)->get();
-            foreach ($appearances as $appearance) {
-                if ($appearance->blocks_order) {
-                    $order = is_string($appearance->blocks_order) ? explode(',', $appearance->blocks_order) : $appearance->blocks_order;
-                    if (is_array($order)) {
-                        $order = array_filter($order, function($item) use ($id) {
-                            return $item !== 'DigitalProduct_' . $id;
-                        });
-                        $appearance->blocks_order = is_string($appearance->blocks_order) ? implode(',', $order) : array_values($order);
-                        $appearance->save();
-                    }
-                }
-            }
-            
+
             // Cleanup media if necessary
             if ($element->media_files) {
                 foreach ($element->media_files as $media) {

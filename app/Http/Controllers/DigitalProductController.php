@@ -13,14 +13,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateDigitalProductQtyRequest;
+use App\Http\Requests\CheckoutDigitalProductRequest;
+use App\Http\Requests\StoreTransactionRequest;
 use Illuminate\Support\Str;
 use Midtrans\Snap;
 
+use App\Services\CheckoutService;
+
 class DigitalProductController extends Controller
 {
+    protected $checkoutService;
 
+    public function __construct(CheckoutService $checkoutService)
+    {
+        $this->checkoutService = $checkoutService;
+    }
 
-public function show($id)
+    public function show($id)
 {
     $product = DigitalProduct::findOrFail($id);
     $user = $product->user; // relasi user() di model DigitalProduct
@@ -33,21 +43,16 @@ public function show($id)
         abort(403, 'Produk ini tidak tersedia karena akun penjual sedang ditangguhkan.');
     }
 
-    $appearance = $user->appearance;
      // Reset qty jadi 1 setiap buka halaman
     session(["cart.qty.$id" => 1]);
 
-    return view('public.product-detail', compact('product', 'user', 'appearance'));
+    return view('public.product-detail', compact('product', 'user'));
 }
 
 
-    public function updateQty(Request $request)
+    public function updateQty(UpdateDigitalProductQtyRequest $request)
 {
-    $request->validate([
-        'product_id' => 'required|integer',
-        'qty' => 'required|integer|min:1',
-        'price' => 'nullable|numeric|min:0'
-    ]);
+    $validated = $request->validated();
 
     session()->put("cart.qty.{$request->product_id}", $request->qty);
     if ($request->has('price')) {
@@ -68,11 +73,25 @@ public function checkoutSuccess(Request $request, $id)
     if ($orderId) {
         $transaction = \App\Models\Transaction::where('order_id', $orderId)->first();
     }
+    // Determine the microsite alias
+    $appearances = \App\Models\Appearance::where('user_id', $product->user_id)->get();
+    $micrositeAlias = null;
+    foreach ($appearances as $appearance) {
+        if (str_contains($appearance->blocks_order, 'digitalproduct_' . $product->id)) {
+            $micrositeAlias = $appearance->alias;
+            break;
+        }
+    }
+    if (!$micrositeAlias) {
+        $firstAppearance = \App\Models\Appearance::where('user_id', $product->user_id)->first();
+        $micrositeAlias = $firstAppearance ? $firstAppearance->alias : ($product->user->username ?? '');
+    }
+    $micrositeUrl = route('public.profile', ['username' => $micrositeAlias]);
 
-    return view('public.checkout-success', compact('product', 'transaction'));
+    return view('public.checkout-success', compact('product', 'transaction', 'micrositeUrl'));
 }
 
-public function checkout(Request $request, $id)
+    public function checkout(CheckoutDigitalProductRequest $request, $id)
 {
     $product = DigitalProduct::findOrFail($id);
 
@@ -90,79 +109,46 @@ public function checkout(Request $request, $id)
         : session("cart.qty.$id", 1);
 
     $customPrice = session("cart.price.$id");
-    $itemPrice = $product->price;
-    if ($product->pricing_type === 'pwyw' && $customPrice && $customPrice >= $product->price_min) {
-        $itemPrice = $customPrice;
+    
+    // Panggil Service untuk menghitung harga & membuat Token Midtrans
+    try {
+        $checkoutData = $this->checkoutService->generateSnapToken(
+            $product, 
+            $qty, 
+            $customPrice, 
+            $request->input('name', 'Guest'), 
+            $request->input('email', 'guest@example.com')
+        );
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
     }
 
-    $totalPrice = $itemPrice * $qty;
-    $snapToken = null;
-    $orderId = 'ORDER-' . uniqid();
-
-    if ($totalPrice > 0) {
-        // Konfigurasi Midtrans
-        \Midtrans\Config::$serverKey = 'SB-Mid-server-qbA7U8pOrHFCGy-0LlFclqIG';
-        \Midtrans\Config::$isProduction = false;
-        \Midtrans\Config::$isSanitized = true;
-        \Midtrans\Config::$is3ds = true;
-
-        $params = [
-            'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => $totalPrice,
-            ],
-            'customer_details' => [
-                'first_name' => $request->input('name', 'Guest'),
-                'email' => $request->input('email', 'guest@example.com'),
-            ],
-            'item_details' => [[
-                'id' => $product->id,
-                'price' => $itemPrice,
-                'quantity' => $qty,
-                'name' => $product->title,
-            ]],
-        ];
-
-        try {
-            $snapToken = \Midtrans\Snap::getSnapToken($params);
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
-        }
-    }
+    $totalPrice = $checkoutData['totalPrice'];
+    $itemPrice = $checkoutData['itemPrice'];
+    $snapToken = $checkoutData['snapToken'];
+    $orderId = $checkoutData['orderId'];
 
     if ($request->isMethod('post')) {
-        $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string',
-            'qty' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         if ($totalPrice == 0) {
-            $status = 'success';
-        } else {
-            $status = 'pending';
-        }
+            // Langsung store untuk transaksi gratis (status otomatis success)
+            $transaction = $this->checkoutService->storeTransaction([
+                'order_id' => $orderId,
+                'transaction_status' => 'success',
+                'product_id' => $product->id,
+                'buyer_email' => $request->email,
+                'buyer_name' => $request->name,
+                'qty' => $qty,
+                'total_price' => 0
+            ]);
 
-        // Simpan transaksi ke database setelah validasi
-        $transaction = Transaction::create([
-            'order_id' => $orderId,
-            'product_id' => $product->id,
-            'buyer_name' => $request->name,
-            'buyer_email' => $request->email,
-            'qty' => $qty,
-            'total_price' => $totalPrice,
-            'status' => $status
-        ]);
-        
-        if ($totalPrice == 0) {
-            \Illuminate\Support\Facades\Mail::to($transaction->buyer_email)->send(
-                new \App\Mail\SendDigitalProductMail($product, $transaction->buyer_name, $transaction)
-            );
             $redirectUrl = null;
             $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
             if ($buyerUser) {
                 $redirectUrl = route('public.profile', ['username' => $buyerUser->username]);
             }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Produk gratis berhasil didapatkan & email terkirim',
@@ -187,121 +173,22 @@ public function checkout(Request $request, $id)
 }
 public function midtransCallback(Request $request)
 {
-    \Midtrans\Config::$serverKey = 'SB-Mid-server-qbA7U8pOrHFCGy-0LlFclqIG';
-    \Midtrans\Config::$isProduction = false;
-
-    $notif = new \Midtrans\Notification();
-
-    $transaction = $notif->transaction_status;
-    $orderId = $notif->order_id;
-
-    \Log::info('Midtrans Callback - Transaction Status: ' . $transaction);
-    \Log::info('Midtrans Callback - Order ID: ' . $orderId);
-
-    $trx = Transaction::where('order_id', $orderId)->first();
-
-    if (!$trx) {
-        \Log::error('Midtrans Callback - Transaction not found for order ID: ' . $orderId);
-        return response()->json(['error' => 'Transaction not found'], 404);
+    $result = $this->checkoutService->handleCallback();
+    
+    if ($result['status'] === 404) {
+        return response()->json(['error' => $result['message']], 404);
     }
 
-    // Ubah status dari Midtrans ke status yang kita gunakan
-    if ($transaction == 'capture' || $transaction == 'settlement') {
-        $trx->status = 'success';
-        $trx->save();
-
-        \Log::info('Midtrans Callback - Updating transaction status to success');
-        \Log::info('Midtrans Callback - Transaction ID: ' . $trx->id);
-        \Log::info('Midtrans Callback - Amount: ' . $trx->total_price);
-
-        // Update balance seller
-        $product = $trx->product;
-        $seller = $product->user;
-        
-        \Log::info('Midtrans Callback - Updating seller balance');
-        \Log::info('Midtrans Callback - Seller ID: ' . $seller->id);
-        \Log::info('Midtrans Callback - Amount to add: ' . $trx->total_price);
-        
-        // Update balance seller
-        DB::table('users')
-            ->where('id', $seller->id)
-            ->increment('balance', $trx->total_price);
-
-        // Kirim email produk digital
-        $product = $trx->product;
-        $link = $product->platform_type === 'upload'
-            ? asset('storage/' . $product->platform_file)
-            : $product->platform_url;
-
-        Mail::raw("Terima kasih telah membeli produk digital. Berikut link download Anda:\n\n$link", function ($message) use ($trx) {
-            $message->to($trx->buyer_email)
-                    ->subject('Produk Digital Anda');
-        });
-    }
-
-    return response()->json(['message' => 'Callback processed']);
+    return response()->json(['message' => $result['message']], 200);
 }
-public function storeTransaction(Request $request)
+public function storeTransaction(StoreTransactionRequest $request)
 {
-    $data = $request->validate([
-        'order_id' => 'required|string|unique:transactions',
-        'transaction_status' => 'required|string',
-        'product_id' => 'required|integer|exists:digital_products,id',
-        'buyer_email' => 'required|email',
-        'buyer_name' => 'required|string',
-        'qty' => 'required|integer|min:1',
-        'total_price' => 'required|numeric'
-    ]);
+    $data = $request->validated();
 
-    \Log::info('Store Transaction - Initial Status: ' . $data['transaction_status']);
+    $transaction = $this->checkoutService->storeTransaction($data);
 
-    // Ubah status dari Midtrans ke status yang kita gunakan
-    $status = $data['transaction_status'];
-    if ($status === 'capture' || $status === 'settlement') {
-        $status = 'success';
-    } else if ($status === 'pending') {
-        $status = 'pending';
-    } else {
-        $status = 'failed';
-    }
-
-    \Log::info('Store Transaction - Converted Status: ' . $status);
-
-    $transaction = Transaction::create([
-        'order_id' => $data['order_id'],
-        'status' => $status,
-        'product_id' => $data['product_id'],
-        'buyer_email' => $data['buyer_email'],
-        'buyer_name' => $data['buyer_name'],
-        'qty' => $data['qty'],
-        'total_price' => $data['total_price'],
-    ]);
-
-    \Log::info('Store Transaction - Created Transaction ID: ' . $transaction->id);
-
-    // Jika transaksi berhasil, update balance seller
-    if ($status === 'success') {
-        $product = DigitalProduct::find($data['product_id']);
-        $seller = $product->user;
-        
-        \Log::info('Store Transaction - Updating seller balance');
-        \Log::info('Store Transaction - Seller ID: ' . $seller->id);
-        \Log::info('Store Transaction - Amount to add: ' . $data['total_price']);
-        
-        // Update balance seller
-        DB::table('users')
-            ->where('id', $seller->id)
-            ->increment('balance', $data['total_price']);
-    }
-
-    $product = \App\Models\DigitalProduct::find($data['product_id']);
-    Mail::to($transaction->buyer_email)->send(
-        new SendDigitalProductMail($product, $transaction->buyer_name, $transaction)
-    );
-
-    // Cari user berdasarkan email pembeli
-    $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
     $redirectUrl = null;
+    $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
     if ($buyerUser) {
         $redirectUrl = route('public.profile', ['username' => $buyerUser->username]);
     }
