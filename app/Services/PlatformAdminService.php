@@ -200,15 +200,39 @@ class PlatformAdminService
             ];
         }
 
+        // 4. Peringatan Pembersihan Log (H-1) jika ada log berumur >= 29 hari
+        $expiringLogsCount = DB::table('activity_logs')
+            ->where('created_at', '<=', Carbon::now()->subDays(29))
+            ->count();
+
+        if ($expiringLogsCount > 0) {
+            $notifications[] = [
+                'id'           => 'log_cleanup_warning',
+                'type'         => 'log_cleanup',
+                'title'        => 'Pembersihan Log (H-1)',
+                'seller_name'  => 'Sistem Platform',
+                'badge'        => 'Pembersihan',
+                'badge_class'  => 'badge-appeal',
+                'icon'         => 'fas fa-history',
+                'icon_bg'      => '#fef3c7',
+                'icon_color'   => '#d97706',
+                'url'          => route('platform-admin.logs.activity.export-archive'),
+                'time_ago'     => 'Besok 02:00',
+                'timestamp'    => time(),
+                'message'      => "{$expiringLogsCount} log (> 29 hari) akan dibersihkan otomatis besok pkl 02:00. Klik untuk mengunduh cadangan CSV.",
+            ];
+        }
+
         usort($notifications, fn ($a, $b) => $b['timestamp'] - $a['timestamp']);
 
         return [
             'status'        => 'success',
-            'unread_count'  => count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals),
+            'unread_count'  => count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals) + ($expiringLogsCount > 0 ? 1 : 0),
             'counts'        => [
-                'products' => count($pendingProducts),
-                'payouts'  => count($pendingPayouts),
-                'appeals'  => count($pendingAppeals),
+                'products'    => count($pendingProducts),
+                'payouts'     => count($pendingPayouts),
+                'appeals'     => count($pendingAppeals),
+                'log_cleanup' => $expiringLogsCount > 0 ? 1 : 0,
             ],
             'notifications' => array_slice($notifications, 0, 20)
         ];

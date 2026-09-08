@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PlatformAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Transaction;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -69,7 +70,7 @@ class LogController extends Controller
             $query->whereDate('created_at', '<=', $endDate);
         }
 
-        $logs = $query->paginate(20)->withQueryString();
+        $logs = $query->paginate(50)->withQueryString();
 
         // Stats
         $totalLogsCount   = ActivityLog::count();
@@ -88,6 +89,9 @@ class LogController extends Controller
             'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
         ])->count();
 
+        // Hitung log yang akan kadaluarsa dalam retensi 30 hari (berusia >= 29 hari)
+        $expiringLogsCount = ActivityLog::where('created_at', '<=', now()->subDays(29))->count();
+
         return view('platformadmin.logs.activity', compact(
             'logs',
             'category',
@@ -98,8 +102,72 @@ class LogController extends Controller
             'totalLogsCount',
             'adminActionCount',
             'authActionCount',
-            'sellerActionCount'
+            'sellerActionCount',
+            'expiringLogsCount'
         ));
+    }
+
+    /**
+     * Ekspor cadangan (backup) log aktivitas yang mendekati batas kadaluarsa (>= 29 hari)
+     * atau seluruh log ke format CSV ber-BOM UTF-8 (ramah Excel).
+     */
+    public function exportArchive(Request $request)
+    {
+        $days = (int) $request->input('days', 29);
+        $cutoff = now()->subDays($days);
+
+        $hasExpiring = ActivityLog::where('created_at', '<=', $cutoff)->exists();
+        $targetQuery = ActivityLog::with('user');
+
+        if ($hasExpiring) {
+            $targetQuery->where('created_at', '<=', $cutoff);
+            $fileName = 'backup_log_aktivitas_' . $days . '_hari_' . now()->format('Y-m-d_H-i-s') . '.csv';
+            $logDesc = "Mengunduh cadangan arsip log aktivitas (kategori usia >= {$days} hari)";
+        } else {
+            $fileName = 'backup_seluruh_log_aktivitas_' . now()->format('Y-m-d_H-i-s') . '.csv';
+            $logDesc = "Mengunduh cadangan seluruh log aktivitas";
+        }
+
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        // Catat aktivitas unduh backup
+        if (class_exists(ActivityLogger::class)) {
+            ActivityLogger::log('export_activity_logs_backup', $logDesc, [
+                'filename' => $fileName,
+                'retention_filter_days' => $hasExpiring ? $days : 'all',
+            ]);
+        }
+
+        return response()->stream(function () use ($targetQuery) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF"); // BOM UTF-8 for Excel support
+
+            $columns = ['ID Log', 'Waktu Dibuat', 'Aksi', 'Nama Pengguna', 'Email', 'Role', 'IP Address', 'Deskripsi'];
+            fputcsv($file, $columns);
+
+            $targetQuery->orderBy('created_at', 'desc')->chunk(500, function ($logs) use ($file) {
+                foreach ($logs as $log) {
+                    fputcsv($file, [
+                        $log->id,
+                        $log->created_at ? $log->created_at->format('Y-m-d H:i:s') : '-',
+                        $log->action,
+                        $log->user->name ?? 'Sistem',
+                        $log->user->email ?? '-',
+                        $log->user->role ?? '-',
+                        $log->ip_address ?? '-',
+                        $log->description ?? '-',
+                    ]);
+                }
+            });
+
+            fclose($file);
+        }, 200, $headers);
     }
 
     /**

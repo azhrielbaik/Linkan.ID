@@ -278,6 +278,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Log & Audit
     Route::get('/logs/activity', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activityLogs'])->name('logs.activity');
+    Route::get('/logs/activity/export-archive', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'exportArchive'])->name('logs.activity.export-archive');
     Route::get('/logs/activity/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activitySuggest'])->name('logs.activity.suggest');
     Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
     Route::get('/logs/transactions/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionSuggest'])->name('logs.transactions.suggest');

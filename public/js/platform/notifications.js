@@ -152,6 +152,19 @@ function renderPlatformNotifs(filterType) {
 
     let html = "";
     items.forEach((item) => {
+        let messageHtml = "";
+        if (item.type === "product") {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan verifikasi produk <em>"${item.product_name}"</em>.`;
+        } else if (item.type === "payout") {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan withdraw <strong>Rp ${item.amount}</strong> (${item.bank}).`;
+        } else if (item.type === "appeal") {
+            messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan banding penangguhan akun.`;
+        } else if (item.type === "log_cleanup") {
+            messageHtml = item.message || "Log aktivitas (> 29 hari) akan dibersihkan besok pukul 02:00 WIB. Klik untuk unduh cadangan.";
+        } else {
+            messageHtml = item.message || item.seller_name || "";
+        }
+
         html += `
             <a href="${item.url}" class="notif-item ${item.is_read ? "is-read" : "is-unread"}" onclick="markPlatformNotifRead(event, '${item.id}')">
                 <div class="notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">

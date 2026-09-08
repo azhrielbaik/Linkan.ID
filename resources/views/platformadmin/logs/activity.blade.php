@@ -92,6 +92,30 @@
                 </a>
             </div>
 
+            {{-- Peringatan Pembersihan Log Bulanan (H-1) --}}
+            @if(isset($expiringLogsCount) && $expiringLogsCount > 0)
+                <div class="log-cleanup-banner" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.08);">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 42px; height: 42px; border-radius: 10px; background: #fef08a; color: #b45309; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 2px;">
+                                Peringatan Pembersihan Log Bulanan (H-1)
+                            </div>
+                            <div style="font-size: 13px; color: #b45309;">
+                                Terdapat <strong>{{ number_format($expiringLogsCount, 0, ',', '.') }}</strong> baris log aktivitas (&ge; 29 hari) yang dijadwalkan dibersihkan otomatis besok pukul 02:00 WIB. Anda dapat mencadangkannya sekarang.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                        <a href="{{ route('platform-admin.logs.activity.export-archive') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #d97706; color: #ffffff; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                            <i class="fas fa-download"></i> Unduh Cadangan CSV
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             {{-- Filter & Search Card --}}
             <div class="filter-card">
                 <form method="GET" action="{{ route('platform-admin.logs.activity') }}" class="search-form">
@@ -149,6 +173,9 @@
                     @if($search || $action || $startDate || $endDate)
                         <a href="{{ route('platform-admin.logs.activity', ['category' => $category]) }}" class="btn-reset">{{ __('platform.reset') }}</a>
                     @endif
+                    <a href="{{ route('platform-admin.logs.activity.export-archive') }}" class="btn-filter" style="background: #475569; text-decoration: none;" title="Unduh cadangan data log ke format CSV">
+                        <i class="fas fa-file-export"></i> Backup Log
+                    </a>
                 </form>
             </div>
 
