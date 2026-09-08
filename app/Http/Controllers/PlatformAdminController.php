@@ -78,6 +78,75 @@ class PlatformAdminController extends Controller
         ]);
     }
 
+    public function getNotifications(Request $request)
+    {
+        return response()->json($this->platformAdminService->getNotificationsData());
+    }
+
+    public function markNotificationRead(Request $request)
+    {
+        return response()->json(['status' => 'success']);
+    }
+
+    public function markAllNotificationsRead(Request $request)
+    {
+        return response()->json(['status' => 'success']);
+    }
+
+    public function streamNotifications(Request $request)
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
+        return response()->stream(function () {
+            @set_time_limit(0);
+            @ini_set('implicit_flush', 1);
+            if (ob_get_level()) {
+                @ob_end_flush();
+            }
+            flush();
+
+            $maxCycles = 10;
+            $lastHash = null;
+
+            for ($i = 0; $i < $maxCycles; $i++) {
+                if (connection_aborted()) {
+                    break;
+                }
+
+                $data = $this->platformAdminService->getNotificationsData();
+                $currentHash = md5(json_encode($data));
+
+                if ($lastHash !== $currentHash || $i === 0) {
+                    echo "event: notifications\n";
+                    echo "data: " . json_encode($data) . "\n\n";
+                    $lastHash = $currentHash;
+                } else {
+                    echo ": ping\n\n";
+                }
+
+                if (ob_get_level()) {
+                    @ob_flush();
+                }
+                flush();
+
+                sleep(3);
+            }
+        }, 200, [
+            'Content-Type'      => 'text/event-stream',
+            'Cache-Control'     => 'no-cache, no-store, must-revalidate',
+            'Connection'        => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
+        ]);
+    }
+
+    public function appeals(Request $request)
+    {
+        $request->merge(['view' => 'appeals']);
+        return $this->users($request);
+    }
+
 
 
     public function users(Request $request)
