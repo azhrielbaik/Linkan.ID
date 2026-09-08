@@ -1,0 +1,277 @@
+/* Digital Product Wizard Styles (Matches image reference) */
+                    .dp-wizard-container {
+                        background: #ffffff;
+                        border-radius: 8px;
+                        padding: 30px;
+                        font-family: 'Plus Jakarta Sans', sans-serif;
+                    }
+                    
+                    /* Stepper UI */
+                    .dp-stepper-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 30px;
+                        padding: 0 10px;
+                    }
+                    .dp-stepper-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        color: #9ca3af;
+                        font-weight: 600;
+                        font-size: 14px;
+                        transition: color 0.2s;
+                    }
+                    .dp-stepper-item.active {
+                        color: #F97316;
+                    }
+                    .dp-stepper-item.completed {
+                        color: #111827;
+                    }
+                    .dp-stepper-circle {
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        background: #e5e7eb;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 12px;
+                        color: #6b7280;
+                        font-weight: 700;
+                        transition: all 0.2s;
+                    }
+                    .dp-stepper-item.active .dp-stepper-circle {
+                        background: #F97316;
+                        color: #fff;
+                    }
+                    .dp-stepper-item.completed .dp-stepper-circle {
+                        background: #d9f99d; 
+                        color: #111827;
+                    }
+                    .dp-stepper-line {
+                        flex: 1;
+                        height: 1px;
+                        background: #e5e7eb;
+                        margin: 0 15px;
+                    }
+
+                    /* Form Rows */
+                    .dp-form-row-box {
+                        display: grid;
+                        grid-template-columns: 150px 1fr;
+                        align-items: center;
+                        gap: 15px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 6px;
+                        padding: 14px 18px;
+                        margin-bottom: 16px;
+                        background: #fff;
+                        transition: all 0.2s ease;
+                    }
+                    .dp-form-row-box:focus-within {
+                        border-color: #F97316;
+                        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+                    }
+                    .dp-row-label {
+                        font-weight: 700;
+                        color: #111827;
+                        font-size: 14px;
+                        margin: 0;
+                    }
+                    .dp-row-input {
+                        border: none;
+                        outline: none;
+                        width: 100%;
+                        font-size: 14px;
+                        color: #111827;
+                        background: transparent;
+                        font-family: inherit;
+                        padding: 0;
+                    }
+                    .dp-row-input::placeholder {
+                        color: #9ca3af;
+                    }
+                    
+                    /* Upload Box */
+                    .dp-upload-box {
+                        border: 1px dashed #d1d5db;
+                        border-radius: 4px;
+                        padding: 40px 20px;
+                        text-align: center;
+                        cursor: pointer;
+                        background: #fff;
+                        transition: all 0.2s ease;
+                        margin-bottom: 24px;
+                    }
+                    .dp-upload-box:hover {
+                        border-color: #F97316;
+                        background: #fff8f3;
+                    }
+                    .dp-upload-box i {
+                        font-size: 28px;
+                        color: #F97316;
+                        margin-bottom: 12px;
+                    }
+                    .dp-upload-box h4 {
+                        margin: 0 0 5px 0;
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: #111827;
+                    }
+                    .dp-upload-box p {
+                        margin: 0;
+                        font-size: 13px;
+                        color: #6b7280;
+                    }
+
+                    /* Radio Cards */
+                    .dp-platform-cards-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                        margin-bottom: 24px;
+                    }
+                    .dp-platform-card {
+                        border: 1px solid #e5e7eb;
+                        border-radius: 4px;
+                        padding: 20px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        background: #fff;
+                        display: block;
+                        height: 100%;
+                    }
+                    .dp-platform-card:hover {
+                        border-color: #F97316;
+                    }
+                    .dp-platform-card-wrapper input[type="radio"] {
+                        display: none;
+                    }
+                    .dp-platform-card-wrapper input[type="radio"]:checked ~ .dp-platform-card .dp-platform-radio-circle {
+                        border-color: #F97316;
+                        background: #F97316;
+                        box-shadow: inset 0 0 0 3px #fff;
+                    }
+                    .dp-platform-card-wrapper.active .dp-platform-card {
+                        border-color: #F97316;
+                    }
+                    .dp-platform-card-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-bottom: 12px;
+                    }
+                    .dp-platform-card-title {
+                        font-weight: 700;
+                        font-size: 15px;
+                        color: #111827;
+                    }
+                    .dp-platform-radio-circle {
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 50%;
+                        border: 1px solid #d1d5db;
+                        transition: all 0.2s ease;
+                        margin-left: 10px;
+                        flex-shrink: 0;
+                    }
+                    .dp-platform-card-desc {
+                        font-size: 13px;
+                        color: #6b7280;
+                        margin: 0 0 15px 0;
+                        line-height: 1.4;
+                    }
+
+                    /* Toggle Switch */
+                    .dp-toggle-switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 44px;
+                        height: 24px;
+                    }
+                    .dp-toggle-switch input { opacity: 0; width: 0; height: 0; }
+                    .dp-toggle-slider {
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background-color: #e5e7eb;
+                        transition: .4s;
+                        border-radius: 24px;
+                    }
+                    .dp-toggle-slider:before {
+                        position: absolute; content: "";
+                        height: 18px; width: 18px;
+                        left: 3px; bottom: 3px;
+                        background-color: white;
+                        transition: .4s; border-radius: 50%;
+                    }
+                    .dp-toggle-switch input:checked + .dp-toggle-slider { background-color: #F97316; }
+                    .dp-toggle-switch input:checked + .dp-toggle-slider:before { transform: translateX(20px); }
+
+                    /* Footer Buttons */
+                    .dp-wizard-footer {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                    }
+                    .dp-btn-prev {
+                        padding: 10px 20px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 4px;
+                        background: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                        color: #374151;
+                        font-size: 14px;
+                    }
+                    .dp-btn-next {
+                        padding: 10px 24px;
+                        border: none;
+                        border-radius: 4px;
+                        background: #F97316;
+                        color: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                    }
+
+                    /* Mobile Responsiveness for Wizard */
+                    @media (max-width: 768px) {
+                        .dp-wizard-container {
+                            padding: 20px 15px;
+                        }
+                        .dp-stepper-wrapper {
+                            padding: 0;
+                            margin-bottom: 25px;
+                        }
+                        .dp-stepper-item {
+                            font-size: 12px;
+                            gap: 6px;
+                        }
+                        /* Hide inactive labels on mobile to prevent cut-off */
+                        .dp-stepper-item:not(.active) .dp-stepper-label {
+                            display: none;
+                        }
+                        .dp-stepper-line {
+                            margin: 0 8px;
+                        }
+                        
+                        /* Fix row box layout for mobile */
+                        .dp-form-row-box {
+                            grid-template-columns: 1fr;
+                            align-items: flex-start;
+                            gap: 8px;
+                            padding: 12px 14px;
+                        }
+                        .dp-row-label {
+                            margin-bottom: 4px;
+                        }
+                        
+                        /* Stack platform cards on mobile */
+                        .dp-platform-cards-grid {
+                            grid-template-columns: 1fr;
+                        }
+                    }

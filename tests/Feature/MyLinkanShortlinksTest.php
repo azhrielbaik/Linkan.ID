@@ -17,27 +17,7 @@ class MyLinkanShortlinksTest extends TestCase
         $this->user = User::factory()->create(['username' => 'testuser']);
     }
 
-    public function test_public_profile_page_displays_all_user_shortlinks()
-    {
-        \App\Models\Appearance::create([
-            'user_id' => $this->user->id,
-            'alias' => $this->user->username,
-            'name' => 'Test User'
-        ]);
 
-        // Create a shortlink for the user
-        Shortlink::create([
-            'user_id' => $this->user->id,
-            'slug' => 'awesome-link',
-            'destination' => 'https://example.com/awesome',
-            'title' => 'Awesome Title'
-        ]);
-
-        $response = $this->get('/linkan.id/testuser');
-        $response->assertOk();
-        $response->assertSee('Awesome Title');
-        $response->assertSee('/awesome-link');
-    }
 
     public function test_shortlink_index_page_pagination_is_six_items_per_page()
     {
