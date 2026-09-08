@@ -9,10 +9,10 @@ class UpdateSettingsRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize()
+    public function authorize(): bool
     {
         // Hanya admin platform yang dapat mengubah pengaturan
-        return auth()->check() && auth()->user()->hasRole('admin_platform');
+        return $this->user() !== null && $this->user()->hasRole('admin_platform');
     }
 
     /**

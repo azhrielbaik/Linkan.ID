@@ -78,6 +78,26 @@ class User extends Authenticatable
         return true;
     }
 
+    /**
+     * Cek apakah user memiliki role tertentu.
+     *
+     * @param string|array ...$roles
+     * @return bool
+     */
+    public function hasRole(string|array ...$roles): bool
+    {
+        $rolesList = [];
+        foreach ($roles as $role) {
+            if (is_array($role)) {
+                $rolesList = array_merge($rolesList, $role);
+            } else {
+                $rolesList[] = $role;
+            }
+        }
+
+        return in_array($this->role, $rolesList, true);
+    }
+
     public function shortlinks(): HasMany
     {
         return $this->hasMany(Shortlink::class);
