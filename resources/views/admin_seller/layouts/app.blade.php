@@ -22,7 +22,7 @@
 
         html, body {
             max-width: 100%;
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         body {
@@ -498,42 +498,46 @@
         document.addEventListener('turbo:render', hideGlobalLoader);
 
         // 3. Intercept Fetch API (Untuk AJAX manual seperti update posisi, simpan produk digital)
-        const originalFetch = window.fetch;
-        window.fetch = async function(...args) {
-            let isMutating = false;
-            if (args[1] && args[1].method) {
-                const method = args[1].method.toUpperCase();
-                if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
-                    isMutating = true;
-                    showGlobalLoader();
+        if (!window._networkIntercepted) {
+            window._networkIntercepted = true;
+            
+            const originalFetch = window.fetch;
+            window.fetch = async function(...args) {
+                let isMutating = false;
+                if (args[1] && args[1].method) {
+                    const method = args[1].method.toUpperCase();
+                    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+                        isMutating = true;
+                        showGlobalLoader();
+                    }
                 }
-            }
-            try {
-                return await originalFetch.apply(this, args);
-            } finally {
-                if (isMutating) {
-                    hideGlobalLoader();
+                try {
+                    return await originalFetch.apply(this, args);
+                } finally {
+                    if (isMutating) {
+                        hideGlobalLoader();
+                    }
                 }
-            }
-        };
+            };
 
-        // 4. Intercept XMLHttpRequest (Untuk jQuery AJAX, Axios, dll)
-        const originalXhrOpen = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function(method, url) {
-            this._requestMethod = method ? method.toUpperCase() : 'GET';
-            return originalXhrOpen.apply(this, arguments);
-        };
-        const originalXhrSend = XMLHttpRequest.prototype.send;
-        XMLHttpRequest.prototype.send = function() {
-            let isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this._requestMethod);
-            if (isMutating) {
-                showGlobalLoader();
-                this.addEventListener('loadend', function() {
-                    hideGlobalLoader();
-                });
-            }
-            return originalXhrSend.apply(this, arguments);
-        };
+            // 4. Intercept XMLHttpRequest (Untuk jQuery AJAX, Axios, dll)
+            const originalXhrOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url) {
+                this._requestMethod = method ? method.toUpperCase() : 'GET';
+                return originalXhrOpen.apply(this, arguments);
+            };
+            const originalXhrSend = XMLHttpRequest.prototype.send;
+            XMLHttpRequest.prototype.send = function() {
+                let isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this._requestMethod);
+                if (isMutating) {
+                    showGlobalLoader();
+                    this.addEventListener('loadend', function() {
+                        hideGlobalLoader();
+                    });
+                }
+                return originalXhrSend.apply(this, arguments);
+            };
+        }
 
         // Jika halaman dipulihkan dari bfcache (tombol back)
         window.addEventListener('pageshow', function(event) {
