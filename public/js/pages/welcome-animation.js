@@ -103,31 +103,28 @@ import { createTimeline, stagger, splitText } from 'https://esm.sh/animejs@4.5.0
             }
 
 
+            // Spotlight effect on hero title
+            const spotlightEl = document.getElementById('spotlightText');
+            if (spotlightEl) {
+                spotlightEl.addEventListener('mousemove', (e) => {
+                    const rect = spotlightEl.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    spotlightEl.style.setProperty('--x', x + 'px');
+                    spotlightEl.style.setProperty('--y', y + 'px');
+                });
+
+                spotlightEl.addEventListener('mouseenter', () => {
+                    spotlightEl.style.setProperty('--radius', '150px');
+                });
+
+                spotlightEl.addEventListener('mouseleave', () => {
+                    spotlightEl.style.setProperty('--radius', '0px');
+                });
+            }
+
+
             document.fonts.ready.then(() => {
-                const heroTitle = document.querySelector('.hero-title');
-                if (heroTitle) {
-                    const split = splitText(heroTitle, {
-                        lines: false,
-                        words: true,
-                        chars: {
-                            class: 'char-inner',
-                            wrap: 'clip',
-                            clone: 'bottom'
-                        },
-                    });
-
-                    split.addEffect(({ chars }) => {
-                        return createTimeline()
-                        .add(chars, {
-                            y: '-100%',
-                            loop: true,
-                            loopDelay: 350,
-                            duration: 750,
-                            ease: 'inOut(2)',
-                        }, stagger(150, { from: 'center' }));
-                    });
-                }
-
                 // AnimeJS event listener for showcase tags
                 window.addEventListener('showcase-revealed', () => {
                     const tags = document.querySelectorAll('.anime-tag');

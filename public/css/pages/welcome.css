@@ -335,16 +335,35 @@
             text-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
+        /* SPOTLIGHT EFFECT — radial gradient + background-clip:text */
+        @property --radius {
+            syntax: '<length>';
+            initial-value: 0px;
+            inherits: false;
+        }
+
+        .spotlight-text {
+            --x: 0px;
+            --y: 0px;
+            --radius: 0px;
+            cursor: crosshair;
+            background: radial-gradient(
+                circle var(--radius) at var(--x) var(--y),
+                #FF8C00 0%,
+                #FFB347 80%,
+                transparent 100%
+            ), #FFFFFF;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            transition: --radius 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
         .title-line {
             display: block;
         }
 
-        /* Let Anime.js splitText handle Level 2 & Level 3 wrapper styles automatically.
-           We only style the character inner element to enable GPU acceleration. */
-        .char-inner {
-            display: inline-block !important;
-            will-change: transform;
-        }
 
         .hero-subtitle {
             font-size: clamp(1.4rem, 2vw, 1.15rem);

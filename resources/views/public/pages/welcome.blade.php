@@ -65,7 +65,7 @@
         <section class="hero-section reveal">
         <div class="hero-container">
             <div class="hero-content">
-                <h1 class="hero-title">
+                <h1 class="hero-title spotlight-text" id="spotlightText">
                     <span class="title-line">{{ __('public.hero_title_1') }}</span>
                     <span class="title-line">{{ __('public.hero_title_2') }}</span>
                 </h1>
