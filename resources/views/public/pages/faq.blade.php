@@ -12,8 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
-    <script src="{{ asset('js/pages/faq-config.js') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/pages/faq-config.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('css/pages/faq.css') }}">
 </head>

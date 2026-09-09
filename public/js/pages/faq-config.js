@@ -1,3 +1,4 @@
+window.tailwind = window.tailwind || {};
 tailwind.config = {
             theme: {
                 extend: {

@@ -657,3 +657,12 @@
                 text-align: center;
             }
         }
+
+        /* Primary color fallback */
+        .bg-primary {
+            background-color: #5A5BF1;
+        }
+        .text-primary {
+            color: #5A5BF1;
+        }
+
