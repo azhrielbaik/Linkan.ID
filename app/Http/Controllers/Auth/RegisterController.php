@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -42,15 +43,19 @@ class RegisterController extends Controller
             $userData['google_id'] = $request->google_id;
         }
 
-        $newUser = User::create($userData);
+        $newUser = DB::transaction(function () use ($userData) {
+            $user = User::create($userData);
 
-        // Catat Log Registrasi Pengguna Baru
-        ActivityLogger::log(
-            'user_register',
-            "Pengguna baru {$newUser->name} ({$newUser->email}) berhasil mendaftar akun seller.",
-            ['username' => $newUser->username, 'role' => $newUser->role],
-            $newUser->id
-        );
+            // Catat Log Registrasi Pengguna Baru
+            ActivityLogger::log(
+                'user_register',
+                "Pengguna baru {$user->name} ({$user->email}) berhasil mendaftar akun seller.",
+                ['username' => $user->username, 'role' => $user->role],
+                $user->id
+            );
+
+            return $user;
+        });
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }

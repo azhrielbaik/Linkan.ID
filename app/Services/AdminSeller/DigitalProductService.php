@@ -5,6 +5,7 @@ namespace App\Services\AdminSeller;
 use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,13 +36,17 @@ class DigitalProductService
             $data['platform_file'] = $this->handleFileUpload($platformFile);
         }
 
-        $createdProduct = DigitalProduct::create($data);
+        $createdProduct = DB::transaction(function () use ($data) {
+            $product = DigitalProduct::create($data);
 
-        ActivityLogger::log(
-            'create_product',
-            "Seller " . (Auth::user()->name ?? 'Seller') . " menambahkan produk digital baru: '{$createdProduct->title}'.",
-            ['product_id' => $createdProduct->id, 'title' => $createdProduct->title, 'price' => $createdProduct->price]
-        );
+            ActivityLogger::log(
+                'create_product',
+                "Seller " . (Auth::user()->name ?? 'Seller') . " menambahkan produk digital baru: '{$product->title}'.",
+                ['product_id' => $product->id, 'title' => $product->title, 'price' => $product->price]
+            );
+
+            return $product;
+        });
 
         return $createdProduct;
     }
@@ -75,13 +80,15 @@ class DigitalProductService
             $data['rejection_reason'] = null;
         }
 
-        $product->update($data);
+        DB::transaction(function () use ($product, $data) {
+            $product->update($data);
 
-        ActivityLogger::log(
-            'update_product',
-            "Seller " . (Auth::user()->name ?? 'Seller') . " memperbarui informasi produk digital: '{$product->title}'.",
-            ['product_id' => $product->id, 'title' => $product->title]
-        );
+            ActivityLogger::log(
+                'update_product',
+                "Seller " . (Auth::user()->name ?? 'Seller') . " memperbarui informasi produk digital: '{$product->title}'.",
+                ['product_id' => $product->id, 'title' => $product->title]
+            );
+        });
 
         return $product;
     }
@@ -94,19 +101,23 @@ class DigitalProductService
         $productTitle = $product->title;
         $productId = $product->id;
 
-        if ($product->transactions()->exists()) {
-            $product->delete();
-            $msg = 'Produk berhasil dihapus (soft delete).';
-        } else {
-            $product->forceDelete();
-            $msg = 'Produk berhasil dihapus secara permanen.';
-        }
+        $msg = DB::transaction(function () use ($product, $productTitle, $productId) {
+            if ($product->transactions()->exists()) {
+                $product->delete();
+                $msg = 'Produk berhasil dihapus (soft delete).';
+            } else {
+                $product->forceDelete();
+                $msg = 'Produk berhasil dihapus secara permanen.';
+            }
 
-        ActivityLogger::log(
-            'delete_product',
-            "Seller " . (Auth::user()->name ?? 'Seller') . " menghapus produk digital: '{$productTitle}'.",
-            ['product_id' => $productId, 'title' => $productTitle]
-        );
+            ActivityLogger::log(
+                'delete_product',
+                "Seller " . (Auth::user()->name ?? 'Seller') . " menghapus produk digital: '{$productTitle}'.",
+                ['product_id' => $productId, 'title' => $productTitle]
+            );
+
+            return $msg;
+        });
 
         return $msg;
     }

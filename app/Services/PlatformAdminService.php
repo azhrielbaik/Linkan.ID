@@ -392,24 +392,26 @@ class PlatformAdminService
                 break;
         }
 
-        $user->update([
-            'suspended_at'    => now(),
-            'suspended_until' => $suspendedUntil,
-            'suspend_reason'  => $reason,
-        ]);
+        DB::transaction(function () use ($user, $duration, $reason, $durationLabel, $suspendedUntil) {
+            $user->update([
+                'suspended_at'    => now(),
+                'suspended_until' => $suspendedUntil,
+                'suspend_reason'  => $reason,
+            ]);
 
-        ActivityLogger::log(
-            'suspend_user',
-            "Men-suspend akun user: {$user->name} ({$user->email}) - Durasi: {$durationLabel}. Alasan: {$reason}",
-            [
-                'target_user_id'  => $user->id,
-                'user_name'       => $user->name,
-                'user_email'      => $user->email,
-                'duration'        => $duration,
-                'suspended_until' => $suspendedUntil ? $suspendedUntil->toDateTimeString() : null,
-                'reason'          => $reason
-            ]
-        );
+            ActivityLogger::log(
+                'suspend_user',
+                "Men-suspend akun user: {$user->name} ({$user->email}) - Durasi: {$durationLabel}. Alasan: {$reason}",
+                [
+                    'target_user_id'  => $user->id,
+                    'user_name'       => $user->name,
+                    'user_email'      => $user->email,
+                    'duration'        => $duration,
+                    'suspended_until' => $suspendedUntil ? $suspendedUntil->toDateTimeString() : null,
+                    'reason'          => $reason
+                ]
+            );
+        });
 
         return $durationLabel;
     }
@@ -419,24 +421,26 @@ class PlatformAdminService
      */
     public function activateUser(User $user): void
     {
-        $user->update([
-            'suspended_at'    => null,
-            'suspended_until' => null,
-            'suspend_reason'  => null,
-        ]);
-
-        SuspensionAppeal::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->update([
-                'status'      => 'approved',
-                'admin_notes' => 'Akun dipulihkan secara manual oleh Admin Platform.',
-                'resolved_at' => now(),
+        DB::transaction(function () use ($user) {
+            $user->update([
+                'suspended_at'    => null,
+                'suspended_until' => null,
+                'suspend_reason'  => null,
             ]);
 
-        ActivityLogger::log(
-            'activate_user',
-            "Mengaktifkan kembali akun user: {$user->name} ({$user->email})",
-            ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email]
-        );
+            SuspensionAppeal::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->update([
+                    'status'      => 'approved',
+                    'admin_notes' => 'Akun dipulihkan secara manual oleh Admin Platform.',
+                    'resolved_at' => now(),
+                ]);
+
+            ActivityLogger::log(
+                'activate_user',
+                "Mengaktifkan kembali akun user: {$user->name} ({$user->email})",
+                ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email]
+            );
+        });
     }
 }

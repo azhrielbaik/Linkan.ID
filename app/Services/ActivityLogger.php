@@ -35,7 +35,7 @@ class ActivityLogger
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to log admin activity: ' . $e->getMessage());
-            return null;
+            throw new \Exception('Gagal mencatat aktivitas log sistem. Operasi dibatalkan demi konsistensi data.', 0, $e);
         }
     }
 

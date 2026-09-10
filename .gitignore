@@ -22,7 +22,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-#/storage/framework/views/*.php
 /storage/framework/views/*.php
 /.postman/
 /postman/
@@ -31,3 +30,22 @@ yarn-error.log
 # Dev helper scripts
 *.py
 *.sql
+jmeter.log
+
+# Unused/Test Scripts
+test_route.php
+test-microsite.php
+public/test.php
+
+# Java test files
+TestScale.java
+TestScale.class
+
+# JS/CSS patch and style scripts
+patch.cjs
+patch.css
+scope_styles.cjs
+scope_styles.js
+
+# Server error logs
+public/error_log

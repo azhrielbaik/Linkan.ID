@@ -161,23 +161,25 @@ class ProductManagementController extends Controller
 
         $product = DigitalProduct::with('user')->findOrFail($id);
 
-        $product->update([
-            'is_active' => false,
-            'takedown_reason' => $request->input('reason'),
-            'takedown_at' => now(),
-        ]);
+        DB::transaction(function () use ($product, $request) {
+            $product->update([
+                'is_active' => false,
+                'takedown_reason' => $request->input('reason'),
+                'takedown_at' => now(),
+            ]);
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'takedown_product',
-            "Melakukan takedown produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . "). Alasan: {$request->input('reason')}",
-            [
-                'product_id' => $product->id,
-                'product_title' => $product->title,
-                'seller_id' => $product->user_id,
-                'reason' => $request->input('reason')
-            ]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'takedown_product',
+                "Melakukan takedown produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . "). Alasan: {$request->input('reason')}",
+                [
+                    'product_id' => $product->id,
+                    'product_title' => $product->title,
+                    'seller_id' => $product->user_id,
+                    'reason' => $request->input('reason')
+                ]
+            );
+        });
 
         return back()->with('success', "Produk \"{$product->title}\" berhasil di-takedown.");
     }
@@ -189,22 +191,24 @@ class ProductManagementController extends Controller
     {
         $product = DigitalProduct::with('user')->findOrFail($id);
 
-        $product->update([
-            'is_active' => true,
-            'takedown_reason' => null,
-            'takedown_at' => null,
-        ]);
+        DB::transaction(function () use ($product) {
+            $product->update([
+                'is_active' => true,
+                'takedown_reason' => null,
+                'takedown_at' => null,
+            ]);
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'restore_product',
-            "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")",
-            [
-                'product_id' => $product->id,
-                'product_title' => $product->title,
-                'seller_id' => $product->user_id
-            ]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'restore_product',
+                "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")",
+                [
+                    'product_id' => $product->id,
+                    'product_title' => $product->title,
+                    'seller_id' => $product->user_id
+                ]
+            );
+        });
 
         return back()->with('success', "Produk \"{$product->title}\" berhasil diaktifkan kembali.");
     }
