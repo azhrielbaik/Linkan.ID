@@ -142,7 +142,7 @@
 
     {{-- Broadcast Announcements from Platform Admin --}}
     @if(isset($announcements) && $announcements->count() > 0)
-        <div class="announcement-banner-wrapper" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="announcement-banner-wrapper" style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px;">
             @foreach($announcements as $ann)
                 @php
                     $bgColor = '#eff6ff';
@@ -186,71 +186,212 @@
         </div>
     @endif
 
-    <div class="account-section">
-        <div class="profile">
-            <div class="profile-image" style="width: 54px; height: 54px; min-width: 54px; min-height: 54px; max-width: 54px; max-height: 54px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                @if($appearance && $appearance->profile_image)
-                    <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile" style="width: 54px; height: 54px; object-fit: cover; border-radius: 50%; display: block;">
-                @else
-                    <i class="fas fa-user"></i>
-                @endif
+    <!-- MAIN DASHBOARD GRID -->
+    <div class="dashboard-main-layout">
+        
+        <!-- === LEFT COLUMN === -->
+        <div class="dashboard-left">
+            
+            <!-- Hero Banner -->
+            <div class="hero-banner">
+                <h2>Tingkatkan Penjualan Anda dengan Memaksimalkan Produk Digital!</h2>
+                <a href="{{ route('admin.digital-products.create') }}" class="hero-btn">
+                    Buat Produk Sekarang <div class="icon-arrow"><i class="fas fa-chevron-right"></i></div>
+                </a>
             </div>
-                    <div class="profile-info">
-                        <h3>{{ $appearance ? ($appearance->title ?? $appearance->name) : Auth::user()->name }}</h3>
-                        <a href="{{ route('track.view', ['username' => Auth::user()->username]) }}" style="color: #FF9040;">
-                            {{ url('/linkan.id/' . Auth::user()->username) }}
-                        </a>
+
+            <!-- Analytics Cards -->
+            <div class="stat-cards-grid">
+                <div class="stat-card-item">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-wallet"></i>
                     </div>
-                    <button
-                      class="share-button"
-                      onclick="copyToClipboard('{{ route('track.view', ['username' => Auth::user()->username]) }}')"
-                    >
-                        <i class="fas fa-share-alt"></i>
-                    </button>
+                    <div class="stat-content">
+                        <div class="stat-val">Rp {{ number_format($totalEarnings, 0, ',', '.') }}</div>
+                        <div class="stat-lbl">Total Pendapatan</div>
+                    </div>
                 </div>
-                <div class="start-creating">{{ __('admin.start_creating_now') }}</div>
-                <div class="action-buttons">
-                    <a href="{{ route('admin.microsites.index') }}" class="action-button">
-                        <i class="fas fa-qrcode"></i> {{ __('admin.add_linkan') }}
-                    </a>
-                    <a href="{{ route('admin.digital-products.create') }}" class="action-button">
-                        <i class="fas fa-box"></i> {{ __('admin.digital_product') }}
-                    </a>
-                    <a href="{{ route('about') }}" class="action-button">
-                        <i class="fas fa-headset"></i> {{ __('admin.about_us') }}
-                    </a>
+                <div class="stat-card-item">
+                    <div class="stat-icon pink">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-val">{{ number_format($lifetimeOrders) }}</div>
+                        <div class="stat-lbl">Total Penjualan</div>
+                    </div>
+                </div>
+                <div class="stat-card-item">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-val">{{ number_format($totalProducts) }}</div>
+                        <div class="stat-lbl">Produk Digital Aktif</div>
+                    </div>
                 </div>
             </div>
 
-    <!-- EARNINGS SECTION -->
-    <div class="earnings-section">
-        <div class="earnings-header">
-            <span>{{ __('admin.earnings') }}</span>
-            <a href="{{ route('admin.payout.index') }}" style="color: #ffffff;"><i class="fas fa-cog"></i></a>
-        </div>
-        <div class="earnings-amount">IDR {{ number_format($totalEarnings, 0, ',', '.') }}</div>
-    </div>
-
-    <!-- STATS CHART SECTION -->
-    <div class="stats-section">
-        <div class="stats-header">
-            <h3>{{ __('admin.total_click_views') }}</h3>
-            <div class="date-range-selector">
-                <input type="date" id="startDate" class="date-input" />
-                <span>{{ __('admin.to') }}</span>
-                <input type="date" id="endDate" class="date-input" />
-                <button class="apply-date" onclick="applyDateFilter()">{{ __('admin.apply') }}</button>
+            <!-- Recent Products (Continue Watching Alternative) -->
+            <div class="recent-products-section">
+                <div class="section-header">
+                    <h3>Produk Digital Terbaru Anda</h3>
+                    <div class="nav-arrows">
+                        <div class="nav-arrow"><i class="fas fa-chevron-left"></i></div>
+                        <div class="nav-arrow active"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                
+                <div class="recent-products-row">
+                    @forelse($recentProducts ?? [] as $product)
+                        <div class="product-course-card">
+                            <button class="like-btn"><i class="far fa-heart"></i></button>
+                            <div class="product-img-box">
+                                @if($product->image_url)
+                                    <img src="{{ Storage::url($product->image_url) }}" alt="{{ $product->title }}">
+                                @else
+                                    <i class="fas fa-image"></i>
+                                @endif
+                            </div>
+                            <span class="product-tag purple">PRODUK DIGITAL</span>
+                            <h4 class="product-title">{{ $product->title }}</h4>
+                            <div class="product-footer">
+                                <div class="price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                                <div class="date">{{ $product->created_at->format('d M') }}</div>
+                            </div>
+                        </div>
+                    @empty
+                        <div style="grid-column: span 3; text-align: center; padding: 40px; background: #fff; border-radius: 16px; border: 1px solid #f1f5f9; color: #64748b; font-size: 14px;">
+                            <i class="fas fa-box-open" style="font-size: 24px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+                            Anda belum memiliki produk digital.
+                        </div>
+                    @endforelse
+                </div>
             </div>
-        </div>
-        <div class="stats-numbers">
-            <span>{{ __('admin.views') }} <strong id="totalViews" style="color: #5A5BF1;">{{ $totalViews }}</strong></span>
-            <span>{{ __('admin.clicks') }} <strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
-        </div>
-        <div class="stats-chart">
-            <canvas id="statsChart"></canvas>
-        </div>
-    </div>
 
+            <!-- Recent Transactions (Your Lesson Alternative) -->
+            <div class="recent-transactions-section">
+                <div class="section-header">
+                    <h3>Transaksi Terakhir</h3>
+                    <a href="{{ route('admin.orders') }}" class="see-all">Lihat Semua</a>
+                </div>
+                
+                <div class="transactions-list">
+                    <table class="tx-table">
+                        <thead>
+                            <tr>
+                                <th>PEMBELI</th>
+                                <th>PRODUK</th>
+                                <th>STATUS</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentTransactions ?? [] as $tx)
+                                <tr>
+                                    <td data-label="PEMBELI">
+                                        <div class="tx-buyer">
+                                            <div class="tx-avatar">{{ strtoupper(substr($tx->buyer_name, 0, 1)) }}</div>
+                                            <div>
+                                                <span class="tx-name">{{ $tx->buyer_name }}</span>
+                                                <span class="tx-date">{{ \Carbon\Carbon::parse($tx->created_at)->format('d/m/Y') }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-label="PRODUK">
+                                        <div class="tx-item-title">{{ $tx->product_title }}</div>
+                                    </td>
+                                    <td data-label="STATUS">
+                                        @if($tx->status === 'success')
+                                            <span class="tx-status"><i class="fas fa-check"></i> Sukses</span>
+                                        @elseif($tx->status === 'pending')
+                                            <span class="tx-status pending"><i class="fas fa-clock"></i> Pending</span>
+                                        @else
+                                            <span class="tx-status failed"><i class="fas fa-times"></i> {{ ucfirst($tx->status) }}</span>
+                                        @endif
+                                    </td>
+                                    <td data-label="AKSI">
+                                        <a href="{{ route('admin.orders') }}" class="tx-action"><i class="fas fa-arrow-right"></i></a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 30px; color: #64748b;">Belum ada transaksi terakhir.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div> <!-- END LEFT COLUMN -->
+
+        <!-- === RIGHT COLUMN === -->
+        <div class="dashboard-right">
+            
+            <!-- User Profile Widget -->
+            <div class="widget-card profile-widget">
+                <i class="fas fa-ellipsis-v profile-dots" onclick="toggleProfileDropdown()"></i>
+                
+                <div class="profile-avatar-circle">
+                    <div class="avatar-inner">
+                        @if($appearance && $appearance->profile_image)
+                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile">
+                        @else
+                            <i class="fas fa-user"></i>
+                        @endif
+                    </div>
+                    <div class="completion-badge">100%</div>
+                </div>
+                
+                <h3>Selamat Datang, {{ Auth::user()->name }}!</h3>
+                <p>Kelola penjualan dan raih target Anda.</p>
+                
+                <!-- Chart (integrated inside profile widget for compact UI like reference) -->
+                <div class="chart-widget-body">
+                    <div class="stats-numbers">
+                        <span>Views: <strong id="totalViews" style="color: #5A5BF1;">{{ $totalViews }}</strong></span>
+                        <span>Clicks: <strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities Widget -->
+            <div class="widget-card activities-widget">
+                <h3>
+                    Aktivitas Terbaru 
+                    <div class="add-btn"><i class="fas fa-plus"></i></div>
+                </h3>
+                
+                <div class="activities-list">
+                    @forelse($recentActivities ?? [] as $activity)
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-icon" style="background: {{ $activity['icon_bg'] }}; color: {{ $activity['icon_color'] }};">
+                                    <i class="{{ $activity['icon'] }}"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <span class="title">{{ $activity['title'] }}</span>
+                                    <span class="desc">{!! strip_tags($activity['message']) !!}</span>
+                                </div>
+                            </div>
+                            <a href="{{ $activity['url'] }}" class="activity-action">Lihat</a>
+                        </div>
+                    @empty
+                        <div style="text-align: center; color: #64748b; font-size: 12px; padding: 20px 0;">
+                            Belum ada aktivitas.
+                        </div>
+                    @endforelse
+                </div>
+                
+                <a href="{{ route('admin.orders') }}" class="btn-see-all">Lihat Semua Pesanan</a>
+            </div>
+
+        </div> <!-- END RIGHT COLUMN -->
+        
+    </div>
 </div>
 @endsection
 
@@ -264,52 +405,10 @@
 
         const ctx = chartEl.getContext('2d');
         let myChart = null;
-        let startDate = null;
-        let endDate = null;
-
-        window.applyDateFilter = function() {
-            const startDateEl = document.getElementById('startDate');
-            const endDateEl = document.getElementById('endDate');
-            if (startDateEl && endDateEl) {
-                startDate = startDateEl.value;
-                endDate = endDateEl.value;
-                updateChart();
-            }
-        };
-
-        window.copyToClipboard = function(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert(@json(__('admin.link_copied')));
-                }).catch(() => {
-                    fallbackCopyText(text);
-                });
-            } else {
-                fallbackCopyText(text);
-            }
-        };
-
-        function fallbackCopyText(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert(@json(__('admin.link_copied')));
-            } catch (err) {
-                console.error('Fallback copy failed', err);
-            }
-            document.body.removeChild(textArea);
-        }
 
         function updateChart() {
             const params = new URLSearchParams();
-            if (startDate) params.append('start_date', startDate);
-            if (endDate) params.append('end_date', endDate);
+            // Fetch default last 7 days from API
 
             const csrfMeta = document.querySelector('meta[name="csrf-token"]');
             const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
@@ -354,11 +453,9 @@
                                     backgroundColor: 'rgba(90, 91, 241, 0.08)',
                                     fill: true,
                                     tension: 0.4,
-                                    borderWidth: 3,
-                                    pointBackgroundColor: '#5A5BF1',
-                                    pointBorderColor: '#fff',
-                                    pointBorderWidth: 2,
-                                    pointRadius: 4
+                                    borderWidth: 2,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 4
                                 },
                                 {
                                     label: 'Clicks',
@@ -367,11 +464,9 @@
                                     backgroundColor: 'rgba(59, 130, 246, 0.08)',
                                     fill: true,
                                     tension: 0.4,
-                                    borderWidth: 3,
-                                    pointBackgroundColor: '#3B82F6',
-                                    pointBorderColor: '#fff',
-                                    pointBorderWidth: 2,
-                                    pointRadius: 4
+                                    borderWidth: 2,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 4
                                 }
                             ]
                         },
@@ -379,22 +474,18 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: {
-                                    display: true,
-                                    position: 'top',
-                                    labels: {
-                                        font: { family: 'Plus Jakarta Sans', weight: '600' }
-                                    }
-                                }
+                                legend: { display: false } // Hide legend for compact UI
                             },
                             scales: {
                                 y: {
-                                    beginAtZero: true,
-                                    grid: { color: 'rgba(0, 0, 0, 0.04)' }
+                                    display: false // Hide Y axis for compact UI
                                 },
                                 x: {
-                                    grid: { display: false }
+                                    display: false // Hide X axis for compact UI
                                 }
+                            },
+                            layout: {
+                                padding: 0
                             }
                         }
                     });

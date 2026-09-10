@@ -74,6 +74,25 @@ class DashboardService
         // Appeal Data
         $appealData = $this->getAppealData($user);
 
+        // Recent Products for Continue Watching equivalent
+        $recentProducts = DigitalProduct::where('user_id', $user->id)
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        // Recent Transactions for "Your Lesson" table equivalent
+        $recentTransactions = DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->select('transactions.*', 'digital_products.title as product_title')
+            ->orderBy('transactions.created_at', 'desc')
+            ->limit(4)
+            ->get();
+
+        // Recent Activities for Sidebar (using existing notification method)
+        $activitiesResponse = $this->fetchSellerNotificationsData($user);
+        $recentActivities = collect($activitiesResponse['notifications'])->take(4);
+
         return array_merge([
             'totalProducts' => $totalProducts,
             'totalViews' => $totalViews,
@@ -84,6 +103,9 @@ class DashboardService
             'totalEarnings' => $totalEarnings,
             'appearance' => $appearance,
             'announcements' => $announcements,
+            'recentProducts' => $recentProducts,
+            'recentTransactions' => $recentTransactions,
+            'recentActivities' => $recentActivities,
         ], $appealData);
     }
 
@@ -152,15 +174,18 @@ class DashboardService
 
         foreach ($transactions as $t) {
             $timeAgo = \Carbon\Carbon::parse($t->updated_at)->diffForHumans();
+            $buyerName = $t->buyer_name ?? 'Seseorang';
             if ($t->status === 'success') {
                 $notifications[] = [
                     'id'          => 'tx_succ_' . $t->id,
                     'type'        => 'transaction',
                     'title'       => 'Pembayaran Diterima!',
-                    'message'     => "Pesanan untuk produk <strong>{$t->product_title}</strong> telah berhasil dibayar (Rp " . number_format($t->total_price, 0, ',', '.') . ").",
+                    'message'     => "<strong>{$buyerName}</strong> membeli <strong>{$t->product_title}</strong>",
+                    'avatar_url'  => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
+                    'state_class' => 'state-green',
                     'badge'       => 'Sukses',
                     'badge_class' => 'badge-tx-success',
-                    'icon'        => 'fas fa-check-circle',
+                    'icon'        => 'fas fa-check',
                     'icon_bg'     => '#dcfce7',
                     'icon_color'  => '#16a34a',
                     'url'         => route('admin.orders'),
@@ -172,10 +197,12 @@ class DashboardService
                     'id'          => 'tx_oth_' . $t->id,
                     'type'        => 'transaction_other',
                     'title'       => 'Pembaruan Pesanan',
-                    'message'     => "Pesanan produk <strong>{$t->product_title}</strong> saat ini berstatus: <em>{$t->status}</em>.",
+                    'message'     => "Pesanan <strong>{$t->product_title}</strong> dari <strong>{$buyerName}</strong> berstatus: {$t->status}",
+                    'avatar_url'  => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
+                    'state_class' => 'state-blue',
                     'badge'       => 'Info',
                     'badge_class' => 'badge-tx-info',
-                    'icon'        => 'fas fa-info-circle',
+                    'icon'        => 'fas fa-info',
                     'icon_bg'     => '#f3f4f6',
                     'icon_color'  => '#6b7280',
                     'url'         => route('admin.orders'),
@@ -199,7 +226,9 @@ class DashboardService
                     'id'          => 'pay_succ_' . $p->id,
                     'type'        => 'payout',
                     'title'       => 'Penarikan Dana Berhasil',
-                    'message'     => "Penarikan dana Anda sebesar Rp " . number_format($p->amount, 0, ',', '.') . " ke {$p->method} telah selesai diproses.",
+                    'message'     => "Penarikan <strong>Rp " . number_format($p->amount, 0, ',', '.') . "</strong> ke {$p->method} berhasil",
+                    'avatar_url'  => null,
+                    'state_class' => 'state-green',
                     'badge'       => 'Selesai',
                     'badge_class' => 'badge-pay-success',
                     'icon'        => 'fas fa-money-bill-wave',
@@ -214,10 +243,12 @@ class DashboardService
                     'id'          => 'pay_rej_' . $p->id,
                     'type'        => 'payout',
                     'title'       => 'Penarikan Dana Gagal',
-                    'message'     => "Penarikan dana Anda (Rp " . number_format($p->amount, 0, ',', '.') . ") ditolak. Silakan hubungi admin.",
+                    'message'     => "Penarikan <strong>Rp " . number_format($p->amount, 0, ',', '.') . "</strong> ditolak",
+                    'avatar_url'  => null,
+                    'state_class' => 'state-red',
                     'badge'       => 'Ditolak',
                     'badge_class' => 'badge-pay-rejected',
-                    'icon'        => 'fas fa-times-circle',
+                    'icon'        => 'fas fa-times',
                     'icon_bg'     => '#fee2e2',
                     'icon_color'  => '#dc2626',
                     'url'         => route('admin.payout.history'),
@@ -233,7 +264,9 @@ class DashboardService
                 'id'          => 'sys_suspension',
                 'type'        => 'system_alert',
                 'title'       => 'AKUN DITANGGUHKAN',
-                'message'     => 'Akun Anda saat ini sedang ditangguhkan. Fitur utama (termasuk penjualan) dinonaktifkan. Segera ajukan banding.',
+                'message'     => '<strong>Sistem</strong> membekukan akun Anda. Segera ajukan banding.',
+                'avatar_url'  => null,
+                'state_class' => 'state-red',
                 'badge'       => 'Penting',
                 'badge_class' => 'badge-sys-alert',
                 'icon'        => 'fas fa-exclamation-triangle',
@@ -259,7 +292,9 @@ class DashboardService
                     'id'          => 'appeal_app_' . $appeal->id,
                     'type'        => 'appeal',
                     'title'       => 'Banding Akun Disetujui!',
-                    'message'     => 'Permohonan banding Anda telah diterima dan akun Anda telah dipulihkan kembali.',
+                    'message'     => '<strong>Banding Akun</strong> disetujui, akun dipulihkan',
+                    'avatar_url'  => null,
+                    'state_class' => 'state-green',
                     'badge'       => 'Dipulihkan',
                     'badge_class' => 'badge-appeal-approved',
                     'icon'        => 'fas fa-shield-alt',
@@ -274,7 +309,9 @@ class DashboardService
                     'id'          => 'appeal_rej_' . $appeal->id,
                     'type'        => 'appeal',
                     'title'       => 'Banding Akun Ditolak',
-                    'message'     => 'Permohonan banding akun Anda ditolak oleh Admin Platform. Catatan: <em>' . e($appeal->admin_notes ?? '-') . '</em>',
+                    'message'     => '<strong>Banding Akun</strong> ditolak oleh Admin Platform',
+                    'avatar_url'  => null,
+                    'state_class' => 'state-red',
                     'badge'       => 'Ditolak',
                     'badge_class' => 'badge-appeal-rejected',
                     'icon'        => 'fas fa-shield-alt',
@@ -300,7 +337,9 @@ class DashboardService
                 'id'          => 'broadcast_' . $b->id,
                 'type'        => 'broadcast',
                 'title'       => $b->title,
-                'message'     => e($b->message),
+                'message'     => "<strong>Pengumuman:</strong> " . e($b->title),
+                'avatar_url'  => null,
+                'state_class' => 'state-orange',
                 'badge'       => 'Pengumuman',
                 'badge_class' => 'badge-broadcast',
                 'icon'        => 'fas fa-bullhorn',

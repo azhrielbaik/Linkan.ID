@@ -1,97 +1,73 @@
-/* Seller Admin Notification Stylesheet */
+/* public/css/seller-notifications.css */
 
 .seller-notif-wrapper {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.action-icon.seller-notif-btn {
+.seller-notif-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #64748b;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748b;
-    border: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    font-size: 20px;
-    position: relative;
-    outline: none;
+    transition: all 0.2s;
 }
 
-.action-icon.seller-notif-btn:hover,
-.action-icon.seller-notif-btn.active {
-    color: #5a5bf1;
-    background: transparent;
+.seller-notif-btn:hover,
+.seller-notif-btn.active {
+    background: #f1f5f9;
+    color: #1e293b;
 }
 
 .seller-notif-badge {
     position: absolute;
-    top: -2px;
-    right: -2px;
+    top: 6px;
+    right: 8px;
     background: #ef4444;
-    color: #ffffff;
+    color: white;
     font-size: 10px;
-    font-weight: 800;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4px;
     border: 2px solid #ffffff;
-    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
-    animation: sellerNotifPulse 2s infinite;
 }
 
-@keyframes sellerNotifPulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Dropdown Panel */
+/* The Dropdown Container */
 .seller-notif-dropdown {
     position: absolute;
-    top: calc(100% + 12px);
-    right: -50px;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
     width: 380px;
     background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
-    border: 1px solid #eef0fe;
-    display: none;
-    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
     z-index: 1000;
-    overflow: hidden;
-    animation: sellerNotifFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Inter', sans-serif;
 }
 
 .seller-notif-dropdown.show {
-    display: flex;
-}
-
-@keyframes sellerNotifFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 /* Header */
@@ -100,273 +76,175 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    background: #fafbfc;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .seller-notif-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.seller-notif-title i {
-    color: #5a5bf1;
     font-size: 16px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0;
 }
 
-.seller-notif-pill {
-    background: #eef0fe;
-    color: #5a5bf1;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.02em;
-}
-
-.seller-notif-read-all,
-.notif-read-all {
-    margin-left: 8px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: #5a5bf1;
-    font: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.seller-notif-item.is-read {
-    opacity: 0.62;
-}
-
-/* Filter Tabs */
-.seller-notif-filter-tabs {
-    display: flex;
-    gap: 6px;
-    padding: 10px 16px;
-    background: #ffffff;
-    border-bottom: 1px solid #f1f5f9;
-    overflow-x: auto;
-}
-
-.seller-notif-tab {
-    background: #f1f5f9;
-    border: none;
-    border-radius: 8px;
-    padding: 5px 12px;
+.seller-notif-badge-header {
+    background: #FFF0E5;
+    color: #FF9040;
     font-size: 12px;
     font-weight: 700;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-    font-family: inherit;
-}
-
-.seller-notif-tab:hover {
-    color: #5a5bf1;
-    background: #eef0fe;
-}
-
-.seller-notif-tab.active {
-    background: #5a5bf1;
-    color: #ffffff;
-}
-
-/* Scroll Area */
-.seller-notif-scroll {
-    max-height: 380px;
-    overflow-y: auto;
-    background: #ffffff;
-}
-
-.seller-notif-scroll::-webkit-scrollbar {
-    width: 5px;
-}
-
-.seller-notif-scroll::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    padding: 4px 10px;
     border-radius: 4px;
 }
 
-/* Notification Item */
-.seller-notif-item {
-    display: flex;
-    gap: 14px;
-    padding: 14px 18px;
-    border-bottom: 1px solid #f8fafc;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.15s ease;
-    position: relative;
+/* Notification List */
+.seller-notif-list {
+    max-height: 400px;
+    overflow-y: auto;
 }
 
-.seller-notif-item:last-child {
+.seller-notif-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.seller-notif-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* Notification Item */
+.notif-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+}
+
+.notif-item:last-child {
     border-bottom: none;
 }
 
-.seller-notif-item:hover {
-    background: #f8faff;
+.notif-item:hover {
+    background: #f8fafc;
 }
 
-.seller-notif-icon-box {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
+/* Avatar Container */
+.notif-avatar-box {
+    position: relative;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
 }
 
-.seller-notif-body {
-    flex: 1;
-    min-width: 0;
+.notif-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e2e8f0;
+    /* fallback color */
 }
 
-.seller-notif-item-top {
+/* State Badges on bottom right of avatar */
+.notif-state-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
-}
-
-.seller-notif-item-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1e293b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.seller-notif-tag {
+    justify-content: center;
+    color: #ffffff;
     font-size: 10px;
-    font-weight: 800;
-    padding: 2px 7px;
-    border-radius: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
-.badge-order {
-    background: #dcfce7;
-    color: #16a34a;
+.state-green {
+    background: #4ade80;
 }
 
-.badge-product-approved {
-    background: #eef0fe;
-    color: #5a5bf1;
+.state-blue {
+    background: #38bdf8;
 }
 
-.badge-product-rejected {
-    background: #fee2e2;
-    color: #dc2626;
+.state-red {
+    background: #fb7185;
 }
 
-.badge-payout-approved {
-    background: #dcfce7;
-    color: #16a34a;
+.state-orange {
+    background: #fbbf24;
 }
 
-.badge-payout-rejected {
-    background: #fee2e2;
-    color: #dc2626;
+.state-gray {
+    background: #94a3b8;
 }
 
-.badge-appeal-approved {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.badge-appeal-rejected {
-    background: #fee2e2;
-    color: #dc2626;
-}
-
-.badge-broadcast {
-    background: #eef0fe;
-    color: #5a5bf1;
-}
-
-.seller-notif-item-msg {
-    font-size: 12px;
-    color: #475569;
-    line-height: 1.4;
-    margin-bottom: 4px;
-}
-
-.seller-notif-item-msg strong {
-    color: #1e293b;
-}
-
-.seller-notif-item-time {
-    font-size: 11px;
-    color: #94a3b8;
+/* Placeholder icon for system notifs */
+.notif-sys-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #f1f5f9;
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    color: #475569;
+    font-size: 18px;
 }
 
-/* Loading & Empty States */
-.seller-notif-loading,
-.seller-notif-empty {
-    padding: 40px 20px;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 13px;
+/* Content Area */
+.notif-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+}
+
+.notif-message {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.notif-message strong {
+    color: #1e293b;
     font-weight: 600;
 }
 
-.seller-notif-empty i {
-    font-size: 36px;
-    color: #cbd5e1;
-    margin-bottom: 10px;
-    display: block;
+.notif-time {
+    font-size: 13px;
+    color: #94a3b8;
 }
 
-/* Dropdown Footer */
+/* Footer */
 .seller-notif-footer {
-    padding: 12px 18px;
-    background: #fafbfc;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    font-weight: 700;
+    padding: 16px;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    background: #ffffff;
+    border-radius: 0 0 12px 12px;
 }
 
 .seller-notif-footer a {
-    color: #5a5bf1;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.15s ease;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color 0.2s;
 }
 
 .seller-notif-footer a:hover {
-    color: #4748d0;
-    text-decoration: underline;
+    color: #1e293b;
 }
 
-.seller-notif-footer .dot {
-    color: #cbd5e1;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 480px) {
     .seller-notif-dropdown {
-        width: 310px;
-        right: -100px;
+        width: 320px;
+        right: -50px;
     }
 }

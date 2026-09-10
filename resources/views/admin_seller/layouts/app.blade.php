@@ -167,46 +167,82 @@
             top: calc(100% + 15px);
             right: 0;
             background: #fff;
-            border: 1px solid #eaeaea;
+            border: 1px solid #f0f0f0;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            width: 180px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 240px;
             display: none;
             flex-direction: column;
             z-index: 1000;
-            padding: 8px;
+            padding: 12px 0;
         }
 
         .profile-dropdown.show {
             display: flex;
         }
 
-        .profile-dropdown a {
-            padding: 10px 14px;
-            text-decoration: none;
-            color: #181818;
-            font-size: 14px;
+        .pd-header {
+            padding: 8px 24px 16px 24px;
+            font-size: 15px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 8px;
-            transition: all 0.2s;
+            color: #4a5568;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
         }
 
-        .profile-dropdown a i {
-            color: #666;
+        .profile-dropdown a.pd-item, .profile-dropdown button.pd-item {
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #4a5568;
             font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .profile-dropdown .pd-item i {
+            color: #4a5568;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
             transition: color 0.2s;
         }
 
-        .profile-dropdown a:hover {
-            background: #EEF0FE;
-            color: #5A5BF1;
+        .profile-dropdown .pd-item:hover {
+            background: #f8f9fa;
+            color: #1a1a1a;
         }
 
-        .profile-dropdown a:hover i {
-            color: #5A5BF1;
+        .profile-dropdown .pd-item:hover i {
+            color: #1a1a1a;
+        }
+
+        .profile-dropdown .pd-divider {
+            height: 1px;
+            background-color: #f0f0f0;
+            margin: 8px 24px;
+            border: none;
+        }
+
+        .profile-dropdown .pd-logout {
+            color: #ff4d4f !important;
+            margin-top: 4px;
+        }
+        
+        .profile-dropdown .pd-logout i {
+            color: #ff4d4f !important;
+        }
+        
+        .profile-dropdown .pd-logout:hover {
+            background: #fff1f0;
         }
 
         @media (max-width: 1200px) {
@@ -316,43 +352,57 @@
                         <a href="{{ route('admin.settings') }}" class="action-icon" title="Pengaturan"><i class="fas fa-cog"></i></a>
 
                         {{-- Seller Notification Bell & Dropdown --}}
+                        @inject('dashboardService', 'App\Services\AdminSeller\DashboardService')
+                        @php
+                            $notifData = $dashboardService->fetchSellerNotificationsData(Auth::user());
+                            $notifications = collect($notifData['notifications'] ?? [])->take(5);
+                            $unreadCount = $notifData['unread_count'] ?? 0;
+                            $hasUnread = $unreadCount > 0;
+                            $displayCount = $unreadCount > 99 ? '99+' : $unreadCount;
+                            $headerCount = str_pad($unreadCount, 2, '0', STR_PAD_LEFT);
+                        @endphp
                         <div class="seller-notif-wrapper">
                             <button type="button" class="action-icon seller-notif-btn" id="sellerNotifBtn" onclick="toggleSellerNotif(event)" title="Notifikasi" aria-label="Notifikasi">
                                 <i class="far fa-bell"></i>
-                                <span class="seller-notif-badge" id="sellerNotifBadge" style="display: none;">0</span>
+                                <span class="seller-notif-badge" id="sellerNotifBadge" style="display: {{ $hasUnread ? 'flex' : 'none' }};">{{ $displayCount }}</span>
                             </button>
 
                             <!-- Notification Dropdown Panel -->
                             <div class="seller-notif-dropdown" id="sellerNotifDropdown">
                                 <div class="seller-notif-header">
-                                    <div class="seller-notif-title">
-                                        <i class="fas fa-bell"></i> Notifikasi
-                                    </div>
-                                    <div>
-                                        <span class="seller-notif-pill" id="sellerNotifTotal">0 Baru</span>
-                                        <button type="button" class="seller-notif-read-all" onclick="markAllSellerNotifsRead(event)">Tandai dibaca</button>
-                                    </div>
+                                    <div class="seller-notif-title">Notifications</div>
+                                    <div class="seller-notif-badge-header">{{ $headerCount }} Notifications</div>
                                 </div>
 
-                                <div class="seller-notif-filter-tabs">
-                                    <button type="button" class="seller-notif-tab active" onclick="filterSellerNotif('all', this)">Semua</button>
-                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('order', this)">Pesanan</button>
-                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('product', this)">Produk</button>
-                                    <button type="button" class="seller-notif-tab" onclick="filterSellerNotif('payout', this)">Payout</button>
-                                </div>
-
-                                <div class="seller-notif-scroll" id="sellerNotifList">
-                                    <div class="seller-notif-loading">
-                                        <i class="fas fa-spinner fa-spin"></i> Memuat notifikasi...
+                                <div class="seller-notif-list" id="sellerNotifList">
+                                    @forelse ($notifications as $item)
+                                    <a href="{{ $item['url'] ?? '#' }}" class="notif-item no-loader" onclick="if(typeof markSellerNotifRead === 'function') markSellerNotifRead(event, '{{ $item['id'] }}', this)">
+                                        <div class="notif-avatar-box">
+                                            @if(!empty($item['avatar_url']))
+                                                <img src="{{ $item['avatar_url'] }}" alt="Avatar" class="notif-avatar">
+                                            @else
+                                                <div class="notif-sys-icon">
+                                                    <i class="{{ $item['icon'] }}"></i>
+                                                </div>
+                                            @endif
+                                            <div class="notif-state-badge {{ $item['state_class'] }}">
+                                                <i class="{{ $item['icon'] }}"></i>
+                                            </div>
+                                        </div>
+                                        <div class="notif-content">
+                                            <p class="notif-message">{!! $item['message'] !!}</p>
+                                            <span class="notif-time">{{ $item['time_ago'] }}</span>
+                                        </div>
+                                    </a>
+                                    @empty
+                                    <div style="padding: 20px; text-align: center; color: #64748b; font-size: 14px;">
+                                        Tidak ada notifikasi
                                     </div>
+                                    @endforelse
                                 </div>
 
                                 <div class="seller-notif-footer">
-                                    <a href="{{ route('admin.orders') }}"><i class="fas fa-receipt"></i> Pesanan</a>
-                                    <span class="dot">&bull;</span>
-                                    <a href="{{ route('admin.digital-products.index') }}"><i class="fas fa-box-open"></i> Produk</a>
-                                    <span class="dot">&bull;</span>
-                                    <a href="{{ route('admin.payout.history') }}"><i class="fas fa-wallet"></i> Payout</a>
+                                    <a href="#" class="no-loader" onclick="if(typeof markAllSellerNotifsRead === 'function') markAllSellerNotifsRead(event, false, this)">Read All Messages</a>
                                 </div>
                             </div>
                         </div>
@@ -362,6 +412,11 @@
                         @php
                             $name = Auth::check() ? Auth::user()->name : 'User';
                             $initials = strtoupper(substr($name, 0, 2));
+                            $balance = Auth::check() ? \Illuminate\Support\Facades\DB::table('transactions')
+                                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+                                ->where('digital_products.user_id', Auth::id())
+                                ->where('transactions.status', 'success')
+                                ->sum('transactions.total_price') : 0;
                         @endphp
                         <div class="top-avatar">
                             {{ $initials }}
@@ -373,20 +428,36 @@
 
                         <!-- Dropdown Menu -->
                         <div class="profile-dropdown" id="profileDropdown">
-                            <a href="{{ route('admin.account') }}">
-                                <i class="fas fa-user-circle"></i> Profile
+                            <div class="pd-header">
+                                Welcome back!
+                            </div>
+                            
+                            <a href="{{ route('admin.account') }}" class="pd-item">
+                                <i class="far fa-user"></i> Profile
                             </a>
-                            <a href="{{ route('admin.tickets.index') }}">
-                                <i class="fas fa-headset" style="color: #DE6C20;"></i> Pusat Bantuan
+                            
+                            <a href="#" class="pd-item" onclick="toggleSellerNotif(event); event.preventDefault();">
+                                <i class="far fa-bell"></i> Notifications
                             </a>
-                            <a href="{{ route('admin.settings') }}">
-                                <i class="fas fa-cog"></i> Settings
+                            
+                            <a href="#" class="pd-item">
+                                <i class="far fa-credit-card"></i> Balance: Rp {{ number_format($balance, 0, ',', '.') }}
                             </a>
-                            <!-- Logout uses a form, so we create a simple button looking like a link -->
+                            
+                            <a href="{{ route('admin.settings') }}" class="pd-item">
+                                <i class="far fa-sun"></i> Account Settings
+                            </a>
+                            
+                            <a href="{{ route('admin.tickets.index') }}" class="pd-item">
+                                <i class="fas fa-headphones-alt"></i> Support Center
+                            </a>
+
+                            <hr class="pd-divider">
+
                             <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;" onsubmit="if(window.sellerEventSource) window.sellerEventSource.close();">
                                 @csrf
-                                <button type="submit" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 10px 14px; font-size: 14px; font-weight: 600; color: #E53935; display: flex; align-items: center; gap: 12px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='transparent'">
-                                    <i class="fas fa-sign-out-alt" style="color: #E53935;"></i> Logout
+                                <button type="submit" class="pd-item pd-logout">
+                                    <i class="fas fa-sign-out-alt"></i> Log Out
                                 </button>
                             </form>
                         </div>
@@ -504,7 +575,7 @@
             const originalFetch = window.fetch;
             window.fetch = async function(...args) {
                 let isMutating = false;
-                if (args[1] && args[1].method) {
+                if (args[1] && args[1].method && !args[1].silent) {
                     const method = args[1].method.toUpperCase();
                     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
                         isMutating = true;

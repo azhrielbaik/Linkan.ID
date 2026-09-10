@@ -23,7 +23,7 @@ class SupportTicketController extends Controller
         $status = $request->query('status');
         $search = $request->query('search');
 
-        $query = SupportTicket::where('user_id', $userId);
+        $query = SupportTicket::where('user_id', $userId)->withCount('replies');
 
         if ($status && in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
             $query->where('status', $status);
