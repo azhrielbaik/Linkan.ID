@@ -60,6 +60,8 @@
     data-route-video-store="{{ route('admin.elements.video.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-social-delete="{{ url('/admin/elements/social') }}"
     data-route-social-store="{{ route('admin.elements.social.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-dp-store="{{ route('admin.elements.digital-product.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-dp-delete="{{ url('/admin/elements/digital-product') }}"
     data-route-order-update="{{ route('admin.elements.order.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-appearance-update="{{ route('admin.appearance.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-design-settings-update="{{ route('admin.appearance.design-settings.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"

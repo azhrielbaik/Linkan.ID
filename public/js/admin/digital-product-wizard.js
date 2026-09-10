@@ -717,8 +717,13 @@
             formData.append('appearance_id', urlsEl.dataset.appearanceId);
         }
 
+        let storeUrl = '/admin/elements/digital-product';
+        if (urlsEl && urlsEl.dataset.routeDpStore) {
+            storeUrl = urlsEl.dataset.routeDpStore;
+        }
+        
         // Send via fetch
-        fetch('{{ route('admin.elements.digital-product.store') }}', {
+        fetch(storeUrl, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
