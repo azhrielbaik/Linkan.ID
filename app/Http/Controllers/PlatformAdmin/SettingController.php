@@ -12,9 +12,7 @@ use App\Http\Requests\PlatformAdmin\UpdateSettingsRequest;
 
 use Illuminate\Support\Facades\Hash;
 
-use App\Mail\BroadcastAnnouncementMail;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 
 class SettingController extends Controller
 {
@@ -83,6 +81,7 @@ class SettingController extends Controller
 
     /**
      * Membuat dan menyiarkan pengumuman baru ke semua seller (opsional via email massal).
+     * Email dikirim secara asinkron via queued job agar tidak timeout.
      */
     public function storeBroadcast(Request $request)
     {
@@ -111,44 +110,37 @@ class SettingController extends Controller
             'email_sent_at'      => $shouldSendEmail ? now() : null,
         ]);
 
-        $sentCount = 0;
+        $recipientCount = 0;
 
-        // Jika opsi email dicentang, kirim email ke seluruh seller aktif
+        // Jika opsi email dicentang, dispatch job per seller ke queue (asinkron)
         if ($shouldSendEmail) {
             $sellers = User::where('role', '!=', 'admin_platform')
                 ->whereNotNull('email')
                 ->get();
 
-            foreach ($sellers as $seller) {
-                try {
-                    Mail::to($seller->email)->send(new BroadcastAnnouncementMail($announcement, $seller));
-                    $sentCount++;
-                } catch (\Exception $e) {
-                    \Log::error("Failed to send broadcast email to {$seller->email}: " . $e->getMessage());
-                }
-            }
+            $recipientCount = $sellers->count();
 
-            $announcement->update([
-                'emails_sent_count' => $sentCount,
-            ]);
+            foreach ($sellers as $seller) {
+                \App\Jobs\SendBroadcastEmailJob::dispatch($announcement, $seller);
+            }
         }
 
         // Catat ke Log Aktivitas
         ActivityLogger::log(
             'create_broadcast',
-            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email Terkirim: {$sentCount}]" : ""),
+            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email dijadwalkan: {$recipientCount} penerima]" : ""),
             [
                 'announcement_id'   => $announcement->id,
                 'title'             => $announcement->title,
                 'type'              => $announcement->type,
                 'send_email'        => $shouldSendEmail,
-                'emails_sent_count' => $sentCount,
+                'queued_recipients' => $recipientCount,
             ]
         );
 
         $msg = __('messages.broadcast_success');
         if ($shouldSendEmail) {
-            $msg .= " " . __('messages.broadcast_email_sent', ['count' => $sentCount]);
+            $msg .= " " . __('messages.broadcast_email_sent', ['count' => $recipientCount]);
         }
 
         return back()->with('success', $msg);
