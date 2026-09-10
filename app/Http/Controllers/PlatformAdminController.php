@@ -80,26 +80,60 @@ class PlatformAdminController extends Controller
 
     public function getNotifications(Request $request)
     {
-        return response()->json($this->platformAdminService->getNotificationsData());
+        $readKeys = session('platform_notif_read_keys', []);
+        return response()->json($this->platformAdminService->getNotificationsData($readKeys));
     }
 
     public function markNotificationRead(Request $request)
     {
-        return response()->json(['status' => 'success']);
+        $request->validate([
+            'notification_key' => 'required|string|max:100',
+        ]);
+
+        $key = $request->input('notification_key');
+        $readKeys = session('platform_notif_read_keys', []);
+
+        if (!in_array($key, $readKeys, true)) {
+            $readKeys[] = $key;
+            // Batasi max 200 entri agar session tidak membengkak
+            if (count($readKeys) > 200) {
+                $readKeys = array_slice($readKeys, -200);
+            }
+            session(['platform_notif_read_keys' => $readKeys]);
+        }
+
+        return response()->json(['status' => 'success', 'key' => $key]);
     }
 
     public function markAllNotificationsRead(Request $request)
     {
-        return response()->json(['status' => 'success']);
+        // Ambil semua notifikasi saat ini dan tandai semuanya sebagai dibaca
+        $currentData = $this->platformAdminService->getNotificationsData([]);
+        $allKeys = array_map(fn ($n) => $n['id'], $currentData['notifications'] ?? []);
+
+        $readKeys = session('platform_notif_read_keys', []);
+        $merged = array_unique(array_merge($readKeys, $allKeys));
+
+        // Batasi max 200 entri
+        if (count($merged) > 200) {
+            $merged = array_slice($merged, -200);
+        }
+
+        session(['platform_notif_read_keys' => $merged]);
+
+        return response()->json(['status' => 'success', 'marked_count' => count($allKeys)]);
     }
 
     public function streamNotifications(Request $request)
     {
+        // Ambil readKeys dari session sebelum session ditutup untuk SSE
+        $readKeys = session('platform_notif_read_keys', []);
+
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
 
-        return response()->stream(function () {
+        return response()->stream(function () use ($readKeys) {
             @set_time_limit(0);
             @ini_set('implicit_flush', 1);
             if (ob_get_level()) {
@@ -115,7 +149,7 @@ class PlatformAdminController extends Controller
                     break;
                 }
 
-                $data = $this->platformAdminService->getNotificationsData();
+                $data = $this->platformAdminService->getNotificationsData($readKeys);
                 $currentHash = md5(json_encode($data));
 
                 if ($lastHash !== $currentHash || $i === 0) {
