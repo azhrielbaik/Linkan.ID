@@ -850,6 +850,26 @@ nav[role="navigation"] a:hover {
     background: #dc2626;
 }
 
+.btn-modal-submit-restore {
+    background: #10b981;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-modal-submit-restore:hover {
+    background: #059669;
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
     .stats-grid {

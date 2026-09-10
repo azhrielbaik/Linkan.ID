@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PlatformAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlatformAdmin\RestoreProductRequest;
 use App\Models\DigitalProduct;
 use App\Models\User;
 use App\Services\ActivityLogger;
@@ -185,9 +186,17 @@ class ProductManagementController extends Controller
     /**
      * Mengaktifkan kembali (Restore) produk yang telah di-takedown.
      */
-    public function restore(Request $request, $id)
+    public function restore(RestoreProductRequest $request, $id)
     {
         $product = DigitalProduct::with('user')->findOrFail($id);
+
+        if ($product->is_active && $product->takedown_reason === null) {
+            return back()->with('info', "Produk \"{$product->title}\" saat ini sudah dalam status aktif.");
+        }
+
+        $restoreReason = $request->validated('restore_reason')
+            ? strip_tags($request->validated('restore_reason'))
+            : null;
 
         $product->update([
             'is_active' => true,
@@ -195,14 +204,20 @@ class ProductManagementController extends Controller
             'takedown_at' => null,
         ]);
 
+        $logDesc = "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")";
+        if ($restoreReason) {
+            $logDesc .= ". Alasan/Catatan: {$restoreReason}";
+        }
+
         // Catat ke Log Aktivitas
         ActivityLogger::log(
             'restore_product',
-            "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")",
+            $logDesc,
             [
-                'product_id' => $product->id,
-                'product_title' => $product->title,
-                'seller_id' => $product->user_id
+                'product_id'     => $product->id,
+                'product_title'  => $product->title,
+                'seller_id'      => $product->user_id,
+                'restore_reason' => $restoreReason,
             ]
         );
 

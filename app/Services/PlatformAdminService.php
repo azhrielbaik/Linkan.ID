@@ -454,7 +454,7 @@ class PlatformAdminService
     /**
      * Activate user logic
      */
-    public function activateUser(User $user): void
+    public function activateUser(User $user, ?string $reason = null): void
     {
         $user->update([
             'suspended_at'    => null,
@@ -466,14 +466,24 @@ class PlatformAdminService
             ->where('status', 'pending')
             ->update([
                 'status'      => 'approved',
-                'admin_notes' => 'Akun dipulihkan secara manual oleh Admin Platform.',
+                'admin_notes' => $reason ?: 'Akun dipulihkan secara manual oleh Admin Platform.',
                 'resolved_at' => now(),
             ]);
 
+        $logDesc = "Mengaktifkan kembali akun user: {$user->name} ({$user->email})";
+        if ($reason) {
+            $logDesc .= ". Catatan: {$reason}";
+        }
+
         ActivityLogger::log(
             'activate_user',
-            "Mengaktifkan kembali akun user: {$user->name} ({$user->email})",
-            ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email]
+            $logDesc,
+            [
+                'target_user_id' => $user->id,
+                'user_name'      => $user->name,
+                'user_email'     => $user->email,
+                'reason'         => $reason
+            ]
         );
     }
 }

@@ -16,6 +16,24 @@ function closeSuspendModal() {
     if (modal) modal.classList.remove('show');
 }
 
+function openActivateModal(userId, userName) {
+    const target = document.getElementById('activateTargetName');
+    const form = document.getElementById('activateForm');
+    const modal = document.getElementById('activateModal');
+    const reasonInput = document.getElementById('activate_reason');
+    const baseUrl = (window.PlatformUsersConfig && window.PlatformUsersConfig.userBaseUrl) || '/platform-admin/users';
+
+    if (target) target.textContent = userName;
+    if (form) form.action = `${baseUrl}/${userId}/activate`;
+    if (reasonInput) reasonInput.value = '';
+    if (modal) modal.classList.add('show');
+}
+
+function closeActivateModal() {
+    const modal = document.getElementById('activateModal');
+    if (modal) modal.classList.remove('show');
+}
+
 function openRejectAppealModal(appealId, userName) {
     const target = document.getElementById('rejectTargetName');
     const form = document.getElementById('rejectAppealForm');
@@ -423,6 +441,12 @@ function openAppealDetailModal(appeal) {
                 </div>
                 <textarea id="appealRejectNotes" rows="3" class="form-control" placeholder="Tuliskan catatan alasan penolakan banding..." style="width: 100%; resize: vertical;"></textarea>
             </div>
+            <div id="approveNotesSection" style="display: none;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <i class="fas fa-check-circle" style="color: #16a34a;"></i> Catatan Persetujuan (Opsional)
+                </div>
+                <textarea id="appealApproveNotes" rows="3" class="form-control" placeholder="Tuliskan catatan persetujuan pemulihan akun (opsional)..." style="width: 100%; resize: vertical;"></textarea>
+            </div>
         </div>
     `;
 
@@ -431,7 +455,7 @@ function openAppealDetailModal(appeal) {
         <button type="button" class="btn-action btn-reject" id="btnShowReject" onclick="showAppealRejectSection()">
             <i class="fas fa-times"></i> Tolak Banding
         </button>
-        <button type="button" class="btn-action btn-approve" id="btnApprove" onclick="submitApproveAppeal()">
+        <button type="button" class="btn-action btn-approve" id="btnApprove" onclick="showAppealApproveSection()">
             <i class="fas fa-check"></i> Setujui Banding
         </button>
     `;
@@ -440,12 +464,14 @@ function openAppealDetailModal(appeal) {
 }
 
 function showAppealRejectSection() {
-    const section       = document.getElementById('rejectNotesSection');
-    const btnShowReject = document.getElementById('btnShowReject');
-    const btnApprove    = document.getElementById('btnApprove');
-    const footer        = document.getElementById('appealDetailFooter');
+    const section        = document.getElementById('rejectNotesSection');
+    const approveSection = document.getElementById('approveNotesSection');
+    const btnShowReject  = document.getElementById('btnShowReject');
+    const btnApprove     = document.getElementById('btnApprove');
+    const footer         = document.getElementById('appealDetailFooter');
     if (!section) return;
 
+    if (approveSection) approveSection.style.display = 'none';
     section.style.display = 'block';
     if (btnShowReject) btnShowReject.style.display = 'none';
     if (btnApprove)    btnApprove.style.display    = 'none';
@@ -458,22 +484,51 @@ function showAppealRejectSection() {
     footer.appendChild(confirmBtn);
 }
 
+function showAppealApproveSection() {
+    const section       = document.getElementById('approveNotesSection');
+    const rejectSection = document.getElementById('rejectNotesSection');
+    const btnShowReject = document.getElementById('btnShowReject');
+    const btnApprove    = document.getElementById('btnApprove');
+    const footer        = document.getElementById('appealDetailFooter');
+    if (!section) return;
+
+    if (rejectSection) rejectSection.style.display = 'none';
+    section.style.display = 'block';
+    if (btnShowReject) btnShowReject.style.display = 'none';
+    if (btnApprove)    btnApprove.style.display    = 'none';
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'btn-modal-submit-primary';
+    confirmBtn.style.background = '#16a34a';
+    confirmBtn.style.color = '#fff';
+    confirmBtn.style.border = 'none';
+    confirmBtn.style.padding = '8px 16px';
+    confirmBtn.style.borderRadius = '8px';
+    confirmBtn.style.fontWeight = '700';
+    confirmBtn.style.cursor = 'pointer';
+    confirmBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Setujui & Pulihkan';
+    confirmBtn.onclick = submitApproveAppeal;
+    footer.appendChild(confirmBtn);
+}
+
 function submitApproveAppeal() {
     if (!_currentAppealData) return;
+    const notes = (document.getElementById('appealApproveNotes') || {}).value || '';
     const userName = _currentAppealData.user_name;
     const url      = _currentAppealData.approve_url;
 
     if (typeof showConfirmModal === 'function') {
         showConfirmModal({
             title: 'Setujui Permohonan Banding?',
-            text: `Permohonan banding dari ${userName} akan disetujui, dan status suspend akun akan langsung dipulihkan.`,
+            text: `Permohonan banding dari ${userName} akan disetujui, dan status suspend akun akan langsung dipulihkan seketika.`,
             icon: 'question',
             confirmText: '<i class="fas fa-check"></i> Ya, Setujui & Pulihkan',
-            onConfirm: () => { _postAppealAction(url, {}); }
+            onConfirm: () => { _postAppealAction(url, { admin_notes: notes }); }
         });
     } else {
         if (confirm(`Setujui banding dari ${userName}?`)) {
-            _postAppealAction(url, {});
+            _postAppealAction(url, { admin_notes: notes });
         }
     }
 }

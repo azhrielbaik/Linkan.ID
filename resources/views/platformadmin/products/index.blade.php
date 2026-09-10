@@ -259,12 +259,9 @@
                                                 <i class="fas fa-ban"></i> {{ __('platform.takedown') }}
                                             </button>
                                         @else
-                                            <form action="{{ route('platform-admin.products.restore', $p->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <button type="button" class="btn-act btn-restore" onclick="confirmRestoreProduct(this.form, '{{ addslashes($p->title) }}')">
-                                                    <i class="fas fa-undo"></i> {{ __('platform.restore_product') }}
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn-act btn-restore" onclick="showRestoreModal({{ $p->id }}, '{{ addslashes($p->title) }}', '{{ addslashes($p->user->name ?? 'Seller') }}')">
+                                                <i class="fas fa-undo"></i> {{ __('platform.restore_product') }}
+                                            </button>
                                         @endif
 
                                         {{-- Tombol View Platform --}}
@@ -325,6 +322,38 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-modal-cancel" onclick="closeTakedownModal()">{{ __('platform.cancel') }}</button>
                     <button type="submit" class="btn-modal-submit-takedown"><i class="fas fa-ban"></i> {{ __('platform.takedown') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Restore Produk (Konfirmasi & Alasan Opsional) -->
+    <div id="restoreModal" class="modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-undo" style="color: #10b981; margin-right: 6px;"></i>{{ __('platform.restore_product') }}</h3>
+                <button class="modal-close" onclick="closeRestoreModal()">&times;</button>
+            </div>
+            <form id="restoreForm" method="POST" action="">
+                @csrf
+                <div class="modal-body">
+                    <div style="background: #ecfdf5; border: 1px solid #d1fae5; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #065f46;">
+                        <i class="fas fa-check-circle"></i> Produk yang dipulihkan akan aktif kembali dan dapat diakses pembeli di etalase microsite seller.
+                    </div>
+
+                    <div style="margin-bottom: 14px; font-size: 14px;">
+                        <div><strong>Produk:</strong> <span id="modalRestoreProductTitle">-</span></div>
+                        <div><strong>{{ __('platform.seller') }}:</strong> <span id="modalRestoreProductSeller">-</span></div>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label>Catatan / Alasan Pemulihan <span style="font-size: 11px; color: #64748b;">(Opsional)</span></label>
+                        <textarea name="restore_reason" id="modalRestoreReason" class="form-control-custom" rows="3" placeholder="Contoh: Seller telah memperbaiki deskripsi dan file konten sesuai kebijakan platform..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" onclick="closeRestoreModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-submit-restore"><i class="fas fa-undo"></i> {{ __('platform.restore_product') }}</button>
                 </div>
             </form>
         </div>

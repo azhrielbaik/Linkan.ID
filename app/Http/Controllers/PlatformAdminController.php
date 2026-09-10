@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\SuspensionAppeal;
 use App\Services\PlatformAdminService;
+use App\Http\Requests\PlatformAdmin\ActivateUserRequest;
+use App\Http\Requests\PlatformAdmin\ApproveAppealRequest;
 use App\Http\Resources\PlatformAdmin\SellerDetailResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -232,33 +234,53 @@ class PlatformAdminController extends Controller
         return back()->with('success', "Akun {$user->name} berhasil di-suspend dengan durasi: {$durationLabel}.");
     }
 
-    public function activate(int $id)
+    public function activate(ActivateUserRequest $request, int $id)
     {
         $user = User::findOrFail($id);
-        
-        $this->platformAdminService->activateUser($user);
+
+        if ($user->hasRole('admin_platform')) {
+            return back()->with('error', 'Tidak dapat mengubah status akun sesama Platform Admin.');
+        }
+
+        if (!$user->isSuspended()) {
+            return back()->with('info', "Akun {$user->name} saat ini dalam kondisi aktif.");
+        }
+
+        $reason = $request->validated('activate_reason')
+            ? strip_tags($request->validated('activate_reason'))
+            : null;
+
+        $this->platformAdminService->activateUser($user, $reason);
 
         return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali.");
     }
 
-    public function approveAppeal(int $id)
+    public function approveAppeal(ApproveAppealRequest $request, int $id)
     {
         $appeal = SuspensionAppeal::with('user')->findOrFail($id);
 
+        if ($appeal->status !== 'pending') {
+            return back()->with('error', 'Permohonan banding ini telah diproses sebelumnya.');
+        }
+
+        $adminNotes = $request->validated('admin_notes')
+            ? strip_tags($request->validated('admin_notes'))
+            : 'Permohonan banding disetujui. Akun telah dipulihkan.';
+
         $appeal->update([
             'status'      => 'approved',
-            'admin_notes' => 'Permohonan banding disetujui. Akun telah dipulihkan.',
+            'admin_notes' => $adminNotes,
             'resolved_at' => now(),
         ]);
 
         if ($appeal->user) {
-            $this->platformAdminService->activateUser($appeal->user);
+            $this->platformAdminService->activateUser($appeal->user, $adminNotes);
         }
 
         \App\Services\ActivityLogger::log(
             'approve_suspension_appeal',
-            "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email})",
-            ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id]
+            "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email}). Catatan: {$adminNotes}",
+            ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id, 'admin_notes' => $adminNotes]
         );
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} berhasil disetujui dan akun telah dipulihkan.");
