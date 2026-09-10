@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
@@ -50,20 +50,20 @@
             <div class="chart-card">
                 <div class="chart-header">
                     <div>
-                        <div class="chart-header-sub">Trend Komisi Platform</div>
+                        <div class="chart-header-sub">TREND KOMISI PLATFORM</div>
                         <h3>Total Komisi Masuk</h3>
                     </div>
                     <div class="chart-period-tabs">
                         <button type="button" class="chart-tab-btn active" id="btnMonthly" onclick="switchChartPeriod('monthly')">
-                            {{ __('platform.monthly') }}
+                            Bulanan (12 Bulan)
                         </button>
                         <button type="button" class="chart-tab-btn" id="btnWeekly" onclick="switchChartPeriod('weekly')">
-                            {{ __('platform.weekly') }}
+                            Mingguan (7 Hari)
                         </button>
                     </div>
                 </div>
                 <div class="chart-canvas-wrapper">
-                    <canvas id="earningsChart"></canvas>
+                    <div id="komisi-chart"></div>
                 </div>
             </div>
 
