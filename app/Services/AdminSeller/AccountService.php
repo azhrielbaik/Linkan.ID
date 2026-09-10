@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AccountService
 {
@@ -14,21 +15,23 @@ class AccountService
      */
     public function updateAccount(User $user, array $data, ?string $password = null): void
     {
-        $user->username = $data['username'];
-        $user->name = $data['name'];
+        DB::transaction(function () use ($user, $data, $password) {
+            $user->username = $data['username'];
+            $user->name = $data['name'];
 
-        if ($password) {
-            $user->password = Hash::make($password);
-        }
+            if ($password) {
+                $user->password = Hash::make($password);
+            }
 
-        $user->save();
+            $user->save();
 
-        ActivityLogger::log(
-            'update_account',
-            "User {$user->name} memperbarui informasi akun" . ($password ? " dan kata sandi" : "") . ".",
-            ['username' => $user->username, 'password_changed' => (bool)$password],
-            $user->id
-        );
+            ActivityLogger::log(
+                'update_account',
+                "User {$user->name} memperbarui informasi akun" . ($password ? " dan kata sandi" : "") . ".",
+                ['username' => $user->username, 'password_changed' => (bool)$password],
+                $user->id
+            );
+        });
     }
 
     /**

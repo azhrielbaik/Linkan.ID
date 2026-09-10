@@ -138,6 +138,12 @@
     let transactionResult = null;
 
     document.getElementById('select-method').addEventListener('click', function () {
+        const form = document.getElementById('checkout-form');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
         const email = document.getElementById('buyer_email').value.trim();
         const name = document.getElementById('buyer_name').value.trim();
 
@@ -206,62 +212,82 @@
             return;
         }
 
-        snap.pay('{{ $snapToken }}', {
-            onSuccess: function(result) {
-                Swal.fire({
-                    title: 'Memproses Pembayaran...',
-                    text: 'Mohon tunggu sebentar, kami sedang menyiapkan pesanan Anda.',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
+        const transactionData = {
+            order_id: '{{ $orderId }}',
+            transaction_status: 'pending',
+            product_id: {{ $product->id }},
+            buyer_email: email,
+            buyer_name: name,
+            qty: {{ $savedQty }},
+            total_price: totalPrice
+        };
+
+        // Simpan transaksi sebagai pending ke DB sebelum membuka Snap Midtrans
+        fetch("{{ route('transaction.store') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(transactionData)
+        })
+        .then(async response => {
+            if (!response.ok) {
+                let errorData = {};
+                try {
+                    errorData = await response.json();
+                } catch (e) {}
                 
-                paymentSelected = true;
-                transactionResult = result;
-
-                const transactionData = {
-                    order_id: result.order_id,
-                    transaction_status: result.transaction_status,
-                    product_id: {{ $product->id }},
-                    buyer_email: email,
-                    buyer_name: name,
-                    qty: {{ $savedQty }},
-                    total_price: totalPrice
-                };
-
-                fetch("{{ route('transaction.store') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(transactionData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id=' + transactionData.order_id;
-                    } else {
-                        Swal.fire('Error', data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Terjadi kesalahan saat menyimpan transaksi', 'error');
-                });
-            },
-            onPending: function(result) {
-                Swal.fire('Menunggu', 'Pembayaran sedang diproses...', 'info');
-                paymentSelected = true;
-                transactionResult = result;
-            },
-            onError: function(result) {
-                Swal.fire('Gagal', 'Terjadi kesalahan dalam pembayaran.', 'error');
-            },
-            onClose: function() {
-                Swal.fire('Perhatian', 'Kamu belum menyelesaikan pembayaran.', 'warning');
+                let errorMessage = errorData.message || 'Gagal menyimpan transaksi. Pastikan data valid.';
+                // Jika error 422, ambil pesan detail
+                if (response.status === 422 && errorData.errors) {
+                    const firstKey = Object.keys(errorData.errors)[0];
+                    errorMessage = errorData.errors[firstKey][0];
+                }
+                throw new Error(errorMessage);
             }
+            return response.json();
+        })
+        .then(data => {
+            // Setelah fetch sukses, buka popup Snap
+            snap.pay('{{ $snapToken }}', {
+                onSuccess: function(result) {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mengarahkan Anda ke halaman status pesanan.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    paymentSelected = true;
+                    transactionResult = result;
+                    window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id={{ $orderId }}';
+                },
+                onPending: function(result) {
+                    Swal.fire({
+                        title: 'Menunggu Pembayaran',
+                        text: 'Silahkan selesaikan pembayaran Anda.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    paymentSelected = true;
+                    transactionResult = result;
+                    window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id={{ $orderId }}';
+                },
+                onError: function(result) {
+                    Swal.fire('Gagal', 'Terjadi kesalahan dalam pembayaran.', 'error');
+                },
+                onClose: function() {
+                    Swal.fire('Perhatian', 'Kamu belum menyelesaikan pembayaran.', 'warning');
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error menyimpan transaksi awal:', error);
+            Swal.fire('Error', error.message, 'error');
         });
     });
 </script>

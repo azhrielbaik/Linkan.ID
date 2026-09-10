@@ -8,6 +8,7 @@ use App\Models\SupportTicketReply;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,7 @@ class SupportTicketController extends Controller
         $status = $request->query('status');
         $search = $request->query('search');
 
-        $query = SupportTicket::where('user_id', $userId);
+        $query = SupportTicket::where('user_id', $userId)->withCount('replies');
 
         if ($status && in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
             $query->where('status', $status);
@@ -105,38 +106,42 @@ class SupportTicketController extends Controller
             $attachmentPath = $request->file('attachment')->store('support_attachments', 'public');
         }
 
-        $ticket = SupportTicket::create([
-            'ticket_code'     => $ticketCode,
-            'user_id'         => Auth::id(),
-            'category'        => $request->category,
-            'subject'         => $request->subject,
-            'message'         => $request->message,
-            'status'          => 'open',
-            'priority'        => 'medium',
-            'last_replied_at' => now(),
-        ]);
-
-        // Jika ada lampiran di pesan awal, buat reply pertama sebagai catatan lampiran
-        if ($attachmentPath) {
-            SupportTicketReply::create([
-                'support_ticket_id' => $ticket->id,
-                'user_id'           => Auth::id(),
-                'is_admin_reply'    => false,
-                'message'           => 'Lampiran Bukti Kendala Terlampir.',
-                'attachment'        => $attachmentPath,
+        $ticket = DB::transaction(function () use ($request, $ticketCode, $attachmentPath) {
+            $ticket = SupportTicket::create([
+                'ticket_code'     => $ticketCode,
+                'user_id'         => Auth::id(),
+                'category'        => $request->category,
+                'subject'         => $request->subject,
+                'message'         => $request->message,
+                'status'          => 'open',
+                'priority'        => 'medium',
+                'last_replied_at' => now(),
             ]);
-        }
 
-        // Catat ke log aktivitas
-        ActivityLogger::log(
-            'create_support_ticket',
-            "Membuat tiket bantuan baru: #{$ticketCode} ({$ticket->subject})",
-            [
-                'ticket_id'   => $ticket->id,
-                'ticket_code' => $ticketCode,
-                'category'    => $ticket->category,
-            ]
-        );
+            // Jika ada lampiran di pesan awal, buat reply pertama sebagai catatan lampiran
+            if ($attachmentPath) {
+                SupportTicketReply::create([
+                    'support_ticket_id' => $ticket->id,
+                    'user_id'           => Auth::id(),
+                    'is_admin_reply'    => false,
+                    'message'           => 'Lampiran Bukti Kendala Terlampir.',
+                    'attachment'        => $attachmentPath,
+                ]);
+            }
+
+            // Catat ke log aktivitas
+            ActivityLogger::log(
+                'create_support_ticket',
+                "Membuat tiket bantuan baru: #{$ticketCode} ({$ticket->subject})",
+                [
+                    'ticket_id'   => $ticket->id,
+                    'ticket_code' => $ticketCode,
+                    'category'    => $ticket->category,
+                ]
+            );
+
+            return $ticket;
+        });
 
         // Kirim email konfirmasi ke seller via SMTP
         try {
@@ -185,30 +190,32 @@ class SupportTicketController extends Controller
             $attachmentPath = $request->file('attachment')->store('support_attachments', 'public');
         }
 
-        SupportTicketReply::create([
-            'support_ticket_id' => $ticket->id,
-            'user_id'           => Auth::id(),
-            'is_admin_reply'    => false,
-            'message'           => $request->message,
-            'attachment'        => $attachmentPath,
-        ]);
+        DB::transaction(function () use ($ticket, $request, $attachmentPath) {
+            SupportTicketReply::create([
+                'support_ticket_id' => $ticket->id,
+                'user_id'           => Auth::id(),
+                'is_admin_reply'    => false,
+                'message'           => $request->message,
+                'attachment'        => $attachmentPath,
+            ]);
 
-        // Update status & waktu balasan tiket
-        if (in_array($ticket->status, ['resolved', 'closed'])) {
-            $ticket->status = 'open'; // Re-open jika seller membalas kembali
-        }
-        $ticket->last_replied_at = now();
-        $ticket->save();
+            // Update status & waktu balasan tiket
+            if (in_array($ticket->status, ['resolved', 'closed'])) {
+                $ticket->status = 'open'; // Re-open jika seller membalas kembali
+            }
+            $ticket->last_replied_at = now();
+            $ticket->save();
 
-        // Catat ke log aktivitas
-        ActivityLogger::log(
-            'reply_support_ticket',
-            "Mengirim balasan pada tiket bantuan: #{$ticket->ticket_code}",
-            [
-                'ticket_id'   => $ticket->id,
-                'ticket_code' => $ticket->ticket_code,
-            ]
-        );
+            // Catat ke log aktivitas
+            ActivityLogger::log(
+                'reply_support_ticket',
+                "Mengirim balasan pada tiket bantuan: #{$ticket->ticket_code}",
+                [
+                    'ticket_id'   => $ticket->id,
+                    'ticket_code' => $ticket->ticket_code,
+                ]
+            );
+        });
 
         return back()->with('success', 'Balasan Anda berhasil dikirim ke tim support.');
     }

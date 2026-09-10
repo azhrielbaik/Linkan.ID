@@ -123,21 +123,25 @@ class ShortlinkController extends Controller
             'destination' => 'required|url',
         ]);
 
-        $createdShortlink = Shortlink::create([
-            'user_id' => $user->getKey(),
-            'title' => $request->title,
-            'description' => $request->description,
-            'slug' => $request->slug,
-            'destination' => $request->destination,
-        ]);
+        $createdShortlink = DB::transaction(function () use ($user, $request) {
+            $shortlink = Shortlink::create([
+                'user_id' => $user->getKey(),
+                'title' => $request->title,
+                'description' => $request->description,
+                'slug' => $request->slug,
+                'destination' => $request->destination,
+            ]);
 
-        // Catat Log Pembuatan Shortlink
-        ActivityLogger::log(
-            'create_shortlink',
-            "Seller {$user->name} membuat shortlink baru: '{$createdShortlink->slug}' diarahkan ke {$createdShortlink->destination}",
-            ['slug' => $createdShortlink->slug, 'destination' => $createdShortlink->destination],
-            $user->id
-        );
+            // Catat Log Pembuatan Shortlink
+            ActivityLogger::log(
+                'create_shortlink',
+                "Seller {$user->name} membuat shortlink baru: '{$shortlink->slug}' diarahkan ke {$shortlink->destination}",
+                ['slug' => $shortlink->slug, 'destination' => $shortlink->destination],
+                $user->id
+            );
+
+            return $shortlink;
+        });
 
         // return back()->with('success', 'Shortlink berhasil dibuat: https://Linkan.id/' . $request->slug);
 
@@ -160,20 +164,22 @@ class ShortlinkController extends Controller
             'expires_at' => 'nullable|date',
         ]);
 
-        $shortlink->update([
-            'title' => $request->title,
-            'slug' => $request->slug,
-            'password' => $request->password,
-            'expires_at' => $request->expires_at,
-        ]);
+        DB::transaction(function () use ($shortlink, $user, $request) {
+            $shortlink->update([
+                'title' => $request->title,
+                'slug' => $request->slug,
+                'password' => $request->password,
+                'expires_at' => $request->expires_at,
+            ]);
 
-        // Catat Log Update Shortlink
-        ActivityLogger::log(
-            'update_shortlink',
-            "Seller " . ($user->name ?? 'Seller') . " memperbarui shortlink: '{$shortlink->slug}'",
-            ['slug' => $shortlink->slug, 'shortlink_id' => $shortlink->id],
-            $user->id ?? null
-        );
+            // Catat Log Update Shortlink
+            ActivityLogger::log(
+                'update_shortlink',
+                "Seller " . ($user->name ?? 'Seller') . " memperbarui shortlink: '{$shortlink->slug}'",
+                ['slug' => $shortlink->slug, 'shortlink_id' => $shortlink->id],
+                $user->id ?? null
+            );
+        });
 
         return back()->with('success', 'Shortlink berhasil diperbarui.');
     }

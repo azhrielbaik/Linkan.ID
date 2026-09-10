@@ -1,7 +1,7 @@
 @extends('admin_seller.layouts.app')
 
-@section('title', 'Pusat Bantuan & Tiket Support — Linkan.ID')
-@section('page_title', 'Pusat Bantuan')
+@section('title', 'Issue List — Linkan.ID')
+@section('page_title', 'Issue List')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/seller-tickets.css') }}?v={{ time() }}">
@@ -33,179 +33,104 @@
         </div>
     @endif
 
-    <!-- Active Ticket Notice Banner (Rate Limiter) -->
-    @if(isset($activeTicket) && $activeTicket)
-        <div class="ticket-active-alert-card">
-            <div class="ticket-active-alert-content">
-                <div class="ticket-active-alert-icon">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <div>
-                    <div class="ticket-active-alert-title">
-                        <i class="fas fa-info-circle"></i> Anda Memiliki Tiket Bantuan yang Masih Aktif (#{{ $activeTicket->ticket_code }})
+    <!-- Issue List Header & Toolbar -->
+    <div class="tickets-header">
+        <h2 class="tickets-title">Issue List</h2>
+        <!-- Optional Breadcrumb could go here -->
+    </div>
+
+    <div class="issue-list-box">
+        <div class="issue-list-toolbar">
+            <form action="{{ route('admin.tickets.index') }}" method="GET" class="issue-search">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search issues..." value="{{ request('search') }}">
+            </form>
+            <button class="btn-add-issue" onclick="openCreateTicketModal()">Add New Issues</button>
+        </div>
+
+        <div class="issue-list-content">
+            @forelse($tickets as $t)
+                @php
+                    // Map statuses to UI colors
+                    $statusClass = 'status-pending';
+                    $statusText = 'Pending';
+                    if ($t->status === 'open') {
+                        $statusClass = 'status-open';
+                        $statusText = 'Open';
+                    } elseif ($t->status === 'in_progress') {
+                        $statusClass = 'status-in-progress';
+                        $statusText = 'In Progress';
+                    } elseif ($t->status === 'resolved') {
+                        $statusClass = 'status-resolved';
+                        $statusText = 'Resolved';
+                    } elseif ($t->status === 'closed') {
+                        $statusClass = 'status-closed';
+                        $statusText = 'Closed';
+                    }
+                @endphp
+
+                <div class="issue-row">
+                    <!-- Column 1: Status -->
+                    <div>
+                        <span class="issue-status {{ $statusClass }}">{{ $statusText }}</span>
                     </div>
-                    <div class="ticket-active-alert-desc">
-                        Subjek: <strong>"{{ $activeTicket->subject }}"</strong> (Status: <em>{{ $activeTicket->status_label }}</em>).<br>
-                        Pengajuan tiket baru dibatasi. Anda dapat membuat tiket baru setelah tiket aktif ini berstatus <strong>Selesai</strong> atau <strong>Ditutup</strong> oleh admin.
+
+                    <!-- Column 2: ID & Title -->
+                    <div class="issue-info">
+                        <span class="issue-id">{{ str_replace('TKT-', 'ISSUE-', explode('-', $t->ticket_code)[0] . '-' . (isset(explode('-', $t->ticket_code)[2]) ? explode('-', $t->ticket_code)[2] : $t->ticket_code)) }}</span>
+                        <span class="issue-title">{{ Str::limit($t->subject, 50) }}</span>
+                    </div>
+
+                    <!-- Column 3: User Avatar & Name -->
+                    <div class="issue-user">
+                        @if(Auth::user()->avatar)
+                            <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Avatar" class="issue-avatar">
+                        @else
+                            <div class="issue-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                        @endif
+                        <span class="issue-username">{{ Auth::user()->name }}</span>
+                    </div>
+
+                    <!-- Column 4: Dates -->
+                    <div class="issue-dates">
+                        <span><i class="far fa-calendar-alt"></i> <strong>Created:</strong> {{ $t->created_at->format('d.m.Y') }}</span>
+                        <span><i class="far fa-clock"></i> <strong>Replied:</strong> {{ $t->last_replied_at ? $t->last_replied_at->format('d.m.Y') : $t->created_at->format('d.m.Y') }}</span>
+                    </div>
+
+                    <!-- Column 5: Tags -->
+                    <div class="issue-tags">
+                        <span class="issue-tag">{{ ucfirst($t->category) }}</span>
+                        <span class="issue-tag">{{ ucfirst($t->priority) }} Priority</span>
+                    </div>
+
+                    <!-- Column 6: Meta (Comments & Files) -->
+                    <div class="issue-meta">
+                        <div class="meta-item" title="Comments">
+                            <i class="far fa-comment-dots"></i> {{ $t->replies_count ?? 0 }}
+                        </div>
+                        <div class="meta-item" title="Files">
+                            <i class="fas fa-paperclip"></i> {{ $t->replies()->whereNotNull('attachment')->count() > 0 ? 1 : 0 }}
+                        </div>
+                    </div>
+
+                    <!-- Column 7: Actions -->
+                    <div class="issue-actions">
+                        <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn-action" title="View Issue">
+                            <i class="far fa-eye"></i>
+                        </a>
                     </div>
                 </div>
-            </div>
-            <a href="{{ route('admin.tickets.show', $activeTicket->id) }}" class="btn-view-active-ticket">
-                <i class="fas fa-comments"></i> Buka Thread Tiket Aktif
-            </a>
+            @empty
+                <div class="tickets-empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p style="font-weight: 600; font-size: 16px; color: #334155; margin-bottom: 6px;">No Issues Found</p>
+                    <p style="font-size: 13px;">You have no active support tickets or issues at the moment.</p>
+                </div>
+            @endforelse
         </div>
-    @endif
-
-    <!-- Header Section -->
-    <div class="tickets-header-section">
-        <div class="tickets-header-title">
-            <h2>Pusat Bantuan & Tiket Bantuan</h2>
-            <p>Laporkan kendala terkait penarikan dana, produk digital, atau pertanyaan akun Anda langsung ke tim support.</p>
-        </div>
-        @if(isset($activeTicket) && $activeTicket)
-            <button type="button" class="btn-create-ticket btn-disabled" onclick="showActiveTicketNotice()" title="Anda masih memiliki tiket yang sedang aktif">
-                <i class="fas fa-lock"></i> Buat Tiket Baru
-            </button>
-        @else
-            <button type="button" class="btn-create-ticket" onclick="openCreateTicketModal()">
-                <i class="fas fa-plus"></i> Buat Tiket Baru
-            </button>
-        @endif
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="tickets-stats-grid">
-        <div class="ticket-stat-card">
-            <div class="ticket-stat-icon icon-all">
-                <i class="fas fa-ticket-alt"></i>
-            </div>
-            <div class="ticket-stat-info">
-                <div class="stat-value">{{ $totalTickets }}</div>
-                <div class="stat-label">Total Tiket</div>
-            </div>
-        </div>
-
-        <div class="ticket-stat-card">
-            <div class="ticket-stat-icon icon-open">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="ticket-stat-info">
-                <div class="stat-value">{{ $openTickets }}</div>
-                <div class="stat-label">Menunggu Respon</div>
-            </div>
-        </div>
-
-        <div class="ticket-stat-card">
-            <div class="ticket-stat-icon icon-progress">
-                <i class="fas fa-spinner"></i>
-            </div>
-            <div class="ticket-stat-info">
-                <div class="stat-value">{{ $inProgressTickets }}</div>
-                <div class="stat-label">Sedang Ditangani</div>
-            </div>
-        </div>
-
-        <div class="ticket-stat-card">
-            <div class="ticket-stat-icon icon-resolved">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="ticket-stat-info">
-                <div class="stat-value">{{ $resolvedTickets }}</div>
-                <div class="stat-label">Terselesaikan</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filter & Search Bar -->
-    <div class="tickets-filter-bar">
-        <div class="ticket-tabs">
-            <a href="{{ route('admin.tickets.index') }}" class="ticket-tab-item {{ empty($status) ? 'active' : '' }}">
-                Semua
-            </a>
-            <a href="{{ route('admin.tickets.index', ['status' => 'open']) }}" class="ticket-tab-item {{ $status === 'open' ? 'active' : '' }}">
-                Menunggu
-            </a>
-            <a href="{{ route('admin.tickets.index', ['status' => 'in_progress']) }}" class="ticket-tab-item {{ $status === 'in_progress' ? 'active' : '' }}">
-                Proses
-            </a>
-            <a href="{{ route('admin.tickets.index', ['status' => 'resolved']) }}" class="ticket-tab-item {{ $status === 'resolved' ? 'active' : '' }}">
-                Selesai
-            </a>
-        </div>
-
-        <form action="{{ route('admin.tickets.index') }}" method="GET" class="ticket-search-form">
-            @if($status)
-                <input type="hidden" name="status" value="{{ $status }}">
-            @endif
-            <i class="fas fa-search ticket-search-icon"></i>
-            <input type="text" name="search" class="ticket-search-input" placeholder="Cari kode atau subjek..." value="{{ $search }}">
-        </form>
-    </div>
-
-    <!-- Tickets List Table -->
-    <div class="tickets-table-card">
-        <table class="tickets-table">
-            <thead>
-                <tr>
-                    <th>Kode Tiket</th>
-                    <th>Subjek & Kategori</th>
-                    <th>Status</th>
-                    <th>Prioritas</th>
-                    <th>Terakhir Diperbarui</th>
-                    <th style="text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($tickets as $t)
-                <tr>
-                    <td>
-                        <span class="ticket-code-badge">#{{ $t->ticket_code }}</span>
-                    </td>
-                    <td>
-                        <a href="{{ route('admin.tickets.show', $t->id) }}" class="ticket-subject-link">
-                            {{ $t->subject }}
-                        </a>
-                        <div class="ticket-snippet">
-                            <span style="font-weight: 600; color: #DE6C20;">[{{ $t->category_label }}]</span> 
-                            {{ Str::limit($t->message, 60) }}
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge-status {{ $t->status_badge_class }}">
-                            <i class="fas fa-circle" style="font-size: 6px;"></i> {{ $t->status_label }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge-priority {{ $t->priority_badge_class }}">
-                            {{ $t->priority }}
-                        </span>
-                    </td>
-                    <td style="color: #64748b; font-size: 12px; white-space: nowrap;">
-                        {{ $t->last_replied_at ? $t->last_replied_at->diffForHumans() : $t->created_at->diffForHumans() }}
-                    </td>
-                    <td style="text-align: center;">
-                        <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn-ticket-detail">
-                            <i class="fas fa-comments"></i> Buka Thread
-                        </a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6">
-                        <div class="tickets-empty-state">
-                            <i class="fas fa-headset"></i>
-                            <p style="font-weight: 600; font-size: 15px; color: #334155; margin-bottom: 6px;">Belum Ada Tiket Bantuan</p>
-                            <p style="font-size: 13px; margin-bottom: 18px;">Jika Anda memiliki pertanyaan atau kendala seputar platform, silakan buat tiket bantuan.</p>
-
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
 
         @if($tickets->hasPages())
-            <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9;">
+            <div class="issue-pagination">
                 {{ $tickets->links() }}
             </div>
         @endif
@@ -217,45 +142,45 @@
 <div id="createTicketModal" class="ticket-modal">
     <div class="ticket-modal-card">
         <div class="ticket-modal-header">
-            <h3><i class="fas fa-headset" style="color: #DE6C20;"></i> Buat Tiket Bantuan Baru</h3>
+            <h3><i class="fas fa-plus-circle" style="color: #4A568D;"></i> Add New Issue</h3>
             <button type="button" class="ticket-modal-close" onclick="closeCreateTicketModal()">&times;</button>
         </div>
         <form action="{{ route('admin.tickets.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="ticket-modal-body">
                 <div class="ticket-form-group">
-                    <label for="category">Kategori Kendala <span style="color: #ef4444;">*</span></label>
+                    <label for="category">Category <span style="color: #ef4444;">*</span></label>
                     <select name="category" id="category" class="ticket-form-control" required>
-                        <option value="">-- Pilih Kategori Kendala --</option>
-                        <option value="payout">Penarikan Dana / Payout</option>
-                        <option value="product">Produk Digital & Transaksi</option>
-                        <option value="account">Akun & Keamanan</option>
-                        <option value="general">Pertanyaan Umum / Lainnya</option>
+                        <option value="">-- Select Category --</option>
+                        <option value="payout">Payments & Payout</option>
+                        <option value="product">Digital Products</option>
+                        <option value="account">Account & Security</option>
+                        <option value="general">General Issue</option>
                     </select>
                 </div>
 
                 <div class="ticket-form-group">
-                    <label for="subject">Subjek Kendala <span style="color: #ef4444;">*</span></label>
-                    <input type="text" name="subject" id="subject" class="ticket-form-control" placeholder="Contoh: Permintaan payout belum masuk rekening" required>
+                    <label for="subject">Issue Title <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="subject" id="subject" class="ticket-form-control" placeholder="E.g. Payment gateway fails..." required>
                 </div>
 
                 <div class="ticket-form-group">
-                    <label for="message">Rincian Keluhan / Pertanyaan <span style="color: #ef4444;">*</span></label>
-                    <textarea name="message" id="message" rows="5" class="ticket-form-control" placeholder="Jelaskan kendala Anda secara detail agar tim support dapat membantu lebih cepat..." required></textarea>
+                    <label for="message">Detailed Description <span style="color: #ef4444;">*</span></label>
+                    <textarea name="message" id="message" rows="5" class="ticket-form-control" placeholder="Describe the issue in detail..." required></textarea>
                 </div>
 
                 <div class="ticket-form-group" style="margin-bottom: 0;">
-                    <label for="attachment">Lampiran Screenshot / Bukti (Opsional)</label>
+                    <label for="attachment">Attachment (Optional)</label>
                     <input type="file" name="attachment" id="attachment" class="ticket-form-control" accept="image/*">
-                    <small style="color: #94a3b8; font-size: 11px; margin-top: 4px; display: block;">Format didukung: JPG, PNG, WEBP (Maksimal 2MB)</small>
+                    <small style="color: #94a3b8; font-size: 11px; margin-top: 4px; display: block;">Supported formats: JPG, PNG, WEBP (Max 2MB)</small>
                 </div>
             </div>
             <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 10px; border-radius: 0 0 16px 16px;">
                 <button type="button" onclick="closeCreateTicketModal()" style="padding: 9px 18px; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; font-weight: 600; font-size: 13px; border-radius: 8px; cursor: pointer;">
-                    Batal
+                    Cancel
                 </button>
-                <button type="submit" class="btn-create-ticket" style="padding: 9px 20px;">
-                    <i class="fas fa-paper-plane"></i> Kirim Tiket
+                <button type="submit" class="btn-add-issue" style="padding: 9px 20px;">
+                    Submit Issue
                 </button>
             </div>
         </form>
@@ -280,12 +205,12 @@
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Tiket Masih Aktif!',
-                    html: `Anda saat ini masih memiliki tiket yang belum selesai:<br><strong style="color: #DE6C20;">#{{ $activeTicket->ticket_code }}</strong> — <em>{{ e($activeTicket->subject) }}</em><br><br><span style="font-size: 13px; color: #64748b;">Harap tunggu hingga tiket tersebut diselesaikan atau ditutup oleh admin sebelum mengajukan tiket baru.</span>`,
-                    confirmButtonText: '<i class="fas fa-comments"></i> Buka Tiket Aktif',
-                    confirmButtonColor: '#DE6C20',
+                    title: 'Active Issue Exists!',
+                    html: `You still have an unresolved issue:<br><strong style="color: #4A568D;">#{{ $activeTicket->ticket_code }}</strong> — <em>{{ e($activeTicket->subject) }}</em><br><br><span style="font-size: 13px; color: #64748b;">Please wait until it is resolved before submitting a new one.</span>`,
+                    confirmButtonText: 'View Issue',
+                    confirmButtonColor: '#4A568D',
                     showCancelButton: true,
-                    cancelButtonText: 'Tutup',
+                    cancelButtonText: 'Close',
                     cancelButtonColor: '#64748b',
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -293,7 +218,7 @@
                     }
                 });
             } else {
-                alert('Anda masih memiliki tiket bantuan yang sedang aktif (#{{ $activeTicket->ticket_code }}). Harap tunggu hingga tiket tersebut selesai atau ditutup oleh admin sebelum membuat tiket baru.');
+                alert('You still have an active issue (#{{ $activeTicket->ticket_code }}). Please wait until it is resolved.');
             }
         @endif
     }

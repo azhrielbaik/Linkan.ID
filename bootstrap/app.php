@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/callback',
+            'midtrans-callback'
+        ]);
         $middleware->web(append: [
             \App\Http\Middleware\Localization::class,
             \App\Http\Middleware\CheckSuspended::class,

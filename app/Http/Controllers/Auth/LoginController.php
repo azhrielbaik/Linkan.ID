@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
@@ -80,13 +81,15 @@ class LoginController extends Controller
             RateLimiter::clear($attemptsKey);
             $request->session()->regenerate();
 
-            // Catat Log Aktivitas Login
-            ActivityLogger::log(
-                'user_login',
-                "User {$user->name} ({$user->email}) berhasil login.",
-                ['role' => $user->role, 'login_type' => 'email_password'],
-                $user->id
-            );
+            DB::transaction(function () use ($user) {
+                // Catat Log Aktivitas Login
+                ActivityLogger::log(
+                    'user_login',
+                    "User {$user->name} ({$user->email}) berhasil login.",
+                    ['role' => $user->role, 'login_type' => 'email_password'],
+                    $user->id
+                );
+            });
 
             if ($user->role === 'admin_seller') {
                 return redirect()->route('admin.dashboard');
@@ -150,40 +153,49 @@ class LoginController extends Controller
                 'name' => $googleUser->name,
                 'email' => $googleUser->email
             ]);
-            // Coba cari user berdasarkan google_id
-            $user = User::where('google_id', $googleUser->id)->first();
+            $user = DB::transaction(function () use ($googleUser) {
+                // Coba cari user berdasarkan google_id
+                $user = User::where('google_id', $googleUser->id)->first();
 
-            // Kalau tidak ditemukan, cek berdasarkan email
-            if (!$user) {
-                $user = User::where('email', $googleUser->email)->first();
+                // Kalau tidak ditemukan, cek berdasarkan email
+                if (!$user) {
+                    $user = User::where('email', $googleUser->email)->first();
 
-                // Kalau user sudah ada, update google_id-nya
-                if ($user) {
-                    $user->update([
-                        'google_id' => $googleUser->id,
-                    ]);
-                } else {
-                    // Kalau user belum ada, redirect ke halaman register dengan data Google
-                    return redirect()->route('register')->with([
-                        'google_data' => [
-                            'name' => $googleUser->name,
-                            'email' => $googleUser->email,
-                            'google_id' => $googleUser->id
-                        ],
-                        'error' => 'Email Anda belum terdaftar. Silakan lengkapi data untuk mendaftar.'
-                    ]);
+                    // Kalau user sudah ada, update google_id-nya
+                    if ($user) {
+                        $user->update([
+                            'google_id' => $googleUser->id,
+                        ]);
+                    } else {
+                        // User akan direturn null dan dihandle di luar transaksi untuk redirect
+                        return null;
+                    }
                 }
+
+                // Catat Log Aktivitas Login Google
+                ActivityLogger::log(
+                    'user_login',
+                    "User {$user->name} ({$user->email}) berhasil login melalui Google OAuth.",
+                    ['role' => $user->role, 'login_type' => 'google_oauth'],
+                    $user->id
+                );
+
+                return $user;
+            });
+
+            if (!$user) {
+                // Kalau user belum ada, redirect ke halaman register dengan data Google
+                return redirect()->route('register')->with([
+                    'google_data' => [
+                        'name' => $googleUser->name,
+                        'email' => $googleUser->email,
+                        'google_id' => $googleUser->id
+                    ],
+                    'error' => 'Email Anda belum terdaftar. Silakan lengkapi data untuk mendaftar.'
+                ]);
             }
 
             Auth::login($user);
-
-            // Catat Log Aktivitas Login Google
-            ActivityLogger::log(
-                'user_login',
-                "User {$user->name} ({$user->email}) berhasil login melalui Google OAuth.",
-                ['role' => $user->role, 'login_type' => 'google_oauth'],
-                $user->id
-            );
 
             // Redirect berdasarkan role
             if ($user->role === 'admin_seller') {

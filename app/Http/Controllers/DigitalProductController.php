@@ -160,7 +160,8 @@ public function checkoutSuccess(Request $request, $id)
             'product' => $product,
             'snapToken' => $snapToken,
             'savedQty' => $qty,
-            'itemPrice' => $itemPrice
+            'itemPrice' => $itemPrice,
+            'orderId' => $orderId
         ]);
     }
 
@@ -168,12 +169,20 @@ public function checkoutSuccess(Request $request, $id)
         'product' => $product,
         'snapToken' => $snapToken,
         'savedQty' => $qty,
-        'itemPrice' => $itemPrice
+        'itemPrice' => $itemPrice,
+        'orderId' => $orderId
     ]);
 }
 public function midtransCallback(Request $request)
 {
-    $result = $this->checkoutService->handleCallback();
+    \Illuminate\Support\Facades\Log::info('Midtrans Webhook Raw Payload: ', $request->all());
+    
+    try {
+        $result = $this->checkoutService->handleCallback();
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Midtrans Webhook Error: ' . $e->getMessage());
+        return response()->json(['error' => 'Webhook error'], 400);
+    }
     
     if ($result['status'] === 404) {
         return response()->json(['error' => $result['message']], 404);

@@ -22,7 +22,7 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => 'required|string|unique:transactions',
+            'order_id' => 'required|string',
             'transaction_status' => 'required|string',
             'product_id' => 'required|integer|exists:digital_products,id',
             'buyer_email' => 'required|email',

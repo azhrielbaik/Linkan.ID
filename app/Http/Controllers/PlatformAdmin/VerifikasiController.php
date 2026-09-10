@@ -24,29 +24,31 @@ class VerifikasiController extends Controller
     {
 
         $product = DigitalProduct::findOrFail($id);
-        $product->verification_status = $request->status;
+        DB::transaction(function () use ($product, $request) {
+            $product->verification_status = $request->status;
 
-        if ($request->status === 'rejected') {
-            $product->rejection_reason = $request->rejection_reason;
-        } else {
-            $product->rejection_reason = null;
-        }
+            if ($request->status === 'rejected') {
+                $product->rejection_reason = $request->rejection_reason;
+            } else {
+                $product->rejection_reason = null;
+            }
 
-        $product->save();
+            $product->save();
 
-        // Catat Log Aktivitas
-        $action = $request->status === 'approved' ? 'approve_product' : 'reject_product';
-        $desc = $request->status === 'approved'
-            ? "Menyetujui verifikasi produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")"
-            : "Menolak verifikasi produk: {$product->title} (Alasan: {$request->rejection_reason})";
+            // Catat Log Aktivitas
+            $action = $request->status === 'approved' ? 'approve_product' : 'reject_product';
+            $desc = $request->status === 'approved'
+                ? "Menyetujui verifikasi produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")"
+                : "Menolak verifikasi produk: {$product->title} (Alasan: {$request->rejection_reason})";
 
-        \App\Services\ActivityLogger::log($action, $desc, [
-            'product_id' => $product->id,
-            'product_title' => $product->title,
-            'seller_id' => $product->user_id,
-            'status' => $request->status,
-            'rejection_reason' => $request->rejection_reason
-        ]);
+            \App\Services\ActivityLogger::log($action, $desc, [
+                'product_id' => $product->id,
+                'product_title' => $product->title,
+                'seller_id' => $product->user_id,
+                'status' => $request->status,
+                'rejection_reason' => $request->rejection_reason
+            ]);
+        });
 
         return redirect()->back()->with('success', 'Status verifikasi produk berhasil diperbarui');
     }

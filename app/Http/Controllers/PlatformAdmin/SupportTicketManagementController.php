@@ -9,6 +9,7 @@ use App\Models\SupportTicketReply;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class SupportTicketManagementController extends Controller
@@ -119,35 +120,39 @@ class SupportTicketManagementController extends Controller
             $attachmentPath = $request->file('attachment')->store('support_attachments', 'public');
         }
 
-        $reply = SupportTicketReply::create([
-            'support_ticket_id' => $ticket->id,
-            'user_id'           => Auth::id(),
-            'is_admin_reply'    => true,
-            'message'           => $request->message,
-            'attachment'        => $attachmentPath,
-        ]);
+        $reply = DB::transaction(function () use ($ticket, $request, $attachmentPath) {
+            $reply = SupportTicketReply::create([
+                'support_ticket_id' => $ticket->id,
+                'user_id'           => Auth::id(),
+                'is_admin_reply'    => true,
+                'message'           => $request->message,
+                'attachment'        => $attachmentPath,
+            ]);
 
-        // Update status tiket
-        if ($request->filled('status')) {
-            $ticket->status = $request->status;
-        } elseif ($ticket->status === 'open') {
-            $ticket->status = 'in_progress';
-        }
+            // Update status tiket
+            if ($request->filled('status')) {
+                $ticket->status = $request->status;
+            } elseif ($ticket->status === 'open') {
+                $ticket->status = 'in_progress';
+            }
 
-        $ticket->last_replied_at = now();
-        $ticket->save();
+            $ticket->last_replied_at = now();
+            $ticket->save();
 
-        // Catat ke Log Aktivitas Platform
-        ActivityLogger::log(
-            'admin_reply_ticket',
-            "Membalas tiket bantuan #{$ticket->ticket_code} (Seller: {$ticket->user->name}, Status: {$ticket->status_label})",
-            [
-                'ticket_id'    => $ticket->id,
-                'ticket_code'  => $ticket->ticket_code,
-                'seller_email' => $ticket->user->email ?? null,
-                'new_status'   => $ticket->status,
-            ]
-        );
+            // Catat ke Log Aktivitas Platform
+            ActivityLogger::log(
+                'admin_reply_ticket',
+                "Membalas tiket bantuan #{$ticket->ticket_code} (Seller: {$ticket->user->name}, Status: {$ticket->status})",
+                [
+                    'ticket_id'    => $ticket->id,
+                    'ticket_code'  => $ticket->ticket_code,
+                    'seller_email' => $ticket->user->email ?? null,
+                    'new_status'   => $ticket->status,
+                ]
+            );
+
+            return $reply;
+        });
 
         // Kirim email notifikasi balasan ke seller via SMTP
         try {
@@ -176,21 +181,23 @@ class SupportTicketManagementController extends Controller
         $oldStatus = $ticket->status;
         $oldPriority = $ticket->priority;
 
-        $ticket->status = $request->status;
-        $ticket->priority = $request->priority;
-        $ticket->save();
+        DB::transaction(function () use ($ticket, $request, $oldStatus, $oldPriority) {
+            $ticket->status = $request->status;
+            $ticket->priority = $request->priority;
+            $ticket->save();
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'update_ticket_status',
-            "Mengubah status tiket #{$ticket->ticket_code}: [{$oldStatus} -> {$ticket->status}], Prioritas: [{$oldPriority} -> {$ticket->priority}]",
-            [
-                'ticket_id'   => $ticket->id,
-                'ticket_code' => $ticket->ticket_code,
-                'status'      => $ticket->status,
-                'priority'    => $ticket->priority,
-            ]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'update_ticket_status',
+                "Mengubah status tiket #{$ticket->ticket_code}: [{$oldStatus} -> {$ticket->status}], Prioritas: [{$oldPriority} -> {$ticket->priority}]",
+                [
+                    'ticket_id'   => $ticket->id,
+                    'ticket_code' => $ticket->ticket_code,
+                    'status'      => $ticket->status,
+                    'priority'    => $ticket->priority,
+                ]
+            );
+        });
 
         return back()->with('success', "Status dan prioritas tiket #{$ticket->ticket_code} berhasil diperbarui.");
     }

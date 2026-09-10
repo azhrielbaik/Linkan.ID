@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -55,28 +56,40 @@ class ForgotPasswordController extends Controller
         $resetToken = Str::random(64);
         $expiresMinutes = 1;
 
-        // Tandai permohonan aktif sebelumnya agar tidak duplikat
-        PasswordResetRequest::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'approved'])
-            ->update([
-                'status'      => 'rejected',
-                'admin_notes' => 'Digantikan oleh permintaan kode OTP baru',
+        // Jalankan transaksi database
+        $resetRequest = DB::transaction(function () use ($user, $resetToken, $otp, $expiresMinutes) {
+            // Tandai permohonan aktif sebelumnya agar tidak duplikat
+            PasswordResetRequest::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->update([
+                    'status'      => 'rejected',
+                    'admin_notes' => 'Digantikan oleh permintaan kode OTP baru',
+                    'resolved_at' => now(),
+                ]);
+
+            // Simpan request OTP baru dengan status langsung approved
+            $resetRequest = PasswordResetRequest::create([
+                'user_id'     => $user->id,
+                'email'       => $user->email,
+                'reset_token_hash' => hash('sha256', $resetToken),
+                'reason'      => 'Permintaan reset password via email OTP',
+                'otp_hash'    => Hash::make($otp),
+                'status'      => 'approved',
+                'expires_at'  => now()->addMinutes($expiresMinutes),
                 'resolved_at' => now(),
             ]);
 
-        // Simpan request OTP baru dengan status langsung approved
-        $resetRequest = PasswordResetRequest::create([
-            'user_id'     => $user->id,
-            'email'       => $user->email,
-            'reset_token_hash' => hash('sha256', $resetToken),
-            'reason'      => 'Permintaan reset password via email OTP',
-            'otp_hash'    => Hash::make($otp),
-            'status'      => 'approved',
-            'expires_at'  => now()->addMinutes($expiresMinutes),
-            'resolved_at' => now(),
-        ]);
+            // Catat di activity log
+            ActivityLogger::log(
+                'password_reset_otp_sent',
+                "Kode OTP verifikasi reset password dikirimkan ke {$user->email}.",
+                ['user_id' => $user->id, 'email' => $user->email]
+            );
 
-        // Kirim email OTP langsung via SMTP
+            return $resetRequest;
+        });
+
+        // Kirim email OTP langsung via SMTP (dilakukan di luar DB Transaction agar tidak menunda DB lock)
         try {
             Mail::to($user->email)->send(new ResetPasswordOtpMail($otp, $user->name ?? 'Pengguna', $expiresMinutes));
         } catch (\Throwable $e) {
@@ -89,13 +102,6 @@ class ForgotPasswordController extends Controller
             'reset_token' => $resetToken,
             'reset_request_id' => $resetRequest->id,
         ]);
-
-        // Catat di activity log
-        ActivityLogger::log(
-            'password_reset_otp_sent',
-            "Kode OTP verifikasi reset password dikirimkan ke {$user->email}.",
-            ['user_id' => $user->id, 'email' => $user->email]
-        );
 
         return redirect()->route('password.verify-otp', ['token' => $resetToken])
             ->with('status', 'Kode OTP 4 digit telah dikirim ke email Anda. Silakan periksa inbox atau folder spam.');
@@ -335,24 +341,26 @@ class ForgotPasswordController extends Controller
             return redirect()->route('password.request')->withErrors(['email' => 'User not found.']);
         }
 
-        // Update password
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
+        DB::transaction(function () use ($user, $request, $resetRequest) {
+            // Update password
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
 
-        // Tandai permohonan selesai
-        $resetRequest->update([
-            'status' => 'completed',
-            'resolved_at' => now(),
-            'used_at' => now(),
-        ]);
+            // Tandai permohonan selesai
+            $resetRequest->update([
+                'status' => 'completed',
+                'resolved_at' => now(),
+                'used_at' => now(),
+            ]);
 
-        // Catat di log
-        ActivityLogger::log(
-            'password_reset_success',
-            "User {$user->name} ({$user->email}) berhasil memperbarui password baru.",
-            ['user_id' => $user->id, 'email' => $user->email]
-        );
+            // Catat di log
+            ActivityLogger::log(
+                'password_reset_success',
+                "User {$user->name} ({$user->email}) berhasil memperbarui password baru.",
+                ['user_id' => $user->id, 'email' => $user->email]
+            );
+        });
 
         // Hapus session temporary
         session()->forget(['reset_token', 'reset_request_id', 'otp_request_id']);

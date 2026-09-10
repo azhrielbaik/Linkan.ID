@@ -197,7 +197,19 @@ class DashboardController extends Controller
         return redirect()->to($target);
     }
 
+    public function markNotificationRead(Request $request)
+    {
+        $user = Auth::user();
+        if ($request->has('notification_key')) {
+            $this->dashboardService->markNotificationRead($user, $request->notification_key);
+        }
+        return response()->json(['status' => 'success']);
+    }
 
-
-
+    public function markAllNotificationsRead(Request $request)
+    {
+        $user = Auth::user();
+        $this->dashboardService->markAllNotificationsRead($user);
+        return response()->json(['status' => 'success']);
+    }
 }

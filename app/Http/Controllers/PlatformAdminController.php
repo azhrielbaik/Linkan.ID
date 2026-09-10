@@ -7,6 +7,7 @@ use App\Models\SuspensionAppeal;
 use App\Services\PlatformAdminService;
 use App\Http\Resources\PlatformAdmin\SellerDetailResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PlatformAdminController extends Controller
@@ -211,21 +212,23 @@ class PlatformAdminController extends Controller
     {
         $appeal = SuspensionAppeal::with('user')->findOrFail($id);
 
-        $appeal->update([
-            'status'      => 'approved',
-            'admin_notes' => 'Permohonan banding disetujui. Akun telah dipulihkan.',
-            'resolved_at' => now(),
-        ]);
+        DB::transaction(function () use ($appeal) {
+            $appeal->update([
+                'status'      => 'approved',
+                'admin_notes' => 'Permohonan banding disetujui. Akun telah dipulihkan.',
+                'resolved_at' => now(),
+            ]);
 
-        if ($appeal->user) {
-            $this->platformAdminService->activateUser($appeal->user);
-        }
+            if ($appeal->user) {
+                $this->platformAdminService->activateUser($appeal->user);
+            }
 
-        \App\Services\ActivityLogger::log(
-            'approve_suspension_appeal',
-            "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email})",
-            ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id]
-        );
+            \App\Services\ActivityLogger::log(
+                'approve_suspension_appeal',
+                "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email})",
+                ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id]
+            );
+        });
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} berhasil disetujui dan akun telah dipulihkan.");
     }
@@ -242,17 +245,19 @@ class PlatformAdminController extends Controller
 
         $adminNotes = strip_tags($request->admin_notes);
 
-        $appeal->update([
-            'status'      => 'rejected',
-            'admin_notes' => $adminNotes,
-            'resolved_at' => now(),
-        ]);
+        DB::transaction(function () use ($appeal, $adminNotes) {
+            $appeal->update([
+                'status'      => 'rejected',
+                'admin_notes' => $adminNotes,
+                'resolved_at' => now(),
+            ]);
 
-        \App\Services\ActivityLogger::log(
-            'reject_suspension_appeal',
-            "Menolak permohonan banding akun: {$appeal->user->name}. Catatan: {$adminNotes}",
-            ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id, 'admin_notes' => $adminNotes]
-        );
+            \App\Services\ActivityLogger::log(
+                'reject_suspension_appeal',
+                "Menolak permohonan banding akun: {$appeal->user->name}. Catatan: {$adminNotes}",
+                ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id, 'admin_notes' => $adminNotes]
+            );
+        });
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} telah ditolak.");
     }

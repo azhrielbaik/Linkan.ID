@@ -1,13 +1,4 @@
-// Seller Admin Notifications Scripts using Server-Sent Events (SSE)
-
-let sellerNotifsData = {
-    unread_count: 0,
-    notifications: [],
-};
-
-let currentSellerNotifFilter = "all";
-let sellerNotifTimer = null;
-let isFetchingSellerNotifs = false;
+// seller-notifications.js (Cleaned up for new UI)
 
 function toggleSellerNotif(event) {
     if (event) {
@@ -28,182 +19,85 @@ function toggleSellerNotif(event) {
 
         dropdown.classList.add("show");
         if (btn) btn.classList.add("active");
-        fetchSellerNotifs();
-    }
-}
-
-function updateSellerUI(data) {
-    if (!data) return;
-    sellerNotifsData = data;
-    const badge = document.getElementById("sellerNotifBadge");
-    const totalPill = document.getElementById("sellerNotifTotal");
-
-    // Update badge counter
-    const count = data.unread_count || 0;
-    if (badge) {
-        if (count > 0) {
-            badge.innerText = count > 99 ? "99+" : count;
-            badge.style.display = "flex";
-        } else {
-            badge.style.display = "none";
+        
+        // Hide badge when opened, indicating they've been seen
+        const badge = document.getElementById("sellerNotifBadge");
+        if (badge) badge.style.display = 'none';
+        
+        const headerBadge = document.querySelector(".seller-notif-badge-header");
+        if (headerBadge) headerBadge.innerText = '00 Notifications';
+        
+        // Silently mark all as read in the background so it doesn't reappear on reload
+        if (typeof markAllSellerNotifsRead === 'function') {
+            markAllSellerNotifsRead(null, true);
         }
     }
+}
 
-    if (totalPill) {
-        totalPill.innerText = count + " Baru";
+function markSellerNotifRead(event, notificationKey, element) {
+    if (event) event.preventDefault();
+    
+    if (element) {
+        element.style.opacity = '0.5';
+        element.style.pointerEvents = 'none';
     }
-
-    renderSellerNotifs(currentSellerNotifFilter);
-}
-
-function getSellerEndpoint() {
-    // Selalu gunakan root-relative path agar aman dari Mixed Content / Cloudflare Tunnel / CORS
-    return "/admin/notifications";
-}
-
-function fetchSellerNotifs() {
-    if (isFetchingSellerNotifs) return;
-    isFetchingSellerNotifs = true;
-
-    const endpoint = getSellerEndpoint();
-    const listContainer = document.getElementById("sellerNotifList");
-
-    fetch(endpoint, {
-        method: "GET",
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            Accept: "application/json",
-            "Cache-Control": "no-cache",
-        },
-    })
-        .then((response) => {
-            if (!response.ok) throw new Error("Network response was not ok");
-            return response.json();
-        })
-        .then((data) => {
-            updateSellerUI(data);
-        })
-        .catch((err) => {
-            console.warn("Failed to load seller notifications:", err);
-            if (
-                listContainer &&
-                (!sellerNotifsData.notifications ||
-                    sellerNotifsData.notifications.length === 0)
-            ) {
-                listContainer.innerHTML = `
-                <div class="seller-notif-empty">
-                    <i class="fas fa-wifi" style="color: #f59e0b;"></i>
-                    <p>Menghubungkan ulang ke server...</p>
-                </div>
-            `;
-            }
-        })
-        .finally(() => {
-            isFetchingSellerNotifs = false;
-        });
-}
-
-function startSellerRealtimePolling() {
-    if (sellerNotifTimer) clearInterval(sellerNotifTimer);
-
-    // Polling cepat setiap 2.5 detik saat tab aktif
-    sellerNotifTimer = setInterval(() => {
-        if (document.visibilityState === "visible") {
-            fetchSellerNotifs();
-        }
-    }, 2500);
-}
-
-// Pause saat tab disembunyikan, langsung fetch saat tab kembali aktif
-document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible") {
-        fetchSellerNotifs();
-    }
-});
-
-function filterSellerNotif(type, buttonElem) {
-    currentSellerNotifFilter = type;
-
-    // Update active tab class
-    const tabs = document.querySelectorAll(
-        ".seller-notif-filter-tabs .seller-notif-tab",
-    );
-    tabs.forEach((tab) => tab.classList.remove("active"));
-    if (buttonElem) {
-        buttonElem.classList.add("active");
-    }
-
-    renderSellerNotifs(type);
-}
-
-function renderSellerNotifs(filterType) {
-    const listContainer = document.getElementById("sellerNotifList");
-    if (!listContainer) return;
-
-    let items = sellerNotifsData.notifications || [];
-    if (filterType && filterType !== "all") {
-        items = items.filter((item) => item.type === filterType);
-    }
-
-    if (items.length === 0) {
-        listContainer.innerHTML = `
-            <div class="seller-notif-empty">
-                <i class="far fa-bell-slash"></i>
-                <p>Tidak ada notifikasi ${filterType !== "all" ? "untuk kategori ini" : "baru"}.</p>
-            </div>
-        `;
+    
+    const targetHref = event.currentTarget.href;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        if(targetHref && targetHref !== '#') window.location.href = targetHref;
         return;
     }
 
-    let html = "";
-    items.forEach((item) => {
-        html += `
-            <a href="${item.url}" class="seller-notif-item ${item.is_read ? "is-read" : "is-unread"}" onclick="markSellerNotifRead(event, '${item.id}')">
-                <div class="seller-notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">
-                    <i class="${item.icon}"></i>
-                </div>
-                <div class="seller-notif-body">
-                    <div class="seller-notif-item-top">
-                        <div class="seller-notif-item-title">${item.title}</div>
-                        <span class="seller-notif-tag ${item.badge_class}">${item.badge}</span>
-                    </div>
-                    <div class="seller-notif-item-msg">${item.message}</div>
-                    <div class="seller-notif-item-time">
-                        <i class="far fa-clock"></i> ${item.time_ago}
-                    </div>
-                </div>
-            </a>
-        `;
-    });
-
-    listContainer.innerHTML = html;
-}
-
-function markSellerNotifRead(event, notificationKey) {
-    event.preventDefault();
-    fetch(window.SellerNotifReadEndpoint, {
+    fetch('/admin/notifications/read', {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-                .content,
+            "X-CSRF-TOKEN": csrfToken.content,
             Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
         },
+        silent: true,
         body: new URLSearchParams({ notification_key: notificationKey }),
     }).finally(() => {
-        window.location.href = event.currentTarget.href;
+        if(targetHref && targetHref !== '#') window.location.href = targetHref;
     });
 }
 
-function markAllSellerNotifsRead(event) {
-    event.stopPropagation();
-    fetch(window.SellerNotifReadAllEndpoint, {
+function markAllSellerNotifsRead(event, silent = false, element = null) {
+    if(event) event.stopPropagation();
+    
+    if (element) {
+        const originalText = element.innerText;
+        element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        element.style.pointerEvents = 'none';
+    }
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) return;
+
+    fetch('/admin/notifications/read-all', {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-                .content,
+            "X-CSRF-TOKEN": csrfToken.content,
             Accept: "application/json",
         },
-    }).then(() => fetchSellerNotifs());
+        silent: true,
+    }).finally(() => {
+        if (!silent) {
+            const badge = document.getElementById("sellerNotifBadge");
+            if (badge) badge.style.display = 'none';
+            const headerBadge = document.querySelector(".seller-notif-badge-header");
+            if (headerBadge) headerBadge.innerText = '00 Notifications';
+        }
+        
+        if (element) {
+            element.innerHTML = '<i class="fas fa-check"></i> Selesai';
+            setTimeout(() => {
+                element.innerText = 'Read All Messages';
+                element.style.pointerEvents = 'auto';
+            }, 2000);
+        }
+    });
 }
 
 // Global click-outside listener
@@ -228,22 +122,5 @@ document.addEventListener("keydown", function (e) {
         const btn = document.getElementById("sellerNotifBtn");
         if (dropdown) dropdown.classList.remove("show");
         if (btn) btn.classList.remove("active");
-    }
-});
-
-// Start the SSE connection when page loads
-function initSellerNotifs() {
-    startSellerRealtimeSSE();
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initSellerNotifs);
-} else {
-    initSellerNotifs();
-}
-
-window.addEventListener("beforeunload", function () {
-    if (window.sellerEventSource) {
-        window.sellerEventSource.close();
     }
 });

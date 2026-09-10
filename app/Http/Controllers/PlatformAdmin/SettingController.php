@@ -8,6 +8,7 @@ use App\Models\PlatformSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PlatformAdmin\UpdateSettingsRequest;
 
 use Illuminate\Support\Facades\Hash;
@@ -63,20 +64,22 @@ class SettingController extends Controller
         $oldCommission = PlatformSetting::get('platform_commission_percent', 5);
         $oldMinWithdraw = PlatformSetting::get('min_withdraw_amount', 10000);
 
-        PlatformSetting::set('platform_commission_percent', $request->input('commission_percent'));
-        PlatformSetting::set('min_withdraw_amount', $request->input('min_withdraw'));
+        DB::transaction(function () use ($request, $oldCommission, $oldMinWithdraw) {
+            PlatformSetting::set('platform_commission_percent', $request->input('commission_percent'));
+            PlatformSetting::set('min_withdraw_amount', $request->input('min_withdraw'));
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'update_settings',
-            "Mengubah pengaturan platform: Komisi ({$oldCommission}% -> {$request->commission_percent}%), Min Withdraw (Rp " . number_format($oldMinWithdraw, 0, ',', '.') . " -> Rp " . number_format($request->min_withdraw, 0, ',', '.') . ")",
-            [
-                'old_commission' => $oldCommission,
-                'new_commission' => $request->commission_percent,
-                'old_min_withdraw' => $oldMinWithdraw,
-                'new_min_withdraw' => $request->min_withdraw,
-            ]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'update_settings',
+                "Mengubah pengaturan platform: Komisi ({$oldCommission}% -> {$request->commission_percent}%), Min Withdraw (Rp " . number_format($oldMinWithdraw, 0, ',', '.') . " -> Rp " . number_format($request->min_withdraw, 0, ',', '.') . ")",
+                [
+                    'old_commission' => $oldCommission,
+                    'new_commission' => $request->commission_percent,
+                    'old_min_withdraw' => $oldMinWithdraw,
+                    'new_min_withdraw' => $request->min_withdraw,
+                ]
+            );
+        });
 
         return back()->with('success', __('messages.financial_settings_updated'));
     }
@@ -128,23 +131,27 @@ class SettingController extends Controller
                 }
             }
 
-            $announcement->update([
-                'emails_sent_count' => $sentCount,
-            ]);
+            DB::transaction(function () use ($announcement, $sentCount) {
+                $announcement->update([
+                    'emails_sent_count' => $sentCount,
+                ]);
+            });
         }
 
         // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'create_broadcast',
-            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email Terkirim: {$sentCount}]" : ""),
-            [
-                'announcement_id'   => $announcement->id,
-                'title'             => $announcement->title,
-                'type'              => $announcement->type,
-                'send_email'        => $shouldSendEmail,
-                'emails_sent_count' => $sentCount,
-            ]
-        );
+        DB::transaction(function () use ($announcement, $shouldSendEmail, $sentCount) {
+            ActivityLogger::log(
+                'create_broadcast',
+                "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email Terkirim: {$sentCount}]" : ""),
+                [
+                    'announcement_id'   => $announcement->id,
+                    'title'             => $announcement->title,
+                    'type'              => $announcement->type,
+                    'send_email'        => $shouldSendEmail,
+                    'emails_sent_count' => $sentCount,
+                ]
+            );
+        });
 
         $msg = __('messages.broadcast_success');
         if ($shouldSendEmail) {
@@ -160,20 +167,22 @@ class SettingController extends Controller
     public function toggleBroadcast($id)
     {
         $announcement = BroadcastAnnouncement::findOrFail($id);
-        $announcement->is_active = !$announcement->is_active;
-        $announcement->save();
+        $statusText = $announcement->is_active ? 'dinonaktifkan' : 'diaktifkan';
 
-        $statusText = $announcement->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        DB::transaction(function () use ($announcement, $statusText) {
+            $announcement->is_active = !$announcement->is_active;
+            $announcement->save();
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'toggle_broadcast',
-            "Mengubah status broadcast pengumuman: {$announcement->title} ({$statusText})",
-            [
-                'announcement_id' => $announcement->id,
-                'is_active' => $announcement->is_active,
-            ]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'toggle_broadcast',
+                "Mengubah status broadcast pengumuman: {$announcement->title} ({$statusText})",
+                [
+                    'announcement_id' => $announcement->id,
+                    'is_active' => $announcement->is_active,
+                ]
+            );
+        });
 
         return back()->with('success', __('messages.ticket_reply_sent'));
     }
@@ -185,14 +194,16 @@ class SettingController extends Controller
     {
         $announcement = BroadcastAnnouncement::findOrFail($id);
         $title = $announcement->title;
-        $announcement->delete();
+        DB::transaction(function () use ($announcement, $title) {
+            $announcement->delete();
 
-        // Catat ke Log Aktivitas
-        ActivityLogger::log(
-            'delete_broadcast',
-            "Menghapus broadcast pengumuman: {$title}",
-            ['title' => $title]
-        );
+            // Catat ke Log Aktivitas
+            ActivityLogger::log(
+                'delete_broadcast',
+                "Menghapus broadcast pengumuman: {$title}",
+                ['title' => $title]
+            );
+        });
 
         return back()->with('success', __('messages.product_takedown', ['title' => $title]));
 
