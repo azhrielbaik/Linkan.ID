@@ -25,6 +25,7 @@ yarn-error.log
 /storage/framework/views/*.php
 /.postman/
 /postman/
+cloudflared.exe
 
 
 # Dev helper scripts

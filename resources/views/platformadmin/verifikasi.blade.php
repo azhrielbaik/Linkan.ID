@@ -35,38 +35,18 @@
 
             {{-- Tabs --}}
             <div class="tabs-container">
-                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'pending'])) }}"
-                   class="tab-link {{ ($status ?? 'pending') === 'pending' ? 'active is-expanded' : '' }}"
-                   data-tab="pending">
+                <button type="button" class="tab-btn {{ ($status ?? 'pending') === 'pending' ? 'active' : '' }}" data-tab="pending">
                     <i class="fas fa-clock"></i> <span class="tab-label">{{ __('platform.pending_verification') }}</span>
-                    @if(($pendingCount ?? 0) > 0)
-                        <span class="tab-counter" style="margin-left: 4px; background: #ed842c; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $pendingCount }}</span>
-                    @endif
-                </a>
-                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'approved'])) }}"
-                   class="tab-link {{ ($status ?? '') === 'approved' ? 'active is-expanded' : '' }}"
-                   data-tab="approved">
+                </button>
+                <button type="button" class="tab-btn {{ ($status ?? '') === 'approved' ? 'active' : '' }}" data-tab="approved">
                     <i class="fas fa-check-circle"></i> <span class="tab-label">{{ __('platform.approved') }}</span>
-                    @if(($approvedCount ?? 0) > 0)
-                        <span class="tab-counter" style="margin-left: 4px; background: #10b981; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $approvedCount }}</span>
-                    @endif
-                </a>
-                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'rejected'])) }}"
-                   class="tab-link {{ ($status ?? '') === 'rejected' ? 'active is-expanded' : '' }}"
-                   data-tab="rejected">
+                </button>
+                <button type="button" class="tab-btn {{ ($status ?? '') === 'rejected' ? 'active' : '' }}" data-tab="rejected">
                     <i class="fas fa-times-circle"></i> <span class="tab-label">{{ __('platform.rejected') }}</span>
-                    @if(($rejectedCount ?? 0) > 0)
-                        <span class="tab-counter" style="margin-left: 4px; background: #ef4444; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $rejectedCount }}</span>
-                    @endif
-                </a>
-                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'archive'])) }}"
-                   class="tab-link {{ ($status ?? '') === 'archive' ? 'active is-expanded' : '' }}"
-                   data-tab="archive">
+                </button>
+                <button type="button" class="tab-btn {{ ($status ?? '') === 'archive' ? 'active' : '' }}" data-tab="archive">
                     <i class="fas fa-archive"></i> <span class="tab-label">{{ __('platform.archive') }}</span>
-                    @if(($archiveCount ?? 0) > 0)
-                        <span class="tab-counter" style="margin-left: 4px; background: #64748b; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $archiveCount }}</span>
-                    @endif
-                </a>
+                </button>
             </div>
 
             {{-- Filter & Search Card --}}

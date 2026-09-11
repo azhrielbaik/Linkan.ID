@@ -242,6 +242,18 @@ window.addEventListener("click", function (event) {
 
 // Filter, Search, and Bulk Selection Setup (Server-side)
 document.addEventListener("DOMContentLoaded", function () {
+    // Tab Navigation
+    const tabs = document.querySelectorAll(".tabs-container .tab-btn");
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", function () {
+            const targetStatus = this.dataset.tab || "pending";
+            const url = new URL(window.location.href);
+            url.searchParams.set("status", targetStatus);
+            url.searchParams.delete("page");
+            window.location.href = url.toString();
+        });
+    });
+
     const filterForm = document.getElementById("verifikasiFilterForm");
     const filterStartDate = document.getElementById("filterStartDate");
     const filterEndDate = document.getElementById("filterEndDate");
