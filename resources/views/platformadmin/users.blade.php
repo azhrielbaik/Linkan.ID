@@ -173,15 +173,10 @@
                                         </button>
 
                                         @if ($user->isSuspended())
-                                            <form method="POST"
-                                                  action="{{ route('platform-admin.users.activate', $user->id) }}"
-                                                  style="display:inline;">
-                                                @csrf
-                                                <button type="button" class="btn-action btn-activate"
-                                                        onclick="confirmActivateUser(this.form, '{{ addslashes($user->name) }}')">
-                                                    <i class="fas fa-check"></i> {{ __('platform.activate') }}
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn-action btn-activate"
+                                                    onclick="openActivateModal({{ $user->id }}, '{{ addslashes($user->name) }}')">
+                                                <i class="fas fa-check"></i> {{ __('platform.activate') }}
+                                            </button>
                                         @else
                                             <button type="button" class="btn-action btn-suspend"
                                                     onclick="openSuspendModal({{ $user->id }}, '{{ addslashes($user->name) }}')">
@@ -280,6 +275,34 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-modal-cancel" onclick="closeSuspendModal()">{{ __('platform.cancel') }}</button>
                     <button type="submit" class="btn-modal-submit-danger"><i class="fas fa-ban"></i> {{ __('platform.suspend') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Aktifkan Kembali Akun (Konfirmasi & Catatan Opsional) -->
+    <div id="activateModal" class="modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-check" style="color: #16a34a;"></i> Aktifkan Kembali Akun</h3>
+                <button type="button" class="modal-close" onclick="closeActivateModal()">&times;</button>
+            </div>
+            <form id="activateForm" method="POST" action="">
+                @csrf
+                <div class="modal-body">
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
+                        Apakah Anda yakin ingin mencabut status penangguhan (suspend) untuk akun <strong id="activateTargetName" style="color: #1e293b;"></strong>? Seluruh akses fitur akan dipulihkan.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="activate_reason">Catatan / Alasan Aktivasi <span style="font-size: 11px; color: #64748b;">(Opsional)</span></label>
+                        <textarea id="activate_reason" name="activate_reason" rows="3" class="form-control"
+                                  placeholder="Tuliskan catatan alasan pengaktifan kembali akun (opsional)..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" onclick="closeActivateModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-submit-primary" style="background: #16a34a; color: white; border: none; padding: 9px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-check"></i> {{ __('platform.activate') }}</button>
                 </div>
             </form>
         </div>

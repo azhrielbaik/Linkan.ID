@@ -96,8 +96,10 @@ class PlatformAdminService
 
     /**
      * Fetch raw notifications data for SSE
+     *
+     * @param array $readKeys Daftar notification ID yang sudah ditandai dibaca oleh admin (dari session)
      */
-    public function getNotificationsData(): array
+    public function getNotificationsData(array $readKeys = []): array
     {
         $notifications = [];
 
@@ -117,8 +119,9 @@ class PlatformAdminService
             ->get();
 
         foreach ($pendingProducts as $prod) {
+            $notifId = 'prod_' . $prod->id;
             $notifications[] = [
-                'id'           => 'prod_' . $prod->id,
+                'id'           => $notifId,
                 'type'         => 'product',
                 'title'        => 'Verifikasi Produk Baru',
                 'seller_name'  => $prod->seller_name,
@@ -131,6 +134,7 @@ class PlatformAdminService
                 'url'          => route('platform-admin.verifikasi'),
                 'time_ago'     => Carbon::parse($prod->created_at)->diffForHumans(),
                 'timestamp'    => strtotime($prod->created_at),
+                'is_read'      => in_array($notifId, $readKeys, true),
             ];
         }
 
@@ -151,8 +155,9 @@ class PlatformAdminService
             ->get();
 
         foreach ($pendingPayouts as $payout) {
+            $notifId = 'payout_' . $payout->id;
             $notifications[] = [
-                'id'           => 'payout_' . $payout->id,
+                'id'           => $notifId,
                 'type'         => 'payout',
                 'title'        => 'Permintaan Payout Baru',
                 'seller_name'  => $payout->seller_name,
@@ -166,6 +171,7 @@ class PlatformAdminService
                 'url'          => route('platform-admin.payouts.index'),
                 'time_ago'     => Carbon::parse($payout->created_at)->diffForHumans(),
                 'timestamp'    => strtotime($payout->created_at),
+                'is_read'      => in_array($notifId, $readKeys, true),
             ];
         }
 
@@ -184,8 +190,9 @@ class PlatformAdminService
             ->get();
 
         foreach ($pendingAppeals as $appeal) {
+            $notifId = 'appeal_' . $appeal->id;
             $notifications[] = [
-                'id'           => 'appeal_' . $appeal->id,
+                'id'           => $notifId,
                 'type'         => 'appeal',
                 'title'        => 'Permohonan Banding Akun',
                 'seller_name'  => $appeal->seller_name,
@@ -197,6 +204,7 @@ class PlatformAdminService
                 'url'          => route('platform-admin.users', ['view' => 'appeals']),
                 'time_ago'     => Carbon::parse($appeal->created_at)->diffForHumans(),
                 'timestamp'    => strtotime($appeal->created_at),
+                'is_read'      => in_array($notifId, $readKeys, true),
             ];
         }
 
@@ -206,8 +214,9 @@ class PlatformAdminService
             ->count();
 
         if ($expiringLogsCount > 0) {
+            $logNotifId = 'log_cleanup_warning';
             $notifications[] = [
-                'id'           => 'log_cleanup_warning',
+                'id'           => $logNotifId,
                 'type'         => 'log_cleanup',
                 'title'        => 'Pembersihan Log (H-1)',
                 'seller_name'  => 'Sistem Platform',
@@ -220,14 +229,18 @@ class PlatformAdminService
                 'time_ago'     => 'Besok 02:00',
                 'timestamp'    => time(),
                 'message'      => "{$expiringLogsCount} log (> 29 hari) akan dibersihkan otomatis besok pkl 02:00. Klik untuk mengunduh cadangan CSV.",
+                'is_read'      => in_array($logNotifId, $readKeys, true),
             ];
         }
 
         usort($notifications, fn ($a, $b) => $b['timestamp'] - $a['timestamp']);
 
+        // Hitung unread berdasarkan notifikasi yang belum ditandai baca
+        $unreadCount = count(array_filter($notifications, fn ($n) => !$n['is_read']));
+
         return [
             'status'        => 'success',
-            'unread_count'  => count($pendingProducts) + count($pendingPayouts) + count($pendingAppeals) + ($expiringLogsCount > 0 ? 1 : 0),
+            'unread_count'  => $unreadCount,
             'counts'        => [
                 'products'    => count($pendingProducts),
                 'payouts'     => count($pendingPayouts),
@@ -443,7 +456,7 @@ class PlatformAdminService
     /**
      * Activate user logic
      */
-    public function activateUser(User $user): void
+    public function activateUser(User $user, ?string $reason = null): void
     {
         DB::transaction(function () use ($user) {
             $user->update([
@@ -452,19 +465,28 @@ class PlatformAdminService
                 'suspend_reason'  => null,
             ]);
 
-            SuspensionAppeal::where('user_id', $user->id)
-                ->where('status', 'pending')
-                ->update([
-                    'status'      => 'approved',
-                    'admin_notes' => 'Akun dipulihkan secara manual oleh Admin Platform.',
-                    'resolved_at' => now(),
-                ]);
+        SuspensionAppeal::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->update([
+                'status'      => 'approved',
+                'admin_notes' => $reason ?: 'Akun dipulihkan secara manual oleh Admin Platform.',
+                'resolved_at' => now(),
+            ]);
 
-            ActivityLogger::log(
-                'activate_user',
-                "Mengaktifkan kembali akun user: {$user->name} ({$user->email})",
-                ['target_user_id' => $user->id, 'user_name' => $user->name, 'user_email' => $user->email]
-            );
-        });
+        $logDesc = "Mengaktifkan kembali akun user: {$user->name} ({$user->email})";
+        if ($reason) {
+            $logDesc .= ". Catatan: {$reason}";
+        }
+
+        ActivityLogger::log(
+            'activate_user',
+            $logDesc,
+            [
+                'target_user_id' => $user->id,
+                'user_name'      => $user->name,
+                'user_email'     => $user->email,
+                'reason'         => $reason
+            ]
+        );
     }
 }

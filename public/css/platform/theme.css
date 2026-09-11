@@ -120,8 +120,8 @@ nav[role="navigation"] a:hover {
 }
 
 .stat-card.total .stat-icon-wrapper {
-    background: var(--p-primary-subtle) !important;
-    color: var(--p-primary) !important;
+    background: transparent !important;
+    color: #64748b !important;
 }
 
 /* =========================================================
@@ -538,28 +538,14 @@ body.dark-mode .commission-amount-badge {
    STAT ICONS & BADGES HARMONY IN DARK MODE
    ========================================================= */
 
-html[data-theme="dark"] .stat-card.total .stat-icon-wrapper,
-body.dark-mode .stat-card.total .stat-icon-wrapper {
-    background: rgba(237, 132, 44, 0.18) !important;
-    color: #fb923c !important;
-}
-
-html[data-theme="dark"] .stat-card.users .stat-icon-wrapper,
-body.dark-mode .stat-card.users .stat-icon-wrapper {
-    background: rgba(239, 68, 68, 0.18) !important;
-    color: #f87171 !important;
-}
-
-html[data-theme="dark"] .stat-card.products .stat-icon-wrapper,
-body.dark-mode .stat-card.products .stat-icon-wrapper {
-    background: rgba(16, 185, 129, 0.18) !important;
-    color: #34d399 !important;
-}
-
-html[data-theme="dark"] .stat-card.payouts .stat-icon-wrapper,
-body.dark-mode .stat-card.payouts .stat-icon-wrapper {
-    background: rgba(245, 158, 11, 0.18) !important;
-    color: #fbbf24 !important;
+html[data-theme="dark"] .stat-card .stat-icon-wrapper,
+body.dark-mode .stat-card .stat-icon-wrapper,
+html[data-theme="dark"] .stat-card .stat-icon-wrap,
+body.dark-mode .stat-card .stat-icon-wrap,
+html[data-theme="dark"] .p-ticket-stat-icon,
+body.dark-mode .p-ticket-stat-icon {
+    background: transparent !important;
+    color: #94a3b8 !important;
 }
 
 /* Badges in Dark Mode */

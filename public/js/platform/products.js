@@ -56,9 +56,32 @@ function closePlatformModal() {
     if (modal) modal.classList.remove('show');
 }
 
+function showRestoreModal(productId, title, seller) {
+    const config = window.PlatformProductsConfig || {};
+    const baseUrl = config.productsBaseUrl || '/platform-admin/products';
+
+    const titleElem = document.getElementById('modalRestoreProductTitle');
+    const sellerElem = document.getElementById('modalRestoreProductSeller');
+    const form = document.getElementById('restoreForm');
+    const modal = document.getElementById('restoreModal');
+    const reasonInput = document.getElementById('modalRestoreReason');
+
+    if (titleElem) titleElem.textContent = title;
+    if (sellerElem) sellerElem.textContent = seller;
+    if (form) form.action = `${baseUrl}/${productId}/restore`;
+    if (reasonInput) reasonInput.value = '';
+    if (modal) modal.classList.add('show');
+}
+
+function closeRestoreModal() {
+    const modal = document.getElementById('restoreModal');
+    if (modal) modal.classList.remove('show');
+}
+
 window.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
         closeTakedownModal();
+        closeRestoreModal();
         closePlatformModal();
     }
 });

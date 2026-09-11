@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\SuspensionAppeal;
 use App\Services\PlatformAdminService;
+use App\Http\Requests\PlatformAdmin\ActivateUserRequest;
+use App\Http\Requests\PlatformAdmin\ApproveAppealRequest;
 use App\Http\Resources\PlatformAdmin\SellerDetailResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -81,26 +83,60 @@ class PlatformAdminController extends Controller
 
     public function getNotifications(Request $request)
     {
-        return response()->json($this->platformAdminService->getNotificationsData());
+        $readKeys = session('platform_notif_read_keys', []);
+        return response()->json($this->platformAdminService->getNotificationsData($readKeys));
     }
 
     public function markNotificationRead(Request $request)
     {
-        return response()->json(['status' => 'success']);
+        $request->validate([
+            'notification_key' => 'required|string|max:100',
+        ]);
+
+        $key = $request->input('notification_key');
+        $readKeys = session('platform_notif_read_keys', []);
+
+        if (!in_array($key, $readKeys, true)) {
+            $readKeys[] = $key;
+            // Batasi max 200 entri agar session tidak membengkak
+            if (count($readKeys) > 200) {
+                $readKeys = array_slice($readKeys, -200);
+            }
+            session(['platform_notif_read_keys' => $readKeys]);
+        }
+
+        return response()->json(['status' => 'success', 'key' => $key]);
     }
 
     public function markAllNotificationsRead(Request $request)
     {
-        return response()->json(['status' => 'success']);
+        // Ambil semua notifikasi saat ini dan tandai semuanya sebagai dibaca
+        $currentData = $this->platformAdminService->getNotificationsData([]);
+        $allKeys = array_map(fn ($n) => $n['id'], $currentData['notifications'] ?? []);
+
+        $readKeys = session('platform_notif_read_keys', []);
+        $merged = array_unique(array_merge($readKeys, $allKeys));
+
+        // Batasi max 200 entri
+        if (count($merged) > 200) {
+            $merged = array_slice($merged, -200);
+        }
+
+        session(['platform_notif_read_keys' => $merged]);
+
+        return response()->json(['status' => 'success', 'marked_count' => count($allKeys)]);
     }
 
     public function streamNotifications(Request $request)
     {
+        // Ambil readKeys dari session sebelum session ditutup untuk SSE
+        $readKeys = session('platform_notif_read_keys', []);
+
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
 
-        return response()->stream(function () {
+        return response()->stream(function () use ($readKeys) {
             @set_time_limit(0);
             @ini_set('implicit_flush', 1);
             if (ob_get_level()) {
@@ -116,7 +152,7 @@ class PlatformAdminController extends Controller
                     break;
                 }
 
-                $data = $this->platformAdminService->getNotificationsData();
+                $data = $this->platformAdminService->getNotificationsData($readKeys);
                 $currentHash = md5(json_encode($data));
 
                 if ($lastHash !== $currentHash || $i === 0) {
@@ -199,36 +235,54 @@ class PlatformAdminController extends Controller
         return back()->with('success', "Akun {$user->name} berhasil di-suspend dengan durasi: {$durationLabel}.");
     }
 
-    public function activate(int $id)
+    public function activate(ActivateUserRequest $request, int $id)
     {
         $user = User::findOrFail($id);
-        
-        $this->platformAdminService->activateUser($user);
+
+        if ($user->hasRole('admin_platform')) {
+            return back()->with('error', 'Tidak dapat mengubah status akun sesama Platform Admin.');
+        }
+
+        if (!$user->isSuspended()) {
+            return back()->with('info', "Akun {$user->name} saat ini dalam kondisi aktif.");
+        }
+
+        $reason = $request->validated('activate_reason')
+            ? strip_tags($request->validated('activate_reason'))
+            : null;
+
+        $this->platformAdminService->activateUser($user, $reason);
 
         return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali.");
     }
 
-    public function approveAppeal(int $id)
+    public function approveAppeal(ApproveAppealRequest $request, int $id)
     {
         $appeal = SuspensionAppeal::with('user')->findOrFail($id);
 
-        DB::transaction(function () use ($appeal) {
-            $appeal->update([
-                'status'      => 'approved',
-                'admin_notes' => 'Permohonan banding disetujui. Akun telah dipulihkan.',
-                'resolved_at' => now(),
-            ]);
+        if ($appeal->status !== 'pending') {
+            return back()->with('error', 'Permohonan banding ini telah diproses sebelumnya.');
+        }
 
-            if ($appeal->user) {
-                $this->platformAdminService->activateUser($appeal->user);
-            }
+        $adminNotes = $request->validated('admin_notes')
+            ? strip_tags($request->validated('admin_notes'))
+            : 'Permohonan banding disetujui. Akun telah dipulihkan.';
 
-            \App\Services\ActivityLogger::log(
-                'approve_suspension_appeal',
-                "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email})",
-                ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id]
-            );
-        });
+        $appeal->update([
+            'status'      => 'approved',
+            'admin_notes' => $adminNotes,
+            'resolved_at' => now(),
+        ]);
+
+        if ($appeal->user) {
+            $this->platformAdminService->activateUser($appeal->user, $adminNotes);
+        }
+
+        \App\Services\ActivityLogger::log(
+            'approve_suspension_appeal',
+            "Menyetujui permohonan banding akun: {$appeal->user->name} ({$appeal->user->email}). Catatan: {$adminNotes}",
+            ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id, 'admin_notes' => $adminNotes]
+        );
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} berhasil disetujui dan akun telah dipulihkan.");
     }
