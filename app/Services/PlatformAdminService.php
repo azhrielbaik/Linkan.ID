@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\SuspensionAppeal;
+use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 class PlatformAdminService
 {
@@ -458,35 +458,36 @@ class PlatformAdminService
      */
     public function activateUser(User $user, ?string $reason = null): void
     {
-        DB::transaction(function () use ($user) {
+        DB::transaction(function () use ($user, $reason) {
             $user->update([
                 'suspended_at'    => null,
                 'suspended_until' => null,
                 'suspend_reason'  => null,
             ]);
 
-        SuspensionAppeal::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->update([
-                'status'      => 'approved',
-                'admin_notes' => $reason ?: 'Akun dipulihkan secara manual oleh Admin Platform.',
-                'resolved_at' => now(),
-            ]);
+            SuspensionAppeal::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->update([
+                    'status'      => 'approved',
+                    'admin_notes' => $reason ?: 'Akun dipulihkan secara manual oleh Admin Platform.',
+                    'resolved_at' => now(),
+                ]);
 
-        $logDesc = "Mengaktifkan kembali akun user: {$user->name} ({$user->email})";
-        if ($reason) {
-            $logDesc .= ". Catatan: {$reason}";
-        }
+            $logDesc = "Mengaktifkan kembali akun user: {$user->name} ({$user->email})";
+            if ($reason) {
+                $logDesc .= ". Catatan: {$reason}";
+            }
 
-        ActivityLogger::log(
-            'activate_user',
-            $logDesc,
-            [
-                'target_user_id' => $user->id,
-                'user_name'      => $user->name,
-                'user_email'     => $user->email,
-                'reason'         => $reason
-            ]
-        );
+            ActivityLogger::log(
+                'activate_user',
+                $logDesc,
+                [
+                    'target_user_id' => $user->id,
+                    'user_name'      => $user->name,
+                    'user_email'     => $user->email,
+                    'reason'         => $reason
+                ]
+            );
+        });
     }
 }
