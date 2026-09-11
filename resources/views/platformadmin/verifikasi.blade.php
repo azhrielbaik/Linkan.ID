@@ -35,44 +35,73 @@
 
             {{-- Tabs --}}
             <div class="tabs-container">
-                <button type="button" class="tab-btn active" data-tab="pending">
+                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'pending'])) }}"
+                   class="tab-link {{ ($status ?? 'pending') === 'pending' ? 'active is-expanded' : '' }}"
+                   data-tab="pending">
                     <i class="fas fa-clock"></i> <span class="tab-label">{{ __('platform.pending_verification') }}</span>
-                </button>
-                <button type="button" class="tab-btn" data-tab="approved">
+                    @if(($pendingCount ?? 0) > 0)
+                        <span class="tab-counter" style="margin-left: 4px; background: #ed842c; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $pendingCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'approved'])) }}"
+                   class="tab-link {{ ($status ?? '') === 'approved' ? 'active is-expanded' : '' }}"
+                   data-tab="approved">
                     <i class="fas fa-check-circle"></i> <span class="tab-label">{{ __('platform.approved') }}</span>
-                </button>
-                <button type="button" class="tab-btn" data-tab="rejected">
+                    @if(($approvedCount ?? 0) > 0)
+                        <span class="tab-counter" style="margin-left: 4px; background: #10b981; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $approvedCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'rejected'])) }}"
+                   class="tab-link {{ ($status ?? '') === 'rejected' ? 'active is-expanded' : '' }}"
+                   data-tab="rejected">
                     <i class="fas fa-times-circle"></i> <span class="tab-label">{{ __('platform.rejected') }}</span>
-                </button>
-                <button type="button" class="tab-btn" data-tab="archive">
+                    @if(($rejectedCount ?? 0) > 0)
+                        <span class="tab-counter" style="margin-left: 4px; background: #ef4444; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $rejectedCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('platform-admin.verifikasi', array_merge(request()->except('status', 'page'), ['status' => 'archive'])) }}"
+                   class="tab-link {{ ($status ?? '') === 'archive' ? 'active is-expanded' : '' }}"
+                   data-tab="archive">
                     <i class="fas fa-archive"></i> <span class="tab-label">{{ __('platform.archive') }}</span>
-                </button>
+                    @if(($archiveCount ?? 0) > 0)
+                        <span class="tab-counter" style="margin-left: 4px; background: #64748b; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">{{ $archiveCount }}</span>
+                    @endif
+                </a>
             </div>
 
             {{-- Filter & Search Card --}}
             <div class="filter-card">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="{{ __('platform.search_verification') }}">
-                </div>
-
-                <div class="filter-actions">
-                    <select class="filter-select" id="platformFilter">
-                        <option value="">{{ __('platform.all_platforms') }}</option>
-                        <option value="upload">Upload File</option>
-                        <option value="dropbox">Dropbox</option>
-                        <option value="gdrive">G-Drive</option>
-                        <option value="other">Lainnya / Other</option>
-                    </select>
-
-                    <div class="date-picker-box" id="verificationDateRange" data-no-submit="true" data-start-name="start_date" data-end-name="end_date" data-placeholder="{{ __('platform.filter_by_date') }}">
-                        <i class="fas fa-calendar-alt date-picker-icon"></i>
-                        <span class="date-range-display">{{ __('platform.filter_by_date') }}</span>
-                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
-                        <input type="hidden" name="start_date" id="filterStartDate" class="date-range-hidden-input">
-                        <input type="hidden" name="end_date" id="filterEndDate" class="date-range-hidden-input">
+                <form method="GET" action="{{ route('platform-admin.verifikasi') }}" id="verifikasiFilterForm" class="filter-form" style="display: flex; gap: 12px; width: 100%; align-items: center; flex-wrap: wrap;">
+                    <input type="hidden" name="status" value="{{ $status ?? 'pending' }}">
+                    <div class="search-box" style="flex: 1; min-width: 240px;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" id="searchInput" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_verification') }}">
                     </div>
-                </div>
+
+                    <div class="filter-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <select class="filter-select" name="platform_type" id="platformFilter" onchange="this.form.submit()">
+                            <option value="">{{ __('platform.all_platforms') }}</option>
+                            <option value="upload" {{ ($platformType ?? '') === 'upload' ? 'selected' : '' }}>Upload File</option>
+                            <option value="dropbox" {{ ($platformType ?? '') === 'dropbox' ? 'selected' : '' }}>Dropbox</option>
+                            <option value="gdrive" {{ ($platformType ?? '') === 'gdrive' ? 'selected' : '' }}>G-Drive</option>
+                            <option value="other" {{ ($platformType ?? '') === 'other' ? 'selected' : '' }}>Lainnya / Other</option>
+                        </select>
+
+                        <div class="date-picker-box" id="verificationDateRange" data-start-name="start_date" data-end-name="end_date" data-placeholder="{{ __('platform.filter_by_date') }}">
+                            <i class="fas fa-calendar-alt date-picker-icon"></i>
+                            <span class="date-range-display">{{ $startDate && $endDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') . ' - ' . \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') : ($startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') : __('platform.filter_by_date')) }}</span>
+                            <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="{{ $startDate ? '' : 'display: none;' }}"><i class="fas fa-times"></i></button>
+                            <input type="hidden" name="start_date" id="filterStartDate" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                            <input type="hidden" name="end_date" id="filterEndDate" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
+                        </div>
+
+                        @if(!empty($search) || !empty($platformType) || !empty($startDate) || !empty($endDate))
+                            <a href="{{ route('platform-admin.verifikasi', ['status' => $status ?? 'pending']) }}" class="btn-reset-filter" title="Reset Filter" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid #e2e8f0; color: #64748b; font-size: 13px; font-weight: 600; text-decoration: none; background: #fff;">
+                                <i class="fas fa-redo"></i> Reset
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
 
             <form id="bulkActionForm" action="{{ route('platform-admin.verifikasi.bulk') }}" method="POST" class="bulk-toolbar">
@@ -122,7 +151,9 @@
                                         <input type="checkbox" class="product-checkbox" value="{{ $product->id }}" aria-label="{{ __('platform.select_product') }}: {{ $product->title }}">
                                     @endif
                                 </td>
-                                <td data-label="#" class="row-number" style="font-weight: 700; color: #94a3b8;">{{ $index + 1 }}</td>
+                                <td data-label="#" class="row-number" style="font-weight: 700; color: #94a3b8;">
+                                    {{ method_exists($products, 'firstItem') && $products->firstItem() ? $products->firstItem() + $index : $index + 1 }}
+                                </td>
                                 <td data-label="{{ __('platform.seller') }}">
                                     <div class="user-name-text">{{ $product->user->name ?? '-' }}</div>
                                     <small style="color: #94a3b8;">{{ $product->user->email ?? '' }}</small>
@@ -215,15 +246,24 @@
                                 </td>
                             </tr>
                             @empty
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-box" style="padding: 40px 20px; text-align: center;">
+                                        <i class="fas fa-box-open" style="font-size: 32px; color: #cbd5e1; margin-bottom: 10px;"></i>
+                                        <p style="color: #64748b; font-weight: 600; margin: 0;">{{ __('platform.no_products_found') }}</p>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <div id="noDataMessage" class="empty-box" style="display: none;">
-                    <i class="fas fa-box-open"></i>
-                    <p>{{ __('platform.no_products_found') }}</p>
-                </div>
+                @if(method_exists($products, 'hasPages') && $products->hasPages())
+                    <div class="pagination-container">
+                        {{ $products->links() }}
+                    </div>
+                @endif
             </div>
 
         </div>

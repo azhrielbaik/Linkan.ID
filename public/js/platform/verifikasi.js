@@ -240,110 +240,30 @@ window.addEventListener("click", function (event) {
     }
 });
 
-// Filter and Search
+// Filter, Search, and Bulk Selection Setup (Server-side)
 document.addEventListener("DOMContentLoaded", function () {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const searchInput = document.getElementById("searchInput");
-    const platformFilter = document.getElementById("platformFilter");
-    const filterStartDate = document.getElementById("filterStartDate") || document.getElementById("startDate") || document.getElementById("filterDate");
-    const filterEndDate = document.getElementById("filterEndDate") || document.getElementById("endDate");
-    const filterDateBox = document.getElementById("verificationDateRange") || document.querySelector(".date-picker-box");
-    const productRows = document.querySelectorAll(".product-row");
-    const noDataMessage = document.getElementById("noDataMessage");
+    const filterForm = document.getElementById("verifikasiFilterForm");
+    const filterStartDate = document.getElementById("filterStartDate");
+    const filterEndDate = document.getElementById("filterEndDate");
+    const filterDateBox = document.getElementById("verificationDateRange");
 
-    let currentActiveTab = "pending";
-
-    function filterProducts() {
-        const searchTerm = searchInput
-            ? searchInput.value.toLowerCase().trim()
-            : "";
-        const platformValue = platformFilter ? platformFilter.value : "";
-        const startVal = filterStartDate ? filterStartDate.value : "";
-        const endVal = filterEndDate ? filterEndDate.value : "";
-        const activeTab = currentActiveTab;
-
-        let visibleCount = 0;
-
-        productRows.forEach((row) => {
-            const status = row.dataset.status;
-            const platform = row.dataset.platform;
-            const date = row.dataset.date;
-            const title = row.dataset.title || "";
-            const username = row.querySelector("td:nth-child(3)")
-                ? row.querySelector("td:nth-child(3)").textContent.toLowerCase()
-                : "";
-            const description = (row.dataset.description || "").toLowerCase();
-
-            const matchesSearch =
-                !searchTerm ||
-                title.includes(searchTerm) ||
-                username.includes(searchTerm) ||
-                description.includes(searchTerm);
-
-            const matchesPlatform =
-                !platformValue || platform === platformValue;
-
-            let matchesDate = true;
-            if (startVal && endVal) {
-                matchesDate = date >= startVal && date <= endVal;
-            } else if (startVal) {
-                matchesDate = date >= startVal;
-            } else if (endVal) {
-                matchesDate = date <= endVal;
-            }
-
-            let matchesStatus = false;
-            if (activeTab === "pending") {
-                matchesStatus = status === "pending";
-            } else if (activeTab === "approved") {
-                matchesStatus = status === "approved";
-            } else if (activeTab === "rejected") {
-                matchesStatus = status === "rejected";
-            } else if (activeTab === "archive") {
-                matchesStatus = status !== "pending";
-            } else {
-                matchesStatus = true;
-            }
-
-            if (
-                matchesSearch &&
-                matchesPlatform &&
-                matchesDate &&
-                matchesStatus
-            ) {
-                row.style.display = "";
-                visibleCount++;
-            } else {
-                row.style.display = "none";
-            }
+    // Auto submit form saat rentang tanggal berubah dari custom date picker
+    if (filterForm && filterDateBox) {
+        filterDateBox.addEventListener("dateRangeChange", function () {
+            filterForm.submit();
         });
 
-        if (noDataMessage) {
-            noDataMessage.style.display = visibleCount === 0 ? "block" : "none";
+        const clearBtn = filterDateBox.querySelector(".date-range-clear-btn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", function () {
+                if (filterStartDate) filterStartDate.value = "";
+                if (filterEndDate) filterEndDate.value = "";
+                filterForm.submit();
+            });
         }
-        updateBulkSelection();
     }
 
-    tabs.forEach((tab) => {
-        tab.addEventListener("click", function () {
-            tabs.forEach((t) => {
-                t.classList.remove("active");
-                t.classList.remove("is-expanded");
-            });
-            this.classList.add("active");
-            this.classList.add("is-expanded");
-            currentActiveTab = this.dataset.tab || "pending";
-            filterProducts();
-        });
-    });
-
-    if (searchInput) searchInput.addEventListener("input", filterProducts);
-    if (platformFilter)
-        platformFilter.addEventListener("change", filterProducts);
-    if (filterStartDate) filterStartDate.addEventListener("change", filterProducts);
-    if (filterEndDate) filterEndDate.addEventListener("change", filterProducts);
-    if (filterDateBox) filterDateBox.addEventListener("dateRangeChange", filterProducts);
-
+    // Checkbox selection untuk bulk verification
     document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
         checkbox.addEventListener("change", updateBulkSelection);
     });
@@ -354,15 +274,13 @@ document.addEventListener("DOMContentLoaded", function () {
             document
                 .querySelectorAll(".product-checkbox")
                 .forEach((checkbox) => {
-                    const row = checkbox.closest(".product-row");
-                    if (row && row.style.display !== "none")
-                        checkbox.checked = this.checked;
+                    checkbox.checked = this.checked;
                 });
             updateBulkSelection();
         });
     }
 
-    filterProducts();
+    updateBulkSelection();
 });
 
 function confirmApproveProduct(form) {

@@ -108,4 +108,122 @@ class VerificationTest extends TestCase
             'rejection_reason' => 'Data tidak lengkap'
         ]);
     }
+
+    /**
+     * Test verification filtering by status tab.
+     */
+    public function test_verification_filters_by_status(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin_platform']);
+        $seller = User::factory()->create();
+
+        DigitalProduct::create([
+            'user_id' => $seller->id,
+            'title' => 'Pending Item',
+            'description' => 'Pending Description',
+            'price' => 10000,
+            'status' => 'active',
+            'platform_type' => 'upload',
+            'button_text' => 'Beli',
+            'is_featured' => 0,
+            'verification_status' => 'pending'
+        ]);
+
+        DigitalProduct::create([
+            'user_id' => $seller->id,
+            'title' => 'Approved Item',
+            'description' => 'Approved Description',
+            'price' => 20000,
+            'status' => 'active',
+            'platform_type' => 'upload',
+            'button_text' => 'Beli',
+            'is_featured' => 0,
+            'verification_status' => 'approved'
+        ]);
+
+        // When viewing pending tab (default)
+        $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['status' => 'pending']));
+        $response->assertStatus(200);
+        $response->assertSee('Pending Item');
+        $response->assertDontSee('Approved Item');
+
+        // When viewing approved tab
+        $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['status' => 'approved']));
+        $response->assertStatus(200);
+        $response->assertSee('Approved Item');
+        $response->assertDontSee('Pending Item');
+    }
+
+    /**
+     * Test verification search filter.
+     */
+    public function test_verification_filters_by_search_query(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin_platform']);
+        $seller = User::factory()->create(['name' => 'John Doe Seller']);
+
+        DigitalProduct::create([
+            'user_id' => $seller->id,
+            'title' => 'Super Unique Product Title',
+            'description' => 'Desc',
+            'price' => 10000,
+            'status' => 'active',
+            'platform_type' => 'upload',
+            'button_text' => 'Beli',
+            'is_featured' => 0,
+            'verification_status' => 'pending'
+        ]);
+
+        DigitalProduct::create([
+            'user_id' => $seller->id,
+            'title' => 'Regular Item',
+            'description' => 'Desc',
+            'price' => 10000,
+            'status' => 'active',
+            'platform_type' => 'upload',
+            'button_text' => 'Beli',
+            'is_featured' => 0,
+            'verification_status' => 'pending'
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['search' => 'Super Unique']));
+        $response->assertStatus(200);
+        $response->assertSee('Super Unique Product Title');
+        $response->assertDontSee('Regular Item');
+    }
+
+    /**
+     * Test verification paginates products to 15 items per page.
+     */
+    public function test_verification_paginates_products(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin_platform']);
+        $seller = User::factory()->create();
+
+        for ($i = 1; $i <= 20; $i++) {
+            DigitalProduct::create([
+                'user_id' => $seller->id,
+                'title' => "Batch Product Item {$i}",
+                'description' => 'Desc',
+                'price' => 10000,
+                'status' => 'active',
+                'platform_type' => 'upload',
+                'button_text' => 'Beli',
+                'is_featured' => 0,
+                'verification_status' => 'pending',
+                'created_at' => now()->subMinutes(25 - $i)
+            ]);
+        }
+
+        $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['page' => 1]));
+        $response->assertStatus(200);
+        $productsInView = $response->viewData('products');
+        $this->assertEquals(15, $productsInView->count());
+        $this->assertEquals(20, $productsInView->total());
+
+        $responsePage2 = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['page' => 2]));
+        $responsePage2->assertStatus(200);
+        $productsInViewPage2 = $responsePage2->viewData('products');
+        $this->assertEquals(5, $productsInViewPage2->count());
+    }
 }

@@ -31,7 +31,10 @@ class ProductManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = DigitalProduct::with(['user', 'transactions'])->latest();
+        // Produk yang masuk ke manajemen produk adalah produk yang telah diverifikasi/disetujui
+        $query = DigitalProduct::with(['user', 'transactions'])
+            ->where('verification_status', 'approved')
+            ->latest();
 
         // 1. Filter Search (Judul, Deskripsi, Nama/Email Seller)
         if ($search = $request->input('search')) {
@@ -45,18 +48,12 @@ class ProductManagementController extends Controller
             });
         }
 
-        // 2. Filter Status Tab (all, active, takedown, pending_verification)
+        // 2. Filter Status Tab (all, active, takedown)
         $tab = $request->input('tab', 'all');
         if ($tab === 'active') {
             $query->where('is_active', true);
         } elseif ($tab === 'takedown') {
             $query->where('is_active', false);
-        } elseif ($tab === 'pending') {
-            $query->where('verification_status', 'pending');
-        } elseif ($tab === 'approved') {
-            $query->where('verification_status', 'approved');
-        } elseif ($tab === 'rejected') {
-            $query->where('verification_status', 'rejected');
         }
 
         // 3. Filter Seller
@@ -69,12 +66,7 @@ class ProductManagementController extends Controller
             $query->where('platform_type', $platformType);
         }
 
-        // 5. Filter Verifikasi
-        if ($verificationStatus = $request->input('verification_status')) {
-            $query->where('verification_status', $verificationStatus);
-        }
-
-        // 6. Filter Rentang Harga
+        // 5. Filter Rentang Harga
         if ($minPrice = $request->input('min_price')) {
             $query->where('price', '>=', $minPrice);
         }
@@ -82,7 +74,7 @@ class ProductManagementController extends Controller
             $query->where('price', '<=', $maxPrice);
         }
 
-        // 7. Filter Rentang Tanggal Upload
+        // 6. Filter Rentang Tanggal Upload
         $startDate = $request->input('start_date') ?: $request->input('date', '');
         $endDate   = $request->input('end_date', '');
         if ($startDate && $endDate) {
@@ -94,7 +86,7 @@ class ProductManagementController extends Controller
             $query->whereDate('created_at', '<=', $endDate);
         }
 
-        // 8. Sort By
+        // 7. Sort By
         $sortBy = $request->input('sort', 'latest');
         if ($sortBy === 'oldest') {
             $query->oldest();
@@ -112,15 +104,16 @@ class ProductManagementController extends Controller
             }
         });
 
-        // Data Statistik
-        $totalProductsCount  = DigitalProduct::count();
-        $activeProductsCount = DigitalProduct::where('is_active', true)->count();
-        $takedownCount       = DigitalProduct::where('is_active', false)->count();
-        $pendingCount        = DigitalProduct::where('verification_status', 'pending')->count();
+        // Data Statistik (Produk aktif & takedown pada produk yang disetujui)
+        $totalProductsCount  = DigitalProduct::where('verification_status', 'approved')->count();
+        $activeProductsCount = DigitalProduct::where('verification_status', 'approved')->where('is_active', true)->count();
+        $takedownCount       = DigitalProduct::where('verification_status', 'approved')->where('is_active', false)->count();
 
         // List seller untuk dropdown filter
         $sellers = User::where('role', '!=', 'admin_platform')
-            ->whereHas('digitalProducts')
+            ->whereHas('digitalProducts', function ($q) {
+                $q->where('verification_status', 'approved');
+            })
             ->select('id', 'name', 'email')
             ->orderBy('name')
             ->get();
@@ -135,7 +128,6 @@ class ProductManagementController extends Controller
             'search',
             'sellerId',
             'platformType',
-            'verificationStatus',
             'minPrice',
             'maxPrice',
             'startDate',
@@ -144,7 +136,6 @@ class ProductManagementController extends Controller
             'totalProductsCount',
             'activeProductsCount',
             'takedownCount',
-            'pendingCount',
             'sellers'
         ));
     }

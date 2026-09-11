@@ -134,7 +134,7 @@ body {
 /* ---- Stats Grid ---- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     margin-bottom: 24px;
 }
@@ -640,15 +640,22 @@ tbody td {
     background: #ffe3ca;
 }
 
+.status-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
 tbody td:nth-child(6) {
-    min-width: 150px;
-    vertical-align: top;
+    min-width: 140px;
+    vertical-align: middle;
 }
 
 tbody td:nth-child(7) {
-    width: 180px;
-    min-width: 180px;
-    vertical-align: top;
+    width: 170px;
+    min-width: 170px;
+    vertical-align: middle;
 }
 
 /* Empty State */

@@ -57,14 +57,6 @@
                         <div class="stat-val">{{ number_format($takedownCount, 0, ',', '.') }}</div>
                     </div>
                 </div>
-
-                <div class="stat-card pending">
-                    <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-label">{{ __('platform.pending_verification') }}</div>
-                        <div class="stat-val">{{ number_format($pendingCount, 0, ',', '.') }}</div>
-                    </div>
-                </div>
             </div>
 
             {{-- Tabs --}}
@@ -80,10 +72,6 @@
                 <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'takedown'])) }}"
                    class="tab-link {{ ($tab ?? '') === 'takedown' ? 'active' : '' }}">
                     <i class="fas fa-ban"></i> <span class="tab-label">{{ __('platform.takedown_products') }} ({{ $takedownCount }})</span>
-                </a>
-                <a href="{{ route('platform-admin.products.index', array_merge(request()->except('tab', 'page'), ['tab' => 'pending'])) }}"
-                   class="tab-link {{ ($tab ?? '') === 'pending' ? 'active' : '' }}">
-                    <i class="fas fa-clock"></i> <span class="tab-label">{{ __('platform.pending_verification') }} ({{ $pendingCount }})</span>
                 </a>
             </div>
 
@@ -116,14 +104,6 @@
                             <option value="gdrive" {{ ($platformType ?? '') === 'gdrive' ? 'selected' : '' }}>G-Drive</option>
                             <option value="other" {{ ($platformType ?? '') === 'other' ? 'selected' : '' }}>Lainnya / Other</option>
                         </select>
-
-                        {{-- Filter by Verifikasi --}}
-                        <select name="verification_status" class="filter-select">
-                            <option value="">{{ __('platform.filter_verification') }}</option>
-                            <option value="approved" {{ ($verificationStatus ?? '') === 'approved' ? 'selected' : '' }}>{{ __('platform.approved') }}</option>
-                            <option value="pending" {{ ($verificationStatus ?? '') === 'pending' ? 'selected' : '' }}>{{ __('platform.pending_status') }}</option>
-                            <option value="rejected" {{ ($verificationStatus ?? '') === 'rejected' ? 'selected' : '' }}>{{ __('platform.rejected') }}</option>
-                        </select>
                     </div>
                     <div class="filter-row-bottom">
                         {{-- Filter Rentang Tanggal --}}
@@ -144,7 +124,7 @@
                         </select>
 
                         <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
-                        @if($search || $sellerId || $platformType || $verificationStatus || $startDate || $endDate || ($sortBy && $sortBy !== 'latest'))
+                        @if($search || $sellerId || $platformType || $startDate || $endDate || ($sortBy && $sortBy !== 'latest'))
                             <a href="{{ route('platform-admin.products.index', ['tab' => $tab]) }}" class="btn-reset">{{ __('platform.reset') }}</a>
                         @endif
                     </div>
@@ -157,13 +137,13 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th style="width: 50px;">#</th>
                                 <th>{{ __('platform.content') }}</th>
-                                <th>{{ __('platform.seller') }}</th>
-                                <th>{{ __('platform.price') }}</th>
-                                <th>{{ __('platform.platform_type') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th style="text-align: center;">{{ __('platform.action') }}</th>
+                                <th style="width: 220px;">{{ __('platform.seller') }}</th>
+                                <th style="width: 140px;">{{ __('platform.price') }}</th>
+                                <th style="width: 120px;">{{ __('platform.platform_type') }}</th>
+                                <th style="width: 150px;">{{ __('platform.status') }}</th>
+                                <th style="text-align: center; width: 170px;">{{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -181,7 +161,7 @@
                                         @endif
                                         <div>
                                             <div class="product-title">{{ $p->title }}</div>
-                                            <div class="product-desc">{{ Str::limit($p->description, 50) }}</div>
+                                            <div class="product-desc">{{ Str::limit(strip_tags($p->description), 50) }}</div>
                                             <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
                                                 <i class="fas fa-calendar-alt"></i> {{ $p->created_at->format('d M Y') }}
                                             </div>
@@ -216,25 +196,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    {{-- Status Verifikasi --}}
-                                    <div style="margin-bottom: 4px;">
-                                        @if($p->verification_status === 'approved')
-                                            <span class="badge badge-approved">
-                                                <i class="fas fa-check-circle"></i> {{ __('platform.approved') }}
-                                            </span>
-                                        @elseif($p->verification_status === 'rejected')
-                                            <span class="badge badge-rejected">
-                                                <i class="fas fa-times-circle"></i> {{ __('platform.rejected') }}
-                                            </span>
-                                        @else
-                                            <span class="badge badge-pending">
-                                                <i class="fas fa-clock"></i> {{ __('platform.pending_status') }}
-                                            </span>
-                                        @endif
-                                    </div>
-
-                                    {{-- Status Live / Takedown --}}
-                                    <div>
+                                    <div class="status-wrapper">
                                         @if($p->is_active)
                                             <span class="badge badge-live">
                                                 <i class="fas fa-circle" style="font-size: 7px;"></i> {{ __('platform.active_status') }}
