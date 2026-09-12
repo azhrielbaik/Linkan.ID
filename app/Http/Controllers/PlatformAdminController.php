@@ -129,51 +129,26 @@ class PlatformAdminController extends Controller
 
     public function streamNotifications(Request $request)
     {
-        // Ambil readKeys dari session sebelum session ditutup untuk SSE
+        // Safe non-blocking SSE response to prevent PHP-FPM worker starvation
         $readKeys = session('platform_notif_read_keys', []);
 
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
 
-        return response()->stream(function () use ($readKeys) {
-            @set_time_limit(0);
-            @ini_set('implicit_flush', 1);
+        $data = $this->platformAdminService->getNotificationsData($readKeys);
+
+        return response()->stream(function () use ($data) {
+            echo "event: notifications\n";
+            echo "data: " . json_encode($data) . "\n\n";
             if (ob_get_level()) {
-                @ob_end_flush();
+                @ob_flush();
             }
             flush();
-
-            $maxCycles = 10;
-            $lastHash = null;
-
-            for ($i = 0; $i < $maxCycles; $i++) {
-                if (connection_aborted()) {
-                    break;
-                }
-
-                $data = $this->platformAdminService->getNotificationsData($readKeys);
-                $currentHash = md5(json_encode($data));
-
-                if ($lastHash !== $currentHash || $i === 0) {
-                    echo "event: notifications\n";
-                    echo "data: " . json_encode($data) . "\n\n";
-                    $lastHash = $currentHash;
-                } else {
-                    echo ": ping\n\n";
-                }
-
-                if (ob_get_level()) {
-                    @ob_flush();
-                }
-                flush();
-
-                sleep(3);
-            }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
             'Cache-Control'     => 'no-cache, no-store, must-revalidate',
-            'Connection'        => 'keep-alive',
+            'Connection'        => 'close',
             'X-Accel-Buffering' => 'no',
         ]);
     }
@@ -312,6 +287,8 @@ class PlatformAdminController extends Controller
                 ['appeal_id' => $appeal->id, 'user_id' => $appeal->user_id, 'admin_notes' => $adminNotes]
             );
         });
+
+        PlatformAdminService::clearNotificationsCache();
 
         return back()->with('success', "Permohonan banding dari {$appeal->user->name} telah ditolak.");
     }

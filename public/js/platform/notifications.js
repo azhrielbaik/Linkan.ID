@@ -50,7 +50,7 @@ function updatePlatformUI(data) {
         totalPill.innerText = count + " Baru";
     }
 
-    renderPlatformNotifs(currentPlatformNotifFilter);
+    renderPlatformNotifs(currentNotifFilter);
 }
 
 function getPlatformEndpoint() {
@@ -103,12 +103,12 @@ function fetchPlatformNotifs() {
 function startPlatformRealtimePolling() {
     if (platformNotifTimer) clearInterval(platformNotifTimer);
 
-    // Polling cepat setiap 2.5 detik saat tab aktif
+    // Polling cerdas setiap 12 detik saat tab aktif
     platformNotifTimer = setInterval(() => {
         if (document.visibilityState === "visible") {
             fetchPlatformNotifs();
         }
-    }, 2500);
+    }, 12000);
 }
 
 // Pause saat tab disembunyikan, langsung fetch saat tab kembali aktif
@@ -239,9 +239,10 @@ document.addEventListener("keydown", function (e) {
     }
 });
 
-// Start the SSE connection when page loads
+// Inisialisasi notifikasi saat halaman dimuat
 function initPlatformNotifs() {
-    startPlatformRealtimeSSE();
+    fetchPlatformNotifs();
+    startPlatformRealtimePolling();
 }
 
 if (document.readyState === "loading") {
@@ -251,7 +252,7 @@ if (document.readyState === "loading") {
 }
 
 window.addEventListener("beforeunload", function () {
-    if (window.platformEventSource) {
-        window.platformEventSource.close();
+    if (platformNotifTimer) {
+        clearInterval(platformNotifTimer);
     }
 });

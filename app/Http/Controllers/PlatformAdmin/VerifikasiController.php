@@ -117,6 +117,8 @@ class VerifikasiController extends Controller
             ]);
         });
 
+        \App\Services\PlatformAdminService::clearNotificationsCache();
+
         return redirect()->back()->with('success', 'Status verifikasi produk berhasil diperbarui');
     }
 
@@ -154,6 +156,8 @@ class VerifikasiController extends Controller
                 );
             }
         });
+
+        \App\Services\PlatformAdminService::clearNotificationsCache();
 
         return redirect()->back()->with('success', count($products) . ' produk berhasil diperbarui.');
     }

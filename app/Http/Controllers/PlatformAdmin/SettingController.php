@@ -115,17 +115,13 @@ class SettingController extends Controller
 
         $recipientCount = 0;
 
-        // Jika opsi email dicentang, dispatch job per seller ke queue (asinkron)
+        // Jika opsi email dicentang, delegasikan proses chunking dan pengiriman ke master background job
         if ($shouldSendEmail) {
-            $sellers = User::where('role', '!=', 'admin_platform')
+            $recipientCount = User::where('role', '!=', 'admin_platform')
                 ->whereNotNull('email')
-                ->get();
+                ->count();
 
-            $recipientCount = $sellers->count();
-
-            foreach ($sellers as $seller) {
-                \App\Jobs\SendBroadcastEmailJob::dispatch($announcement, $seller);
-            }
+            \App\Jobs\DispatchBroadcastEmailsJob::dispatch($announcement);
         }
 
         // Catat ke Log Aktivitas

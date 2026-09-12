@@ -161,6 +161,8 @@ class PayoutManagementController extends Controller
             ]
         );
 
+        \App\Services\PlatformAdminService::clearNotificationsCache();
+
         return back()->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($payout->amount, 0, ',', '.') . ' berhasil disetujui.');
     }
 
@@ -229,6 +231,8 @@ class PayoutManagementController extends Controller
                 'rejection_reason' => $reason
             ]
         );
+
+        \App\Services\PlatformAdminService::clearNotificationsCache();
 
         return back()->with('success', 'Permintaan penarikan berhasil ditolak. Saldo Rp ' . number_format($refundAmount, 0, ',', '.') . ' telah dikembalikan ke akun seller.');
     }
