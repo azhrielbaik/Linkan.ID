@@ -18,81 +18,159 @@ class PlatformAdminService
      */
     public function getDashboardStats(): array
     {
-        $totalUsers = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->count();
-        $totalTransactions = DB::table('transactions')->where('status', 'success')->count();
-        $totalCommission = DB::table('platform_commissions')->sum('commission') ?? 0;
-        $totalProducts = DB::table('digital_products')->count();
+        return Cache::remember('platform_admin_dashboard_stats', 300, function () {
+            $totalUsers = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->count();
+            $totalTransactions = DB::table('transactions')->where('status', 'success')->count();
+            $totalCommission = DB::table('platform_commissions')->sum('commission') ?? 0;
+            $totalProducts = DB::table('digital_products')->count();
 
-        // 2. Chart Pendapatan - 12 Bulan Terakhir
-        $monthlyLabels = [];
-        $monthlyData = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $monthDate = now()->subMonths($i);
-            $monthlyLabels[] = $monthDate->translatedFormat('M Y');
-            $sum = DB::table('platform_commissions')
-                ->whereYear('created_at', $monthDate->year)
-                ->whereMonth('created_at', $monthDate->month)
-                ->sum('commission') ?? 0;
-            $monthlyData[] = (float)$sum;
-        }
+            // 2. Chart Pendapatan - 12 Bulan Terakhir (Optimasi: 1 query GROUP BY memanfaatkan index created_at)
+            $startMonth = now()->subMonths(11)->startOfMonth();
+            $monthlySums = DB::table('platform_commissions')
+                ->where('created_at', '>=', $startMonth)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(commission) as total")
+                ->groupBy('ym')
+                ->pluck('total', 'ym');
 
-        // Chart Pendapatan - 7 Hari Terakhir
-        $weeklyLabels = [];
-        $weeklyData = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $dayDate = now()->subDays($i);
-            $weeklyLabels[] = $dayDate->translatedFormat('D, d M');
-            $sum = DB::table('platform_commissions')
-                ->whereDate('created_at', $dayDate->toDateString())
-                ->sum('commission') ?? 0;
-            $weeklyData[] = (float)$sum;
-        }
+            $monthlyLabels = [];
+            $monthlyData = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $monthDate = now()->subMonths($i);
+                $monthlyLabels[] = $monthDate->translatedFormat('M Y');
+                $key = $monthDate->format('Y-m');
+                $monthlyData[] = (float) ($monthlySums[$key] ?? 0);
+            }
 
-        // 3. Top Seller Ranking
-        $topSellers = DB::table('users')
-            ->where('users.role', '!=', self::ROLE_PLATFORM_ADMIN)
-            ->leftJoin('platform_commissions', 'users.id', '=', 'platform_commissions.seller_id')
-            ->leftJoin('digital_products', 'users.id', '=', 'digital_products.user_id')
-            ->select(
-                'users.id',
-                'users.name',
-                'users.email',
-                'users.avatar',
-                DB::raw('COUNT(DISTINCT digital_products.id) as total_products'),
-                DB::raw('COUNT(DISTINCT platform_commissions.id) as total_sales_count'),
-                DB::raw('COALESCE(SUM(platform_commissions.commission), 0) as total_commission_earned'),
-                DB::raw('COALESCE(SUM(platform_commissions.amount), 0) as total_turnover')
-            )
-            ->groupBy('users.id', 'users.name', 'users.email', 'users.avatar')
-            ->orderByDesc('total_commission_earned')
-            ->orderByDesc('total_sales_count')
-            ->limit(5)
-            ->get();
+            // Chart Pendapatan - 7 Hari Terakhir (Optimasi: 1 query GROUP BY memanfaatkan index created_at)
+            $startDate = now()->subDays(6)->startOfDay();
+            $weeklySums = DB::table('platform_commissions')
+                ->where('created_at', '>=', $startDate)
+                ->selectRaw("DATE(created_at) as date_val, SUM(commission) as total")
+                ->groupBy('date_val')
+                ->pluck('total', 'date_val');
 
-        // 4. Riwayat Komisi Terkini
-        $commissions = DB::table('platform_commissions')
-            ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
-            ->select(
-                'platform_commissions.*',
-                'sellers.name as seller_name',
-                'sellers.email as seller_email'
-            )
-            ->orderBy('platform_commissions.created_at', 'desc')
-            ->limit(10)
-            ->get();
+            $weeklyLabels = [];
+            $weeklyData = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $dayDate = now()->subDays($i);
+                $weeklyLabels[] = $dayDate->translatedFormat('D, d M');
+                $key = $dayDate->toDateString();
+                $weeklyData[] = (float) ($weeklySums[$key] ?? 0);
+            }
 
-        return compact(
-            'totalUsers',
-            'totalTransactions',
-            'totalCommission',
-            'totalProducts',
-            'monthlyLabels',
-            'monthlyData',
-            'weeklyLabels',
-            'weeklyData',
-            'topSellers',
-            'commissions'
-        );
+            // 3. Top Seller Ranking (Berdasarkan data penjualan nyata di tabel transactions status success)
+            $salesBySeller = DB::table('transactions')
+                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+                ->where('transactions.status', 'success')
+                ->select(
+                    'digital_products.user_id as seller_id',
+                    DB::raw('COUNT(transactions.id) as total_sales_count'),
+                    DB::raw('SUM(transactions.total_price) as total_turnover')
+                )
+                ->groupBy('digital_products.user_id')
+                ->orderByDesc('total_sales_count')
+                ->orderByDesc('total_turnover')
+                ->limit(5)
+                ->get()
+                ->keyBy('seller_id');
+
+            $topSellerIds = $salesBySeller->keys()->toArray();
+
+            // Jika seller dengan penjualan kurang dari 5, lengkapi dari seller lain agar slot top 5 terisi
+            if (count($topSellerIds) < 5) {
+                $fallbackIds = DB::table('users')
+                    ->where('role', '!=', self::ROLE_PLATFORM_ADMIN)
+                    ->whereNotIn('id', $topSellerIds)
+                    ->limit(5 - count($topSellerIds))
+                    ->pluck('id')
+                    ->toArray();
+
+                $topSellerIds = array_merge($topSellerIds, $fallbackIds);
+            }
+
+            $sellersData = DB::table('users')
+                ->whereIn('id', $topSellerIds)
+                ->select('id', 'name', 'email', 'avatar')
+                ->get()
+                ->keyBy('id');
+
+            $productCounts = DB::table('digital_products')
+                ->whereIn('user_id', $topSellerIds)
+                ->select('user_id', DB::raw('COUNT(id) as total'))
+                ->groupBy('user_id')
+                ->pluck('total', 'user_id');
+
+            $commissionSums = DB::table('platform_commissions')
+                ->whereIn('seller_id', $topSellerIds)
+                ->select('seller_id', DB::raw('SUM(commission) as total_comm'))
+                ->groupBy('seller_id')
+                ->pluck('total_comm', 'seller_id');
+
+            $topSellers = collect();
+            foreach ($topSellerIds as $sId) {
+                if (!isset($sellersData[$sId])) continue;
+                $seller = $sellersData[$sId];
+                $sale = $salesBySeller->get($sId);
+
+                $seller->total_products = (int) ($productCounts[$sId] ?? 0);
+                $seller->total_sales_count = (int) ($sale->total_sales_count ?? 0);
+                $seller->total_turnover = (float) ($sale->total_turnover ?? 0);
+                $seller->total_commission_earned = (float) ($commissionSums[$sId] ?? 0);
+
+                $topSellers->push($seller);
+            }
+
+            // 4. Riwayat Komisi Terkini
+            $commissions = DB::table('platform_commissions')
+                ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
+                ->select(
+                    'platform_commissions.*',
+                    'sellers.name as seller_name',
+                    'sellers.email as seller_email'
+                )
+                ->orderBy('platform_commissions.created_at', 'desc')
+                ->limit(10)
+                ->get();
+
+            return compact(
+                'totalUsers',
+                'totalTransactions',
+                'totalCommission',
+                'totalProducts',
+                'monthlyLabels',
+                'monthlyData',
+                'weeklyLabels',
+                'weeklyData',
+                'topSellers',
+                'commissions'
+            );
+        });
+    }
+
+    /**
+     * Hapus cache data beranda platform.
+     */
+    public static function clearDashboardCache(): void
+    {
+        Cache::forget('platform_admin_dashboard_stats');
+    }
+
+    /**
+     * Ambil jumlah tiket yang open dengan caching (TTL: 60 detik).
+     */
+    public static function getPendingTicketsCount(): int
+    {
+        return Cache::remember('platform_admin_pending_tickets_count', 60, function () {
+            return (int) DB::table('support_tickets')->where('status', 'open')->count();
+        });
+    }
+
+    /**
+     * Hapus cache data tiket platform saat status tiket berubah.
+     */
+    public static function clearPendingTicketsCache(): void
+    {
+        Cache::forget('platform_admin_pending_tickets_count');
     }
 
     /**
@@ -101,6 +179,7 @@ class PlatformAdminService
     public static function clearNotificationsCache(): void
     {
         Cache::forget('platform_admin_raw_notifications');
+        Cache::forget('platform_admin_dashboard_stats');
     }
 
     /**

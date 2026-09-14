@@ -167,11 +167,14 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($tx->status === 'success')
+                                    @php
+                                        $txStatus = $tx->status instanceof \BackedEnum ? $tx->status->value : (string) $tx->status;
+                                    @endphp
+                                    @if($txStatus === 'success')
                                         <span class="badge badge-success">
                                             <i class="fas fa-check-circle"></i> {{ __('platform.success_status') }}
                                         </span>
-                                    @elseif($tx->status === 'failed')
+                                    @elseif($txStatus === 'failed')
                                         <span class="badge badge-failed">
                                             <i class="fas fa-times-circle"></i> {{ __('platform.failed_status') }}
                                         </span>

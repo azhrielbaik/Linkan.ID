@@ -154,6 +154,8 @@ class SupportTicketManagementController extends Controller
             return $reply;
         });
 
+        \App\Services\PlatformAdminService::clearPendingTicketsCache();
+
         // Kirim email notifikasi balasan ke seller via SMTP
         try {
             if ($ticket->user && $ticket->user->email) {
@@ -198,6 +200,8 @@ class SupportTicketManagementController extends Controller
                 ]
             );
         });
+
+        \App\Services\PlatformAdminService::clearPendingTicketsCache();
 
         return back()->with('success', "Status dan prioritas tiket #{$ticket->ticket_code} berhasil diperbarui.");
     }

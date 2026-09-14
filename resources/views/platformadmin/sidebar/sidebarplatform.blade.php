@@ -77,7 +77,7 @@
             <a href="{{ route('platform-admin.tickets.index') }}" class="{{ request()->routeIs('platform-admin.tickets*') ? 'active' : '' }}">
                 <i class="fas fa-headset"></i><span class="nav-text">{{ __('platform.pusat_bantuan') }}</span>
                 @php
-                    $pendingTicketsCount = \App\Models\SupportTicket::where('status', 'open')->count();
+                    $pendingTicketsCount = \App\Services\PlatformAdminService::getPendingTicketsCount();
                 @endphp
                 @if($pendingTicketsCount > 0)
                     <span style="background: #ef4444; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: auto;">

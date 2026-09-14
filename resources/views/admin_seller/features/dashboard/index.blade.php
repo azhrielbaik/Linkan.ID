@@ -301,12 +301,15 @@
                                         <div class="tx-item-title">{{ $tx->product_title }}</div>
                                     </td>
                                     <td data-label="STATUS">
-                                        @if($tx->status === 'success')
+                                        @php
+                                            $txStatus = $tx->status instanceof \BackedEnum ? $tx->status->value : (string) $tx->status;
+                                        @endphp
+                                        @if($txStatus === 'success')
                                             <span class="tx-status"><i class="fas fa-check"></i> Sukses</span>
-                                        @elseif($tx->status === 'pending')
+                                        @elseif($txStatus === 'pending')
                                             <span class="tx-status pending"><i class="fas fa-clock"></i> Pending</span>
                                         @else
-                                            <span class="tx-status failed"><i class="fas fa-times"></i> {{ ucfirst($tx->status) }}</span>
+                                            <span class="tx-status failed"><i class="fas fa-times"></i> {{ ucfirst($txStatus) }}</span>
                                         @endif
                                     </td>
                                     <td data-label="AKSI">
