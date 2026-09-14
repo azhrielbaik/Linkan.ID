@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class PayoutManagementController extends Controller
 {
@@ -92,6 +93,16 @@ class PayoutManagementController extends Controller
      */
     public function approve(Request $request, $id)
     {
+        $request->validate([
+            'admin_password' => 'required|string',
+        ], [
+            'admin_password.required' => 'Password admin wajib dimasukkan untuk mengonfirmasi persetujuan penarikan dana.',
+        ]);
+
+        if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
+            return back()->with('error', __('platform.invalid_payout_password'));
+        }
+
         $adminId = Auth::id();
 
         try {

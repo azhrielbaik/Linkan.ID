@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/payouts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/payouts.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -203,12 +203,9 @@
                                 <td>
                                     @if($payout->status === 'pending')
                                         <div class="action-btns">
-                                            <form action="{{ route('platform-admin.payouts.approve', $payout->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <button type="button" class="btn-act btn-approve" onclick="confirmApprovePayout(this.form, '{{ addslashes($payout->user->name ?? 'Seller') }}', 'Rp {{ number_format($payout->amount, 0, ',', '.') }}')">
-                                                    <i class="fas fa-check"></i> {{ __('platform.approve') }}
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn-act btn-approve" onclick="showApproveModal({{ $payout->id }}, '{{ addslashes($payout->user->name ?? 'Seller') }}', 'Rp {{ number_format($payout->amount, 0, ',', '.') }}', '{{ addslashes($payout->bank_name ?? strtoupper($payout->method)) }}', '{{ addslashes($payout->account_number ?? '-') }}', '{{ addslashes($payout->account_name ?? '-') }}')">
+                                                <i class="fas fa-check"></i> {{ __('platform.approve') }}
+                                            </button>
                                             <button type="button" class="btn-act btn-reject" onclick="showRejectModal({{ $payout->id }}, '{{ addslashes($payout->user->name ?? 'Seller') }}', 'Rp {{ number_format($payout->amount, 0, ',', '.') }}')">
                                                 <i class="fas fa-times"></i> {{ __('platform.reject') }}
                                             </button>
@@ -245,6 +242,55 @@
                 @endif
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal Approve Payout dengan Verifikasi Password Admin -->
+    <div id="approvePayoutModal" class="modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-shield-alt" style="color: #10b981; margin-right: 6px;"></i>{{ __('platform.confirm_payout_password_title') }}</h3>
+                <button class="modal-close" onclick="closeApproveModal()">&times;</button>
+            </div>
+            <form id="approvePayoutForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #166534; line-height: 1.5;">
+                        <i class="fas fa-info-circle"></i> {{ __('platform.confirm_payout_password_desc') }}
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px;">
+                        <div style="margin-bottom: 6px; color: #475569;">
+                            <strong>{{ __('platform.seller') }}:</strong> <span id="approveModalSellerName" style="font-weight: 700; color: #0f172a;">-</span>
+                        </div>
+                        <div style="margin-bottom: 6px; color: #475569;">
+                            <strong>{{ __('platform.amount') }}:</strong> <span id="approveModalPayoutAmount" style="font-weight: 800; color: #10b981;">-</span>
+                        </div>
+                        <div style="color: #475569;">
+                            <strong>Tujuan Transfer:</strong> <span id="approveModalDestination" style="font-weight: 600; color: #0f172a;">-</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-custom" style="margin-bottom: 0;">
+                        <label for="approve_admin_password" style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block;">
+                            <i class="fas fa-key" style="color: #10b981;"></i> {{ __('platform.admin_password_label') }} <span style="color: #ef4444;">*</span>
+                        </label>
+                        <div style="position: relative;">
+                            <input type="password" id="approve_admin_password" name="admin_password" class="form-control-custom"
+                                   placeholder="{{ __('platform.admin_password_placeholder') }}" required
+                                   style="width: 100%; padding-right: 40px; box-sizing: border-box;"
+                                   onkeydown="if(event.key === 'Enter'){ event.preventDefault(); document.getElementById('approvePayoutForm').submit(); }">
+                            <button type="button" onclick="toggleApprovePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer;">
+                                <i class="fas fa-eye" id="toggleApprovePasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" onclick="closeApproveModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-submit" style="background: #10b981;"><i class="fas fa-check"></i> {{ __('platform.approve') }}</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -310,6 +356,6 @@
     </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/payouts.js') }}"></script>
+    <script src="{{ asset('js/platform/payouts.js') }}?v={{ time() }}"></script>
 </body>
 </html>

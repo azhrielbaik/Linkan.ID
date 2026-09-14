@@ -168,7 +168,7 @@ class SettingController extends Controller
             );
         });
 
-        return back()->with('success', __('messages.ticket_reply_sent'));
+        return back()->with('success', "Status broadcast pengumuman berhasil {$statusText}.");
     }
 
     /**
@@ -189,7 +189,7 @@ class SettingController extends Controller
             );
         });
 
-        return back()->with('success', __('messages.product_takedown', ['title' => $title]));
+        return back()->with('success', "Broadcast pengumuman \"{$title}\" berhasil dihapus.");
 
     }
 }

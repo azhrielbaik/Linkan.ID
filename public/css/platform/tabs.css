@@ -71,7 +71,7 @@
     cursor: pointer;
     outline: none;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -129,22 +129,58 @@
     transition: max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 }
 
-/* Tab Badge Counter */
+/* Tab Badge Counter (Default Inactive: Absolute Badge on Top-Right Corner) */
 .tab-counter {
-    min-width: 18px;
-    height: 18px;
-    margin-left: 6px;
-    padding: 0 5px;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    margin: 0;
     border-radius: 9999px;
     background: #ef4444;
     color: #ffffff;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     line-height: 1;
+    box-shadow: 0 0 0 2px #ffffff;
+    z-index: 5;
+    pointer-events: none;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tab Badge Counter when Tab is Active, Expanded, or Hovered */
+.tabs-container .tab-btn.active .tab-counter,
+.tabs-container .tab-link.active .tab-counter,
+.view-switcher .view-tab-link.active .tab-counter,
+.p-ticket-tabs .p-ticket-tab.active .tab-counter,
+.filter-tabs .filter-tab.active .tab-counter,
+.tabs-container .tab-btn.is-expanded .tab-counter,
+.tabs-container .tab-link.is-expanded .tab-counter,
+.view-switcher .view-tab-link.is-expanded .tab-counter,
+.p-ticket-tabs .p-ticket-tab.is-expanded .tab-counter,
+.filter-tabs .filter-tab.is-expanded .tab-counter,
+.tabs-container .tab-btn:hover .tab-counter,
+.tabs-container .tab-link:hover .tab-counter,
+.view-switcher .view-tab-link:hover .tab-counter,
+.p-ticket-tabs .p-ticket-tab:hover .tab-counter,
+.filter-tabs .filter-tab:hover .tab-counter {
+    position: static;
+    top: auto;
+    right: auto;
+    min-width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    padding: 0 5px;
+    font-size: 10px;
+    line-height: 1;
+    box-shadow: none;
 }
 
 /* 4. Tab Aktif (Expanded Pill dengan Padding Presisi 0 16px & Gap 8px) */
@@ -312,3 +348,20 @@ body.dark-mode .tab-separator,
 body.dark-mode .tabs-separator {
     background: rgba(255, 255, 255, 0.12);
 }
+
+html[data-theme="dark"] .tab-counter,
+body.dark-mode .tab-counter {
+    box-shadow: 0 0 0 2px var(--p-bg-surface-elevated, #1e293b);
+}
+
+html[data-theme="dark"] .tabs-container .tab-btn.active .tab-counter,
+html[data-theme="dark"] .tabs-container .tab-link.active .tab-counter,
+html[data-theme="dark"] .tabs-container .tab-btn:hover .tab-counter,
+html[data-theme="dark"] .tabs-container .tab-link:hover .tab-counter,
+body.dark-mode .tabs-container .tab-btn.active .tab-counter,
+body.dark-mode .tabs-container .tab-link.active .tab-counter,
+body.dark-mode .tabs-container .tab-btn:hover .tab-counter,
+body.dark-mode .tabs-container .tab-link:hover .tab-counter {
+    box-shadow: none;
+}
+
