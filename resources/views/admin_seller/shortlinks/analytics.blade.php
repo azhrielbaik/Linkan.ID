@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div class="chart-wrap">
-                        <canvas id="shortlinkAnalyticsChart"></canvas>
+                        <div id="shortlinkAnalyticsChart" style="height: 300px;"></div>
                     </div>
                 </div>
 
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <div class="chart-wrap">
-                        <canvas id="shortlinkSourceChart"></canvas>
+                        <div id="shortlinkSourceChart" style="height: 300px;"></div>
                     </div>
                 </div>
 
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="chart-wrap" style="position: relative;">
-                        <canvas id="shortlinkIpChart"></canvas>
+                        <div id="shortlinkIpChart" style="height: 300px;"></div>
                         <div id="ipNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">{{ __('admin.no_click_data') }}</div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="chart-wrap" style="position: relative;">
-                        <canvas id="shortlinkDeviceChart"></canvas>
+                        <div id="shortlinkDeviceChart" style="height: 300px;"></div>
                         <div id="deviceNoData" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#999; font-style:italic;">{{ __('admin.no_click_data') }}</div>
                     </div>
                 </div>
@@ -79,132 +79,133 @@
     @endsection
 
 @push("scripts")
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset('js/apexcharts.min.js') }}"></script>
 @endpush
 
 @push("scripts")
 <script>
 let chart;
-        let sourceChart;
-        let ipChart;
-        let deviceChart;
+let sourceChart;
+let ipChart;
+let deviceChart;
 
-        function buildBreakdownChart(canvasId, noDataId, dataArray, chartInstance) {
-            const noDataEl = document.getElementById(noDataId);
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+function buildBreakdownChart(elementId, noDataId, dataArray, chartInstance) {
+    const noDataEl = document.getElementById(noDataId);
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
-            if (!dataArray || dataArray.length === 0 || dataArray.every(d => d.total === 0)) {
-                if (noDataEl) noDataEl.style.display = 'block';
-                return null;
-            }
-            if (noDataEl) noDataEl.style.display = 'none';
+    if (!dataArray || dataArray.length === 0 || dataArray.every(d => d.total === 0)) {
+        if (noDataEl) noDataEl.style.display = 'block';
+        return null;
+    }
+    if (noDataEl) noDataEl.style.display = 'none';
 
-            return new Chart(document.getElementById(canvasId).getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: dataArray.map(item => item.label),
-                    datasets: [{
-                        data: dataArray.map(item => item.total),
-                        backgroundColor: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30', '#8e8e93', '#5ac8fa'],
-                        borderWidth: 0,
-                    }],
+    const options = {
+        series: dataArray.map(item => item.total),
+        chart: {
+            type: 'donut',
+            height: '100%',
+            parentHeightOffset: 0
+        },
+        labels: dataArray.map(item => item.label),
+        colors: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30', '#8e8e93', '#5ac8fa'],
+        legend: {
+            position: 'bottom'
+        },
+        dataLabels: {
+            enabled: false
+        }
+    };
+
+    const container = document.querySelector("#" + elementId);
+    container.innerHTML = '';
+    const newChart = new ApexCharts(container, options);
+    newChart.render();
+    return newChart;
+}
+
+function updateChart() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+
+    fetch(`{{ route('admin.shortlinks.analytics.chart', $shortlink) }}?${params.toString()}`)
+        .then((response) => response.json())
+        .then((data) => {
+            const totalEl = document.getElementById('totalClicksValue');
+            if (totalEl) totalEl.textContent = data.total_clicks;
+            
+            document.getElementById('startDate').value = data.start_date;
+            document.getElementById('endDate').value = data.end_date;
+
+            if (chart) chart.destroy();
+            if (sourceChart) sourceChart.destroy();
+
+            const chartOptions = {
+                series: [{
+                    name: 'Clicks',
+                    data: data.clicks
+                }],
+                chart: {
+                    type: 'bar',
+                    height: '100%',
+                    toolbar: { show: false },
+                    parentHeightOffset: 0
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle' },
-                        },
-                    },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        columnWidth: '50%',
+                    }
                 },
-            });
-        }
+                colors: ['#4a90e2'],
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: data.labels,
+                    labels: { show: false },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    labels: { formatter: (val) => Math.floor(val) }
+                },
+                grid: {
+                    borderColor: '#f0f0f0',
+                    strokeDashArray: 4,
+                }
+            };
+            const chartContainer = document.querySelector("#shortlinkAnalyticsChart");
+            chartContainer.innerHTML = '';
+            chart = new ApexCharts(chartContainer, chartOptions);
+            chart.render();
 
-        function updateChart() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+            const sourceOptions = {
+                series: data.sources.map(item => item.total),
+                chart: {
+                    type: 'donut',
+                    height: '100%',
+                    parentHeightOffset: 0
+                },
+                labels: data.sources.map(item => item.label),
+                colors: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30'],
+                legend: { position: 'bottom' },
+                dataLabels: { enabled: false }
+            };
+            const sourceChartContainer = document.querySelector("#shortlinkSourceChart");
+            sourceChartContainer.innerHTML = '';
+            sourceChart = new ApexCharts(sourceChartContainer, sourceOptions);
+            sourceChart.render();
 
-            fetch(`{{ route('admin.shortlinks.analytics.chart', $shortlink) }}?${params.toString()}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    document.getElementById('totalClicksValue').textContent = data.total_clicks;
-                    document.getElementById('startDate').value = data.start_date;
-                    document.getElementById('endDate').value = data.end_date;
+            ipChart = buildBreakdownChart('shortlinkIpChart', 'ipNoData', data.ip_breakdown, ipChart);
+            deviceChart = buildBreakdownChart('shortlinkDeviceChart', 'deviceNoData', data.device_breakdown, deviceChart);
+        });
+}
 
-                    if (chart) {
-                        chart.destroy();
-                    }
+function applyDateFilter() {
+    updateChart();
+}
 
-                    if (sourceChart) {
-                        sourceChart.destroy();
-                    }
-
-                    chart = new Chart(document.getElementById('shortlinkAnalyticsChart').getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Clicks',
-                                data: data.clicks,
-                                backgroundColor: '#4a90e2',
-                                borderRadius: 4,
-                                maxBarThickness: 18,
-                            }],
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
-                                x: { grid: { display: false } },
-                            },
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    align: 'start',
-                                    labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle' },
-                                },
-                            },
-                        },
-                    });
-
-                    sourceChart = new Chart(document.getElementById('shortlinkSourceChart').getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: data.sources.map((item) => item.label),
-                            datasets: [{
-                                label: 'Sources',
-                                data: data.sources.map((item) => item.total),
-                                backgroundColor: ['#5A5BF1', '#4a90e2', '#34c759', '#af52de', '#ffcc00', '#ff3b30'],
-                                borderWidth: 0,
-                            }],
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle' },
-                                },
-                            },
-                        },
-                    });
-
-                    ipChart = buildBreakdownChart('shortlinkIpChart', 'ipNoData', data.ip_breakdown, ipChart);
-                    deviceChart = buildBreakdownChart('shortlinkDeviceChart', 'deviceNoData', data.device_breakdown, deviceChart);
-                });
-        }
-
-        function applyDateFilter() {
-            updateChart();
-        }
-
-        document.addEventListener('DOMContentLoaded', updateChart);
+document.addEventListener('DOMContentLoaded', updateChart);
 </script>
 @endpush

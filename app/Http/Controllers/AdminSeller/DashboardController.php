@@ -127,17 +127,19 @@ class DashboardController extends Controller
             $dates[] = $currentDate->format('d M');
 
             $viewCount = DB::table('link_views')
-                ->where('link_id', $user->username)
+                ->where('user_id', $user->id)
                 ->whereDate('created_at', $currentDate)
                 ->count();
 
-            $clickCount = DB::table('link_clicks')
-                ->where('link_id', $user->username)
-                ->whereDate('created_at', $currentDate)
+            $orderCount = DB::table('transactions')
+                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+                ->where('digital_products.user_id', $user->id)
+                ->where('transactions.status', 'success')
+                ->whereDate('transactions.created_at', $currentDate)
                 ->count();
 
             $views[] = $viewCount;
-            $clicks[] = $clickCount;
+            $clicks[] = $orderCount;
 
             $currentDate->addDay();
         }
@@ -176,8 +178,8 @@ class DashboardController extends Controller
         $linkId = $request->query('link_id');
         $target = $request->query('target');
 
-        if (!filter_var($target, FILTER_VALIDATE_URL)) {
-            abort(400, 'Invalid target URL');
+        if ($target !== '#' && !filter_var($target, FILTER_VALIDATE_URL)) {
+            $target = '#';
         }
 
         $user = User::where('username', $linkId)->first();
@@ -193,6 +195,10 @@ class DashboardController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->to($target);
     }

@@ -180,10 +180,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/orders/{id}', [OrderController::class, 'getOrderDetail'])->name('orders.detail');
 
     // Digital Products Seller CRUD
-    Route::resource('digital-products', AdminDigitalProductController::class)->except(['show']);
+    Route::resource('digital-products', AdminDigitalProductController::class);
 
     // Digital Products Public Show
-    Route::get('digital-products/{digital_product}', [DigitalProductController::class, 'show'])->name('digital-products.show');
 
     // Digital product payment flow (initiated from admin context)
     Route::prefix('digital-products')->name('digital-products.')->group(function () {

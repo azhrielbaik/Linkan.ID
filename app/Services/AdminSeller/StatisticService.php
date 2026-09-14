@@ -17,11 +17,11 @@ class StatisticService
     public function getStatisticOverview(User $user): array
     {
         $totalViews = DB::table('link_views')
-            ->where('link_id', $user->username)
+            ->where('user_id', $user->id)
             ->count();
             
         $totalClicks = DB::table('link_clicks')
-            ->where('link_id', $user->username)
+            ->where('user_id', $user->id)
             ->count();
             
         $totalSales = DB::table('transactions')
@@ -71,12 +71,12 @@ class StatisticService
             $dates[] = $currentDate->format('d M');
             
             $viewCount = DB::table('link_views')
-                ->where('link_id', $user->username)
+                ->where('user_id', $user->id)
                 ->whereDate('created_at', $currentDate)
                 ->count();
             
             $clickCount = DB::table('link_clicks')
-                ->where('link_id', $user->username)
+                ->where('user_id', $user->id)
                 ->whereDate('created_at', $currentDate)
                 ->count();
             
