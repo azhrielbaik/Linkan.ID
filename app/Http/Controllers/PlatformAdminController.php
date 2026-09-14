@@ -183,7 +183,7 @@ class PlatformAdminController extends Controller
     public function userSuggest(Request $request)
     {
         $q = trim($request->query('q', ''));
-        if (empty($q)) {
+        if (mb_strlen($q) < 2 || mb_strlen($q) > 100) {
             return response()->json([]);
         }
 

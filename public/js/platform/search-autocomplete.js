@@ -20,7 +20,7 @@ function initAutocomplete(input) {
   input.addEventListener('input', (e) => {
     const query = e.target.value.trim();
     clearTimeout(timeoutId);
-    if (!query) {
+    if (!query || query.length < 2) {
       datalist.innerHTML = '';
       return;
     }

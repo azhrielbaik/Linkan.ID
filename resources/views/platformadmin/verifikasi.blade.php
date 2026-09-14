@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/verifikasi.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/gooey-search.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -53,12 +55,12 @@
             <div class="filter-card">
                 <form method="GET" action="{{ route('platform-admin.verifikasi') }}" id="verifikasiFilterForm" class="filter-form" style="display: flex; gap: 12px; width: 100%; align-items: center; flex-wrap: wrap;">
                     <input type="hidden" name="status" value="{{ $status ?? 'pending' }}">
-                    <div class="search-box" style="flex: 1; min-width: 240px;">
+                    <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" name="search" id="searchInput" value="{{ $search ?? '' }}" placeholder="{{ __('platform.search_verification') }}">
                     </div>
 
-                    <div class="filter-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div class="filter-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-left: auto;">
                         <select class="filter-select" name="platform_type" id="platformFilter" onchange="this.form.submit()">
                             <option value="">{{ __('platform.all_platforms') }}</option>
                             <option value="upload" {{ ($platformType ?? '') === 'upload' ? 'selected' : '' }}>Upload File</option>

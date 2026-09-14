@@ -175,7 +175,7 @@
         const query = input.value.trim();
         clearTimeout(debounceTimer);
 
-        if (query.length < 1) {
+        if (query.length < 2) {
             closeAutocompleteDropdown(dropdown);
             return;
         }
@@ -192,7 +192,7 @@
                 .catch(err => {
                     console.error('Gooey Search suggest error:', err);
                 });
-        }, 220);
+        }, 300);
     }
 
     function getFallbackSuggestUrl(input) {

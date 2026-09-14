@@ -240,7 +240,7 @@ class LogController extends Controller
     public function activitySuggest(Request $request)
     {
         $q = trim($request->query('q', ''));
-        if (empty($q)) {
+        if (mb_strlen($q) < 2 || mb_strlen($q) > 100) {
             return response()->json([]);
         }
 
@@ -317,7 +317,7 @@ class LogController extends Controller
     public function transactionSuggest(Request $request)
     {
         $q = trim($request->query('q', ''));
-        if (empty($q)) {
+        if (mb_strlen($q) < 2 || mb_strlen($q) > 100) {
             return response()->json([]);
         }
 
