@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/verifikasi.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/verifikasi.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/gooey-search.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}?v={{ time() }}">

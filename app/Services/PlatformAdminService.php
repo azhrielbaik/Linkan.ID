@@ -24,38 +24,38 @@ class PlatformAdminService
             $totalCommission = DB::table('platform_commissions')->sum('commission') ?? 0;
             $totalProducts = DB::table('digital_products')->count();
 
-            // 2. Chart Pendapatan - 12 Bulan Terakhir (Optimasi: 1 query GROUP BY memanfaatkan index created_at)
-            $startMonth = now()->subMonths(11)->startOfMonth();
-            $monthlySums = DB::table('platform_commissions')
-                ->where('created_at', '>=', $startMonth)
-                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(commission) as total")
-                ->groupBy('ym')
-                ->pluck('total', 'ym');
-
-            $monthlyLabels = [];
-            $monthlyData = [];
-            for ($i = 11; $i >= 0; $i--) {
-                $monthDate = now()->subMonths($i);
-                $monthlyLabels[] = $monthDate->translatedFormat('M Y');
-                $key = $monthDate->format('Y-m');
-                $monthlyData[] = (float) ($monthlySums[$key] ?? 0);
-            }
-
-            // Chart Pendapatan - 7 Hari Terakhir (Optimasi: 1 query GROUP BY memanfaatkan index created_at)
-            $startDate = now()->subDays(6)->startOfDay();
-            $weeklySums = DB::table('platform_commissions')
-                ->where('created_at', '>=', $startDate)
+            // 2. Chart Pendapatan Harian - 30 Hari Terakhir (Harian)
+            $start30Days = now()->subDays(29)->startOfDay();
+            $daily30Sums = DB::table('platform_commissions')
+                ->where('created_at', '>=', $start30Days)
                 ->selectRaw("DATE(created_at) as date_val, SUM(commission) as total")
                 ->groupBy('date_val')
                 ->pluck('total', 'date_val');
 
-            $weeklyLabels = [];
-            $weeklyData = [];
+            $daily30Labels = [];
+            $daily30Data = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $dayDate = now()->subDays($i);
+                $daily30Labels[] = $dayDate->translatedFormat('d M');
+                $key = $dayDate->toDateString();
+                $daily30Data[] = (float) ($daily30Sums[$key] ?? 0);
+            }
+
+            // Chart Pendapatan Harian - 7 Hari Terakhir (Harian)
+            $start7Days = now()->subDays(6)->startOfDay();
+            $daily7Sums = DB::table('platform_commissions')
+                ->where('created_at', '>=', $start7Days)
+                ->selectRaw("DATE(created_at) as date_val, SUM(commission) as total")
+                ->groupBy('date_val')
+                ->pluck('total', 'date_val');
+
+            $daily7Labels = [];
+            $daily7Data = [];
             for ($i = 6; $i >= 0; $i--) {
                 $dayDate = now()->subDays($i);
-                $weeklyLabels[] = $dayDate->translatedFormat('D, d M');
+                $daily7Labels[] = $dayDate->translatedFormat('d M');
                 $key = $dayDate->toDateString();
-                $weeklyData[] = (float) ($weeklySums[$key] ?? 0);
+                $daily7Data[] = (float) ($daily7Sums[$key] ?? 0);
             }
 
             // 3. Top Seller Ranking (Berdasarkan data penjualan nyata di tabel transactions status success)
@@ -137,10 +137,10 @@ class PlatformAdminService
                 'totalTransactions',
                 'totalCommission',
                 'totalProducts',
-                'monthlyLabels',
-                'monthlyData',
-                'weeklyLabels',
-                'weeklyData',
+                'daily7Labels',
+                'daily7Data',
+                'daily30Labels',
+                'daily30Data',
                 'topSellers',
                 'commissions'
             );
