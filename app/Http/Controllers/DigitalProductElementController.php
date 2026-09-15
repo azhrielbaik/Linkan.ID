@@ -115,8 +115,9 @@ class DigitalProductElementController extends Controller
 
                     if (str_starts_with($mime, 'image/')) {
                         $filename = 'digital_products/media/' . time() . '_' . Str::random(10) . '.webp';
-                        $image = ImageManager::gd()->read($file)->scaleDown(width: 1200);
-                        $encoded = $image->toWebp(80);
+                        $imageManager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                        $image = $imageManager->decode($file)->scaleDown(width: 1200);
+                        $encoded = $image->encode(new \Intervention\Image\Encoders\WebpEncoder(quality: 80));
                         Storage::disk('public')->put($filename, (string) $encoded);
                         $mediaFiles[] = ['url' => $filename, 'type' => $mime, 'path' => $filename];
                     } else if (str_starts_with($mime, 'video/')) {

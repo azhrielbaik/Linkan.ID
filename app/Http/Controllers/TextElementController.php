@@ -63,8 +63,9 @@ class TextElementController extends Controller
                 $file = $request->file('button_icon_upload');
                 $filename = 'text_icons/' . time() . '_' . \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
 
-                $image = \Intervention\Image\ImageManager::gd()->read($file)->scaleDown(width: 200);
-                $encoded = $image->toWebp(80);
+                $imageManager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $image = $imageManager->decode($file)->scaleDown(width: 200);
+                $encoded = $image->encode(new \Intervention\Image\Encoders\WebpEncoder(quality: 80));
                 \Illuminate\Support\Facades\Storage::disk('public')->put($filename, (string) $encoded);
 
                 $textElement->button_icon_value = $filename;

@@ -1,3 +1,14 @@
+<?php
+    if (!function_exists("resolveProductImageUrl")) {
+        function resolveProductImageUrl($path) {
+            if (empty($path)) return "https://via.placeholder.com/600x600?text=No+Image";
+            if (Str::startsWith($path, ["http://", "https://", "data:image/", "/storage/"])) {
+                return $path;
+            }
+            return Storage::url($path);
+        }
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +152,7 @@
             font-size: 14px;
         }
 
-        .colors-wrap, .qty-wrap {
+        .qty-wrap {
             display: flex;
             align-items: center;
             gap: 16px;
@@ -152,16 +163,6 @@
             font-weight: 600;
             color: #334155;
             width: 70px;
-        }
-        .color-dots {
-            display: flex;
-            gap: 10px;
-        }
-        .dot {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
         }
         
         .qty-selector {
@@ -470,7 +471,7 @@
         $images[] = $product->image;
     }
     
-    $mainImage = count($images) > 0 ? Storage::url($images[0]) : 'https://via.placeholder.com/600x600?text=No+Image';
+    $mainImage = count($images) > 0 ? resolveProductImageUrl($images[0]) : 'https://via.placeholder.com/600x600?text=No+Image';
     
     // Simulate sale price if none exists (just for UI demonstration based on design)
     $originalPrice = $product->sale_price ? $product->price : ($product->price * 1.2);
@@ -488,7 +489,7 @@
             <div class="thumbnail-gallery">
                 @if(count($images) > 0)
                     @foreach($images as $index => $img)
-                        <img src="{{ Storage::url($img) }}" alt="Thumbnail" class="{{ $index === 0 ? 'active' : '' }}" onclick="changeImage(this, '{{ Storage::url($img) }}')">
+                        <img src="{{ resolveProductImageUrl($img) }}" alt="Thumbnail" class="{{ $index === 0 ? 'active' : '' }}" onclick="changeImage(this, '{{ resolveProductImageUrl($img) }}')">
                     @endforeach
                 @else
                     <img src="{{ $mainImage }}" alt="Thumbnail" class="active">
@@ -524,15 +525,6 @@
                     <i class="far fa-star"></i>
                 </div>
                 <div class="reviews">(236 reviews)</div>
-            </div>
-            
-            <div class="colors-wrap">
-                <div class="label">Colors:</div>
-                <div class="color-dots">
-                    <div class="dot" style="background: #ef4444;"></div>
-                    <div class="dot" style="background: #3b82f6;"></div>
-                    <div class="dot" style="background: #84cc16;"></div>
-                </div>
             </div>
             
             <div class="qty-wrap">

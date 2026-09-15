@@ -59,6 +59,7 @@
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.orders') }}" 
            class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}"
            style="{{ $lockStyle }}"
+           onclick="if(window.location.href.split('?')[0] === this.href.split('?')[0]) return false;"
            @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
             <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-clipboard-list' }}"></i><span class="nav-text">{{ __('sidebar.orders') }}</span>
         </a>

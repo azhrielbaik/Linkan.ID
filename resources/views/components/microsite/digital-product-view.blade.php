@@ -101,10 +101,18 @@
                 </div>
                 
                 @if(count($media) > 1)
+                    {{-- Nav Arrows --}}
+                    <button class="dp-nav-left" onclick="slideDpMedia(this, -1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="dp-nav-right" onclick="slideDpMedia(this, 1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
                     {{-- Dots Indicator for Multiple Images (Modal View) --}}
                     <div class="dp-slider-dots" style="position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 6px; z-index: 2;">
                         @foreach($media as $index => $item)
-                            <div class="dp-dot" data-index="{{ $index }}" style="width: 8px; height: 8px; border-radius: 50%; background: {{ $index === 0 ? '#fff' : 'rgba(255,255,255,0.5)' }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: background 0.2s;"></div>
+                            <div class="dp-dot" onclick="goToDpSlide(this, {{ $index }})" data-index="{{ $index }}" style="width: 8px; height: 8px; border-radius: 50%; background: {{ $index === 0 ? '#fff' : 'rgba(255,255,255,0.5)' }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: background 0.2s; cursor: pointer;"></div>
                         @endforeach
                     </div>
                 @endif
@@ -170,10 +178,10 @@
 
 <style>
 /* CSS Scroll Snap Slider */
-.dp-media-slider::-webkit-scrollbar {
+.dp-media-slider::-webkit-scrollbar, .dp-modal-content::-webkit-scrollbar {
     display: none;
 }
-.dp-media-slider {
+.dp-media-slider, .dp-modal-content {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -322,6 +330,22 @@ function initDpSliders() {
         });
     });
 }
+
+window.slideDpMedia = function(btn, direction) {
+    const container = btn.parentElement;
+    const slider = container.querySelector('.dp-media-slider');
+    if (!slider) return;
+    const scrollAmount = slider.clientWidth * direction;
+    slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+};
+
+window.goToDpSlide = function(dot, index) {
+    const container = dot.parentElement.parentElement;
+    const slider = container.querySelector('.dp-media-slider');
+    if (!slider) return;
+    const scrollAmount = slider.clientWidth * index;
+    slider.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+};
 
 // Run on initial load
 document.addEventListener('DOMContentLoaded', () => {
