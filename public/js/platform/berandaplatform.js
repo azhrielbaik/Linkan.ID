@@ -1,17 +1,17 @@
-// Platform Admin Dashboard Scripts — ApexCharts version
+// Platform Admin Dashboard Scripts — Daily ApexCharts version
 
 let komisiChartInstance = null;
 
 /**
- * Build ApexCharts options for the komisi line chart.
- * @param {string[]} labels  – X-axis category labels
- * @param {number[]} data    – Series data values
+ * Build ApexCharts options for the daily komisi chart.
+ * @param {string[]} labels  – X-axis category labels (dates)
+ * @param {number[]} data    – Series data values (commissions)
  * @returns {object} ApexCharts options
  */
 function buildChartOptions(labels, data) {
     return {
         chart: {
-            type: 'line',
+            type: 'area',
             height: 300,
             fontFamily: 'Plus Jakarta Sans, sans-serif',
             toolbar: { show: false },
@@ -26,18 +26,27 @@ function buildChartOptions(labels, data) {
             name: 'Komisi Platform',
             data: data
         }],
-        colors: ['#ff6b00'],
+        colors: ['#ed842c'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.35,
+                opacityTo: 0.05,
+                stops: [0, 90, 100]
+            }
+        },
         stroke: {
-            curve: 'straight',
+            curve: 'smooth',
             width: 3
         },
         markers: {
-            size: 5,
+            size: 4,
             colors: ['#ffffff'],
-            strokeColors: '#ff6b00',
+            strokeColors: '#ed842c',
             strokeWidth: 2,
             hover: {
-                size: 7,
+                size: 6,
                 sizeOffset: 2
             }
         },
@@ -54,16 +63,20 @@ function buildChartOptions(labels, data) {
             }
         },
         yaxis: {
-            min: -1,
-            max: 1,
-            tickAmount: 10,
+            min: 0,
+            forceNiceScale: true,
             labels: {
                 style: {
                     colors: '#94a3b8',
                     fontSize: '11px'
                 },
                 formatter: function(val) {
-                    return 'Rp ' + val.toFixed(1).replace('.', ',');
+                    if (val >= 1000000) {
+                        return 'Rp ' + (val / 1000000).toFixed(1) + ' jt';
+                    } else if (val >= 1000) {
+                        return 'Rp ' + (val / 1000).toFixed(0) + ' rb';
+                    }
+                    return 'Rp ' + Math.round(val);
                 }
             }
         },
@@ -90,7 +103,7 @@ function buildChartOptions(labels, data) {
 }
 
 /**
- * Render (or re-render) the komisi chart.
+ * Render (or re-render) the daily komisi chart.
  * @param {string[]} labels
  * @param {number[]} data
  */
@@ -109,21 +122,21 @@ function initKomisiChart(labels, data) {
 }
 
 /**
- * Toggle between monthly and weekly chart views.
+ * Toggle between daily chart views (7 days and 30 days).
  */
 function switchChartPeriod(period) {
-    var btnMonthly = document.getElementById('btnMonthly');
-    var btnWeekly  = document.getElementById('btnWeekly');
+    var btnDaily7  = document.getElementById('btnDaily7');
+    var btnDaily30 = document.getElementById('btnDaily30');
     var d = window.PlatformDashboardData || {};
 
-    if (period === 'monthly') {
-        if (btnMonthly) btnMonthly.classList.add('active');
-        if (btnWeekly)  btnWeekly.classList.remove('active');
-        initKomisiChart(d.monthlyLabels || [], d.monthlyData || []);
+    if (period === '30days') {
+        if (btnDaily30) btnDaily30.classList.add('active');
+        if (btnDaily7)  btnDaily7.classList.remove('active');
+        initKomisiChart(d.daily30Labels || [], d.daily30Data || []);
     } else {
-        if (btnWeekly)  btnWeekly.classList.add('active');
-        if (btnMonthly) btnMonthly.classList.remove('active');
-        initKomisiChart(d.weeklyLabels || [], d.weeklyData || []);
+        if (btnDaily7)  btnDaily7.classList.add('active');
+        if (btnDaily30) btnDaily30.classList.remove('active');
+        initKomisiChart(d.daily7Labels || [], d.daily7Data || []);
     }
 }
 
@@ -137,7 +150,7 @@ function printCommissionReport() {
 
 document.addEventListener('DOMContentLoaded', function() {
     var d = window.PlatformDashboardData || {};
-    if (d.monthlyLabels && d.monthlyData) {
-        initKomisiChart(d.monthlyLabels, d.monthlyData);
+    if (d.daily7Labels && d.daily7Data) {
+        initKomisiChart(d.daily7Labels, d.daily7Data);
     }
 });

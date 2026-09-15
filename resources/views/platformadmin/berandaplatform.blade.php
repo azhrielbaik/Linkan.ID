@@ -46,19 +46,19 @@
                 </div>
             </div>
 
-            {{-- 2. Grafik Pendapatan Platform --}}
+            {{-- 2. Grafik Pendapatan Platform (Harian) --}}
             <div class="chart-card">
                 <div class="chart-header">
                     <div>
-                        <div class="chart-header-sub">TREND KOMISI PLATFORM</div>
-                        <h3>Total Komisi Masuk</h3>
+                        <div class="chart-header-sub">TREND KOMISI HARIAN</div>
+                        <h3>Total Komisi Masuk (Harian)</h3>
                     </div>
                     <div class="chart-period-tabs">
-                        <button type="button" class="chart-tab-btn active" id="btnMonthly" onclick="switchChartPeriod('monthly')">
-                            Bulanan (12 Bulan)
+                        <button type="button" class="chart-tab-btn active" id="btnDaily7" onclick="switchChartPeriod('7days')">
+                            7 Hari Terakhir
                         </button>
-                        <button type="button" class="chart-tab-btn" id="btnWeekly" onclick="switchChartPeriod('weekly')">
-                            Mingguan (7 Hari)
+                        <button type="button" class="chart-tab-btn" id="btnDaily30" onclick="switchChartPeriod('30days')">
+                            30 Hari Terakhir
                         </button>
                     </div>
                 </div>
@@ -150,10 +150,10 @@
 
     <script>
         window.PlatformDashboardData = {
-            monthlyLabels: @json($monthlyLabels),
-            monthlyData: @json($monthlyData),
-            weeklyLabels: @json($weeklyLabels),
-            weeklyData: @json($weeklyData),
+            daily7Labels: @json($daily7Labels),
+            daily7Data: @json($daily7Data),
+            daily30Labels: @json($daily30Labels),
+            daily30Data: @json($daily30Data),
             commissionsUrl: '{{ route('platform-admin.commissions') }}',
             printUrl: '{{ route("platform-admin.print") }}',
             csrfToken: '{{ csrf_token() }}'
@@ -161,7 +161,7 @@
     </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
-<script src="{{ asset('js/platform/activity.js') }}"></script>
+    <script src="{{ asset('js/platform/berandaplatform.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/activity.js') }}"></script>
 </body>
 </html>

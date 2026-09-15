@@ -168,19 +168,19 @@
                                 <td>
                                     <div class="action-group">
                                         {{-- Tombol Detail / Inspeksi Seller --}}
-                                        <button type="button" class="btn-action btn-detail" onclick="openSellerModal({{ $user->id }})">
-                                            <i class="fas fa-id-badge"></i> {{ __('platform.view_seller_detail') }}
+                                        <button type="button" class="btn-action btn-detail" onclick="openSellerModal({{ $user->id }})" title="{{ __('platform.view_seller_detail') }}">
+                                            <i class="fas fa-id-badge"></i> <span>Detail</span>
                                         </button>
 
                                         @if ($user->isSuspended())
                                             <button type="button" class="btn-action btn-activate"
-                                                    onclick="openActivateModal({{ $user->id }}, '{{ addslashes($user->name) }}')">
-                                                <i class="fas fa-check"></i> {{ __('platform.activate') }}
+                                                    onclick="openActivateModal({{ $user->id }}, '{{ addslashes($user->name) }}')" title="{{ __('platform.activate') }}">
+                                                <i class="fas fa-check"></i> <span>{{ __('platform.activate') }}</span>
                                             </button>
                                         @else
                                             <button type="button" class="btn-action btn-suspend"
-                                                    onclick="openSuspendModal({{ $user->id }}, '{{ addslashes($user->name) }}')">
-                                                <i class="fas fa-ban"></i> {{ __('platform.suspend') }}
+                                                    onclick="openSuspendModal({{ $user->id }}, '{{ addslashes($user->name) }}')" title="{{ __('platform.suspend') }}">
+                                                <i class="fas fa-ban"></i> <span>{{ __('platform.suspend') }}</span>
                                             </button>
                                         @endif
 
@@ -197,8 +197,8 @@
                                                         'attempt'       => \App\Models\SuspensionAppeal::where('user_id', $user->id)->where('id', '<=', $pendingAppeal->id)->count(),
                                                         'approve_url'   => route('platform-admin.users.appeals.approve', $pendingAppeal->id),
                                                         'reject_url'    => route('platform-admin.users.appeals.reject', $pendingAppeal->id),
-                                                    ]) }})">
-                                                <i class="fas fa-file-contract"></i> Detail Banding
+                                                    ]) }})" title="Tinjau Permohonan Banding">
+                                                <i class="fas fa-file-contract"></i> <span>Banding</span><span class="appeal-badge-dot"></span>
                                             </button>
                                         @endif
                                     </div>
