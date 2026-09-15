@@ -129,12 +129,12 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>{{ __('platform.announcement') }}</th>
-                                    <th>{{ __('platform.announcement_type') }}</th>
-                                    <th>Pengiriman</th>
-                                    <th>{{ __('platform.time') }}</th>
-                                    <th>{{ __('platform.status') }}</th>
-                                    <th style="text-align: center;">{{ __('platform.delete') }}</th>
+                                    <th><i class="fas fa-bullhorn"></i> {{ __('platform.announcement') }}</th>
+                                    <th><i class="fas fa-tag"></i> {{ __('platform.announcement_type') }}</th>
+                                    <th><i class="fas fa-paper-plane"></i> Pengiriman</th>
+                                    <th><i class="fas fa-calendar-alt"></i> {{ __('platform.time') }}</th>
+                                    <th><i class="fas fa-check-circle"></i> {{ __('platform.status') }}</th>
+                                    <th style="text-align: center;"><i class="fas fa-trash-alt"></i> {{ __('platform.delete') }}</th>
                                 </tr>
                             </thead>
                             <tbody>

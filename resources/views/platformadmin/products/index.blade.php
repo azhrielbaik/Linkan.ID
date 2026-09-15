@@ -140,19 +140,19 @@
                         <thead>
                             <tr>
                                 <th style="width: 44px; text-align: center;">#</th>
-                                <th>{{ __('platform.content') }}</th>
-                                <th style="width: 170px;">{{ __('platform.seller') }}</th>
-                                <th style="width: 115px;">{{ __('platform.price') }}</th>
-                                <th style="width: 105px;">{{ __('platform.platform_type') }}</th>
-                                <th style="width: 115px;">{{ __('platform.status') }}</th>
-                                <th style="text-align: center; width: 160px;">{{ __('platform.action') }}</th>
+                                <th><i class="fas fa-box-open"></i> {{ __('platform.content') }}</th>
+                                <th style="width: 170px;"><i class="fas fa-user"></i> {{ __('platform.seller') }}</th>
+                                <th style="width: 115px;"><i class="fas fa-tag"></i> {{ __('platform.price') }}</th>
+                                <th style="width: 110px;"><i class="fas fa-layer-group"></i> {{ __('platform.platform_type') }}</th>
+                                <th style="width: 115px;"><i class="fas fa-shield-alt"></i> {{ __('platform.status') }}</th>
+                                <th style="text-align: center; width: 160px;"><i class="fas fa-cog"></i> {{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($products as $index => $p)
                             <tr>
-                                <td style="font-weight: 700; color: #94a3b8; text-align: center;">
-                                    {{ $products->firstItem() + $index }}
+                                <td style="text-align: center;">
+                                    <span class="table-index-badge">{{ $products->firstItem() + $index }}</span>
                                 </td>
                                 <td>
                                     <div class="product-cell">
@@ -290,7 +290,7 @@
 
                 @if($products->hasPages())
                     <div class="pagination-container">
-                        {{ $products->links() }}
+                        {{ $products->links('platformadmin.partials.pagination') }}
                     </div>
                 @endif
             </div>

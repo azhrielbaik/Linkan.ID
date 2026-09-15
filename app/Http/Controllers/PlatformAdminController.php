@@ -11,6 +11,8 @@ use App\Http\Resources\PlatformAdmin\SellerDetailResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class PlatformAdminController extends Controller
 {
@@ -305,5 +307,41 @@ class PlatformAdminController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password'     => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
+            'new_password.required'     => 'Kata sandi baru wajib diisi.',
+            'new_password.min'          => 'Kata sandi baru minimal 8 karakter.',
+            'new_password.confirmed'    => 'Konfirmasi kata sandi baru tidak sesuai.',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kata sandi saat ini tidak cocok.'
+            ], 422);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        \App\Services\ActivityLogger::log(
+            'admin_change_password',
+            "Admin ({$user->name}) berhasil memperbarui kata sandi akun.",
+            ['user_id' => $user->id]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kata sandi akun berhasil diperbarui.'
+        ]);
     }
 }

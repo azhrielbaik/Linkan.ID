@@ -156,12 +156,12 @@
                 <table class="p-tickets-table">
                     <thead>
                         <tr>
-                            <th>{{ __('platform.ticket_code_and_time') }}</th>
-                            <th>{{ __('platform.seller_requester') }}</th>
-                            <th>{{ __('platform.subject_and_category') }}</th>
-                            <th>{{ __('platform.status') }}</th>
-                            <th>{{ __('platform.priority') }}</th>
-                            <th style="text-align: center;">{{ __('platform.action') }}</th>
+                            <th><i class="fas fa-ticket-alt"></i> {{ __('platform.ticket_code_and_time') }}</th>
+                            <th><i class="fas fa-user"></i> {{ __('platform.seller_requester') }}</th>
+                            <th><i class="fas fa-folder-open"></i> {{ __('platform.subject_and_category') }}</th>
+                            <th><i class="fas fa-chart-line"></i> {{ __('platform.status') }}</th>
+                            <th><i class="fas fa-flag"></i> {{ __('platform.priority') }}</th>
+                            <th style="text-align: center;"><i class="fas fa-cog"></i> {{ __('platform.action') }}</th>
                         </tr>
                     </thead>
                     <tbody>

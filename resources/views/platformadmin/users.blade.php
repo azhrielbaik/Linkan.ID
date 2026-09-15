@@ -108,18 +108,18 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>User</th>
-                                <th>{{ __('platform.role') }}</th>
-                                <th>{{ __('platform.joined_at') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th>{{ __('platform.action') }}</th>
+                                <th><i class="fas fa-user"></i> User</th>
+                                <th><i class="fas fa-user-tag"></i> {{ __('platform.role') }}</th>
+                                <th><i class="fas fa-calendar-alt"></i> {{ __('platform.joined_at') }}</th>
+                                <th><i class="fas fa-shield-alt"></i> {{ __('platform.status') }}</th>
+                                <th><i class="fas fa-cog"></i> {{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($users as $i => $user)
                             <tr>
-                                <td style="color:#94a3b8; font-weight:600; font-size:13px;">
-                                    {{ $users->firstItem() + $i }}
+                                <td>
+                                    <span class="table-index-badge">{{ $users->firstItem() + $i }}</span>
                                 </td>
                                 <td>
                                     <div class="user-cell">
@@ -209,8 +209,8 @@
                     </table>
 
                     @if ($users->hasPages())
-                        <div class="pagination-wrap">
-                            {{ $users->links() }}
+                        <div class="pagination-container">
+                            {{ $users->links('platformadmin.partials.pagination') }}
                         </div>
                     @endif
                     @else
