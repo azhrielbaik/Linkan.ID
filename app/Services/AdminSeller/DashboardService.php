@@ -21,11 +21,13 @@ class DashboardService
         $totalProducts = $digitalProducts->count();
 
         $totalViews = DB::table('link_views')
-            ->where('link_id', $user->username)
+            ->where('user_id', $user->id)
             ->count();
 
-        $totalClicks = DB::table('link_clicks')
-            ->where('link_id', $user->username)
+        $totalClicks = DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->where('transactions.status', 'success')
             ->count();
 
         $lifetimeOrders = DB::table('transactions')

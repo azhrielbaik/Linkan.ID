@@ -20,9 +20,25 @@ class DigitalProductController extends Controller
 
     public function index()
     {
-        // Route ini biasanya tidak digunakan karena tabel product ada di dashboard atau halaman tersendiri
-        // Jika ada halaman khusus index product, bisa render view di sini
-        return redirect()->route('admin.microsites.index');
+        $user = Auth::user();
+        
+        $products = \App\Models\DigitalProduct::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        $totalSales = (float)\Illuminate\Support\Facades\DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->where('transactions.status', 'success')
+            ->sum('transactions.total_price');
+
+        $totalOrders = \Illuminate\Support\Facades\DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->where('transactions.status', 'success')
+            ->count();
+
+        return view('admin_seller.features.digital_products.index', compact('products', 'totalSales', 'totalOrders'));
     }
 
     public function create()
@@ -59,6 +75,13 @@ class DigitalProductController extends Controller
         return view('admin_seller.features.digital_products.form', compact('product'));
     }
     
+    
+    public function show($id)
+    {
+        $user = Auth::user();
+        $product = \App\Models\DigitalProduct::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        return view('admin_seller.features.digital_products.show', compact('product', 'user'));
+    }
     public function update(UpdateDigitalProductRequest $request, $id)
     {
         $product = $this->digitalProductService->getProduct($id, Auth::id());

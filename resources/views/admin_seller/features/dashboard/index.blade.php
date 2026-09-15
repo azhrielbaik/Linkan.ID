@@ -246,8 +246,20 @@
                         <div class="product-course-card">
                             <button class="like-btn"><i class="far fa-heart"></i></button>
                             <div class="product-img-box">
-                                @if($product->image_url)
-                                    <img src="{{ Storage::url($product->image_url) }}" alt="{{ $product->title }}">
+                                @php
+                                    $dashImg = null;
+                                    // Karena dari DB::table(), media_files mungkin berupa string JSON
+                                    $mediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
+                                    if (is_array($mediaFiles) && count($mediaFiles) > 0) {
+                                        $dashImg = $mediaFiles[0]['url'] ?? $mediaFiles[0]['path'] ?? null;
+                                    }
+                                    if (!$dashImg && $product->image) {
+                                        $dashImg = $product->image;
+                                    }
+                                @endphp
+
+                                @if($dashImg)
+                                    <img src="{{ Storage::url($dashImg) }}" alt="{{ $product->title }}">
                                 @else
                                     <i class="fas fa-image"></i>
                                 @endif
@@ -353,10 +365,10 @@
                 <div class="chart-widget-body">
                     <div class="stats-numbers">
                         <span>Views: <strong id="totalViews" style="color: #5A5BF1;">{{ $totalViews }}</strong></span>
-                        <span>Clicks: <strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
+                        <span>Pesanan: <strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
                     </div>
                     <div class="chart-wrapper">
-                        <canvas id="statsChart"></canvas>
+                        <div id="statsChart" style="min-height: 120px;"></div>
                     </div>
                 </div>
             </div>
@@ -399,14 +411,13 @@
 @endsection
 
 @push("scripts")
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset('js/apexcharts.min.js') }}"></script>
 <script>
 (function() {
     function initBeranda() {
-        const chartEl = document.getElementById('statsChart');
+        const chartEl = document.querySelector('#statsChart');
         if (!chartEl) return;
 
-        const ctx = chartEl.getContext('2d');
         let myChart = null;
 
         function updateChart() {
@@ -427,71 +438,56 @@
                 return response.json();
             })
             .then((data) => {
-                const totalViewsEl = document.getElementById('totalViews');
-                const totalClicksEl = document.getElementById('totalClicks');
-
-                if (totalViewsEl && data.views) {
-                    const sumViews = data.views.reduce((a, b) => a + b, 0);
-                    totalViewsEl.textContent = sumViews;
-                }
-                if (totalClicksEl && data.clicks) {
-                    totalClicksEl.textContent = data.clicks.reduce((a, b) => a + b, 0);
-                }
-
                 if (myChart) {
-                    myChart.data.labels = data.labels;
-                    myChart.data.datasets[0].data = data.views;
-                    myChart.data.datasets[1].data = data.clicks;
-                    myChart.update();
-                } else {
-                    myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: data.labels,
-                            datasets: [
-                                {
-                                    label: 'Views',
-                                    data: data.views,
-                                    borderColor: '#5A5BF1',
-                                    backgroundColor: 'rgba(90, 91, 241, 0.08)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    borderWidth: 2,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 4
-                                },
-                                {
-                                    label: 'Clicks',
-                                    data: data.clicks,
-                                    borderColor: '#3B82F6',
-                                    backgroundColor: 'rgba(59, 130, 246, 0.08)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    borderWidth: 2,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 4
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false } // Hide legend for compact UI
-                            },
-                            scales: {
-                                y: {
-                                    display: false // Hide Y axis for compact UI
-                                },
-                                x: {
-                                    display: false // Hide X axis for compact UI
-                                }
-                            },
-                            layout: {
-                                padding: 0
-                            }
-                        }
+                    myChart.updateSeries([
+                        { data: data.views },
+                        { data: data.clicks }
+                    ]);
+                    myChart.updateOptions({
+                        xaxis: { categories: data.labels }
                     });
+                } else {
+                    const chartContainer = document.querySelector("#statsChart");
+                    chartContainer.innerHTML = ''; // Prevent duplicate charts on Turbo/PJAX reload
+
+                    const options = {
+                        series: [
+                            { name: 'Views', data: data.views },
+                            { name: 'Pesanan', data: data.clicks }
+                        ],
+                        chart: {
+                            type: 'area',
+                            height: '100%',
+                            parentHeightOffset: 0,
+                            sparkline: { enabled: true },
+                            toolbar: { show: false }
+                        },
+                        colors: ['#FF9040', '#3B82F6'],
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.4,
+                                opacityTo: 0.05,
+                                stops: [0, 90, 100]
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        xaxis: {
+                            categories: data.labels,
+                            crosshairs: { width: 1 }
+                        },
+                        tooltip: {
+                            fixed: { enabled: false },
+                            x: { show: true },
+                            marker: { show: true }
+                        }
+                    };
+                    myChart = new ApexCharts(document.querySelector("#statsChart"), options);
+                    myChart.render();
                 }
             })
             .catch((error) => console.error('Error fetching chart data:', error));

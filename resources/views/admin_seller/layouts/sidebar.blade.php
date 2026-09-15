@@ -28,7 +28,7 @@
         @endphp
 
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.microsites.index') }}" 
-           class="{{ (request()->routeIs('admin.microsites.index') || request()->routeIs('admin.digital-products.*')) ? 'active' : '' }}"
+           class="{{ request()->routeIs('admin.microsites.index') ? 'active' : '' }}"
            style="{{ $lockStyle }}"
            @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
             <i class="fa-solid {{ $isSuspended ? 'fa-lock' : 'fa-pager' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
@@ -49,11 +49,18 @@
             <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-chart-bar' }}"></i><span class="nav-text">{{ __('sidebar.analytics') }}</span>
         </a>
 
+        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.digital-products.index') }}" 
+           class="{{ request()->routeIs('admin.digital-products.*') ? 'active' : '' }}"
+           style="{{ $lockStyle }}"
+           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
+            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-store' }}"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
+        </a>
+
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.orders') }}" 
            class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}"
            style="{{ $lockStyle }}"
            @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-clipboard-check' }}"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
+            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-clipboard-list' }}"></i><span class="nav-text">{{ __('sidebar.orders') }}</span>
         </a>
 
         <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.purchases') }}" 

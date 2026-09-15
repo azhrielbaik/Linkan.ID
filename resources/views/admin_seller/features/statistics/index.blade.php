@@ -27,7 +27,7 @@
                     <span>{{ __('admin.clicks') }}: {{ $totalClicks }}</span>
                 </div>
                 <div class="stats-chart">
-                    <canvas id="statsChart1"></canvas>
+                    <div id="statsChart1" style="height: 300px;"></div>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@
                     <span>{{ __('admin.total_sales') }}: IDR {{ number_format($totalSales, 0, ',', '.') }}</span>
                 </div>
                 <div class="stats-chart">
-                    <canvas id="statsChart2"></canvas>
+                    <div id="statsChart2" style="height: 300px;"></div>
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
 @endsection
 
 @push("scripts")
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset('js/apexcharts.min.js') }}"></script>
 @endpush
 
 @push("scripts")
@@ -81,54 +81,45 @@ let chart1, chart2;
                     startDate1 = data.start_date;
                     endDate1 = data.end_date;
 
-                    const ctx = document.getElementById('statsChart1').getContext('2d');
-                    chart1 = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Views',
-                                data: data.views,
-                                backgroundColor: '#5A5BF1',
-                                borderRadius: 4,
-                                maxBarThickness: 12
-                            }, {
-                                label: 'Clicks',
-                                data: data.clicks,
-                                backgroundColor: '#38BDF8',
-                                borderRadius: 4,
-                                maxBarThickness: 12
-                            }]
+                    const options1 = {
+                        series: [{
+                            name: 'Views',
+                            data: data.views
+                        }, {
+                            name: 'Clicks',
+                            data: data.clicks
+                        }],
+                        chart: {
+                            type: 'bar',
+                            height: 300,
+                            toolbar: { show: false }
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        color: '#f0f0f0'
-                                    }
-                                },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    align: 'start',
-                                    labels: {
-                                        boxWidth: 12,
-                                        usePointStyle: true,
-                                        pointStyle: 'circle'
-                                    }
-                                }
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 4,
+                                columnWidth: '50%'
                             }
-                        }
-                    });
+                        },
+                        colors: ['#5A5BF1', '#38BDF8'],
+                        dataLabels: { enabled: false },
+                        xaxis: {
+                            categories: data.labels,
+                            axisBorder: { show: false },
+                            axisTicks: { show: false }
+                        },
+                        yaxis: {
+                            labels: { formatter: (val) => Math.floor(val) }
+                        },
+                        grid: {
+                            borderColor: '#f0f0f0',
+                            strokeDashArray: 4
+                        },
+                        legend: { position: 'top', horizontalAlign: 'left' }
+                    };
+                    const container1 = document.querySelector("#statsChart1");
+                    container1.innerHTML = '';
+                    chart1 = new ApexCharts(container1, options1);
+                    chart1.render();
                 });
         }
 
@@ -150,54 +141,48 @@ let chart1, chart2;
                     startDate2 = data.start_date;
                     endDate2 = data.end_date;
 
-                    const ctx = document.getElementById('statsChart2').getContext('2d');
-                    chart2 = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Sales',
-                                data: data.sales,
-                                borderColor: '#5A5BF1',
-                                backgroundColor: 'rgba(90, 91, 241, 0.1)',
-                                fill: true,
-                                tension: 0.4
-                            }]
+                    const options2 = {
+                        series: [{
+                            name: 'Sales',
+                            data: data.sales
+                        }],
+                        chart: {
+                            type: 'area',
+                            height: 300,
+                            toolbar: { show: false }
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        color: '#f0f0f0'
-                                    },
-                                    ticks: {
-                                        callback: function(value) {
-                                            return 'IDR ' + value.toLocaleString('id-ID');
-                                        }
-                                    }
-                                },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    align: 'start',
-                                    labels: {
-                                        boxWidth: 12,
-                                        usePointStyle: true,
-                                        pointStyle: 'circle'
-                                    }
+                        colors: ['#5A5BF1'],
+                        fill: {
+                            type: 'solid',
+                            opacity: 0.1
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        dataLabels: { enabled: false },
+                        xaxis: {
+                            categories: data.labels,
+                            axisBorder: { show: false },
+                            axisTicks: { show: false }
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: function(value) {
+                                    return 'IDR ' + value.toLocaleString('id-ID');
                                 }
                             }
-                        }
-                    });
+                        },
+                        grid: {
+                            borderColor: '#f0f0f0',
+                            strokeDashArray: 4
+                        },
+                        legend: { position: 'top', horizontalAlign: 'left' }
+                    };
+                    const container2 = document.querySelector("#statsChart2");
+                    container2.innerHTML = '';
+                    chart2 = new ApexCharts(container2, options2);
+                    chart2.render();
                 });
         }
 
