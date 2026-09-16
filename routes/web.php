@@ -291,6 +291,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
 
     // Theme & Tampilan Platform Admin
     Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->middleware('throttle:20,1')->name('theme.update');
+    Route::post('/password/update', [PlatformAdminController::class, 'updatePassword'])->middleware('throttle:10,1')->name('password.update');
 });
 
 

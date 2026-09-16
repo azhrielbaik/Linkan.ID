@@ -113,11 +113,11 @@
                             <tr>
                                 <th class="select-column"><input type="checkbox" id="selectAllProducts" aria-label="{{ __('platform.select_all') }}"></th>
                                 <th>#</th>
-                                <th>{{ __('platform.seller') }}</th>
-                                <th>{{ __('admin.product') }}</th>
-                                <th>{{ __('platform.price') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th style="text-align: center;">{{ __('platform.action') }}</th>
+                                <th><i class="fas fa-user"></i> {{ __('platform.seller') }}</th>
+                                <th><i class="fas fa-box-open"></i> {{ __('admin.product') }}</th>
+                                <th><i class="fas fa-tag"></i> {{ __('platform.price') }}</th>
+                                <th><i class="fas fa-shield-alt"></i> {{ __('platform.status') }}</th>
+                                <th style="text-align: center;"><i class="fas fa-cog"></i> {{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody id="productTableBody">
@@ -133,8 +133,10 @@
                                         <input type="checkbox" class="product-checkbox" value="{{ $product->id }}" aria-label="{{ __('platform.select_product') }}: {{ $product->title }}">
                                     @endif
                                 </td>
-                                <td data-label="#" class="row-number" style="font-weight: 700; color: #94a3b8;">
-                                    {{ method_exists($products, 'firstItem') && $products->firstItem() ? $products->firstItem() + $index : $index + 1 }}
+                                <td data-label="#">
+                                    <span class="table-index-badge">
+                                        {{ method_exists($products, 'firstItem') && $products->firstItem() ? $products->firstItem() + $index : $index + 1 }}
+                                    </span>
                                 </td>
                                 <td data-label="{{ __('platform.seller') }}">
                                     <div class="user-name-text">{{ $product->user->name ?? '-' }}</div>
@@ -243,7 +245,7 @@
 
                 @if(method_exists($products, 'hasPages') && $products->hasPages())
                     <div class="pagination-container">
-                        {{ $products->links() }}
+                        {{ $products->links('platformadmin.partials.pagination') }}
                     </div>
                 @endif
             </div>

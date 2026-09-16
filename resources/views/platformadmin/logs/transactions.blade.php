@@ -126,19 +126,19 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>{{ __('platform.order_id') }}</th>
-                                <th>{{ __('platform.product_and_seller') }}</th>
-                                <th>{{ __('platform.buyer') }}</th>
-                                <th>{{ __('platform.amount') }}</th>
-                                <th>{{ __('platform.transaction_time') }}</th>
-                                <th>{{ __('platform.payment_status') }}</th>
+                                <th><i class="fas fa-receipt"></i> {{ __('platform.order_id') }}</th>
+                                <th><i class="fas fa-box-open"></i> {{ __('platform.product_and_seller') }}</th>
+                                <th><i class="fas fa-user"></i> {{ __('platform.buyer') }}</th>
+                                <th><i class="fas fa-money-bill-wave"></i> {{ __('platform.amount') }}</th>
+                                <th><i class="fas fa-calendar-alt"></i> {{ __('platform.transaction_time') }}</th>
+                                <th><i class="fas fa-chart-line"></i> {{ __('platform.payment_status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($transactions as $index => $tx)
                             <tr>
-                                <td style="font-weight: 700; color: #94a3b8;">
-                                    {{ $transactions->firstItem() + $index }}
+                                <td>
+                                    <span class="table-index-badge">{{ $transactions->firstItem() + $index }}</span>
                                 </td>
                                 <td>
                                     <span class="order-code">{{ $tx->order_id }}</span>

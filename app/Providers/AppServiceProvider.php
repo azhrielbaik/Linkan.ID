@@ -28,6 +28,9 @@ public function boot(): void
     \Midtrans\Config::$isProduction = false; // true untuk production
     \Midtrans\Config::$isSanitized = true;
     \Midtrans\Config::$is3ds = true;
+
+    \Illuminate\Pagination\Paginator::defaultView('platformadmin.partials.pagination');
+    \Illuminate\Pagination\Paginator::defaultSimpleView('platformadmin.partials.pagination');
 }
 
 }

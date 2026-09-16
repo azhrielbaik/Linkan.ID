@@ -186,18 +186,18 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>{{ __('platform.time') }}</th>
-                                <th>Pengguna / Aktor</th>
-                                <th>{{ __('platform.action') }}</th>
-                                <th>{{ __('platform.activity_description') }}</th>
-                                <th>{{ __('platform.ip_and_device') }}</th>
+                                <th><i class="fas fa-calendar-alt"></i> {{ __('platform.time') }}</th>
+                                <th><i class="fas fa-user"></i> Pengguna / Aktor</th>
+                                <th><i class="fas fa-bolt"></i> {{ __('platform.action') }}</th>
+                                <th><i class="fas fa-info-circle"></i> {{ __('platform.activity_description') }}</th>
+                                <th><i class="fas fa-laptop"></i> {{ __('platform.ip_and_device') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($logs as $index => $log)
                             <tr>
-                                <td style="font-weight: 700; color: #94a3b8;">
-                                    {{ $logs->firstItem() + $index }}
+                                <td>
+                                    <span class="table-index-badge">{{ $logs->firstItem() + $index }}</span>
                                 </td>
                                 <td style="white-space: nowrap;">
                                     <div style="font-weight: 700; color: #1e293b;">

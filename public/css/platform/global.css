@@ -38,6 +38,39 @@
     box-sizing: border-box;
 }
 
+/* Fallback styling for native select elements when custom dropdown is not mounted */
+select.filter-select:not(.custom-dropdown-native-hidden),
+select.p-filter-select:not(.custom-dropdown-native-hidden) {
+    height: var(--platform-control-height, 38px);
+    min-height: var(--platform-control-height, 38px);
+    padding: 0 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9999px;
+    background: #ffffff;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* Hidden native select should never display or affect layout */
+select.custom-dropdown-native-hidden {
+    display: none !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
 .btn-filter,
 .btn-reset,
 .btn-search,
@@ -426,91 +459,169 @@ body.dark-mode .p-ticket-stat-icon i {
     color: #94a3b8 !important;
 }
 
-/* ---- Table Card Base Component ---- */
-.table-card {
-    background: #ffffff;
-    border-radius: var(--platform-radius);
-    box-shadow: var(--platform-card-shadow);
-    overflow: hidden;
-    border: var(--platform-border);
-    width: 100%;
+/* ==========================================================================
+   LINKAN.ID — MODERN FLOATING CARD TABLE SYSTEM (PLATFORM ADMIN)
+   Concept:
+   - Soft, crisp background container (#f1f5fa) that floats white row cards
+   - Distinct rounded ice-blue thead header banner (#e8f1fc) with 12px padding
+   - Floating row cards (border-spacing: 0 10px, rounded ends, clean subtle border)
+   - Hover elevation with soft shadow and crisp border highlight
+   - Modern rounded blue badge for row indices (#)
+   ========================================================================== */
+.table-card,
+.p-tickets-table-card {
+    background: #f1f5fa !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04) !important;
+    border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
 }
 
 .table-responsive {
     width: 100%;
     overflow-x: auto;
-    overflow-y: auto;
-    max-height: calc(100vh - 240px);
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
     position: relative;
+    padding: 2px 2px 4px 2px;
+    box-sizing: border-box;
 }
 
 /* Smooth custom scrollbars for long tables */
 .table-responsive::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 .table-responsive::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #e2e8f0;
+    border-radius: 4px;
 }
 .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #94a3b8;
     border-radius: 4px;
 }
 .table-responsive::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #64748b;
 }
 
-table {
+table,
+.table-card table,
+.p-tickets-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
     text-align: left;
+    margin-top: -2px;
 }
 
 thead {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 5;
 }
 
-thead th {
+thead tr {
+    border: none !important;
+}
+
+thead th,
+.table-card thead th {
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: #f8fafc;
-    padding: 14px 20px;
+    z-index: 5;
+    background: #e8f1fc !important;
+    padding: 9px 12px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-transform: none !important;
+    letter-spacing: 0.01em !important;
+    border: none !important;
+    box-shadow: none !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+thead th i,
+.table-card thead th i {
+    color: #2563eb;
+    margin-right: 5px;
     font-size: 11.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #475569;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow:
-        inset 0 -1px 0 #e2e8f0,
-        0 2px 4px rgba(0, 0, 0, 0.02);
-    white-space: nowrap;
 }
 
-tbody tr {
-    border-bottom: 1px solid #f1f5f9;
-    transition: background 0.15s ease;
+thead th:first-child,
+.table-card thead th:first-child {
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
 }
 
-tbody tr:last-child {
-    border-bottom: none;
+thead th:last-child,
+.table-card thead th:last-child {
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
 }
 
-tbody tr:hover {
-    background: #f8fafc;
+tbody tr,
+.table-card tbody tr {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.15s ease !important;
 }
 
-tbody td {
-    padding: 16px 20px;
-    font-size: 13.5px;
-    vertical-align: middle;
-    color: #334155;
-    border-bottom: 1px solid #f1f5f9;
+tbody td,
+.table-card tbody td {
+    background: #ffffff !important;
+    padding: 10px 12px !important;
+    font-size: 12.5px !important;
+    vertical-align: middle !important;
+    color: #334155 !important;
+    border-top: 1px solid #edf2f7 !important;
+    border-bottom: 1px solid #edf2f7 !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02) !important;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+tbody td:first-child,
+.table-card tbody td:first-child {
+    border-left: 1px solid #edf2f7 !important;
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+}
+
+tbody td:last-child,
+.table-card tbody td:last-child {
+    border-right: 1px solid #edf2f7 !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+
+tbody tr:hover td,
+.table-card tbody tr:hover td {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Modern Index Badge (#) */
+.table-index-badge,
+td.row-number,
+.row-number {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    padding: 0 6px !important;
+    border-radius: 8px !important;
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    box-sizing: border-box !important;
 }
 
 /* ---- Floating Toast Notifications (Top Right) ---- */
@@ -753,88 +864,66 @@ tbody td {
     color: #64748b;
 }
 
-/* ---- Laravel Pagination & SVG Fixes ---- */
+/* ---- Clean Arrow-Only Pagination ---- */
 .pagination-container {
     padding: 14px 20px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #edf2f7;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    font-size: 13px;
-    color: #64748b;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-nav[role="navigation"] {
+.platform-arrow-pagination {
     display: flex;
     align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
+    justify-content: center;
 }
 
-nav[role="navigation"] svg {
-    width: 16px !important;
-    height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    display: inline-block !important;
-    vertical-align: middle !important;
-    color: inherit !important;
-    fill: currentColor !important;
-}
-
-.pagination {
-    display: flex;
-    gap: 4px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.pagination-arrows-wrapper {
+    display: inline-flex;
     align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 4px 6px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
 }
 
-.page-link,
-nav[role="navigation"] a,
-nav[role="navigation"] span {
+.btn-pag-arrow {
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 32px;
-    height: 32px;
-    padding: 0 8px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border-radius: 9px;
     background: #ffffff;
+    border: 1px solid #e2e8f0;
     color: #475569;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    box-sizing: border-box;
 }
 
-.page-link:hover,
-nav[role="navigation"] a:hover {
+.btn-pag-arrow:hover:not(.disabled) {
+    background: #ed842c;
     border-color: #ed842c;
-    color: #ed842c;
-    background: #fff8f2;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(237, 132, 44, 0.28);
 }
 
-.page-item.active .page-link,
-nav[role="navigation"] span[aria-current="page"] > span,
-nav[role="navigation"] .active {
-    background: #ed842c !important;
-    border-color: #ed842c !important;
-    color: #ffffff !important;
-    font-weight: 800;
-}
-
-.page-item.disabled .page-link,
-nav[role="navigation"] span[aria-disabled="true"] {
-    color: #cbd5e1 !important;
-    border-color: #e2e8f0 !important;
-    cursor: not-allowed !important;
-    background: #f8fafc !important;
+.btn-pag-arrow.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    pointer-events: none;
 }
 
 /* ---- Common Modal Overlay Base ---- */

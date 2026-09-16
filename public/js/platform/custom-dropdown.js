@@ -43,6 +43,28 @@
         wrapper.className = 'custom-dropdown-wrapper';
         if (selectEl.id) wrapper.dataset.forId = selectEl.id;
 
+        // Copy modifier classes (such as select-seller, select-platform, select-sort, w-full),
+        // but exclude base input/select style classes to prevent duplicate borders or background conflicts
+        const EXCLUDED_CLASSES = [
+            'filter-select',
+            'p-filter-select',
+            'form-control',
+            'custom-select',
+            'date-input',
+            'date-picker-box',
+            'custom-dropdown-native-hidden'
+        ];
+
+        Array.from(selectEl.classList).forEach(cls => {
+            if (!cls.startsWith('custom-dropdown') && !EXCLUDED_CLASSES.includes(cls)) {
+                wrapper.classList.add(cls);
+            }
+        });
+
+        if (selectEl.style.width) {
+            wrapper.style.width = selectEl.style.width;
+        }
+
         // Create Trigger Button (Rounded-full with active label and chevron)
         const trigger = document.createElement('button');
         trigger.type = 'button';
@@ -70,7 +92,9 @@
         function buildOptions() {
             menu.innerHTML = '';
             const selectedOpt = selectEl.selectedOptions[0] || selectEl.options[0];
-            labelSpan.textContent = selectedOpt ? selectedOpt.textContent.trim() : 'Pilih...';
+            const text = selectedOpt ? selectedOpt.textContent.trim() : 'Pilih...';
+            labelSpan.textContent = text;
+            trigger.title = text;
 
             const children = Array.from(selectEl.children);
 
@@ -140,7 +164,9 @@
 
             // Update UI state
             const selectedOpt = selectEl.selectedOptions[0] || selectEl.options[0];
-            labelSpan.textContent = selectedOpt ? selectedOpt.textContent.trim() : 'Pilih...';
+            const text = selectedOpt ? selectedOpt.textContent.trim() : 'Pilih...';
+            labelSpan.textContent = text;
+            trigger.title = text;
 
             menu.querySelectorAll('.custom-dropdown-item').forEach(it => {
                 if (it.dataset.value === value) {

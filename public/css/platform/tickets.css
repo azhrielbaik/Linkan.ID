@@ -150,7 +150,7 @@
     background-size: 14px;
 }
 
-.p-filter-select {
+select.p-filter-select:not(.custom-dropdown-native-hidden) {
     height: 40px;
     padding: 0 12px;
     border: 1.5px solid #e2e8f0;
@@ -184,14 +184,15 @@
 
 /* Table */
 .p-tickets-table-card {
-    background: #ffffff;
-    border: var(--platform-border);
-    border-radius: var(--platform-radius);
+    background: #f1f5fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
     overflow-x: auto;
-    overflow-y: auto;
-    max-height: calc(100vh - 240px);
-    box-shadow: var(--platform-card-shadow);
+    overflow-y: visible;
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
     position: relative;
+    padding: 8px 10px;
+    box-sizing: border-box;
 }
 
 .p-tickets-table-card::-webkit-scrollbar {
@@ -199,59 +200,100 @@
     height: 6px;
 }
 .p-tickets-table-card::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #e2e8f0;
+    border-radius: 4px;
 }
 .p-tickets-table-card::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #94a3b8;
     border-radius: 4px;
 }
 .p-tickets-table-card::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #64748b;
 }
 
 .p-tickets-table {
     width: 100%;
-    min-width: 800px;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 13px;
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+    font-size: 12.5px;
+    margin-top: -4px;
 }
 
 .p-tickets-table thead {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 5;
 }
 
 .p-tickets-table th {
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: #f8fafc;
-    padding: 14px 20px;
+    z-index: 5;
+    background: #e8f1fc !important;
+    padding: 9px 12px !important;
     text-align: left;
-    font-weight: 800;
-    color: #475569;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow:
-        inset 0 -1px 0 #e2e8f0,
-        0 2px 4px rgba(0, 0, 0, 0.02);
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 11.5px !important;
+    text-transform: none !important;
+    letter-spacing: 0.01em !important;
+    white-space: nowrap !important;
+}
+
+.p-tickets-table th i {
+    color: #2563eb;
+    margin-right: 6px;
     font-size: 11.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
+}
+
+.p-tickets-table th:first-child {
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+}
+
+.p-tickets-table th:last-child {
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+
+.p-tickets-table tbody tr {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.15s ease !important;
 }
 
 .p-tickets-table td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    color: #334155;
-    vertical-align: middle;
-    font-size: 13.5px;
+    background: #ffffff !important;
+    padding: 10px 12px !important;
+    color: #334155 !important;
+    vertical-align: middle !important;
+    font-size: 12.5px !important;
+    border-top: 1px solid #edf2f7 !important;
+    border-bottom: 1px solid #edf2f7 !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02) !important;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.p-tickets-table td:first-child {
+    border-left: 1px solid #edf2f7 !important;
+    border-top-left-radius: 14px !important;
+    border-bottom-left-radius: 14px !important;
+}
+
+.p-tickets-table td:last-child {
+    border-right: 1px solid #edf2f7 !important;
+    border-top-right-radius: 14px !important;
+    border-bottom-right-radius: 14px !important;
 }
 
 .p-tickets-table tr:hover td {
-    background: #f8fafc;
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
 }
 
 .seller-avatar-small {

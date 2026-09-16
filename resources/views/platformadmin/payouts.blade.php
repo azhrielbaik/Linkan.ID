@@ -133,21 +133,21 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>{{ __('platform.seller') }}</th>
-                                <th>{{ __('platform.account_details') }}</th>
-                                <th>{{ __('platform.net_amount') }}</th>
-                                <th>{{ __('platform.gross_and_fee') }}</th>
-                                <th>{{ __('platform.request_date') }}</th>
-                                <th>{{ __('platform.status') }}</th>
-                                <th style="text-align: center;">{{ __('platform.action') }}</th>
+                                <th style="width: 44px; text-align: center;">#</th>
+                                <th style="width: 18%;"><i class="fas fa-user"></i> {{ __('platform.seller') }}</th>
+                                <th style="width: 18%;"><i class="fas fa-wallet"></i> {{ __('platform.account_details') }}</th>
+                                <th style="width: 13%;"><i class="fas fa-money-bill-wave"></i> {{ __('platform.net_amount') }}</th>
+                                <th style="width: 14%;"><i class="fas fa-coins"></i> {{ __('platform.gross_and_fee') }}</th>
+                                <th style="width: 13%;"><i class="fas fa-calendar-alt"></i> {{ __('platform.request_date') }}</th>
+                                <th style="width: 11%;"><i class="fas fa-chart-line"></i> {{ __('platform.status') }}</th>
+                                <th style="width: 13%; text-align: center;"><i class="fas fa-cog"></i> {{ __('platform.action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($payouts as $index => $payout)
                             <tr>
-                                <td style="font-weight: 700; color: #94a3b8;">
-                                    {{ $payouts->firstItem() + $index }}
+                                <td style="text-align: center;">
+                                    <span class="table-index-badge">{{ $payouts->firstItem() + $index }}</span>
                                 </td>
                                 <td>
                                     <div class="seller-cell">
@@ -182,8 +182,8 @@
                                         {{ __('platform.fee') }}: Rp {{ number_format($payout->commission ?? 0, 0, ',', '.') }}
                                     </div>
                                 </td>
-                                <td style="white-space: nowrap; color: #64748b; font-size: 12px;">
-                                    {{ $payout->created_at->format('d M Y, H:i') }}
+                                <td style="white-space: nowrap; color: #64748b; font-size: 12.5px;">
+                                    <i class="far fa-calendar-alt" style="color: #64748b; margin-right: 6px;"></i> {{ $payout->created_at->format('d M Y, H:i') }}
                                 </td>
                                 <td>
                                     @if($payout->status === 'approved')
@@ -237,7 +237,7 @@
 
                 @if($payouts->hasPages())
                     <div class="pagination-container">
-                        {{ $payouts->links() }}
+                        {{ $payouts->links('platformadmin.partials.pagination') }}
                     </div>
                 @endif
             </div>

@@ -13,15 +13,11 @@
         document.body.classList.add('mini-sidebar');
     }
     (function() {
-        const savedMode = localStorage.getItem('platform_theme_mode') || '{{ Auth::user()->theme ?? "light" }}';
-        const savedColor = localStorage.getItem('platform_theme_color') || '{{ Auth::user()->theme_color ?? "#ed842c" }}';
-        if (savedMode === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.documentElement.classList.add('dark-mode');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-        }
-        document.documentElement.setAttribute('data-theme-color', savedColor);
+        localStorage.removeItem('platform_theme_mode');
+        localStorage.removeItem('platform_theme_color');
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.classList.remove('dark-mode');
+        document.documentElement.setAttribute('data-theme-color', '#ed842c');
     })();
 </script>
 
@@ -222,4 +218,28 @@
 <script src="{{ asset('js/platform/gooey-search.js') }}?v={{ time() }}"></script>
 {{-- Modern Date Range Picker Engine --}}
 <script src="{{ asset('js/platform/custom-datepicker.js') }}?v={{ time() }}"></script>
+
+{{-- Modern Table Enhancement Engine --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.table-card table, .p-tickets-table-card table, table').forEach(function(table) {
+            let hashIndex = -1;
+            const ths = table.querySelectorAll('thead th');
+            ths.forEach(function(th, idx) {
+                if (th.textContent.trim() === '#') hashIndex = idx;
+            });
+            if (hashIndex !== -1) {
+                table.querySelectorAll('tbody tr').forEach(function(tr) {
+                    const td = tr.children[hashIndex];
+                    if (td && !td.querySelector('.table-index-badge') && !td.querySelector('input')) {
+                        const text = td.textContent.trim();
+                        if (text && !isNaN(text)) {
+                            td.innerHTML = `<span class="table-index-badge">${text}</span>`;
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
 
