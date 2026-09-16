@@ -2,6 +2,18 @@
 @section('title', 'Detail Produk Digital')
 @section('page_title', 'Detail Produk Digital')
 
+@php
+    if (!function_exists('resolveProductImageUrl')) {
+        function resolveProductImageUrl($path) {
+            if (empty($path)) return 'https://via.placeholder.com/600x600?text=No+Image';
+            if (Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/'])) {
+                return $path;
+            }
+            return Storage::url($path);
+        }
+    }
+@endphp
+
 @section('content')
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -131,7 +143,7 @@
         font-size: 14px;
     }
 
-    .colors-wrap, .qty-wrap {
+    .qty-wrap {
         display: flex;
         align-items: center;
         gap: 16px;
@@ -142,16 +154,6 @@
         font-weight: 600;
         color: #334155;
         width: 70px;
-    }
-    .color-dots {
-        display: flex;
-        gap: 10px;
-    }
-    .dot {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        cursor: pointer;
     }
     
     .qty-selector {
@@ -289,6 +291,42 @@
             flex-direction: column;
         }
     }
+
+    @media (max-width: 768px) {
+        .product-detail-admin {
+            /* Break out of the .content-wrapper 16px padding on mobile */
+            margin-left: -16px;
+            margin-right: -16px;
+            padding: 16px 12px;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+        .bottom-section {
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .tab-content {
+            padding: 0;
+        }
+        .main-img-wrap {
+            height: auto;
+            aspect-ratio: 1 / 1;
+        }
+        .title {
+            font-size: 24px;
+        }
+        .price-current {
+            font-size: 24px;
+        }
+        .tabs {
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
 </style>
 
 @php
@@ -305,7 +343,7 @@
         $images[] = $product->image;
     }
     
-    $mainImage = count($images) > 0 ? Storage::url($images[0]) : 'https://via.placeholder.com/600x600?text=No+Image';
+    $mainImage = count($images) > 0 ? resolveProductImageUrl($images[0]) : 'https://via.placeholder.com/600x600?text=No+Image';
     $originalPrice = $product->sale_price ? $product->price : ($product->price * 1.2);
     $currentPrice = $product->sale_price ? $product->sale_price : $product->price;
 @endphp
@@ -326,7 +364,7 @@
             <div class="thumbnail-gallery">
                 @if(count($images) > 0)
                     @foreach($images as $index => $img)
-                        <img src="{{ Storage::url($img) }}" alt="Thumbnail" class="{{ $index === 0 ? 'active' : '' }}" onclick="changeImage(this, '{{ Storage::url($img) }}')">
+                        <img src="{{ resolveProductImageUrl($img) }}" alt="Thumbnail" class="{{ $index === 0 ? 'active' : '' }}" onclick="changeImage(this, '{{ resolveProductImageUrl($img) }}')">
                     @endforeach
                 @else
                     <img src="{{ $mainImage }}" alt="Thumbnail" class="active">
@@ -361,15 +399,6 @@
                     <i class="far fa-star"></i>
                 </div>
                 <div class="reviews">(236 reviews)</div>
-            </div>
-            
-            <div class="colors-wrap">
-                <div class="label">Colors:</div>
-                <div class="color-dots">
-                    <div class="dot" style="background: #ef4444;"></div>
-                    <div class="dot" style="background: #3b82f6;"></div>
-                    <div class="dot" style="background: #84cc16;"></div>
-                </div>
             </div>
             
             <div class="qty-wrap">

@@ -224,8 +224,40 @@
     .star-empty {
         color: #e2e8f0;
     }
+
+    @media (max-width: 768px) {
+        .store-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .store-header-actions {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .store-search-box {
+            width: 100%;
+        }
+        .btn-create {
+            text-align: center;
+            justify-content: center;
+        }
+    }
 </style>
 @endpush
+
+@php
+    if (!function_exists('resolveProductImageUrl')) {
+        function resolveProductImageUrl($path) {
+            if (empty($path)) return 'https://via.placeholder.com/600x600?text=No+Image';
+            if (Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/'])) {
+                return $path;
+            }
+            return Storage::url($path);
+        }
+    }
+@endphp
 
 @section("content")
 <div class="dashboard-beranda-page" style="padding-top: 10px;">
@@ -272,7 +304,7 @@
                         @endphp
 
                         @if($imageUrl)
-                            <img src="{{ Storage::url($imageUrl) }}" alt="{{ $product->title }}">
+                            <img src="{{ resolveProductImageUrl($imageUrl) }}" alt="{{ $product->title }}">
                         @else
                             <div class="no-img"><i class="fas fa-image"></i></div>
                         @endif

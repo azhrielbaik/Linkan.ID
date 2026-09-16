@@ -565,7 +565,7 @@
                 return;
             }
             if (dpFormState.deliverableType === 'upload') {
-                if (!dpFormState.deliverableFile) {
+                if (!dpFormState.deliverableFile && !dpFormState.existingPlatformFile) {
                     alert('Silakan unggah file isi produk yang akan dijual.');
                     return;
                 }

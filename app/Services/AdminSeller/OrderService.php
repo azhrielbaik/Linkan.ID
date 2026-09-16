@@ -17,7 +17,7 @@ class OrderService
      * @param int $perPage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getOrders(int $userId, array $filters = [], int $perPage = 5)
+    public function getOrders(int $userId, array $filters = [], int $perPage = 10)
     {
         $query = Transaction::with(['product'])
             ->whereHas('product', function($query) use ($userId) {

@@ -140,11 +140,22 @@ class CheckoutService
         }
 
         $transactionStatus = MidtransStatus::tryFrom($transactionStatusRaw);
+        $paymentType = isset($status_response->payment_type) ? $status_response->payment_type : null;
+
+        // Enhance payment type with bank/store details if available
+        if ($paymentType === 'bank_transfer' && isset($status_response->va_numbers[0]->bank)) {
+            $paymentType .= '-' . $status_response->va_numbers[0]->bank;
+        } elseif ($paymentType === 'echannel') {
+            $paymentType = 'bank_transfer-mandiri';
+        } elseif ($paymentType === 'cstore' && isset($status_response->store)) {
+            $paymentType .= '-' . $status_response->store;
+        }
 
         Log::info('Midtrans Callback - Transaction Status: ' . ($transactionStatus?->value ?? $transactionStatusRaw));
         Log::info('Midtrans Callback - Order ID: ' . $orderId);
+        Log::info('Midtrans Callback - Payment Type: ' . $paymentType);
 
-        return DB::transaction(function () use ($orderId, $transactionStatus) {
+        return DB::transaction(function () use ($orderId, $transactionStatus, $paymentType) {
             // Kunci baris transaksi ini untuk mencegah eksekusi webhook ganda secara paralel
             $trx = Transaction::where('order_id', $orderId)->lockForUpdate()->first();
 
@@ -163,6 +174,9 @@ class CheckoutService
             // Ubah status dari Midtrans ke status yang kita gunakan
             if ($transactionStatus === MidtransStatus::CAPTURE || $transactionStatus === MidtransStatus::SETTLEMENT) {
                 $trx->status = TransactionStatus::SUCCESS;
+                if ($paymentType) {
+                    $trx->payment_method = $paymentType;
+                }
                 $trx->save();
 
                 Log::info('Midtrans Callback - Updating transaction status to success');

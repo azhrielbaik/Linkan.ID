@@ -42,10 +42,11 @@ class ImageElementController extends Controller
             $filename = 'elements/images/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
 
             // Sintaks Intervention Image v4
-            $image = \Intervention\Image\ImageManager::gd()->read($file)
+            $imageManager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $image = $imageManager->decode($file)
                 ->scaleDown(width: 1200);
 
-            $encoded = $image->toWebp(80);
+            $encoded = $image->encode(new \Intervention\Image\Encoders\WebpEncoder(quality: 80));
 
             Storage::disk('public')->put($filename, (string) $encoded);
 
