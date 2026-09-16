@@ -20,7 +20,7 @@
 
         <div style="margin-bottom: 15px;">
             <strong>Tanggal Pembelian:</strong>
-            <div style="padding-left: 15px;">{{ isset($transaction) ? $transaction->created_at->format('d-m-Y H:i') : 'N/A' }}</div>
+            <div style="padding-left: 15px;">{{ isset($transaction) ? $transaction->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i') . ' WIB' : 'N/A' }}</div>
         </div>
 
         <div style="margin-bottom: 15px;">
