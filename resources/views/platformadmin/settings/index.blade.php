@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -36,8 +36,25 @@
                 {{-- Card 1: Pengaturan Komisi & Withdraw --}}
                 <div class="setting-card">
                     <div class="setting-card-header">
-                        <h2>{{ __('platform.commission_and_withdrawal') }}</h2>
-                        <p>{{ __('platform.commission_and_withdrawal_desc') }}</p>
+                        <div class="setting-card-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="setting-card-title-wrap">
+                            <h2>{{ __('platform.commission_and_withdrawal') }}</h2>
+                            <p>{{ __('platform.commission_and_withdrawal_desc') }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Quick Stats Box --}}
+                    <div class="settings-stats-preview">
+                        <div class="settings-stat-item">
+                            <span class="settings-stat-lbl">Komisi Saat Ini</span>
+                            <span class="settings-stat-val highlight">{{ $commissionPercent }}%</span>
+                        </div>
+                        <div class="settings-stat-item">
+                            <span class="settings-stat-lbl">Batas Min. Withdraw</span>
+                            <span class="settings-stat-val">Rp {{ number_format($minWithdrawAmount, 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                     <form id="financialSettingsForm" action="{{ route('platform-admin.settings.update') }}" method="POST">
@@ -75,8 +92,13 @@
                 {{-- Card 2: Broadcast Pengumuman --}}
                 <div class="setting-card">
                     <div class="setting-card-header">
-                        <h2>{{ __('platform.broadcast_seller_announcement') }}</h2>
-                        <p>{{ __('platform.broadcast_seller_desc') }}</p>
+                        <div class="setting-card-icon" style="background: rgba(14, 165, 233, 0.1); color: #0284c7;">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="setting-card-title-wrap">
+                            <h2>{{ __('platform.broadcast_seller_announcement') }}</h2>
+                            <p>{{ __('platform.broadcast_seller_desc') }}</p>
+                        </div>
                     </div>
 
                     <form action="{{ route('platform-admin.settings.broadcast.store') }}" method="POST">
@@ -105,105 +127,111 @@
                         </div>
 
                         {{-- Opsi Kirim Email Massal --}}
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 12px 16px; border-radius: 10px; transition: border-color 0.2s;">
-                                <input type="checkbox" name="send_email" value="1" style="width: 18px; height: 18px; accent-color: #ED842C; cursor: pointer;">
-                                <div>
-                                    <div style="font-size: 13px; font-weight: 700; color: #0f172a;">
-                                        <i class="fas fa-envelope" style="color: #ED842C;"></i> Kirim Notifikasi via Email ke Semua Seller
-                                    </div>
-                                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
-                                        Opsi ini akan mengirimkan email pengumuman resmi ke seluruh seller aktif melalui SMTP Gmail. Cocok untuk pengumuman mendesak.
-                                    </div>
+                        <label class="email-broadcast-card">
+                            <input type="checkbox" name="send_email" value="1">
+                            <div>
+                                <div class="email-broadcast-title">
+                                    <i class="fas fa-envelope" style="color: #ed842c;"></i> Kirim Notifikasi via Email ke Semua Seller
                                 </div>
-                            </label>
-                        </div>
+                                <div class="email-broadcast-desc">
+                                    Kirimkan salinan pengumuman resmi langsung ke inbox email seluruh seller aktif melalui SMTP Gmail.
+                                </div>
+                            </div>
+                        </label>
 
-                        <button type="submit" class="btn-save-settings" style="width: auto; padding: 10px 22px;">
-                            <i class="fas fa-bullhorn"></i> {{ __('platform.send_broadcast') }}
+                        <button type="submit" class="btn-send-broadcast">
+                            <i class="fas fa-paper-plane"></i> {{ __('platform.send_broadcast') }}
                         </button>
                     </form>
-
-                    {{-- Tabel Riwayat Broadcast --}}
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-bullhorn"></i> {{ __('platform.announcement') }}</th>
-                                    <th><i class="fas fa-tag"></i> {{ __('platform.announcement_type') }}</th>
-                                    <th><i class="fas fa-paper-plane"></i> Pengiriman</th>
-                                    <th><i class="fas fa-calendar-alt"></i> {{ __('platform.time') }}</th>
-                                    <th><i class="fas fa-check-circle"></i> {{ __('platform.status') }}</th>
-                                    <th style="text-align: center;"><i class="fas fa-trash-alt"></i> {{ __('platform.delete') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($announcements as $ann)
-                                <tr>
-                                    <td>
-                                        <div class="ann-title">{{ $ann->title }}</div>
-                                        <div class="ann-msg">{{ Str::limit($ann->message, 80) }}</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge-type type-{{ $ann->type }}">
-                                            {{ $ann->type }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if($ann->send_email)
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
-                                                <i class="fas fa-paper-plane"></i> Email ({{ $ann->emails_sent_count }})
-                                            </span>
-                                        @else
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                                                <i class="fas fa-desktop"></i> Banner
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td style="font-size: 12px; color: #64748b; white-space: nowrap;">
-                                        {{ $ann->created_at->format('d M Y, H:i') }}
-                                    </td>
-                                    <td>
-                                        <form action="{{ route('platform-admin.settings.broadcast.toggle', $ann->id) }}" method="POST" style="margin: 0;">
-                                            @csrf
-                                            <button type="submit" class="btn-toggle-status {{ $ann->is_active ? 'btn-status-active' : 'btn-status-inactive' }}" title="{{ __('platform.toggle_status_title') }}">
-                                                <i class="fas fa-{{ $ann->is_active ? 'check-circle' : 'times-circle' }}"></i>
-                                                {{ $ann->is_active ? __('platform.active') : __('platform.inactive') }}
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <form action="{{ route('platform-admin.settings.broadcast.delete', $ann->id) }}" method="POST" style="margin: 0;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn-del-ann" title="{{ __('platform.delete') }}" onclick="confirmDeleteAnnouncement(this.form, '{{ addslashes($ann->title) }}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="empty-state">
-                                            <i class="fas fa-bullhorn" style="font-size: 24px; color: #cbd5e1; margin-bottom: 6px; display: block;"></i>
-                                            {{ __('platform.no_announcements_yet') }}
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
 
             </div>
 
+            {{-- Card 3: Tabel Riwayat Broadcast (Clean Full Width Card) --}}
+            <div class="setting-card settings-table-card" style="margin-top: 24px;">
+                <div class="settings-table-header">
+                    <div class="settings-table-title">
+                        <h3><i class="fas fa-history" style="color: #64748b; margin-right: 6px;"></i> Riwayat Siaran Pengumuman</h3>
+                        <span class="settings-table-badge">{{ $announcements->count() }} Total</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 38%;"><i class="fas fa-bullhorn"></i> {{ __('platform.announcement') }}</th>
+                                <th style="width: 14%;"><i class="fas fa-tag"></i> {{ __('platform.announcement_type') }}</th>
+                                <th style="width: 16%;"><i class="fas fa-paper-plane"></i> Pengiriman</th>
+                                <th style="width: 16%;"><i class="fas fa-calendar-alt"></i> {{ __('platform.time') }}</th>
+                                <th style="width: 10%;"><i class="fas fa-toggle-on"></i> {{ __('platform.status') }}</th>
+                                <th style="width: 6%; text-align: center;"><i class="fas fa-trash-alt"></i> {{ __('platform.delete') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($announcements as $ann)
+                            <tr>
+                                <td>
+                                    <div class="ann-title">{{ $ann->title }}</div>
+                                    <div class="ann-msg">{{ Str::limit($ann->message, 85) }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge-type type-{{ $ann->type }}">
+                                        {{ $ann->type }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($ann->send_email)
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                                            <i class="fas fa-paper-plane"></i> Email ({{ $ann->emails_sent_count }})
+                                        </span>
+                                    @else
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                                            <i class="fas fa-desktop"></i> Banner
+                                        </span>
+                                    @endif
+                                </td>
+                                <td style="font-size: 12px; color: #64748b; white-space: nowrap;">
+                                    {{ $ann->created_at->format('d M Y, H:i') }}
+                                </td>
+                                <td>
+                                    <form action="{{ route('platform-admin.settings.broadcast.toggle', $ann->id) }}" method="POST" style="margin: 0;">
+                                        @csrf
+                                        <button type="submit" class="btn-toggle-status {{ $ann->is_active ? 'btn-status-active' : 'btn-status-inactive' }}" title="{{ __('platform.toggle_status_title') }}">
+                                            <i class="fas fa-{{ $ann->is_active ? 'check-circle' : 'times-circle' }}"></i>
+                                            {{ $ann->is_active ? __('platform.active') : __('platform.inactive') }}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td style="text-align: center;">
+                                    <form action="{{ route('platform-admin.settings.broadcast.delete', $ann->id) }}" method="POST" style="margin: 0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn-del-ann" title="{{ __('platform.delete') }}" onclick="confirmDeleteAnnouncement(this.form, '{{ addslashes($ann->title) }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <i class="fas fa-bullhorn" style="font-size: 26px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                                        {{ __('platform.no_announcements_yet') }}
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Modal Konfirmasi Password Admin untuk Pengaturan Finansial -->
-    <div id="adminPasswordModal" class="modal">
+    <div id="financialPasswordModal" class="modal" onclick="if(event.target === this) closePasswordConfirmationModal()">
         <div class="modal-container">
             <div class="modal-header">
                 <h3><i class="fas fa-shield-alt" style="color: #ED842C;"></i> {{ __('platform.confirm_admin_password_title') }}</h3>
@@ -255,6 +283,6 @@
     </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/settings.js') }}"></script>
+    <script src="{{ asset('js/platform/settings.js') }}?v={{ time() }}"></script>
 </body>
 </html>

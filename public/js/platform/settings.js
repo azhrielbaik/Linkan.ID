@@ -14,7 +14,7 @@ function openPasswordConfirmationModal() {
     const summaryMinW = document.getElementById('summary_min_withdraw');
     const passInput = document.getElementById('modal_admin_password');
     const errBox = document.getElementById('passwordErrorMsg');
-    const modal = document.getElementById('adminPasswordModal');
+    const modal = document.getElementById('financialPasswordModal');
 
     if (summaryComm) summaryComm.textContent = commInput.value + '%';
     if (summaryMinW) summaryMinW.textContent = 'Rp ' + Number(minWInput.value).toLocaleString('id-ID');
@@ -30,7 +30,7 @@ function openPasswordConfirmationModal() {
 }
 
 function closePasswordConfirmationModal() {
-    const modal = document.getElementById('adminPasswordModal');
+    const modal = document.getElementById('financialPasswordModal');
     if (modal) modal.classList.remove('show');
 }
 

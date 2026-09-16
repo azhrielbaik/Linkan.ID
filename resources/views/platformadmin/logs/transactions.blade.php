@@ -7,10 +7,10 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/transactions.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/transactions.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/platform/autocomplete.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
 </head>

@@ -132,114 +132,12 @@ body {
     border: 1px solid #fecaca;
 }
 
-/* ---- Stats Grid ---- */
+/* ---- Stats Grid (Managed consistently via global.css) ---- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
-.stat-card {
-    background: #ffffff;
-    border-radius: var(--platform-radius, 20px);
-    padding: 20px 22px;
-    box-shadow: var(--platform-card-shadow, 0 4px 20px -2px rgba(15, 23, 42, 0.04));
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border: var(--platform-border, 1px solid #f1f5f9);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.payout-summary-grid .stat-card {
-    min-width: 0;
-    padding: 18px 20px;
     gap: 14px;
-}
-
-.payout-summary-grid .stat-icon-wrapper {
-    width: 32px;
-    height: 32px;
-    background: transparent !important;
-    border-radius: 0 !important;
-    font-size: 22px;
-}
-
-.payout-summary-grid .stat-info {
-    min-width: 0;
-}
-
-.payout-summary-grid .stat-info .stat-label {
-    font-size: 10px !important;
-    line-height: 1.3;
-}
-
-.payout-summary-grid .stat-info .stat-val {
-    font-size: 16px !important;
-    line-height: 1.25;
-    overflow-wrap: anywhere;
-}
-
-.payout-summary-grid .stat-info .stat-sub {
-    font-size: 10px !important;
-    line-height: 1.3;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(237, 132, 44, 0.12);
-}
-
-.stat-icon-wrapper {
-    width: 32px;
-    height: 32px;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    color: #64748b !important;
-    flex-shrink: 0;
-}
-
-.stat-icon-wrapper i {
-    color: #64748b !important;
-}
-
-.stat-card.total .stat-icon-wrapper,
-.stat-card.pending .stat-icon-wrapper,
-.stat-card.approved .stat-icon-wrapper,
-.stat-card.rejected .stat-icon-wrapper,
-.stat-card.commission .stat-icon-wrapper {
-    background: transparent !important;
-    color: #64748b !important;
-}
-
-.stat-info .stat-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
-}
-
-.stat-info .stat-val {
-    font-size: 20px;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.2;
-}
-
-.stat-info .stat-sub {
-    font-size: 11px;
-    color: #94a3b8;
-    margin-top: 2px;
+    margin-bottom: 20px;
 }
 
 /* ---- Tabs Container (Managed by public/css/platform/tabs.css) ---- */
