@@ -1,6 +1,7 @@
 @extends("admin_seller.layouts.app")
 
 @section("page_title", __('admin.microsite_management'))
+@section("meta_description", "Edit microsite untuk mengatur halaman portofolio, profil, dan link bio Anda.")
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/mylinkan.css') }}?v={{ filemtime(public_path('css/pages/mylinkan.css')) }}">

@@ -24,14 +24,14 @@
                                 <!-- Banner -->
                                 <div class="phone-thumb-banner">
                                     @if($appearance->banner)
-                                        <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner">
+                                        <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner Preview">
                                     @endif
                                 </div>
 
                                 <!-- Avatar -->
                                 <div class="phone-thumb-avatar">
                                     @if($appearance->profile_image)
-                                        <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Avatar">
+                                        <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Avatar Preview">
                                     @else
                                         <i class="fas fa-user" style="color: #888; font-size: 16px;"></i>
                                     @endif

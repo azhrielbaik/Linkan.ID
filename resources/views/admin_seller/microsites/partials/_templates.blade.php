@@ -19,7 +19,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="__ELEMENT_ID__" title="Hapus Elemen">
+                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="__ELEMENT_ID__" title="Hapus Elemen" aria-label="Hapus Elemen">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <button type="button" data-type="Image" data-target-id="__ELEMENT_ID__" class="btn-edit-block js-toggle-edit-form">
@@ -46,7 +46,7 @@
                             </div>
 
                             <div id="previewCont___ELEMENT_ID__" class="dynamic-preview-container" style="display: none;">
-                                                        <img src="" id="previewImg___ELEMENT_ID__" class="preview-img-contain">
+                                                        <img src="" id="previewImg___ELEMENT_ID__" class="preview-img-contain" alt="Image Preview">
                                                         <div class="edit-image-overlay">
                                                             <i class="fa-solid fa-pen-to-square"></i>
                                                         </div>
@@ -79,7 +79,7 @@
     <template id="image-live-template">
         <div id="live___ELEMENT_ID__" class="microsite-live-element live-element-pointer js-toggle-edit-form" style="display: none;" data-type="Image" data-target-id="__ELEMENT_ID__" data-force-open="true">
             <a id="liveLink___ELEMENT_ID__" class="live-element-link pointer-events-none">
-                <img id="liveImg___ELEMENT_ID__" src="" class="live-element-img">
+                <img id="liveImg___ELEMENT_ID__" src="" class="live-element-img" alt="Live Image Element">
             </a>
         </div>
     </template>
@@ -104,7 +104,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Divider" data-target-id="__ELEMENT_ID__" title="Hapus Elemen">
+                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Divider" data-target-id="__ELEMENT_ID__" title="Hapus Elemen" aria-label="Hapus Elemen">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <button type="button" data-type="Divider" data-target-id="__ELEMENT_ID__" class="btn-edit-block js-toggle-edit-form">
@@ -189,7 +189,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Text" data-target-id="__ELEMENT_ID__" title="Hapus Elemen">
+                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Text" data-target-id="__ELEMENT_ID__" title="Hapus Elemen" aria-label="Hapus Elemen">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <button type="button" data-type="Text" data-target-id="__ELEMENT_ID__" class="btn-edit-block js-toggle-edit-form">
@@ -207,22 +207,22 @@
                         <label class="profile-form-label" style="font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Isi Teks Konten</label>
                         <div class="text-editor-container" style="box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
                             <div class="text-editor-toolbar" style="background: #f8fafc; padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #e2e8f0; align-items: center;">
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="bold" title="Bold"><i class="fas fa-bold"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="italic" title="Italic"><i class="fas fa-italic"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="underline" title="Underline"><i class="fas fa-underline"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="strikeThrough" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="bold" title="Bold" aria-label="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="italic" title="Italic" aria-label="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="underline" title="Underline" aria-label="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="strikeThrough" title="Strikethrough" aria-label="Strikethrough"><i class="fas fa-strikethrough"></i></button>
                             <span class="toolbar-divider"></span>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyLeft" title="Align Left"><i class="fas fa-align-left"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyCenter" title="Align Center"><i class="fas fa-align-center"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyRight" title="Align Right"><i class="fas fa-align-right"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyLeft" title="Align Left" aria-label="Align Left"><i class="fas fa-align-left"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyCenter" title="Align Center" aria-label="Align Center"><i class="fas fa-align-center"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="justifyRight" title="Align Right" aria-label="Align Right"><i class="fas fa-align-right"></i></button>
                             <span class="toolbar-divider"></span>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="insertUnorderedList" title="Bullet List"><i class="fas fa-list-ul"></i></button>
-                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="insertOrderedList" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="insertUnorderedList" title="Bullet List" aria-label="Bullet List"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="__ELEMENT_ID__" data-cmd="insertOrderedList" title="Numbered List" aria-label="Numbered List"><i class="fas fa-list-ol"></i></button>
                             <span class="toolbar-divider"></span>
-                            <input type="color" class="toolbar-color-picker js-exec-cmd-value" data-target-id="__ELEMENT_ID__" data-cmd="foreColor" title="Text Color" value="#000000">
+                            <input type="color" aria-label="Warna Teks" class="toolbar-color-picker js-exec-cmd-value" data-target-id="__ELEMENT_ID__" data-cmd="foreColor" title="Text Color" value="#000000">
                             <span class="toolbar-divider"></span>
                             <div class="toolbar-dropdown">
-                                <select data-target-id="__ELEMENT_ID__" class="toolbar-select js-change-text-size" id="textSizeSelect___ELEMENT_ID__">
+                                <select aria-label="Ukuran Teks" data-target-id="__ELEMENT_ID__" class="toolbar-select js-change-text-size" id="textSizeSelect___ELEMENT_ID__">
                                     <option value="12px">Kecil (12px)</option>
                                     <option value="16px" selected>Normal (16px)</option>
                                     <option value="24px">Besar (24px)</option>
@@ -231,7 +231,7 @@
                             </div>
                         </div>
                         <div id="customSizeWrapper___ELEMENT_ID__" class="custom-size-wrapper" style="display: none;">
-                            <input type="number" id="customSizeInput___ELEMENT_ID__" class="toolbar-input js-apply-custom-size-input" placeholder="Ukuran (px)" min="1" max="99" data-target-id="__ELEMENT_ID__">
+                            <input type="number" aria-label="Ukuran Custom (px)" id="customSizeInput___ELEMENT_ID__" class="toolbar-input js-apply-custom-size-input" placeholder="Ukuran (px)" min="1" max="99" data-target-id="__ELEMENT_ID__">
                             <button type="button" class="toolbar-btn-text js-apply-custom-size" data-target-id="__ELEMENT_ID__">Terapkan</button>
                         </div>
                         <div id="editorContent___ELEMENT_ID__" class="text-editor-area js-update-text-preview" contenteditable="true" data-target-id="__ELEMENT_ID__" style="padding: 16px; min-height: 120px; font-size: 16px; line-height: 1.5; outline: none;">Teks Anda di sini...</div>
@@ -1240,7 +1240,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Video" data-target-id="__ELEMENT_ID__" title="Hapus Elemen">
+                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Video" data-target-id="__ELEMENT_ID__" title="Hapus Elemen" aria-label="Hapus Elemen">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <button type="button" data-type="Video" data-target-id="__ELEMENT_ID__" class="btn-edit-block js-toggle-edit-form">
@@ -1344,7 +1344,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="__ELEMENT_ID__" title="Hapus Elemen">
+                    <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="__ELEMENT_ID__" title="Hapus Elemen" aria-label="Hapus Elemen">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <button type="button" data-type="Social" data-target-id="__ELEMENT_ID__" class="btn-edit-block js-toggle-edit-form">
@@ -1492,7 +1492,7 @@
             </div>
             
             <div style="width: 100%; max-height: 400px; background-color: #f8fafc; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 20px;">
-                <img id="cropperImageTarget" src="" style="max-width: 100%; display: block;">
+                <img id="cropperImageTarget" src="" style="max-width: 100%; display: block;" alt="Cropper Target">
             </div>
             
             <div class="custom-confirm-actions">

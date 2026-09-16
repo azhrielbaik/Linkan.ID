@@ -21,7 +21,7 @@
                                                     <span class="toggle-slider"></span>
                                                 </label>
                                             </div>
-                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="{{ $elementId }}" title="Hapus Elemen">
+                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Element" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" data-type="Image" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
@@ -48,7 +48,7 @@
                                                     </div>
 
                                                     <div id="previewCont_{{ $elementId }}" style="display: {{ $imageEl->image_path ? 'block' : 'none' }}; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; position: relative; z-index: 1;">
-                                                        <img src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" id="previewImg_{{ $elementId }}" style="width: 100%; object-fit: contain;">
+                                                        <img src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" id="previewImg_{{ $elementId }}" style="width: 100%; object-fit: contain;" alt="Image Preview">
                                                         <div class="edit-image-overlay">
                                                             <i class="fa-solid fa-pen-to-square"></i>
                                                         </div>

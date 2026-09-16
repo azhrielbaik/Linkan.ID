@@ -13,7 +13,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ $product->title }} - Detail</title>
+    @php
+        $pageTitle = $product->title . ' - Detail';
+        $pageDesc = strip_tags($product->description ?? 'Beli ' . $product->title . ' di Linkan.id');
+        $pageImage = resolveProductImageUrl($product->image);
+        $pageUrl = url()->current();
+    @endphp
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ Str::limit($pageDesc, 150) }}">
+    <link rel="canonical" href="{{ $pageUrl }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ $pageUrl }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ Str::limit($pageDesc, 150) }}">
+    <meta property="og:image" content="{{ $pageImage }}">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ $pageUrl }}">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ Str::limit($pageDesc, 150) }}">
+    <meta name="twitter:image" content="{{ $pageImage }}">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "{{ $product->title }}",
+      "description": "{{ strip_tags($product->description) }}",
+      "image": "{{ $pageImage }}",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "IDR",
+        "price": "{{ $product->price }}",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ $pageUrl }}"
+      }
+    }
+    </script>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,6 +71,44 @@
         }
 
         /* Container */
+        /* Breadcrumb Styles */
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+        .breadcrumb ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .breadcrumb li {
+            display: flex;
+            align-items: center;
+        }
+        .breadcrumb li:not(:last-child)::after {
+            content: "/"; 
+            margin: 0 8px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+        .breadcrumb a {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .breadcrumb a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        .breadcrumb li[aria-current="page"] {
+            font-weight: 500;
+            color: #334155;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -479,6 +556,13 @@
 @endphp
 
 <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+        <ol>
+            <li><a href="{{ url('/') }}">Home</a></li>
+            <li>Digital Products</li>
+            <li aria-current="page">{{ $product->title }}</li>
+        </ol>
+    </nav>
     <div class="product-top">
         <!-- Left Column: Images -->
         <div class="product-left">

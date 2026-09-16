@@ -177,14 +177,14 @@
         height: 8px;
         border-radius: 50%;
     }
-    .status-success .status-dot { background: #fbbf24; } /* Delivered / Success = Yellow in ref */
-    .status-success { color: #d97706; }
+    .status-success .status-dot { background: #10b981; } /* Completed = Green */
+    .status-success { color: #047857; }
     
-    .status-failed .status-dot { background: #ef4444; } /* Cancelled = Red in ref */
-    .status-failed { color: #ef4444; }
+    .status-failed .status-dot { background: #ef4444; } /* Cancelled = Red */
+    .status-failed { color: #dc2626; }
     
-    .status-pending .status-dot { background: #1e293b; } /* Collected / Pending = Black/Grey */
-    .status-pending { color: #1e293b; }
+    .status-pending .status-dot { background: #fbbf24; } /* Pending = Yellow */
+    .status-pending { color: #d97706; }
     
     /* Actions Dropdown */
     .action-btn {
@@ -425,7 +425,7 @@
     <div class="oh-controls">
         <div class="oh-tabs">
             <div class="oh-tab active" data-status="" onclick="setTabFilter(this)">All Order</div>
-            <div class="oh-tab" data-status="pending" onclick="setTabFilter(this)">Summary</div>
+            <div class="oh-tab" data-status="pending" onclick="setTabFilter(this)">Pending</div>
             <div class="oh-tab" data-status="success" onclick="setTabFilter(this)">Completed</div>
             <div class="oh-tab" data-status="failed" onclick="setTabFilter(this)">Cancelled</div>
         </div>
@@ -560,7 +560,7 @@
 
                         // Status Badge Mapping
                         let statusClass = 'status-pending';
-                        let statusText = 'Collected'; // Equivalent to pending in the reference
+                        let statusText = 'Pending'; // Diubah dari Collected
                         let paymentMethod = transaction.payment_method || '-';
                         // Clean up and capitalize payment method (e.g. bank_transfer-bca -> Bank Transfer (BCA))
                         if (paymentMethod !== '-') {
@@ -580,7 +580,7 @@
                         
                         if (transaction.status === 'success') {
                             statusClass = 'status-success';
-                            statusText = 'Delivered';
+                            statusText = 'Completed';
                         } else if (transaction.status === 'failed') {
                             statusClass = 'status-failed';
                             statusText = 'Cancelled';

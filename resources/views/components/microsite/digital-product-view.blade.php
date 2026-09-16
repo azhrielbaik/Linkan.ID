@@ -29,7 +29,7 @@
             @if(isset($media[0]['type']) && str_starts_with($media[0]['type'], 'video'))
                 <video src="{{ $media[0]['url'] }}" style="width: 100%; height: 100%; object-fit: cover;" muted playsinline></video>
             @else
-                <img src="{{ $media[0]['url'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ $media[0]['url'] }}" alt="{{ $product['title'] ?? 'Product Image' }}" width="1200" height="675" style="width: 100%; height: 100%; object-fit: cover;" fetchpriority="high">
             @endif
         @else
             <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #cbd5e1;">
@@ -81,8 +81,8 @@
     <div class="dp-modal-content" style="background: white; width: 100%; max-width: 500px; max-height: 90vh; border-radius: 20px 20px 0 0; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; position: relative; display: flex; flex-direction: column;">
         
         {{-- Close Button --}}
-        <button onclick="closeDpModal('{{ $uniqueId }}')" style="position: absolute; top: 15px; right: 15px; z-index: 10; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; color: #475569;">
-            <i class="fas fa-times"></i>
+        <button onclick="closeDpModal('{{ $uniqueId }}')" aria-label="Close" style="position: absolute; top: 15px; right: 15px; z-index: 10; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; color: #475569;">
+            <i class="fas fa-times" aria-hidden="true"></i>
         </button>
 
         <!-- Media Slider -->
@@ -94,7 +94,7 @@
                             @if(isset($item['type']) && str_starts_with($item['type'], 'video'))
                                 <video class="dp-video-player" src="{{ $item['url'] }}" style="width: 100%; height: 100%; object-fit: cover;" muted loop playsinline></video>
                             @else
-                                <img src="{{ $item['url'] }}" alt="Media {{ $index + 1 }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ $item['url'] }}" alt="Media {{ $index + 1 }}" width="1200" height="675" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
                             @endif
                         </div>
                     @endforeach
@@ -102,11 +102,11 @@
                 
                 @if(count($media) > 1)
                     {{-- Nav Arrows --}}
-                    <button class="dp-nav-left" onclick="slideDpMedia(this, -1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
-                        <i class="fas fa-chevron-left"></i>
+                    <button class="dp-nav-left" aria-label="Previous image" onclick="slideDpMedia(this, -1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
                     </button>
-                    <button class="dp-nav-right" onclick="slideDpMedia(this, 1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
-                        <i class="fas fa-chevron-right"></i>
+                    <button class="dp-nav-right" aria-label="Next image" onclick="slideDpMedia(this, 1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; color: #1e293b; transition: background 0.2s;">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
                     </button>
 
                     {{-- Dots Indicator for Multiple Images (Modal View) --}}
@@ -130,7 +130,7 @@
             {{-- 2. Area Harga (Pricing) & 3. Kuantitas --}}
             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px;">Harga Produk</label>
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;">Harga Produk</label>
                     @if($pricing['type'] === 'fixed')
                         <div style="font-size: 20px; font-weight: 700; color: #FF9040;">
                             Rp {{ number_format((float)$pricing['fixed'], 0, ',', '.') }}
@@ -138,7 +138,7 @@
                     @else
                         <div class="pwyw-container">
                             <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; focus-within: border-color: #FF9040;">
-                                <span style="padding: 8px 12px; background: #f1f5f9; color: #64748b; font-weight: 600; border-right: 1px solid #cbd5e1;">Rp</span>
+                                <span style="padding: 8px 12px; background: #f1f5f9; color: #475569; font-weight: 600; border-right: 1px solid #cbd5e1;">Rp</span>
                                 <input type="number" id="priceInput_{{ $uniqueId }}" class="dp-pwyw-input" placeholder="Tentukan harga..." style="flex: 1; border: none; padding: 8px 12px; outline: none; width: 100%;" value="{{ $pricing['min'] }}" min="{{ $pricing['min'] }}" max="{{ $pricing['max'] ?: '' }}">
                             </div>
                             <div id="priceWarn_{{ $uniqueId }}" style="color: #ef4444; font-size: 12px; margin-top: 5px; display: none;">
@@ -149,11 +149,11 @@
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px;">Kuantitas</label>
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;" for="qtyInput_{{ $uniqueId }}">Kuantitas</label>
                     <div style="display: inline-flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
-                        <button type="button" class="dp-qty-btn" onclick="updateDpQty('{{ $uniqueId }}', -1, {{ $quantity['min'] }}, {{ $quantity['max'] ?: 'null' }})" style="padding: 8px 12px; background: #f8fafc; border: none; border-right: 1px solid #cbd5e1; cursor: pointer; color: #475569; font-weight: bold;">-</button>
-                        <input type="number" id="qtyInput_{{ $uniqueId }}" style="width: 50px; text-align: center; border: none; outline: none; padding: 8px 0; -moz-appearance: textfield;" value="{{ $quantity['min'] }}" readonly>
-                        <button type="button" class="dp-qty-btn" onclick="updateDpQty('{{ $uniqueId }}', 1, {{ $quantity['min'] }}, {{ $quantity['max'] ?: 'null' }})" style="padding: 8px 12px; background: #f8fafc; border: none; border-left: 1px solid #cbd5e1; cursor: pointer; color: #475569; font-weight: bold;">+</button>
+                        <button type="button" aria-label="Decrease quantity" class="dp-qty-btn" onclick="updateDpQty('{{ $uniqueId }}', -1, {{ $quantity['min'] }}, {{ $quantity['max'] ?: 'null' }})" style="padding: 8px 12px; background: #f8fafc; border: none; border-right: 1px solid #cbd5e1; cursor: pointer; color: #475569; font-weight: bold;">-</button>
+                        <input type="number" id="qtyInput_{{ $uniqueId }}" aria-label="Quantity" style="width: 50px; text-align: center; border: none; outline: none; padding: 8px 0; -moz-appearance: textfield;" value="{{ $quantity['min'] }}" readonly>
+                        <button type="button" aria-label="Increase quantity" class="dp-qty-btn" onclick="updateDpQty('{{ $uniqueId }}', 1, {{ $quantity['min'] }}, {{ $quantity['max'] ?: 'null' }})" style="padding: 8px 12px; background: #f8fafc; border: none; border-left: 1px solid #cbd5e1; cursor: pointer; color: #475569; font-weight: bold;">+</button>
                     </div>
                 </div>
             </div>

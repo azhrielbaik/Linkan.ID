@@ -267,21 +267,21 @@
                 onPending: function(result) {
                     Swal.fire({
                         title: 'Menunggu Pembayaran',
-                        text: 'Silahkan selesaikan pembayaran Anda.',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
+                        text: 'Silahkan selesaikan pembayaran Anda menggunakan instruksi yang telah diberikan (atau periksa email Anda).',
+                        icon: 'info',
+                        confirmButtonText: 'Tutup'
                     });
-                    paymentSelected = true;
-                    transactionResult = result;
-                    window.location.href = '{{ route("checkout.success", ["id" => $product->id]) }}?order_id={{ $orderId }}';
                 },
                 onError: function(result) {
                     Swal.fire('Gagal', 'Terjadi kesalahan dalam pembayaran.', 'error');
                 },
                 onClose: function() {
-                    Swal.fire('Perhatian', 'Kamu belum menyelesaikan pembayaran.', 'warning');
+                    Swal.fire({
+                        title: 'Perhatian',
+                        text: 'Kamu belum menyelesaikan pembayaran.',
+                        icon: 'warning',
+                        confirmButtonText: 'Tutup'
+                    });
                 }
             });
         })

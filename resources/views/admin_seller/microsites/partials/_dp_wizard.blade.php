@@ -120,7 +120,7 @@
                                             <i class="fas fa-file-alt" style="font-size: 20px; color: #F97316;"></i>
                                             <span id="dpDeliverableFileName" style="font-size: 14px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">filename.pdf</span>
                                         </div>
-                                        <button type="button" onclick="removeDpDeliverableFile()" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;"><i class="fas fa-trash-alt"></i></button>
+                                        <button type="button" onclick="removeDpDeliverableFile()" aria-label="Hapus File" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
 

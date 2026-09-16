@@ -355,7 +355,6 @@
                             <i class="fas fa-user"></i>
                         @endif
                     </div>
-                    <div class="completion-badge">100%</div>
                 </div>
                 
                 <h3>Selamat Datang, {{ Auth::user()->name }}!</h3>
