@@ -244,7 +244,6 @@
                 <div class="recent-products-row">
                     @forelse($recentProducts ?? [] as $product)
                         <div class="product-course-card">
-                            <button class="like-btn"><i class="far fa-heart"></i></button>
                             <div class="product-img-box">
                                 @php
                                     $dashImg = null;

@@ -750,6 +750,10 @@
     }
 
     function initOrdersPage() {
+        if (typeof jQuery === 'undefined') {
+            setTimeout(initOrdersPage, 50);
+            return;
+        }
         loadOrders(null);
     }
 
@@ -759,11 +763,14 @@
         initOrdersPage();
     }
     
-    document.addEventListener('turbo:load', function() {
-        // Only run if we are actually on the orders page
-        if (window.location.pathname.includes('/admin/orders')) {
-            initOrdersPage();
-        }
-    });
+    if (!window.hasOrdersTurboListener) {
+        document.addEventListener('turbo:load', function() {
+            // Only run if we are actually on the orders page
+            if (window.location.pathname.includes('/admin/orders')) {
+                initOrdersPage();
+            }
+        });
+        window.hasOrdersTurboListener = true;
+    }
 </script>
 @endpush
