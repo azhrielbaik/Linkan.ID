@@ -46,9 +46,9 @@
 
                                                 <div id="bannerPreviewContainer" class="banner-preview-container {{ ($appearance && $appearance->banner) ? 'd-block' : 'd-none' }}">
                                                     @if($appearance && $appearance->banner)
-                                                        <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" class="live-phone-banner-img">
+                                                        <img src="{{ asset('storage/' . $appearance->banner) }}" id="bannerPreviewImg" class="live-phone-banner-img" alt="Banner Preview">
                                                     @else
-                                                        <img src="" id="bannerPreviewImg" class="banner-preview-img d-none">
+                                                        <img src="" id="bannerPreviewImg" class="banner-preview-img d-none" alt="Banner Preview">
                                                     @endif
                                                     <div class="edit-image-overlay">
                                                         <i class="fa-solid fa-pen-to-square"></i>
@@ -71,10 +71,12 @@
                                                 <div class="avatar-dropzone-inner">
                                                     <div id="avatarPreviewContainer" class="avatar-preview-container">
                                                         @if($appearance && $appearance->profile_image)
-                                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" class="live-phone-banner-img">
+                                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="avatarPreviewImg" class="live-phone-banner-img" alt="Avatar Preview">
                                                         @else
-                                                            <i class="fas fa-user" id="avatarPreviewPlaceholder" class="avatar-placeholder-icon"></i>
-                                                            <img src="" id="avatarPreviewImg" class="banner-preview-img d-none">
+                                                            <div class="avatar-placeholder" id="avatarPlaceholder">
+                                                                <i class="fas fa-user text-gray-400 text-3xl"></i>
+                                                            </div>
+                                                            <img src="" id="avatarPreviewImg" class="banner-preview-img d-none" alt="Avatar Preview">
                                                         @endif
                                                     </div>
                                                     
@@ -121,12 +123,12 @@
                                             <label class="profile-form-label">Nama Profil</label>
                                             <div class="text-editor-container">
                                                 <div class="text-editor-toolbar">
-                                                    <button type="button" class="js-prevent-default" data-cmd="bold" class="toolbar-btn toolbar-btn-bold js-format-profile-text" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" class="js-prevent-default" data-cmd="italic" class="toolbar-btn toolbar-btn-italic js-format-profile-text" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" class="js-prevent-default" data-cmd="bold" class="toolbar-btn toolbar-btn-bold js-format-profile-text" title="Tebal (Bold)" aria-label="Tebal"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" class="js-prevent-default" data-cmd="italic" class="toolbar-btn toolbar-btn-italic js-format-profile-text" title="Miring (Italic)" aria-label="Miring"><i class="fas fa-italic"></i></button>
                                                     
                                                     <div class="toolbar-separator"></div>
                                                     
-                                                    <select data-cmd="fontName" data-target="editorProfileName" class="toolbar-select js-format-profile-text-val" title="Pilih Font">
+                                                    <select data-cmd="fontName" data-target="editorProfileName" class="toolbar-select js-format-profile-text-val" title="Pilih Font" aria-label="Pilih Font Profil">
                                                         <option value="Plus Jakarta Sans">Jakarta Sans</option>
                                                         <option value="Arial">Arial</option>
                                                         <option value="Times New Roman">Times New Roman</option>
@@ -135,9 +137,9 @@
                                                         <option value="Verdana">Verdana</option>
                                                     </select>
                                                     
-                                                    <label class="toolbar-color-picker" title="Pilih Warna">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna" aria-label="Pilih Warna Profil">
                                                         <i class="fas fa-eye-dropper"></i>
-                                                        <input type="color" id="colorPickerProfileName" data-cmd="foreColor" data-target="editorProfileName" class="hidden-color-input js-format-profile-text-val">
+                                                        <input type="color" id="colorPickerProfileName" aria-label="Warna Profil" data-cmd="foreColor" data-target="editorProfileName" class="hidden-color-input js-format-profile-text-val">
                                                     </label>
                                                     
                                                     
@@ -160,13 +162,13 @@
                                             <label class="profile-form-label">Deskripsi / Bio Profil</label>
                                             <div class="text-editor-container">
                                                 <div class="text-editor-toolbar">
-                                                    <button type="button" class="js-prevent-default" data-cmd="bold" class="toolbar-btn toolbar-btn-bold js-format-profile-text" title="Tebal (Bold)"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" class="js-prevent-default" data-cmd="italic" class="toolbar-btn toolbar-btn-italic js-format-profile-text" title="Miring (Italic)"><i class="fas fa-italic"></i></button>
-                                                    <button type="button" class="js-prevent-default" data-cmd="underline" class="toolbar-btn toolbar-btn-underline js-format-profile-text" title="Garis Bawah (Underline)"><i class="fas fa-underline"></i></button>
+                                                    <button type="button" class="js-prevent-default" data-cmd="bold" class="toolbar-btn toolbar-btn-bold js-format-profile-text" title="Tebal (Bold)" aria-label="Tebal Bio"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" class="js-prevent-default" data-cmd="italic" class="toolbar-btn toolbar-btn-italic js-format-profile-text" title="Miring (Italic)" aria-label="Miring Bio"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" class="js-prevent-default" data-cmd="underline" class="toolbar-btn toolbar-btn-underline js-format-profile-text" title="Garis Bawah (Underline)" aria-label="Garis Bawah Bio"><i class="fas fa-underline"></i></button>
                                                     
                                                     <div class="toolbar-separator"></div>
                                                     
-                                                    <select data-cmd="fontName" data-target="editorProfileBio" class="toolbar-select js-format-profile-text-val" title="Pilih Font">
+                                                    <select data-cmd="fontName" data-target="editorProfileBio" class="toolbar-select js-format-profile-text-val" title="Pilih Font" aria-label="Pilih Font Bio">
                                                         <option value="Plus Jakarta Sans">Jakarta Sans</option>
                                                         <option value="Arial">Arial</option>
                                                         <option value="Times New Roman">Times New Roman</option>
@@ -174,9 +176,9 @@
                                                         <option value="Georgia">Georgia</option>
                                                         <option value="Verdana">Verdana</option>
                                                     </select>
-                                                    <label class="toolbar-color-picker" title="Pilih Warna">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna" aria-label="Pilih Warna Bio">
                                                         <i class="fas fa-eye-dropper"></i>
-                                                        <input type="color" id="colorPickerProfileBio" data-cmd="foreColor" data-target="editorProfileBio" class="hidden-color-input js-format-profile-text-val">
+                                                        <input type="color" id="colorPickerProfileBio" aria-label="Warna Bio" data-cmd="foreColor" data-target="editorProfileBio" class="hidden-color-input js-format-profile-text-val">
                                                     </label>
                                                 </div>
                                                 <div id="editorProfileBio" contenteditable="true" class="text-editor-body editor-bio-body js-sync-profile-bio" placeholder="Tulis deskripsi singkat profil Anda..." >{!! old('bio', $appearance->bio ?? '') !!}</div>

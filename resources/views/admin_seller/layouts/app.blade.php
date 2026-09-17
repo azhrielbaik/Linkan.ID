@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="@yield('meta_description', 'Linkan.ID Dashboard')">
     <title>@yield('title', 'Linkan Dashboard')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -410,7 +411,7 @@
 
                     <div class="top-profile" onclick="toggleProfileDropdown()">
                         @php
-                            $name = Auth::check() ? Auth::user()->name : 'User';
+                            $name = Auth::check() ? (Auth::user()->username ?? Auth::user()->name) : 'User';
                             $initials = strtoupper(substr($name, 0, 2));
                             $balance = Auth::check() ? \Illuminate\Support\Facades\DB::table('transactions')
                                 ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
@@ -419,7 +420,11 @@
                                 ->sum('transactions.total_price') : 0;
                         @endphp
                         <div class="top-avatar">
-                            {{ $initials }}
+                            @if(Auth::check() && Auth::user()->avatar)
+                                <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            @else
+                                {{ $initials }}
+                            @endif
                         </div>
                         <div class="top-user-info">
                             <span class="top-user-name">{{ $name }}</span>

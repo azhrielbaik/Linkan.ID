@@ -22,7 +22,7 @@
                                                     <span class="toggle-slider"></span>
                                                 </label>
                                             </div>
-                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="SocialMedia" data-target-id="{{ $elementId }}" title="Hapus Elemen">
+                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="SocialMedia" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" data-type="Social" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
@@ -64,7 +64,7 @@
                                                                         <i class="{{ $platInfo['icon'] }}" style="color: {{ $platInfo['color'] }}; font-size: 20px; width: 24px; text-align: center;"></i>
                                                                         <span class="platform-name">{{ $platInfo['label'] }}</span>
                                                                     </div>
-                                                                    <button type="button" class="btn-remove-platform js-remove-social-platform" data-target-id="{{ $elementId }}" data-platform="{{ $platKey }}" title="Hapus Platform">
+                                                                    <button type="button" class="btn-remove-platform js-remove-social-platform" data-target-id="{{ $elementId }}" data-platform="{{ $platKey }}" title="Hapus Platform" aria-label="Hapus Platform">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </button>
                                                                 </div>

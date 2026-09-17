@@ -15,7 +15,8 @@
         "laravel/reverb": "^1.0",
         "laravel/socialite": "*",
         "laravel/tinker": "^2.9",
-        "midtrans/midtrans-php": "^2.6"
+        "midtrans/midtrans-php": "^2.6",
+        "spatie/laravel-sitemap": "^8.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.4",

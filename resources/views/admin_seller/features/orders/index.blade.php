@@ -177,14 +177,14 @@
         height: 8px;
         border-radius: 50%;
     }
-    .status-success .status-dot { background: #fbbf24; } /* Delivered / Success = Yellow in ref */
-    .status-success { color: #d97706; }
+    .status-success .status-dot { background: #10b981; } /* Completed = Green */
+    .status-success { color: #047857; }
     
-    .status-failed .status-dot { background: #ef4444; } /* Cancelled = Red in ref */
-    .status-failed { color: #ef4444; }
+    .status-failed .status-dot { background: #ef4444; } /* Cancelled = Red */
+    .status-failed { color: #dc2626; }
     
-    .status-pending .status-dot { background: #1e293b; } /* Collected / Pending = Black/Grey */
-    .status-pending { color: #1e293b; }
+    .status-pending .status-dot { background: #fbbf24; } /* Pending = Yellow */
+    .status-pending { color: #d97706; }
     
     /* Actions Dropdown */
     .action-btn {
@@ -425,7 +425,7 @@
     <div class="oh-controls">
         <div class="oh-tabs">
             <div class="oh-tab active" data-status="" onclick="setTabFilter(this)">All Order</div>
-            <div class="oh-tab" data-status="pending" onclick="setTabFilter(this)">Summary</div>
+            <div class="oh-tab" data-status="pending" onclick="setTabFilter(this)">Pending</div>
             <div class="oh-tab" data-status="success" onclick="setTabFilter(this)">Completed</div>
             <div class="oh-tab" data-status="failed" onclick="setTabFilter(this)">Cancelled</div>
         </div>
@@ -488,18 +488,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let currentStatus = '';
+    let currentPageIndex = 1;
 
     function setTabFilter(elem) {
         $('.oh-tab').removeClass('active');
         $(elem).addClass('active');
         currentStatus = $(elem).data('status');
-        loadOrders(1);
+        loadOrders(null);
     }
 
     let searchTimeout;
     $('#searchInput').on('keyup', function() {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => loadOrders(1), 300);
+        searchTimeout = setTimeout(() => loadOrders(null), 300);
     });
 
     function toggleDropdown(id, event) {
@@ -525,7 +526,13 @@
         }
     }
 
-    function loadOrders(page = 1) {
+    function loadOrders(cursor = null, targetPage = 1) {
+        if (!cursor) {
+            currentPageIndex = 1;
+        } else {
+            currentPageIndex = targetPage;
+        }
+
         const dateStart = $('#dateFilterStart').val();
         const search = $('#searchInput').val().trim();
 
@@ -533,7 +540,8 @@
             <tr><td colspan="8" class="oh-empty"><i class="fas fa-circle-notch fa-spin"></i> Loading...</td></tr>
         `);
 
-        const requestData = { page: page };
+        const requestData = {};
+        if (cursor) requestData.cursor = cursor;
         if (currentStatus) requestData.status = currentStatus;
         if (dateStart) requestData.date = dateStart; // Backend receives 'date'
         if (search) requestData.search = search;
@@ -560,7 +568,7 @@
 
                         // Status Badge Mapping
                         let statusClass = 'status-pending';
-                        let statusText = 'Collected'; // Equivalent to pending in the reference
+                        let statusText = 'Pending'; // Diubah dari Collected
                         let paymentMethod = transaction.payment_method || '-';
                         // Clean up and capitalize payment method (e.g. bank_transfer-bca -> Bank Transfer (BCA))
                         if (paymentMethod !== '-') {
@@ -580,7 +588,7 @@
                         
                         if (transaction.status === 'success') {
                             statusClass = 'status-success';
-                            statusText = 'Delivered';
+                            statusText = 'Completed';
                         } else if (transaction.status === 'failed') {
                             statusClass = 'status-failed';
                             statusText = 'Cancelled';
@@ -626,13 +634,23 @@
                     });
 
                     // Pagination logic
-                    if (response.pagination && response.pagination.last_page > 1) {
+                    if (response.pagination && (response.pagination.next_cursor || response.pagination.prev_cursor)) {
                         const p = response.pagination;
                         let pagHtml = '<div class="sl-pagination-container">';
-                        for (let i = 1; i <= p.last_page; i++) {
-                            const btnClass = (i === p.current_page) ? 'sl-page-btn active' : 'sl-page-btn';
-                            pagHtml += `<button type="button" class="${btnClass}" onclick="loadOrders(${i})"><span>${i}</span></button>`;
+                        
+                        // Previous page button (N-1)
+                        if (p.prev_cursor && currentPageIndex > 1) {
+                            pagHtml += `<button type="button" class="sl-page-btn" onclick="loadOrders('${p.prev_cursor}', ${currentPageIndex - 1})"><span>${currentPageIndex - 1}</span></button>`;
                         }
+
+                        // Current page button (N) - Active
+                        pagHtml += `<button type="button" class="sl-page-btn active" style="pointer-events: none;"><span>${currentPageIndex}</span></button>`;
+
+                        // Next page button (N+1)
+                        if (p.next_cursor) {
+                            pagHtml += `<button type="button" class="sl-page-btn" onclick="loadOrders('${p.next_cursor}', ${currentPageIndex + 1})"><span>${currentPageIndex + 1}</span></button>`;
+                        }
+                        
                         pagHtml += '</div>';
                         $('#ordersPaginationContainer').html(pagHtml);
                     } else {
@@ -732,7 +750,7 @@
     }
 
     function initOrdersPage() {
-        loadOrders(1);
+        loadOrders(null);
     }
 
     if (document.readyState === 'loading') {

@@ -460,19 +460,6 @@
     font-size: 32px;
     color: #5A5BF1;
 }
-.profile-avatar-circle .completion-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: #5A5BF1;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 10px;
-    border: 2px solid #fff;
-}
-
 .profile-widget h3 {
     font-size: 18px;
     font-weight: 800;

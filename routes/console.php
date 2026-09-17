@@ -30,3 +30,6 @@ Artisan::command('activity-logs:prune {days=30}', function (int $days = 30) {
 
 // Jadwal Pembersihan Otomatis Setiap Hari Pukul 02:00 WIB (Retensi 30 Hari)
 Schedule::command('activity-logs:prune 30')->dailyAt('02:00');
+
+// Generate XML Sitemap Otomatis Setiap Hari Pukul 03:00
+Schedule::command('sitemap:generate')->dailyAt('03:00');

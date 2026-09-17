@@ -21,7 +21,7 @@
                                                     <span class="toggle-slider"></span>
                                                 </label>
                                             </div>
-                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Text" data-target-id="{{ $elementId }}" title="Hapus Elemen">
+                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Text" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" data-type="Text" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
@@ -39,25 +39,25 @@
                                                 <label class="profile-form-label dynamic-form-label-bold">Isi Teks Konten</label>
                                                 <div class="text-editor-container text-editor-container-styled">
                                                     <div class="text-editor-toolbar text-editor-toolbar-styled">
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="bold" title="Bold"><i class="fas fa-bold"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="italic" title="Italic"><i class="fas fa-italic"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="underline" title="Underline"><i class="fas fa-underline"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="strikeThrough" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="bold" title="Bold" aria-label="Bold"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="italic" title="Italic" aria-label="Italic"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="underline" title="Underline" aria-label="Underline"><i class="fas fa-underline"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="strikeThrough" title="Strikethrough" aria-label="Strikethrough"><i class="fas fa-strikethrough"></i></button>
                                                     <span class="toolbar-divider"></span>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyLeft" title="Align Left"><i class="fas fa-align-left"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyCenter" title="Align Center"><i class="fas fa-align-center"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyRight" title="Align Right"><i class="fas fa-align-right"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyLeft" title="Align Left" aria-label="Align Left"><i class="fas fa-align-left"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyCenter" title="Align Center" aria-label="Align Center"><i class="fas fa-align-center"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="justifyRight" title="Align Right" aria-label="Align Right"><i class="fas fa-align-right"></i></button>
                                                     <span class="toolbar-divider"></span>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertUnorderedList" title="Bullet List"><i class="fas fa-list-ul"></i></button>
-                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertOrderedList" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertUnorderedList" title="Bullet List" aria-label="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                                    <button type="button" class="toolbar-btn js-exec-cmd" data-target-id="{{ $elementId }}" data-cmd="insertOrderedList" title="Numbered List" aria-label="Numbered List"><i class="fas fa-list-ol"></i></button>
                                                     <span class="toolbar-divider"></span>
-                                                    <label class="toolbar-color-picker" title="Pilih Warna Teks" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 4px; color: #4b5563; transition: all 0.2s;">
+                                                    <label class="toolbar-color-picker" title="Pilih Warna Teks" aria-label="Pilih Warna Teks" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 4px; color: #4b5563; transition: all 0.2s;">
                                                         <i class="fas fa-eye-dropper"></i>
-                                                        <input type="color" class="hidden-color-input js-exec-cmd-value" data-target-id="{{ $elementId }}" data-cmd="foreColor" title="Text Color" value="#000000" style="opacity: 0; position: absolute; width: 0; height: 0;">
+                                                        <input type="color" aria-label="Warna Teks" class="hidden-color-input js-exec-cmd-value" data-target-id="{{ $elementId }}" data-cmd="foreColor" title="Text Color" value="#000000" style="opacity: 0; position: absolute; width: 0; height: 0;">
                                                     </label>
                                                     <span class="toolbar-divider"></span>
                                                     <div class="toolbar-dropdown">
-                                                        <select data-target-id="{{ $elementId }}" class="toolbar-select js-change-text-size" id="textSizeSelect_{{ $elementId }}">
+                                                        <select aria-label="Ukuran Teks" data-target-id="{{ $elementId }}" class="toolbar-select js-change-text-size" id="textSizeSelect_{{ $elementId }}">
                                                             <option value="12px">Kecil (12px)</option>
                                                             <option value="16px" selected>Normal (16px)</option>
                                                             <option value="24px">Besar (24px)</option>
@@ -66,7 +66,7 @@
                                                     </div>
                                                 </div>
                                                 <div id="customSizeWrapper_{{ $elementId }}" class="custom-size-wrapper" style="display: none; align-items: center; gap: 8px; margin-top: 8px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                                                    <input type="number" id="customSizeInput_{{ $elementId }}" class="toolbar-input js-apply-custom-size-input" placeholder="Ukuran (px)" min="1" max="99" data-target-id="{{ $elementId }}" style="width: 80px; padding: 4px 8px;">
+                                                    <input type="number" aria-label="Ukuran Custom (px)" id="customSizeInput_{{ $elementId }}" class="toolbar-input js-apply-custom-size-input" placeholder="Ukuran (px)" min="1" max="99" data-target-id="{{ $elementId }}" style="width: 80px; padding: 4px 8px;">
                                                     <button type="button" class="toolbar-btn-text js-apply-custom-size" data-target-id="{{ $elementId }}">Terapkan</button>
                                                 </div>
                                                 <div id="editorContent_{{ $elementId }}" class="text-editor-area text-editor-area-styled js-update-text-preview" contenteditable="true" data-target-id="{{ $elementId }}">{!! $textEl->content ?? 'Teks Anda di sini...' !!}</div>
@@ -1022,7 +1022,7 @@
                 <input type="file" id="buttonIconUpload_{{ $elementId }}" class="profile-input js-upload-icon-preview" data-target-id="{{ $elementId }}" accept="image/*" style="display: none;">
                 <div id="uploadPreview_{{ $elementId }}" style="display: {{ (($textEl->button_icon_type ?? '') === 'upload' && !empty($textEl->button_icon_value)) ? 'flex' : 'none' }}; align-items: center; margin-top: 15px; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
                     @if(($textEl->button_icon_type ?? '') === 'upload' && !empty($textEl->button_icon_value))
-                        <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" style="width:40px; height:40px; object-fit:contain; border-radius:6px;">
+                        <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" style="width:40px; height:40px; object-fit:contain; border-radius:6px;" alt="Icon Preview">
                         <div style="margin-left: 12px;">
                             <div style="font-size: 13px; font-weight: 600; color: #0f172a;">Gambar Tersimpan</div>
                             <a href="{{ asset('storage/' . $textEl->button_icon_value) }}" target="_blank" style="font-size: 11px; color: #3b82f6; text-decoration: none;">Lihat gambar asli</a>

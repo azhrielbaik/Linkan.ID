@@ -59,7 +59,8 @@ class PayoutService
             'totalEarnings' => $totalEarnings,
             'totalWithdrawn' => $totalWithdrawn,
             'currentBalance' => $currentBalance,
-            'payoutDetail' => $payoutDetail
+            'payoutDetail' => $payoutDetail,
+            'history' => $this->getPayoutHistory($user->id)->take(10)
         ];
     }
 

@@ -13,11 +13,27 @@ class AccountService
     /**
      * Update account details for a user.
      */
-    public function updateAccount(User $user, array $data, ?string $password = null): void
+    public function updateAccount(User $user, array $data, ?\Illuminate\Http\UploadedFile $avatar = null, ?string $password = null): void
     {
-        DB::transaction(function () use ($user, $data, $password) {
+        DB::transaction(function () use ($user, $data, $avatar, $password) {
             $user->username = $data['username'];
             $user->name = $data['name'];
+            if (isset($data['bio'])) {
+                $user->bio = $data['bio'];
+            }
+
+            if (isset($data['remove_avatar']) && $data['remove_avatar']) {
+                if ($user->avatar) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+                }
+                $user->avatar = null;
+            } elseif ($avatar) {
+                if ($user->avatar) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+                }
+                $path = $avatar->store('avatars', 'public');
+                $user->avatar = $path;
+            }
 
             if ($password) {
                 $user->password = Hash::make($password);

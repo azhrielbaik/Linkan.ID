@@ -151,7 +151,7 @@
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
                                 <div id="liveProfileSection" class="live-profile-section live-element-pointer js-toggle-edit-form {{ ($appearance && $appearance->banner) ? 'has-banner' : '' }}" style="display: none;" data-type="Profile" data-force-open="true">
                                     <div id="livePhoneBannerContainer" class="live-phone-banner-container" style="display: {{ ($appearance && $appearance->banner) ? 'block' : 'none' }};">
-                                        <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" id="livePhoneBannerImg" class="live-phone-banner-img">
+                                        <img src="{{ ($appearance && $appearance->banner) ? asset('storage/' . $appearance->banner) : '' }}" alt="Banner Image" id="livePhoneBannerImg" class="live-phone-banner-img">
                                     </div>
 
                                     @php
@@ -163,7 +163,7 @@
                                     @endphp
                                     <div id="livePhoneAvatarContainer" class="live-phone-avatar-container" style="border-radius: {{ $shapeRadius }};">
                                         @if($appearance && $appearance->profile_image)
-                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" id="livePhoneAvatarImg" class="live-phone-banner-img">
+                                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image" id="livePhoneAvatarImg" class="live-phone-banner-img">
                                         @else
                                             <i class="fas fa-user" id="livePhoneAvatarPlaceholder" class="live-phone-avatar-placeholder"></i>
                                         @endif
@@ -179,37 +179,37 @@
                                     
                                     <div class="preview-social-links" id="livePreviewSocialLinks">
                                         @if($appearance && $appearance->instagram)
-                                            <a href="{{ $appearance->instagram }}" target="_blank" class="social-link-item"><i class="fab fa-instagram"></i></a>
+                                            <a href="{{ $appearance->instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-link-item"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->tiktok)
-                                            <a href="{{ $appearance->tiktok }}" target="_blank" class="social-link-item"><i class="fab fa-tiktok"></i></a>
+                                            <a href="{{ $appearance->tiktok }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="social-link-item"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->whatsapp)
-                                            <a href="{{ $appearance->whatsapp }}" target="_blank" class="social-link-item"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="{{ $appearance->whatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-link-item"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->linkedin)
-                                            <a href="{{ $appearance->linkedin }}" target="_blank" class="social-link-item"><i class="fab fa-linkedin"></i></a>
+                                            <a href="{{ $appearance->linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-link-item"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->facebook)
-                                            <a href="{{ $appearance->facebook }}" target="_blank" class="social-link-item"><i class="fab fa-facebook"></i></a>
+                                            <a href="{{ $appearance->facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-link-item"><i class="fab fa-facebook" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->website)
-                                            <a href="{{ $appearance->website }}" target="_blank" class="social-link-item"><i class="fas fa-globe"></i></a>
+                                            <a href="{{ $appearance->website }}" target="_blank" rel="noopener noreferrer" aria-label="Website" class="social-link-item"><i class="fas fa-globe" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->twitter)
-                                            <a href="{{ $appearance->twitter }}" target="_blank" class="social-link-item"><i class="fab fa-twitter"></i></a>
+                                            <a href="{{ $appearance->twitter }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="social-link-item"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->youtube)
-                                            <a href="{{ $appearance->youtube }}" target="_blank" class="social-link-item"><i class="fab fa-youtube"></i></a>
+                                            <a href="{{ $appearance->youtube }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="social-link-item"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->telegram)
-                                            <a href="{{ $appearance->telegram }}" target="_blank" class="social-link-item"><i class="fab fa-telegram"></i></a>
+                                            <a href="{{ $appearance->telegram }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" class="social-link-item"><i class="fab fa-telegram" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->email)
-                                            <a href="mailto:{{ $appearance->email }}" class="social-link-item"><i class="fas fa-envelope"></i></a>
+                                            <a href="mailto:{{ $appearance->email }}" aria-label="Email" class="social-link-item"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                                         @endif
                                         @if($appearance && $appearance->discord)
-                                            <a href="{{ $appearance->discord }}" target="_blank" class="social-link-item"><i class="fab fa-discord"></i></a>
+                                            <a href="{{ $appearance->discord }}" target="_blank" rel="noopener noreferrer" aria-label="Discord" class="social-link-item"><i class="fab fa-discord" aria-hidden="true"></i></a>
                                         @endif
                                     </div>
                                     
@@ -272,8 +272,8 @@
                                             $isActive = $imageEl->is_active ?? true;
                                         @endphp
                                         <div id="live_{{ $elementId }}" class="live-image-element live-element-pointer js-toggle-edit-form" style="display: {{ $isActive ? 'block' : 'none' }};" data-type="Image" data-target-id="{{ $elementId }}" data-force-open="true">
-                                            <a id="liveLink_{{ $elementId }}" class="live-image-link pointer-events-none">
-                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" class="live-image-img">
+                                            <a id="liveLink_{{ $elementId }}" aria-label="Image Display" class="live-image-link pointer-events-none">
+                                                <img id="liveImg_{{ $elementId }}" src="{{ $imageEl->image_path ? asset('storage/' . $imageEl->image_path) : '' }}" alt="Dynamic Image" class="live-image-img">
                                             </a>
                                         </div>
                                     @endforeach
@@ -304,23 +304,23 @@
                                             @if(isset($textEl->has_button) && $textEl->has_button)
                                                 <div class="text-element-accordion" style="width: 100%; margin: 15px 0;">
                                                     <div class="text-element-button-wrapper">
-                                                        <button class="text-element-button" style="background-color: {{ $textEl->button_color ?? '#f8f9fa' }} !important;" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active')">
+                                                        <button aria-expanded="false" class="text-element-button" style="background-color: {{ $textEl->button_color ?? '#f8f9fa' }} !important;" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active'); this.setAttribute('aria-expanded', this.classList.contains('active'))">
                                                             <div class="text-element-btn-icon-left">
                                                                 @if(($textEl->button_icon_type ?? 'none') === 'emoji')
                                                                     <span style="font-size:25px;">{{ $textEl->button_icon_value }}</span>
                                                                 @elseif(($textEl->button_icon_type ?? 'none') === 'fontawesome')
-                                                                    <i class="{{ $textEl->button_icon_value }}"></i>
+                                                                    <i class="{{ $textEl->button_icon_value }}" aria-hidden="true"></i>
                                                                 @elseif(($textEl->button_icon_type ?? 'none') === 'url')
-                                                                    <img src="{{ $textEl->button_icon_value }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                                                    <img src="{{ $textEl->button_icon_value }}" alt="Icon" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
                                                                 @elseif(($textEl->button_icon_type ?? 'none') === 'upload' && !empty($textEl->button_icon_value))
-                                                                    <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                                                    <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" alt="Icon" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
                                                                 @else
-                                                                    <i class="fas fa-align-left"></i>
+                                                                    <i class="fas fa-align-left" aria-hidden="true"></i>
                                                                 @endif
                                                             </div>
                                                             <span class="btn-text">{{ $textEl->button_text }}</span>
                                                             <div class="text-element-btn-icon-right">
-                                                                <i class="fas fa-chevron-down"></i>
+                                                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                             </div>
                                                         </button>
                                                     </div>
@@ -358,7 +358,7 @@
                                                     @if($embedUrl)
                                                         <!-- pointer-events: none to allow clicking through to edit form -->
                                                         <div class="live-video-embed-wrapper">
-                                                            <iframe src="{{ $embedUrl }}" class="live-video-iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                            <iframe src="{{ $embedUrl }}" title="YouTube Video Player" class="live-video-iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                                         </div>
                                                     @else
                                                         <div class="live-video-placeholder">
@@ -401,8 +401,8 @@
                                             <div id="liveSocialContainer_{{ $elementId }}" class="live-social-container live-social-container-styled">
                                                 @foreach($platforms as $plat => $url)
                                                     @if(!empty($url) && isset($availableIcons[$plat]))
-                                                        <a href="{{ $url }}" target="_blank" class="live-social-icon-btn">
-                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" class="live-social-icon-inner"></i>
+                                                        <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($plat) }}" class="live-social-icon-btn">
+                                                            <i class="{{ $availableIcons[$plat]['icon'] }}" aria-hidden="true" class="live-social-icon-inner"></i>
                                                         </a>
                                                     @endif
                                                 @endforeach

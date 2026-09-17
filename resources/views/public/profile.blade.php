@@ -2,10 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ strip_tags($appearance->name ?? $user->name) }} | Linkan.id</title>
+    @php
+        $pageTitle = strip_tags($appearance->name ?? $user->name) . ' | Linkan.id';
+        $pageDesc = strip_tags($appearance->bio ?? 'Temukan berbagai tautan dan produk menarik dari ' . ($user->name ?? 'kreator') . ' di Linkan.id.');
+        $pageImage = isset($appearance->profile_image) && $appearance->profile_image ? asset('storage/' . $appearance->profile_image) : asset('images/default-avatar.png');
+        $pageUrl = url()->current();
+    @endphp
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ Str::limit($pageDesc, 150) }}">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="{{ $pageUrl }}">
+    
+    @if(isset($appearance->banner) && $appearance->banner)
+        <link rel="preload" as="image" href="{{ asset('storage/' . $appearance->banner) }}">
+    @endif
+    @if(isset($appearance->profile_image) && $appearance->profile_image)
+        <link rel="preload" as="image" href="{{ asset('storage/' . $appearance->profile_image) }}">
+    @endif
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="profile">
+    <meta property="og:url" content="{{ $pageUrl }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ Str::limit($pageDesc, 150) }}">
+    <meta property="og:image" content="{{ $pageImage }}">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ $pageUrl }}">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ Str::limit($pageDesc, 150) }}">
+    <meta name="twitter:image" content="{{ $pageImage }}">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "mainEntity": {
+        "@type": "Person",
+        "name": "{{ strip_tags($appearance->name ?? $user->name) }}",
+        "description": "{{ strip_tags($appearance->bio ?? '') }}",
+        "image": "{{ $pageImage }}",
+        "url": "{{ $pageUrl }}"
+      }
+    }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @php
         $shapeRadius = '50%';
@@ -403,7 +451,7 @@
                 <div class="live-profile-section" data-profile-layout="{{ $appearance->profile_layout ?? 'classic' }}">
                     @if($appearance && $appearance->banner)
                         <div class="preview-banner">
-                            <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner">
+                            <img src="{{ asset('storage/' . $appearance->banner) }}" alt="Banner" width="1200" height="400" fetchpriority="high">
                         </div>
                     @else
                         <div class="preview-banner"></div>
@@ -411,48 +459,48 @@
 
                     <div class="preview-profile">
                         @if($appearance && $appearance->profile_image)
-                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image">
+                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile Image" width="500" height="500" fetchpriority="high">
                         @else
                             <i class="fas fa-user"></i>
                         @endif
                     </div>
 
-                    <div class="preview-name">{!! $appearance->name ?? $user->name !!}</div>
+                    <h1 class="preview-name" style="margin:0; font-size: inherit; line-height: inherit; font-weight: inherit;">{!! $appearance->name ?? $user->name !!}</h1>
                     <div class="preview-bio">{!! $appearance->bio ?? '' !!}</div>
 
                     <div class="preview-social-links" id="livePreviewSocialLinks">
                         @if($appearance && $appearance->instagram)
-                            <a href="{{ $appearance->instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="{{ $appearance->instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->tiktok)
-                            <a href="{{ $appearance->tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
+                            <a href="{{ $appearance->tiktok }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->whatsapp)
-                            <a href="{{ $appearance->whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                            <a href="{{ $appearance->whatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->linkedin)
-                            <a href="{{ $appearance->linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                            <a href="{{ $appearance->linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->facebook)
-                            <a href="{{ $appearance->facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
+                            <a href="{{ $appearance->facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->website)
-                            <a href="{{ $appearance->website }}" target="_blank"><i class="fas fa-globe"></i></a>
+                            <a href="{{ $appearance->website }}" target="_blank" rel="noopener noreferrer" aria-label="Website"><i class="fas fa-globe" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->twitter)
-                            <a href="{{ $appearance->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                            <a href="{{ $appearance->twitter }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->youtube)
-                            <a href="{{ $appearance->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="{{ $appearance->youtube }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->telegram)
-                            <a href="{{ $appearance->telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
+                            <a href="{{ $appearance->telegram }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><i class="fab fa-telegram" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->email)
-                            <a href="mailto:{{ $appearance->email }}"><i class="fas fa-envelope"></i></a>
+                            <a href="mailto:{{ $appearance->email }}" aria-label="Email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                         @endif
                         @if($appearance && $appearance->discord)
-                            <a href="{{ $appearance->discord }}" target="_blank"><i class="fab fa-discord"></i></a>
+                            <a href="{{ $appearance->discord }}" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord" aria-hidden="true"></i></a>
                         @endif
                     </div>
                 </div>
@@ -466,11 +514,11 @@
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="margin-bottom: 12px; border-radius: {{ $blockRadius }}; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
                         @if(!empty($imageEl->link_url))
-                            <a href="{{ $imageEl->link_url }}" target="_blank" style="display: block; width: 100%; text-decoration: none;">
+                            <a href="{{ $imageEl->link_url }}" target="_blank" rel="noopener noreferrer" aria-label="Image Link" style="display: block; width: 100%; text-decoration: none;">
                         @else
-                            <a style="display: block; width: 100%; text-decoration: none; pointer-events: none; cursor: default;">
+                            <a aria-label="Image Display" style="display: block; width: 100%; text-decoration: none; pointer-events: none; cursor: default;">
                         @endif
-                            <img src="{{ asset('storage/' . $imageEl->image_path) }}" style="width: 100%; display: block; object-fit: cover;">
+                            <img src="{{ asset('storage/' . $imageEl->image_path) }}" alt="{{ strip_tags($appearance->name ?? $user->name) }} Image" style="width: 100%; display: block; object-fit: cover;" loading="lazy">
                         </a>
                     </div>
                     </div>
@@ -502,23 +550,23 @@
                     @if(isset($textEl->has_button) && $textEl->has_button)
                         <div class="text-element-accordion" style="width: 100%; margin: 15px 0;">
                             <div class="text-element-button-wrapper">
-                                <button class="text-element-button" style="background-color: {{ $textEl->button_color ?? '#f8f9fa' }} !important;" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active')">
+                                <button class="text-element-button" style="background-color: {{ $textEl->button_color ?? '#f8f9fa' }} !important;" aria-expanded="false" onclick="this.parentElement.nextElementSibling.classList.toggle('show'); this.classList.toggle('active'); this.setAttribute('aria-expanded', this.classList.contains('active'))">
                                     <div class="text-element-btn-icon-left">
                                         @if(($textEl->button_icon_type ?? 'none') === 'emoji')
                                             <span style="font-size:25px;">{{ $textEl->button_icon_value }}</span>
                                         @elseif(($textEl->button_icon_type ?? 'none') === 'fontawesome')
-                                            <i class="{{ $textEl->button_icon_value }}"></i>
+                                            <i class="{{ $textEl->button_icon_value }}" aria-hidden="true"></i>
                                         @elseif(($textEl->button_icon_type ?? 'none') === 'url')
-                                            <img src="{{ $textEl->button_icon_value }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                            <img src="{{ $textEl->button_icon_value }}" alt="{{ strip_tags($textEl->title) }} Icon" width="20" height="20" style="width:20px; height:20px; object-fit:contain; border-radius:4px;" loading="lazy">
                                         @elseif(($textEl->button_icon_type ?? 'none') === 'upload' && !empty($textEl->button_icon_value))
-                                            <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                                            <img src="{{ asset('storage/' . $textEl->button_icon_value) }}" alt="{{ strip_tags($textEl->title) }} Icon" width="20" height="20" style="width:20px; height:20px; object-fit:contain; border-radius:4px;" loading="lazy">
                                         @else
-                                            <i class="fas fa-align-left"></i>
+                                            <i class="fas fa-align-left" aria-hidden="true"></i>
                                         @endif
                                     </div>
                                     <span class="btn-text">{{ $textEl->button_text }}</span>
                                     <div class="text-element-btn-icon-right">
-                                        <i class="fas fa-chevron-down"></i>
+                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                     </div>
                                 </button>
                             </div>
@@ -550,7 +598,7 @@
                     @if($embedUrl)
                         <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                             <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: {{ $blockRadius }}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <iframe src="{{ $embedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <iframe src="{{ $embedUrl }}" title="YouTube Video Player" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
                     @endif
@@ -579,8 +627,8 @@
                     <div style="display: flex; justify-content: center; gap: 12px; padding: 10px 0; margin-bottom: 12px; width: 100%; box-sizing: border-box; border-radius: {{ $blockRadius }};">
                         @foreach($platforms as $plat => $url)
                             @if(!empty($url) && isset($availableIcons[$plat]))
-                                <a href="{{ $url }}" target="_blank" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 45px; height: 45px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
-                                    <i class="{{ $availableIcons[$plat]['icon'] }}" style="font-size: 24px;"></i>
+                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($plat) }}" style="display: inline-flex; justify-content: center; align-items: center; background-color: #111827; color: white; width: 45px; height: 45px; border-radius: 50%; text-decoration: none; transition: all 0.2s; margin: 0 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-3px) scale(1.1)';" onmouseout="this.style.transform='translateY(0) scale(1)';">
+                                    <i class="{{ $availableIcons[$plat]['icon'] }}" aria-hidden="true" style="font-size: 24px;"></i>
                                 </a>
                             @endif
                         @endforeach

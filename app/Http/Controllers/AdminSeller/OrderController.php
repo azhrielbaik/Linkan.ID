@@ -27,13 +27,9 @@ class OrderController extends Controller
             return response()->json([
                 'transactions' => $transactions->items(),
                 'pagination' => [
-                    'current_page' => $transactions->currentPage(),
-                    'last_page' => $transactions->lastPage(),
-                    'per_page' => $transactions->perPage(),
-                    'total' => $transactions->total(),
                     'has_more_pages' => $transactions->hasMorePages(),
-                    'next_page_url' => $transactions->nextPageUrl(),
-                    'prev_page_url' => $transactions->previousPageUrl(),
+                    'next_cursor' => $transactions->nextCursor() ? $transactions->nextCursor()->encode() : null,
+                    'prev_cursor' => $transactions->previousCursor() ? $transactions->previousCursor()->encode() : null,
                 ]
             ]);
         }

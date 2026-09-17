@@ -1,13 +1,13 @@
-@extends('admin_seller.layouts.app')
+@extends('admin_seller.layouts.settings')
 
 @section('title', 'Thread Tiket #' . $ticket->ticket_code . ' — Linkan.ID')
-@section('page_title', 'Detail Tiket Bantuan')
+@section('page_title', 'Settings')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/seller-tickets.css') }}?v={{ time() }}">
 @endpush
 
-@section('content')
+@section('settings_content')
 <div class="tickets-container">
 
     {{-- Alerts --}}

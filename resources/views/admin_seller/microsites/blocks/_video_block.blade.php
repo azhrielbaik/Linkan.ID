@@ -22,7 +22,7 @@
                                                     <span class="toggle-slider"></span>
                                                 </label>
                                             </div>
-                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Video" data-target-id="{{ $elementId }}" title="Hapus Elemen">
+                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Video" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" data-type="Video" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
