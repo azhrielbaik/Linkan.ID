@@ -330,12 +330,17 @@
     <div id="sellerModal" class="modal">
         <div class="modal-container modal-container-large">
             <div class="modal-header">
-                <h3><i class="fas fa-user-shield" style="color: #ED842C;"></i> {{ __('platform.seller_profile_inspection') }}</h3>
-                <button type="button" class="modal-close" onclick="closeSellerModal()">&times;</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff7ed; color: #ed842c; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">{{ __('platform.seller_profile_inspection') }}</h3>
+                </div>
+                <button type="button" class="modal-close" onclick="closeSellerModal()" aria-label="Tutup">&times;</button>
             </div>
             <div class="modal-body" id="sellerModalBody">
                 <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
+                    <i class="fas fa-spinner fa-spin" style="font-size: 28px; margin-bottom: 8px; display: block; color: #ed842c;"></i>
                     {{ __('platform.loading_data') }}
                 </div>
             </div>

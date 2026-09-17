@@ -228,53 +228,161 @@
 
     <!-- Modal Suspend Akun (Pilihan Durasi & Alasan) -->
     <div id="suspendModal" class="modal">
-        <div class="modal-container">
+        <div class="modal-container modal-action-container">
             <div class="modal-header">
-                <h3><i class="fas fa-user-slash" style="color: #dc2626;"></i> {{ __('platform.suspend_account') }}</h3>
-                <button type="button" class="modal-close" onclick="closeSuspendModal()">&times;</button>
+                <div class="modal-header-left">
+                    <div class="modal-header-icon danger">
+                        <i class="fas fa-user-slash"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-title">{{ __('platform.suspend_account') }}</h3>
+                        <p class="modal-subtitle">Penangguhan akses akun & layanan seller secara terukur</p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close-round" onclick="closeSuspendModal()" aria-label="Tutup">&times;</button>
             </div>
+            
             <form id="suspendForm" method="POST" action="">
                 @csrf
-                <div class="modal-body">
-                    <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                        Tentukan durasi penangguhan dan alasan suspend untuk akun <strong id="suspendTargetName" style="color: #1e293b;"></strong>:
-                    </p>
+                <div class="modal-body modal-action-body">
+                    <!-- Target User Info Card -->
+                    <div class="action-target-card danger">
+                        <div class="action-target-avatar danger" id="suspendTargetAvatar">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                        <div class="action-target-meta">
+                            <div class="action-target-label">Target Akun Seller</div>
+                            <div class="action-target-name" id="suspendTargetName">-</div>
+                        </div>
+                        <div class="action-target-badge danger">
+                            <i class="fas fa-shield-alt"></i> Penangguhan
+                        </div>
+                    </div>
 
-                    <div class="form-group">
-                        <label>{{ __('platform.suspend_duration') }}</label>
+                    <!-- Pilihan Durasi -->
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <div class="form-label-row">
+                            <label class="form-section-label">
+                                <i class="fas fa-hourglass-half"></i> {{ __('platform.suspend_duration') }}
+                            </label>
+                            <span class="form-label-hint">Pilih masa berlaku</span>
+                        </div>
+                        
                         <div class="duration-grid">
                             <label class="duration-option">
                                 <input type="radio" name="duration" value="1_day" required>
-                                <div class="duration-card"><i class="fas fa-clock"></i> {{ __('platform.duration_1_day') }}</div>
+                                <div class="duration-card">
+                                    <div class="duration-card-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="duration-card-content">
+                                        <span class="duration-title">1 Hari</span>
+                                        <span class="duration-sub">Masa singkat</span>
+                                    </div>
+                                    <div class="duration-radio-indicator"></div>
+                                </div>
                             </label>
+                            
                             <label class="duration-option">
                                 <input type="radio" name="duration" value="3_days">
-                                <div class="duration-card"><i class="fas fa-clock"></i> {{ __('platform.duration_3_days') }}</div>
+                                <div class="duration-card">
+                                    <div class="duration-card-icon">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <div class="duration-card-content">
+                                        <span class="duration-title">3 Hari</span>
+                                        <span class="duration-sub">Peringatan awal</span>
+                                    </div>
+                                    <div class="duration-radio-indicator"></div>
+                                </div>
                             </label>
+
                             <label class="duration-option">
                                 <input type="radio" name="duration" value="7_days" checked>
-                                <div class="duration-card"><i class="fas fa-calendar-week"></i> {{ __('platform.duration_7_days') }}</div>
+                                <div class="duration-card">
+                                    <div class="duration-card-icon">
+                                        <i class="fas fa-calendar-week"></i>
+                                    </div>
+                                    <div class="duration-card-content">
+                                        <span class="duration-title">7 Hari <span class="duration-pill">1 Minggu</span></span>
+                                        <span class="duration-sub">Standar sanksi</span>
+                                    </div>
+                                    <div class="duration-radio-indicator"></div>
+                                </div>
                             </label>
+
                             <label class="duration-option">
                                 <input type="radio" name="duration" value="30_days">
-                                <div class="duration-card"><i class="fas fa-calendar-alt"></i> {{ __('platform.duration_30_days') }}</div>
+                                <div class="duration-card">
+                                    <div class="duration-card-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="duration-card-content">
+                                        <span class="duration-title">30 Hari <span class="duration-pill">1 Bulan</span></span>
+                                        <span class="duration-sub">Pelanggaran berat</span>
+                                    </div>
+                                    <div class="duration-radio-indicator"></div>
+                                </div>
                             </label>
-                            <label class="duration-option" style="grid-column: span 2;">
+
+                            <label class="duration-option duration-full">
                                 <input type="radio" name="duration" value="permanent">
-                                <div class="duration-card"><i class="fas fa-infinity"></i> {{ __('platform.duration_permanent') }}</div>
+                                <div class="duration-card">
+                                    <div class="duration-card-icon danger">
+                                        <i class="fas fa-infinity"></i>
+                                    </div>
+                                    <div class="duration-card-content">
+                                        <span class="duration-title">Permanen <span class="duration-pill danger">Selamanya</span></span>
+                                        <span class="duration-sub">Blokir akun tanpa batas waktu (hanya bisa dibuka manual oleh admin)</span>
+                                    </div>
+                                    <div class="duration-radio-indicator"></div>
+                                </div>
                             </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="suspend_reason">{{ __('platform.suspend_reason_label') }}</label>
-                        <textarea id="suspend_reason" name="suspend_reason" rows="3" class="form-control"
+                    <!-- Alasan Penangguhan -->
+                    <div class="form-group" style="margin-bottom: 6px;">
+                        <div class="form-label-row">
+                            <label for="suspend_reason" class="form-section-label">
+                                <i class="fas fa-comment-alt"></i> {{ __('platform.suspend_reason_label') }} <span class="required-star">*</span>
+                            </label>
+                            <span class="form-label-hint">Wajib diisi</span>
+                        </div>
+
+                        <!-- Quick Reason Preset Chips -->
+                        <div class="reason-preset-chips">
+                            <button type="button" class="reason-chip" onclick="applyReasonPreset('Pelanggaran Ketentuan Layanan (ToS)')">
+                                <i class="fas fa-plus" style="font-size: 9px;"></i> ToS Platform
+                            </button>
+                            <button type="button" class="reason-chip" onclick="applyReasonPreset('Unggahan produk digital dilarang / melanggar hak cipta')">
+                                <i class="fas fa-plus" style="font-size: 9px;"></i> Produk Dilarang
+                            </button>
+                            <button type="button" class="reason-chip" onclick="applyReasonPreset('Aktivitas mencurigakan / terindikasi penipuan (fraud)')">
+                                <i class="fas fa-plus" style="font-size: 9px;"></i> Indikasi Penipuan
+                            </button>
+                            <button type="button" class="reason-chip" onclick="applyReasonPreset('Tindakan spam atau penyalahgunaan link microsite')">
+                                <i class="fas fa-plus" style="font-size: 9px;"></i> Spam Link
+                            </button>
+                        </div>
+
+                        <textarea id="suspend_reason" name="suspend_reason" rows="2" class="action-textarea"
                                   placeholder="{{ __('platform.suspend_reason_placeholder') }}" required></textarea>
                     </div>
+
+                    <!-- Notice Callout -->
+                    <div class="modal-notice-banner danger">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Selama masa suspend, akses login dinonaktifkan dan halaman microsite seller dialihkan ke pemberitahuan sistem.</span>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" onclick="closeSuspendModal()">{{ __('platform.cancel') }}</button>
-                    <button type="submit" class="btn-modal-submit-danger"><i class="fas fa-ban"></i> {{ __('platform.suspend') }}</button>
+                
+                <div class="modal-action-footer">
+                    <button type="button" class="btn-modal-cancel-pill" onclick="closeSuspendModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-danger-pill">
+                        <i class="fas fa-ban"></i>
+                        <span>{{ __('platform.suspend') }}</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -282,27 +390,60 @@
 
     <!-- Modal Aktifkan Kembali Akun (Konfirmasi & Catatan Opsional) -->
     <div id="activateModal" class="modal">
-        <div class="modal-container">
+        <div class="modal-container modal-action-container">
             <div class="modal-header">
-                <h3><i class="fas fa-user-check" style="color: #16a34a;"></i> Aktifkan Kembali Akun</h3>
-                <button type="button" class="modal-close" onclick="closeActivateModal()">&times;</button>
-            </div>
-            <form id="activateForm" method="POST" action="">
-                @csrf
-                <div class="modal-body">
-                    <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                        Apakah Anda yakin ingin mencabut status penangguhan (suspend) untuk akun <strong id="activateTargetName" style="color: #1e293b;"></strong>? Seluruh akses fitur akan dipulihkan.
-                    </p>
-
-                    <div class="form-group">
-                        <label for="activate_reason">Catatan / Alasan Aktivasi <span style="font-size: 11px; color: #64748b;">(Opsional)</span></label>
-                        <textarea id="activate_reason" name="activate_reason" rows="3" class="form-control"
-                                  placeholder="Tuliskan catatan alasan pengaktifan kembali akun (opsional)..."></textarea>
+                <div class="modal-header-left">
+                    <div class="modal-header-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-title">Aktifkan Kembali Akun</h3>
+                        <p class="modal-subtitle">Pulihkan hak akses dashboard dan tautan microsite seller</p>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" onclick="closeActivateModal()">{{ __('platform.cancel') }}</button>
-                    <button type="submit" class="btn-modal-submit-primary" style="background: #16a34a; color: white; border: none; padding: 9px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-check"></i> {{ __('platform.activate') }}</button>
+                <button type="button" class="modal-close-round" onclick="closeActivateModal()" aria-label="Tutup">&times;</button>
+            </div>
+            
+            <form id="activateForm" method="POST" action="">
+                @csrf
+                <div class="modal-body modal-action-body">
+                    <!-- Target User Info Card -->
+                    <div class="action-target-card success">
+                        <div class="action-target-avatar success" id="activateTargetAvatar">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="action-target-meta">
+                            <div class="action-target-label">Target Akun Seller</div>
+                            <div class="action-target-name" id="activateTargetName">-</div>
+                        </div>
+                        <div class="action-target-badge success">
+                            <i class="fas fa-check-circle"></i> Pemulihan Akses
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <div class="form-label-row">
+                            <label for="activate_reason" class="form-section-label">
+                                <i class="fas fa-sticky-note"></i> Catatan / Alasan Aktivasi
+                            </label>
+                            <span class="form-label-hint">Opsional</span>
+                        </div>
+                        <textarea id="activate_reason" name="activate_reason" rows="3" class="action-textarea"
+                                  placeholder="Tuliskan catatan alasan pengaktifan kembali akun (opsional)..."></textarea>
+                    </div>
+
+                    <div class="modal-notice-banner success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Status penangguhan akan langsung dicabut dan seluruh tautan microsite seller kembali aktif.</span>
+                    </div>
+                </div>
+                
+                <div class="modal-action-footer">
+                    <button type="button" class="btn-modal-cancel-pill" onclick="closeActivateModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-success-pill">
+                        <i class="fas fa-check"></i>
+                        <span>{{ __('platform.activate') }}</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -310,26 +451,60 @@
 
     <!-- Modal Tolak Permohonan Banding -->
     <div id="rejectAppealModal" class="modal">
-        <div class="modal-container">
+        <div class="modal-container modal-action-container">
             <div class="modal-header">
-                <h3><i class="fas fa-times-circle" style="color: #dc2626;"></i> {{ __('platform.reject_appeal') }}</h3>
-                <button type="button" class="modal-close" onclick="closeRejectAppealModal()">&times;</button>
-            </div>
-            <form id="rejectAppealForm" method="POST" action="">
-                @csrf
-                <div class="modal-body">
-                    <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">
-                        Tolak permohonan banding dari <strong id="rejectTargetName" style="color: #1e293b;"></strong>. Berikan catatan penjelasan:
-                    </p>
-                    <div class="form-group">
-                        <label for="admin_notes">{{ __('platform.rejection_reason_notes') }}</label>
-                        <textarea id="admin_notes" name="admin_notes" rows="3" class="form-control"
-                                  placeholder="Tuliskan catatan alasan penolakan banding..." required></textarea>
+                <div class="modal-header-left">
+                    <div class="modal-header-icon danger">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-title">{{ __('platform.reject_appeal') }}</h3>
+                        <p class="modal-subtitle">Tolak permohonan banding pembukaan penangguhan akun</p>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" onclick="closeRejectAppealModal()">{{ __('platform.cancel') }}</button>
-                    <button type="submit" class="btn-modal-submit-danger"><i class="fas fa-times"></i> {{ __('platform.reject_appeal') }}</button>
+                <button type="button" class="modal-close-round" onclick="closeRejectAppealModal()" aria-label="Tutup">&times;</button>
+            </div>
+            
+            <form id="rejectAppealForm" method="POST" action="">
+                @csrf
+                <div class="modal-body modal-action-body">
+                    <!-- Target User Info Card -->
+                    <div class="action-target-card danger">
+                        <div class="action-target-avatar danger" id="rejectTargetAvatar">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="action-target-meta">
+                            <div class="action-target-label">Pemohon Banding</div>
+                            <div class="action-target-name" id="rejectTargetName">-</div>
+                        </div>
+                        <div class="action-target-badge danger">
+                            <i class="fas fa-ban"></i> Tolak Banding
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <div class="form-label-row">
+                            <label for="admin_notes" class="form-section-label">
+                                <i class="fas fa-pen-alt"></i> {{ __('platform.rejection_reason_notes') }} <span class="required-star">*</span>
+                            </label>
+                            <span class="form-label-hint">Wajib diisi</span>
+                        </div>
+                        <textarea id="admin_notes" name="admin_notes" rows="3" class="action-textarea"
+                                  placeholder="Tuliskan catatan alasan penolakan banding..." required></textarea>
+                    </div>
+
+                    <div class="modal-notice-banner danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Catatan penolakan ini akan dikirimkan ke seller dan akun tetap berstatus ditangguhkan.</span>
+                    </div>
+                </div>
+                
+                <div class="modal-action-footer">
+                    <button type="button" class="btn-modal-cancel-pill" onclick="closeRejectAppealModal()">{{ __('platform.cancel') }}</button>
+                    <button type="submit" class="btn-modal-danger-pill">
+                        <i class="fas fa-times"></i>
+                        <span>{{ __('platform.reject_appeal') }}</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -356,67 +531,82 @@
     <div id="sellerModal" class="modal">
         <div class="modal-container modal-container-large">
             <div class="modal-header">
-                <h3><i class="fas fa-user-shield" style="color: #ED842C;"></i> {{ __('platform.seller_profile_inspection') }}</h3>
-                <button type="button" class="modal-close" onclick="closeSellerModal()">&times;</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff7ed; color: #ed842c; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">{{ __('platform.seller_profile_inspection') }}</h3>
+                </div>
+                <button type="button" class="modal-close" onclick="closeSellerModal()" aria-label="Tutup">&times;</button>
             </div>
             <div class="modal-body" id="sellerModalBody">
                 <div class="seller-skeleton">
                     <!-- Skeleton Banner -->
                     <div class="seller-skeleton-banner">
                         <div class="seller-skeleton-banner-left">
-                            <div class="skeleton-elem skeleton-avatar"></div>
-                            <div class="seller-skeleton-info">
-                                <div class="skeleton-elem" style="width: 150px; height: 18px; border-radius: 4px;"></div>
-                                <div class="skeleton-elem" style="width: 230px; height: 13px; border-radius: 4px;"></div>
-                                <div class="skeleton-elem" style="width: 120px; height: 12px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem skeleton-avatar" style="width: 58px; height: 58px; border-radius: 50%;"></div>
+                            <div class="seller-skeleton-info" style="gap: 8px;">
+                                <div class="skeleton-elem" style="width: 170px; height: 20px; border-radius: 6px;"></div>
+                                <div class="skeleton-elem" style="width: 250px; height: 13px; border-radius: 4px;"></div>
+                                <div class="skeleton-elem" style="width: 140px; height: 22px; border-radius: 20px;"></div>
                             </div>
                         </div>
                         <div>
-                            <div class="skeleton-elem" style="width: 80px; height: 26px; border-radius: 20px;"></div>
+                            <div class="skeleton-elem" style="width: 85px; height: 26px; border-radius: 20px;"></div>
                         </div>
                     </div>
 
                     <!-- Skeleton 4 Mini Financial Stats Grid -->
                     <div class="modal-stats-grid">
-                        <div class="modal-stat-box" style="padding: 16px 12px;">
-                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        <div class="modal-stat-card" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                         </div>
-                        <div class="modal-stat-box" style="padding: 16px 12px;">
-                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        <div class="modal-stat-card" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                         </div>
-                        <div class="modal-stat-box" style="padding: 16px 12px;">
-                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        <div class="modal-stat-card" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                         </div>
-                        <div class="modal-stat-box" style="padding: 16px 12px;">
-                            <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                        <div class="modal-stat-card" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                            <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                         </div>
                     </div>
 
                     <!-- Skeleton Extra Details Grid -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                    <div class="seller-extra-grid">
+                        <div class="extra-stat-box" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 45%; height: 13px; margin-bottom: 10px; border-radius: 4px;"></div>
+                            <div style="display: flex; gap: 6px;">
+                                <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                                <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                                <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                            </div>
                         </div>
-                        <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                            <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                        <div class="extra-stat-box" style="padding: 14px;">
+                            <div class="skeleton-elem" style="width: 45%; height: 13px; margin-bottom: 10px; border-radius: 4px;"></div>
+                            <div style="display: flex; gap: 6px;">
+                                <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                                <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                                <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Skeleton Tabs -->
-                    <div class="modal-tabs" style="margin-bottom: 16px; display: flex; gap: 10px;">
-                        <div class="skeleton-elem" style="width: 110px; height: 32px; border-radius: 8px;"></div>
-                        <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
-                        <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                    <div class="modal-tabs-wrapper">
+                        <div class="modal-tabs-nav">
+                            <div class="skeleton-elem" style="width: 120px; height: 32px; border-radius: 8px;"></div>
+                            <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
+                            <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                        </div>
                     </div>
 
                     <!-- Skeleton Mini Table -->
-                    <div style="border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; background: #fff;">
+                    <div style="border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
                         <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; display: flex; gap: 16px;">
                             <div class="skeleton-elem" style="width: 30%; height: 13px; border-radius: 4px;"></div>
                             <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
@@ -425,13 +615,6 @@
                             <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
                         </div>
                         <div style="padding: 14px 16px; border-bottom: 1px solid #f8fafc; display: flex; gap: 16px; align-items: center;">
-                            <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
-                            <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
-                        </div>
-                        <div style="padding: 14px 16px; display: flex; gap: 16px; align-items: center;">
                             <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
                             <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
                             <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>

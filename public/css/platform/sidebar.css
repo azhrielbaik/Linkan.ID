@@ -608,3 +608,8 @@
     background: #D9701A !important;
     transform: translateY(-1px) !important;
 }
+
+.linkan-swal-single-btn {
+    max-width: 200px !important;
+    margin: 0 auto !important;
+}

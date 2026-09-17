@@ -24,8 +24,6 @@
 .btn-reset,
 .btn-search,
 .btn-export,
-.btn-open-ticket,
-.btn-act,
 .bulk-btn,
 .p-filter-select,
 .p-filter-search,
@@ -75,12 +73,24 @@ select.custom-dropdown-native-hidden {
 .btn-reset,
 .btn-search,
 .btn-export,
-.btn-open-ticket,
-.btn-act,
 .bulk-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+/* =========================================================
+   CLEAN & VIBRANT ORANGE & WHITE TABLE ACTION BUTTONS (SHARED)
+   ========================================================= */
+.action-btns .btn-act,
+.action-group .btn-action,
+.btn-open-ticket,
+.btn-detail,
+.btn-view,
+.btn-view-platform {
+    font-family: inherit;
+    text-decoration: none;
+    line-height: 1;
 }
 
 /* Modern Capsule Filter Button */

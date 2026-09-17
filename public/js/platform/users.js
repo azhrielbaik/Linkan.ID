@@ -1,13 +1,32 @@
 // Platform Admin User Management Scripts
 
+function applyReasonPreset(text) {
+    const el = document.getElementById('suspend_reason');
+    if (!el) return;
+    const currentVal = el.value.trim();
+    if (currentVal === '') {
+        el.value = text;
+    } else if (!currentVal.includes(text)) {
+        el.value = currentVal + ' • ' + text;
+    }
+    el.focus();
+}
+
 function openSuspendModal(userId, userName) {
     const target = document.getElementById('suspendTargetName');
+    const avatar = document.getElementById('suspendTargetAvatar');
     const form = document.getElementById('suspendForm');
     const modal = document.getElementById('suspendModal');
+    const reasonInput = document.getElementById('suspend_reason');
     const baseUrl = (window.PlatformUsersConfig && window.PlatformUsersConfig.userBaseUrl) || '/platform-admin/users';
 
-    if (target) target.textContent = userName;
+    if (target) target.textContent = userName || '-';
+    if (avatar) {
+        const initial = (userName || '').trim().charAt(0).toUpperCase();
+        avatar.innerHTML = initial ? `<span style="font-size: 16px; font-weight: 800;">${initial}</span>` : '<i class="fas fa-user-slash"></i>';
+    }
     if (form) form.action = `${baseUrl}/${userId}/suspend`;
+    if (reasonInput) reasonInput.value = '';
     if (modal) modal.classList.add('show');
 }
 
@@ -18,12 +37,17 @@ function closeSuspendModal() {
 
 function openActivateModal(userId, userName) {
     const target = document.getElementById('activateTargetName');
+    const avatar = document.getElementById('activateTargetAvatar');
     const form = document.getElementById('activateForm');
     const modal = document.getElementById('activateModal');
     const reasonInput = document.getElementById('activate_reason');
     const baseUrl = (window.PlatformUsersConfig && window.PlatformUsersConfig.userBaseUrl) || '/platform-admin/users';
 
-    if (target) target.textContent = userName;
+    if (target) target.textContent = userName || '-';
+    if (avatar) {
+        const initial = (userName || '').trim().charAt(0).toUpperCase();
+        avatar.innerHTML = initial ? `<span style="font-size: 16px; font-weight: 800;">${initial}</span>` : '<i class="fas fa-user-check"></i>';
+    }
     if (form) form.action = `${baseUrl}/${userId}/activate`;
     if (reasonInput) reasonInput.value = '';
     if (modal) modal.classList.add('show');
@@ -36,11 +60,18 @@ function closeActivateModal() {
 
 function openRejectAppealModal(appealId, userName) {
     const target = document.getElementById('rejectTargetName');
+    const avatar = document.getElementById('rejectTargetAvatar');
     const form = document.getElementById('rejectAppealForm');
     const modal = document.getElementById('rejectAppealModal');
+    const notesInput = document.getElementById('admin_notes');
     const baseUrl = (window.PlatformUsersConfig && window.PlatformUsersConfig.appealsBaseUrl) || '/platform-admin/users/appeals';
 
-    if (target) target.textContent = userName;
+    if (target) target.textContent = userName || '-';
+    if (avatar) {
+        const initial = (userName || '').trim().charAt(0).toUpperCase();
+        avatar.innerHTML = initial ? `<span style="font-size: 16px; font-weight: 800;">${initial}</span>` : '<i class="fas fa-times-circle"></i>';
+    }
+    if (notesInput) notesInput.value = '';
     if (form) form.action = `${baseUrl}/${appealId}/reject`;
     if (modal) modal.classList.add('show');
 }
@@ -56,59 +87,69 @@ function getSellerSkeletonHtml() {
             <!-- Skeleton Banner -->
             <div class="seller-skeleton-banner">
                 <div class="seller-skeleton-banner-left">
-                    <div class="skeleton-elem skeleton-avatar"></div>
-                    <div class="seller-skeleton-info">
-                        <div class="skeleton-elem" style="width: 150px; height: 18px; border-radius: 4px;"></div>
-                        <div class="skeleton-elem" style="width: 230px; height: 13px; border-radius: 4px;"></div>
-                        <div class="skeleton-elem" style="width: 120px; height: 12px; border-radius: 4px;"></div>
+                    <div class="skeleton-elem skeleton-avatar" style="width: 58px; height: 58px; border-radius: 50%;"></div>
+                    <div class="seller-skeleton-info" style="gap: 8px;">
+                        <div class="skeleton-elem" style="width: 170px; height: 20px; border-radius: 6px;"></div>
+                        <div class="skeleton-elem" style="width: 250px; height: 13px; border-radius: 4px;"></div>
+                        <div class="skeleton-elem" style="width: 140px; height: 22px; border-radius: 20px;"></div>
                     </div>
                 </div>
                 <div>
-                    <div class="skeleton-elem" style="width: 80px; height: 26px; border-radius: 20px;"></div>
+                    <div class="skeleton-elem" style="width: 85px; height: 26px; border-radius: 20px;"></div>
                 </div>
             </div>
 
             <!-- Skeleton 4 Mini Financial Stats Grid -->
             <div class="modal-stats-grid">
-                <div class="modal-stat-box" style="padding: 16px 12px;">
-                    <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                <div class="modal-stat-card" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                 </div>
-                <div class="modal-stat-box" style="padding: 16px 12px;">
-                    <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                <div class="modal-stat-card" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                 </div>
-                <div class="modal-stat-box" style="padding: 16px 12px;">
-                    <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                <div class="modal-stat-card" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                 </div>
-                <div class="modal-stat-box" style="padding: 16px 12px;">
-                    <div class="skeleton-elem" style="width: 65%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 85%; height: 20px; border-radius: 4px;"></div>
+                <div class="modal-stat-card" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 60%; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div class="skeleton-elem" style="width: 85%; height: 22px; border-radius: 6px;"></div>
                 </div>
             </div>
 
             <!-- Skeleton Extra Details Grid -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                    <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+            <div class="seller-extra-grid">
+                <div class="extra-stat-box" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 45%; height: 13px; margin-bottom: 10px; border-radius: 4px;"></div>
+                    <div style="display: flex; gap: 6px;">
+                        <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                        <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                        <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                    </div>
                 </div>
-                <div style="background: #f8fafc; padding: 14px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                    <div class="skeleton-elem" style="width: 50%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 80%; height: 12px; border-radius: 4px;"></div>
+                <div class="extra-stat-box" style="padding: 14px;">
+                    <div class="skeleton-elem" style="width: 45%; height: 13px; margin-bottom: 10px; border-radius: 4px;"></div>
+                    <div style="display: flex; gap: 6px;">
+                        <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                        <div class="skeleton-elem" style="width: 75px; height: 24px; border-radius: 6px;"></div>
+                        <div class="skeleton-elem" style="width: 65px; height: 24px; border-radius: 6px;"></div>
+                    </div>
                 </div>
             </div>
 
             <!-- Skeleton Tabs -->
-            <div class="modal-tabs" style="margin-bottom: 16px; display: flex; gap: 10px;">
-                <div class="skeleton-elem" style="width: 110px; height: 32px; border-radius: 8px;"></div>
-                <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
-                <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+            <div class="modal-tabs-wrapper">
+                <div class="modal-tabs-nav">
+                    <div class="skeleton-elem" style="width: 120px; height: 32px; border-radius: 8px;"></div>
+                    <div class="skeleton-elem" style="width: 140px; height: 32px; border-radius: 8px;"></div>
+                    <div class="skeleton-elem" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                </div>
             </div>
 
             <!-- Skeleton Mini Table -->
-            <div style="border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; background: #fff;">
+            <div style="border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
                 <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; display: flex; gap: 16px;">
                     <div class="skeleton-elem" style="width: 30%; height: 13px; border-radius: 4px;"></div>
                     <div class="skeleton-elem" style="width: 20%; height: 13px; border-radius: 4px;"></div>
@@ -123,16 +164,19 @@ function getSellerSkeletonHtml() {
                     <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
                     <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
                 </div>
-                <div style="padding: 14px 16px; display: flex; gap: 16px; align-items: center;">
-                    <div class="skeleton-elem" style="width: 30%; height: 12px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 15%; height: 12px; border-radius: 4px;"></div>
-                    <div class="skeleton-elem" style="width: 20%; height: 12px; border-radius: 4px;"></div>
-                </div>
             </div>
         </div>
     `;
+}
+
+function safeEscapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function openSellerModal(userId) {
@@ -150,7 +194,7 @@ function openSellerModal(userId) {
         .then(res => res.json())
         .then(data => {
             if (data.status !== 'success') {
-                modalBody.innerHTML = `<div class="alert alert-error">${lang.failed || 'Gagal memuat detail profil.'}</div>`;
+                modalBody.innerHTML = `<div class="alert alert-error" style="padding: 16px; border-radius: 12px; margin: 10px 0;">${lang.failed || 'Gagal memuat detail profil.'}</div>`;
                 return;
             }
 
@@ -161,12 +205,17 @@ function openSellerModal(userId) {
             const appeals = data.appeals_history || [];
 
             let avatarHtml = u.avatar 
-                ? `<img src="${u.avatar}" alt="${u.name}">` 
-                : u.name.substring(0, 2).toUpperCase();
+                ? `<img src="${u.avatar}" alt="${safeEscapeHtml(u.name)}">` 
+                : safeEscapeHtml(u.name.substring(0, 2).toUpperCase());
 
             let statusBadge = u.is_suspended 
-                ? `<span class="badge badge-suspended"><i class="fas fa-ban" style="font-size:10px;"></i> ${lang.suspended || 'Ditangguhkan'}</span>`
-                : `<span class="badge badge-active"><i class="fas fa-circle" style="font-size:8px;"></i> ${lang.active || 'Aktif'}</span>`;
+                ? `<span class="seller-status-chip chip-suspended"><span class="status-pulse-dot dot-suspended"></span> ${lang.suspended || 'Ditangguhkan'}</span>`
+                : `<span class="seller-status-chip chip-active"><span class="status-pulse-dot dot-active"></span> ${lang.active || 'Aktif'}</span>`;
+
+            let ctrValue = 0;
+            if (s.total_views > 0 && s.total_clicks > 0) {
+                ctrValue = ((s.total_clicks / s.total_views) * 100).toFixed(1);
+            }
 
             let html = `
                 <!-- Seller Header Banner -->
@@ -174,65 +223,108 @@ function openSellerModal(userId) {
                     <div class="seller-banner-left">
                         <div class="seller-banner-avatar">${avatarHtml}</div>
                         <div class="seller-banner-info">
-                            <div class="name">${u.name}</div>
-                            <div class="email">${u.email} &bull; Bergabung: ${u.joined_at}</div>
-                            <a href="${u.microsite_url}" target="_blank" class="link">
-                                <i class="fas fa-external-link-alt"></i> ${u.microsite_url}
-                            </a>
+                            <div class="seller-banner-top">
+                                <h4 class="seller-name">${safeEscapeHtml(u.name)}</h4>
+                                ${statusBadge}
+                            </div>
+                            <div class="seller-meta">
+                                <span><i class="far fa-envelope"></i> ${safeEscapeHtml(u.email)}</span>
+                                <span class="meta-sep">&bull;</span>
+                                <span><i class="far fa-calendar-alt"></i> Bergabung: ${safeEscapeHtml(u.joined_at)}</span>
+                            </div>
+                            <div class="seller-link-wrap">
+                                <a href="${u.microsite_url}" target="_blank" class="seller-microsite-chip" title="Buka Halaman Publik Microsite">
+                                    <i class="fas fa-globe"></i>
+                                    <span>${safeEscapeHtml(u.microsite_url)}</span>
+                                    <i class="fas fa-arrow-up-right-from-square chip-ext-icon"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        ${statusBadge}
                     </div>
                 </div>
 
-                <!-- 4 Mini Financial Stats Grid -->
+                <!-- 4 Financial Stats Grid (Clean SaaS Inspector) -->
                 <div class="modal-stats-grid">
-                    <div class="modal-stat-box">
-                        <div class="box-lbl">${lang.total_turnover || 'Total Omset Produk'}</div>
-                        <div class="box-val" style="color: #16a34a;">Rp ${Number(s.total_turnover).toLocaleString('id-ID')}</div>
+                    <div class="modal-stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-lbl">${lang.total_turnover || 'Total Omset'}</span>
+                            <div class="stat-card-icon icon-omset"><i class="fas fa-chart-line"></i></div>
+                        </div>
+                        <div class="stat-card-val val-omset">Rp ${Number(s.total_turnover || 0).toLocaleString('id-ID')}</div>
+                        <div class="stat-card-sub">Gross Revenue</div>
                     </div>
-                    <div class="modal-stat-box">
-                        <div class="box-lbl">${lang.current_balance || 'Saldo Seller'}</div>
-                        <div class="box-val" style="color: #5A5BF1;">Rp ${Number(s.current_balance).toLocaleString('id-ID')}</div>
+                    <div class="modal-stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-lbl">${lang.current_balance || 'Saldo Akun'}</span>
+                            <div class="stat-card-icon icon-balance"><i class="fas fa-wallet"></i></div>
+                        </div>
+                        <div class="stat-card-val val-balance">Rp ${Number(s.current_balance || 0).toLocaleString('id-ID')}</div>
+                        <div class="stat-card-sub">Tersedia untuk Payout</div>
                     </div>
-                    <div class="modal-stat-box">
-                        <div class="box-lbl">${lang.total_withdrawn || 'Sudah Dicairkan'}</div>
-                        <div class="box-val" style="color: #d97706;">Rp ${Number(s.total_withdrawn).toLocaleString('id-ID')}</div>
+                    <div class="modal-stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-lbl">${lang.total_withdrawn || 'Total Withdraw'}</span>
+                            <div class="stat-card-icon icon-payout"><i class="fas fa-money-bill-transfer"></i></div>
+                        </div>
+                        <div class="stat-card-val val-payout">Rp ${Number(s.total_withdrawn || 0).toLocaleString('id-ID')}</div>
+                        <div class="stat-card-sub">Telah Dicairkan</div>
                     </div>
-                    <div class="modal-stat-box">
-                        <div class="box-lbl">${lang.total_orders || 'Pesanan Sukses'}</div>
-                        <div class="box-val">${s.total_orders} Pesanan</div>
+                    <div class="modal-stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-lbl">${lang.total_orders || 'Pesanan Sukses'}</span>
+                            <div class="stat-card-icon icon-orders"><i class="fas fa-bag-shopping"></i></div>
+                        </div>
+                        <div class="stat-card-val val-orders">${s.total_orders || 0} <span class="unit">Pesanan</span></div>
+                        <div class="stat-card-sub">Transaksi Berhasil</div>
                     </div>
                 </div>
 
-                <!-- Extra Details Grid -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; font-size: 13px;">
-                    <div style="background: #f8fafc; padding: 12px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                        <strong><i class="fas fa-boxes" style="color: #5A5BF1; margin-right: 6px;"></i> Produk Digital:</strong>
-                        <div style="margin-top: 4px; color: #64748b;">
-                            Total: <strong>${s.total_products}</strong> &bull; Live: <strong style="color: #16a34a;">${s.active_products}</strong> &bull; Pending: <strong style="color: #d97706;">${s.pending_products}</strong> &bull; Takedown: <strong style="color: #dc2626;">${s.takedown_products}</strong>
+                <!-- Extra Overview Grid -->
+                <div class="seller-extra-grid">
+                    <div class="extra-stat-box">
+                        <div class="extra-stat-title">
+                            <i class="fas fa-boxes-stacked icon-accent"></i>
+                            <span>Inventaris Produk Digital</span>
+                        </div>
+                        <div class="extra-stat-chips">
+                            <span class="stat-chip chip-total">Total: <strong>${s.total_products || 0}</strong></span>
+                            <span class="stat-chip chip-live"><span class="chip-dot dot-live"></span> Live: <strong>${s.active_products || 0}</strong></span>
+                            <span class="stat-chip chip-pending"><span class="chip-dot dot-pending"></span> Pending: <strong>${s.pending_products || 0}</strong></span>
+                            <span class="stat-chip chip-takedown"><span class="chip-dot dot-takedown"></span> Takedown: <strong>${s.takedown_products || 0}</strong></span>
                         </div>
                     </div>
-                    <div style="background: #f8fafc; padding: 12px 16px; border-radius: 10px; border: 1px solid #f1f5f9;">
-                        <strong><i class="fas fa-chart-line" style="color: #5A5BF1; margin-right: 6px;"></i> Kunjungan Microsite:</strong>
-                        <div style="margin-top: 4px; color: #64748b;">
-                            Views: <strong>${s.total_views}</strong> &bull; Clicks: <strong>${s.total_clicks}</strong>
+                    <div class="extra-stat-box">
+                        <div class="extra-stat-title">
+                            <i class="fas fa-chart-simple icon-accent"></i>
+                            <span>Trafik & Kunjungan Microsite</span>
+                        </div>
+                        <div class="extra-stat-chips">
+                            <span class="stat-chip chip-traffic"><i class="fas fa-eye"></i> <strong>${Number(s.total_views || 0).toLocaleString('id-ID')}</strong> Views</span>
+                            <span class="stat-chip chip-traffic"><i class="fas fa-arrow-pointer"></i> <strong>${Number(s.total_clicks || 0).toLocaleString('id-ID')}</strong> Clicks</span>
+                            <span class="stat-chip chip-ctr"><i class="fas fa-percent"></i> CTR: <strong>${ctrValue}%</strong></span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal Tabs (Products, Payouts & Appeals) -->
-                <div class="modal-tabs">
-                    <button type="button" class="modal-tab-btn active" onclick="switchModalTab('tabProducts')">
-                        <i class="fas fa-box"></i> ${lang.products_tab || 'Produk'} (${products.length})
-                    </button>
-                    <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabPayouts')">
-                        <i class="fas fa-money-bill-wave"></i> ${lang.payouts_tab || 'Riwayat Payout'} (${payouts.length})
-                    </button>
-                    <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabAppeals')">
-                        <i class="fas fa-file-contract"></i> Riwayat Banding ${appeals.length > 0 ? `<span style="background:#fff0e2;color:#ED842C;font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:4px;">${appeals.length}</span>` : ''}
-                    </button>
+                <div class="modal-tabs-wrapper">
+                    <div class="modal-tabs-nav">
+                        <button type="button" class="modal-tab-pill active" onclick="switchModalTab('tabProducts')">
+                            <i class="fas fa-box"></i>
+                            <span>${lang.products_tab || 'Produk Digital'}</span>
+                            <span class="tab-badge">${products.length}</span>
+                        </button>
+                        <button type="button" class="modal-tab-pill" onclick="switchModalTab('tabPayouts')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>${lang.payouts_tab || 'Riwayat Payout'}</span>
+                            <span class="tab-badge">${payouts.length}</span>
+                        </button>
+                        <button type="button" class="modal-tab-pill" onclick="switchModalTab('tabAppeals')">
+                            <i class="fas fa-shield-halved"></i>
+                            <span>Riwayat Banding</span>
+                            ${appeals.length > 0 ? `<span class="tab-badge" style="background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;">${appeals.length}</span>` : `<span class="tab-badge">0</span>`}
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Tab 1: Products -->
@@ -251,12 +343,12 @@ function openSellerModal(userId) {
                             <tbody>
                                 ${products.map(p => `
                                     <tr>
-                                        <td style="font-weight: 700;">${p.title}</td>
-                                        <td>Rp ${Number(p.sale_price || p.price).toLocaleString('id-ID')}</td>
-                                        <td><span class="badge badge-role" style="font-size: 10px;">${p.platform_type}</span></td>
+                                        <td style="font-weight: 700; color: #0f172a;">${safeEscapeHtml(p.title)}</td>
+                                        <td style="font-weight: 600;">Rp ${Number(p.sale_price || p.price).toLocaleString('id-ID')}</td>
+                                        <td><span class="badge badge-role" style="font-size: 10px;">${safeEscapeHtml(p.platform_type)}</span></td>
                                         <td>
                                             <span class="badge ${p.verification_status === 'approved' ? 'badge-active' : (p.verification_status === 'rejected' ? 'badge-suspended' : 'badge-role')}" style="font-size: 10px;">
-                                                ${p.verification_status}
+                                                ${safeEscapeHtml(p.verification_status)}
                                             </span>
                                         </td>
                                         <td>
@@ -268,7 +360,13 @@ function openSellerModal(userId) {
                                 `).join('')}
                             </tbody>
                         </table>
-                    ` : `<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 13px;">${lang.no_products || 'Belum ada produk digital.'}</div>`}
+                    ` : `
+                        <div class="modal-empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-box-open"></i></div>
+                            <div class="empty-state-title">Belum Ada Produk Digital</div>
+                            <p class="empty-state-desc">Seller ini belum mengunggah atau mempublikasikan produk digital di Linkan.ID.</p>
+                        </div>
+                    `}
                 </div>
 
                 <!-- Tab 2: Payouts -->
@@ -290,17 +388,23 @@ function openSellerModal(userId) {
                                         <td>${new Date(po.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                         <td style="font-weight: 700; color: #16a34a;">Rp ${Number(po.amount).toLocaleString('id-ID')}</td>
                                         <td style="color: #64748b;">Rp ${Number(po.commission || 0).toLocaleString('id-ID')}</td>
-                                        <td>${po.method || '-'}</td>
+                                        <td>${safeEscapeHtml(po.method || '-')}</td>
                                         <td>
                                             <span class="badge ${po.status === 'approved' ? 'badge-active' : (po.status === 'rejected' ? 'badge-suspended' : 'badge-role')}" style="font-size: 10px;">
-                                                ${po.status}
+                                                ${safeEscapeHtml(po.status)}
                                             </span>
                                         </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
-                    ` : `<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 13px;">${lang.no_payouts || 'Belum ada riwayat penarikan dana.'}</div>`}
+                    ` : `
+                        <div class="modal-empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-receipt"></i></div>
+                            <div class="empty-state-title">Belum Ada Riwayat Payout</div>
+                            <p class="empty-state-desc">Seller ini belum pernah mengajukan atau menerima pencairan dana.</p>
+                        </div>
+                    `}
                 </div>
 
                 <!-- Tab 3: Riwayat Banding -->
@@ -316,42 +420,48 @@ function openSellerModal(userId) {
                                 const cfg = statusConfig[a.status] || statusConfig.pending;
                                 const attemptNum = appeals.length - i;
                                 return `
-                                    <div style="border: 1px solid #f1f5f9; border-left: 4px solid ${cfg.border}; border-radius: 10px; padding: 14px 16px; background: #fafafa;">
+                                    <div style="border: 1px solid #f1f5f9; border-left: 4px solid ${cfg.border}; border-radius: 12px; padding: 14px 16px; background: #fafbfc;">
                                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                                             <div style="display: flex; align-items: center; gap: 8px;">
                                                 <span style="font-size: 11px; font-weight: 800; background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 20px;">Percobaan #${attemptNum}</span>
                                                 <span class="badge ${cfg.cls}" style="font-size: 10px;"><i class="fas ${cfg.icon}"></i> ${cfg.label}</span>
                                             </div>
-                                            <span style="font-size: 11px; color: #94a3b8;"><i class="fas fa-clock"></i> ${a.submitted_at}</span>
+                                            <span style="font-size: 11px; color: #94a3b8;"><i class="far fa-clock"></i> ${safeEscapeHtml(a.submitted_at)}</span>
                                         </div>
-                                        <div style="font-size: 13px; color: #334155; line-height: 1.55; margin-bottom: ${a.admin_notes ? '10px' : '0'}">${a.appeal_reason}</div>
+                                        <div style="font-size: 13px; color: #334155; line-height: 1.55; margin-bottom: ${a.admin_notes ? '10px' : '0'}">${safeEscapeHtml(a.appeal_reason)}</div>
                                         ${a.admin_notes ? `
-                                            <div style="font-size: 11px; color: #64748b; background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #ED842C; border-radius: 6px; padding: 8px 12px; margin-top: 8px;">
-                                                <strong>Catatan Admin:</strong> ${a.admin_notes}
-                                                ${a.resolved_at ? `<span style="float:right;color:#94a3b8;">${a.resolved_at}</span>` : ''}
+                                            <div style="font-size: 11px; color: #64748b; background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #ED842C; border-radius: 8px; padding: 8px 12px; margin-top: 8px;">
+                                                <strong style="color: #0f172a;">Catatan Admin:</strong> ${safeEscapeHtml(a.admin_notes)}
+                                                ${a.resolved_at ? `<span style="float:right;color:#94a3b8;">${safeEscapeHtml(a.resolved_at)}</span>` : ''}
                                             </div>
                                         ` : ''}
                                     </div>
                                 `;
                             }).join('')}
                         </div>
-                    ` : `<div style="text-align: center; padding: 28px 20px; color: #94a3b8; font-size: 13px;"><i class="fas fa-file-contract" style="font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.4;"></i>Belum ada riwayat permohonan banding.</div>`}
+                    ` : `
+                        <div class="modal-empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-shield-check"></i></div>
+                            <div class="empty-state-title">Akun Bersih & Normal</div>
+                            <p class="empty-state-desc">Tidak ada riwayat permohonan banding suspensi untuk akun seller ini.</p>
+                        </div>
+                    `}
                 </div>
             `;
 
             modalBody.innerHTML = html;
         })
         .catch(err => {
-            modalBody.innerHTML = `<div class="alert alert-error">${lang.failed || 'Gagal memuat detail profil.'}</div>`;
+            modalBody.innerHTML = `<div class="alert alert-error" style="padding: 16px; border-radius: 12px; margin: 10px 0;">${lang.failed || 'Gagal memuat detail profil.'}</div>`;
         });
 }
 
 function switchModalTab(tabId) {
-    document.querySelectorAll('.modal-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.modal-tab-pill, .modal-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.modal-tab-content').forEach(content => content.classList.remove('active'));
 
     if (window.event && window.event.target) {
-        const targetBtn = window.event.target.closest('.modal-tab-btn');
+        const targetBtn = window.event.target.closest('.modal-tab-pill, .modal-tab-btn');
         if (targetBtn) targetBtn.classList.add('active');
     }
     const targetContent = document.getElementById(tabId);

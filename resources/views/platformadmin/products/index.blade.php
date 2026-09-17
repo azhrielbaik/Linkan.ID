@@ -367,13 +367,13 @@
         <div class="modal-card modal-card-detail">
             <div class="modal-header">
                 <div class="modal-header-title">
-                    <div class="modal-icon-badge"><i class="fas fa-cube"></i></div>
+                    <div class="modal-icon-badge"><i class="fas fa-box-open"></i></div>
                     <div>
                         <h3>Detail & Inspeksi Produk</h3>
                         <p class="modal-subtitle">Informasi lengkap konten, akses platform, dan performa penjualan</p>
                     </div>
                 </div>
-                <button class="modal-close" onclick="closePlatformModal()">&times;</button>
+                <button type="button" class="modal-close-round" onclick="closePlatformModal()" aria-label="Tutup">&times;</button>
             </div>
             <div class="modal-body modal-body-scrollable">
                 {{-- Banner Takedown Notice (Muncul jika sedang ditakedown) --}}
@@ -389,13 +389,16 @@
                 {{-- Overview Header Card --}}
                 <div class="detail-overview-card">
                     <div class="detail-thumb-box" id="modalDetailThumbBox">
-                        <img id="modalDetailThumb" src="" alt="Cover Produk" class="detail-thumb-img">
-                        <div id="modalDetailThumbPlaceholder" class="detail-thumb-placeholder"><i class="fas fa-box-open"></i></div>
+                        <img id="modalDetailThumb" src="" alt="Cover Produk" class="detail-thumb-img"
+                             onerror="this.style.display='none'; document.getElementById('modalDetailThumbPlaceholder').style.display='flex';">
+                        <div id="modalDetailThumbPlaceholder" class="detail-thumb-placeholder">
+                            <i class="fas fa-box-open"></i>
+                        </div>
                     </div>
                     <div class="detail-overview-info">
                         <div class="detail-title-row">
                             <h4 id="modalDetailTitle" class="detail-product-title">-</h4>
-                            <span id="modalDetailStatusBadge" class="badge badge-live">Aktif</span>
+                            <span id="modalDetailStatusBadge" class="badge-live-dot">Aktif (Live)</span>
                         </div>
                         <div class="detail-seller-meta">
                             <div class="detail-seller-avatar" id="modalDetailSellerAvatar">U</div>
@@ -403,23 +406,23 @@
                                 <span class="detail-seller-name" id="modalDetailSellerName">-</span>
                                 <span class="detail-seller-email" id="modalDetailSellerEmail">-</span>
                             </div>
-                            <span class="detail-created-badge" id="modalDetailCreatedAt"><i class="fas fa-calendar-alt"></i> -</span>
+                            <span class="detail-created-badge" id="modalDetailCreatedAt"><i class="far fa-calendar-alt"></i> -</span>
                         </div>
                         <div class="detail-metrics-chips">
-                            <div class="metric-chip price">
+                            <div class="metric-chip price" title="Harga Jual">
                                 <i class="fas fa-tag"></i>
                                 <span id="modalDetailPriceDisplay">Rp 0</span>
                                 <span id="modalDetailStrikePrice" class="strike-price-mini" style="display: none;"></span>
                             </div>
-                            <div class="metric-chip stock" id="modalDetailStockChip">
+                            <div class="metric-chip stock" id="modalDetailStockChip" title="Ketersediaan Stok">
                                 <i class="fas fa-boxes"></i>
                                 <span id="modalDetailStockDisplay">Unlimited</span>
                             </div>
-                            <div class="metric-chip sales">
+                            <div class="metric-chip sales" title="Total Penjualan">
                                 <i class="fas fa-shopping-bag"></i>
                                 <span id="modalDetailSoldDisplay">0 Terjual</span>
                             </div>
-                            <div class="metric-chip revenue">
+                            <div class="metric-chip revenue" title="Total Omzet Produk">
                                 <i class="fas fa-coins"></i>
                                 <span id="modalDetailRevenueDisplay">Rp 0 Omzet</span>
                             </div>
@@ -430,8 +433,11 @@
                 {{-- Akses & Pengiriman Konten Card --}}
                 <div class="detail-section-card">
                     <div class="detail-section-header">
-                        <i class="fas fa-truck-loading" style="color: #ed842c;"></i>
-                        <span>Akses Pengiriman Konten (*Deliverable & Fulfillment*)</span>
+                        <div class="section-icon-badge"><i class="fas fa-truck-ramp-box"></i></div>
+                        <div>
+                            <span class="section-main-title">Akses Pengiriman Konten</span>
+                            <span class="section-sub-title">Integrasi platform, deliverable URL & file digital pembeli</span>
+                        </div>
                     </div>
 
                     <div class="detail-fulfillment-grid">
@@ -456,12 +462,12 @@
                             </div>
                         </div>
 
-                        {{-- Deliverable URL jika ada (Zoom/Notion/Telegram) --}}
+                        {{-- Deliverable URL jika ada (Zoom/Notion/Telegram/File Storage) --}}
                         <div class="fulfillment-row" id="modalDetailDeliverableRow" style="display: none;">
                             <span class="fulfillment-label">Tautan Tambahan / Deliverable URL:</span>
                             <div class="url-action-wrapper">
                                 <input type="text" id="modalDetailDeliverableInput" readonly class="url-input-field">
-                                <a id="modalDetailDeliverableLink" href="#" target="_blank" class="btn-open-url">
+                                <a id="modalDetailDeliverableLink" href="#" target="_blank" class="btn-open-url" title="Buka / Akses Link Deliverable">
                                     <i class="fas fa-external-link-alt"></i> Akses
                                 </a>
                             </div>
@@ -486,7 +492,7 @@
 
                         {{-- Jika tidak ada URL dan tidak ada File --}}
                         <div id="modalDetailNoFulfillment" class="no-fulfillment-note" style="display: none;">
-                            <i class="fas fa-exclamation-circle"></i> Tidak ada file terunggah maupun link eksternal yang tercantum pada produk ini.
+                            <i class="fas fa-info-circle"></i> Tidak ada file terunggah maupun link eksternal yang tercantum pada produk ini.
                         </div>
                     </div>
                 </div>
@@ -494,8 +500,10 @@
                 {{-- Deskripsi Lengkap Produk --}}
                 <div class="detail-section-card">
                     <div class="detail-section-header">
-                        <i class="fas fa-align-left" style="color: #64748b;"></i>
-                        <span>Deskripsi Lengkap Produk</span>
+                        <div class="section-icon-badge gray"><i class="fas fa-align-left"></i></div>
+                        <div>
+                            <span class="section-main-title">Deskripsi Lengkap Produk</span>
+                        </div>
                     </div>
                     <div class="detail-description-box" id="modalDetailDescription">
                         -
@@ -505,26 +513,27 @@
                 {{-- Galeri Media Tambahan (Media Files) --}}
                 <div class="detail-section-card" id="modalDetailGalleryCard" style="display: none;">
                     <div class="detail-section-header">
-                        <i class="fas fa-images" style="color: #64748b;"></i>
-                        <span>Galeri / Screenshot Pendukung</span>
+                        <div class="section-icon-badge gray"><i class="fas fa-images"></i></div>
+                        <div>
+                            <span class="section-main-title">Galeri / Screenshot Pendukung</span>
+                        </div>
                     </div>
                     <div class="detail-gallery-grid" id="modalDetailGalleryGrid"></div>
                 </div>
             </div>
 
-            <div class="modal-footer modal-footer-split">
+            <div class="modal-footer-split">
                 <div class="footer-left">
                     <a id="modalDetailSellerStoreLink" href="#" target="_blank" class="btn-store-external" style="display: none;">
-                        <i class="fas fa-store"></i> Kunjungi Etalase Seller
+                        <i class="fas fa-store"></i> <span>Kunjungi Etalase Seller</span>
                     </a>
                 </div>
                 <div class="footer-right">
-                    <button type="button" class="btn-modal-cancel" onclick="closePlatformModal()">Tutup</button>
                     <button type="button" id="modalDetailQuickTakedownBtn" class="btn-modal-action-takedown" onclick="triggerTakedownFromDetail()">
-                        <i class="fas fa-ban"></i> Takedown Produk
+                        <i class="fas fa-ban"></i> <span>Takedown Produk</span>
                     </button>
                     <button type="button" id="modalDetailQuickRestoreBtn" class="btn-modal-action-restore" onclick="triggerRestoreFromDetail()" style="display: none;">
-                        <i class="fas fa-undo"></i> Pulihkan Produk
+                        <i class="fas fa-undo"></i> <span>Pulihkan Produk</span>
                     </button>
                 </div>
             </div>

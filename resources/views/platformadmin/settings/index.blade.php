@@ -63,24 +63,36 @@
 
                         {{-- Set Persentase Komisi --}}
                         <div class="form-group">
-                            <label for="commission_percent">{{ __('platform.platform_commission_percent') }}</label>
+                            <label for="commission_percent">
+                                <i class="fas fa-percentage form-label-icon"></i>
+                                <span>{{ __('platform.platform_commission_percent') }}</span>
+                            </label>
                             <div class="input-group">
                                 <input type="number" step="0.1" min="0" max="100" id="commission_percent" name="commission_percent"
                                        value="{{ old('commission_percent', $commissionPercent) }}" class="form-control has-suffix" required>
                                 <span class="input-suffix">%</span>
                             </div>
-                            <div class="form-hint">{{ __('platform.platform_commission_hint') }}</div>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>
+                                <span>{{ __('platform.platform_commission_hint') }}</span>
+                            </div>
                         </div>
 
                         {{-- Set Batas Minimum Withdraw --}}
                         <div class="form-group">
-                            <label for="min_withdraw">{{ __('platform.min_withdraw_amount') }}</label>
+                            <label for="min_withdraw">
+                                <i class="fas fa-wallet form-label-icon"></i>
+                                <span>{{ __('platform.min_withdraw_amount') }}</span>
+                            </label>
                             <div class="input-group">
                                 <span class="input-prefix">Rp</span>
                                 <input type="number" step="1000" min="0" id="min_withdraw" name="min_withdraw"
                                        value="{{ old('min_withdraw', $minWithdrawAmount) }}" class="form-control has-prefix" required>
                             </div>
-                            <div class="form-hint">{{ __('platform.min_withdraw_hint') }}</div>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>
+                                <span>{{ __('platform.min_withdraw_hint') }}</span>
+                            </div>
                         </div>
 
                         <button type="button" class="btn-save-settings" onclick="openPasswordConfirmationModal()">
@@ -92,7 +104,7 @@
                 {{-- Card 2: Broadcast Pengumuman --}}
                 <div class="setting-card">
                     <div class="setting-card-header">
-                        <div class="setting-card-icon" style="background: rgba(14, 165, 233, 0.1); color: #0284c7;">
+                        <div class="setting-card-icon broadcast-icon">
                             <i class="fas fa-bullhorn"></i>
                         </div>
                         <div class="setting-card-title-wrap">
@@ -106,32 +118,48 @@
 
                         <div class="broadcast-form-grid">
                             <div class="form-group">
-                                <label for="ann_title">{{ __('platform.announcement_title') }}</label>
+                                <label for="ann_title">
+                                    <i class="fas fa-heading form-label-icon"></i>
+                                    <span>{{ __('platform.announcement_title') }}</span>
+                                </label>
                                 <input type="text" id="ann_title" name="title" placeholder="{{ __('platform.announcement_title_placeholder') }}" class="form-control" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="ann_type">{{ __('platform.announcement_type') }}</label>
-                                <select id="ann_type" name="type" class="form-control filter-select" required>
-                                    <option value="info">{{ __('platform.type_info') }}</option>
-                                    <option value="warning">{{ __('platform.type_warning') }}</option>
-                                    <option value="success">{{ __('platform.type_success') }}</option>
-                                    <option value="danger">{{ __('platform.type_danger') }}</option>
-                                </select>
+                                <label for="ann_type">
+                                    <i class="fas fa-tag form-label-icon"></i>
+                                    <span>{{ __('platform.announcement_type') }}</span>
+                                </label>
+                                <div class="select-wrapper">
+                                    <select id="ann_type" name="type" class="form-control filter-select" required>
+                                        <option value="info">{{ __('platform.type_info') }}</option>
+                                        <option value="warning">{{ __('platform.type_warning') }}</option>
+                                        <option value="success">{{ __('platform.type_success') }}</option>
+                                        <option value="danger">{{ __('platform.type_danger') }}</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="ann_message">{{ __('platform.announcement_message') }}</label>
+                            <label for="ann_message">
+                                <i class="fas fa-comment-alt form-label-icon"></i>
+                                <span>{{ __('platform.announcement_message') }}</span>
+                            </label>
                             <textarea id="ann_message" name="message" rows="3" class="form-control" placeholder="{{ __('platform.announcement_message_placeholder') }}" required></textarea>
                         </div>
 
                         {{-- Opsi Kirim Email Massal --}}
                         <label class="email-broadcast-card">
-                            <input type="checkbox" name="send_email" value="1">
-                            <div>
+                            <input type="checkbox" name="send_email" value="1" id="send_email_check">
+                            <span class="custom-checkbox">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <div class="email-broadcast-content">
                                 <div class="email-broadcast-title">
-                                    <i class="fas fa-envelope" style="color: #ed842c;"></i> Kirim Notifikasi via Email ke Semua Seller
+                                    <i class="fas fa-envelope-open-text" style="color: #ed842c;"></i>
+                                    <span>Kirim Notifikasi via Email ke Semua Seller</span>
                                 </div>
                                 <div class="email-broadcast-desc">
                                     Kirimkan salinan pengumuman resmi langsung ke inbox email seluruh seller aktif melalui SMTP Gmail.
@@ -242,7 +270,7 @@
                     {{ __('platform.confirm_admin_password_desc') }}
                 </p>
 
-                <div style="background: #fff8f2; border: 1px solid rgba(237, 132, 44, 0.2); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px;">
+                <div class="modal-summary-box">
                     <div style="margin-bottom: 6px; color: #475569;">
                         <strong>{{ __('platform.platform_commission_percent') }}:</strong> <span id="summary_commission" style="font-weight: 800; color: #ED842C;"></span>
                     </div>
@@ -252,15 +280,16 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="modal_admin_password" style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block;">
-                        <i class="fas fa-key" style="color: #ED842C;"></i> {{ __('platform.admin_password_label') }}
+                    <label for="modal_admin_password" style="font-size: 12.5px; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-key" style="color: #ED842C;"></i>
+                        <span>{{ __('platform.admin_password_label') }}</span>
                     </label>
                     <div style="position: relative;">
                         <input type="password" id="modal_admin_password" class="form-control"
                                placeholder="{{ __('platform.admin_password_placeholder') }}"
-                               style="width: 100%; padding: 10px 40px 10px 14px; box-sizing: border-box;"
+                               style="width: 100%; padding-right: 44px;"
                                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); submitFinancialSettings(); }">
-                        <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer;">
+                        <button type="button" onclick="togglePasswordVisibility()" class="btn-toggle-eye">
                             <i class="fas fa-eye" id="togglePasswordIcon"></i>
                         </button>
                     </div>
