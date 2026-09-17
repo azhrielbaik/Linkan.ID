@@ -349,15 +349,15 @@
                 
                 <div class="profile-avatar-circle">
                     <div class="avatar-inner">
-                        @if($appearance && $appearance->profile_image)
-                            <img src="{{ asset('storage/' . $appearance->profile_image) }}" alt="Profile">
+                        @if(Auth::check() && Auth::user()->avatar)
+                            <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
                         @else
                             <i class="fas fa-user"></i>
                         @endif
                     </div>
                 </div>
                 
-                <h3>Selamat Datang, {{ Auth::user()->name }}!</h3>
+                <h3>Selamat Datang, {{ Auth::user()->username ?? Auth::user()->name }}!</h3>
                 <p>Kelola penjualan dan raih target Anda.</p>
                 
                 <!-- Chart (integrated inside profile widget for compact UI like reference) -->

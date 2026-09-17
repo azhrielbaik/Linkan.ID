@@ -27,6 +27,9 @@ class AccountController extends Controller
         $request->validate([
             'username' => 'required|string|max:255',
             'name' => 'required|string|max:255',
+            'bio' => 'nullable|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_avatar' => 'nullable|boolean',
             'password' => 'nullable|string|min:8|confirmed',
         ], [
             'password.min' => 'Password minimal harus 8 karakter',
@@ -35,11 +38,12 @@ class AccountController extends Controller
 
         $this->accountService->updateAccount(
             Auth::user(),
-            $request->only(['username', 'name']),
+            $request->only(['username', 'name', 'bio', 'remove_avatar']),
+            $request->file('avatar'),
             $request->input('password')
         );
 
-        return redirect()->route('admin.account')->with('success', 'Account updated successfully.');
+        return redirect()->route('admin.settings')->with('success', 'Account updated successfully.');
     }
 
     public function delete()

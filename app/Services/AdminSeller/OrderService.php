@@ -15,7 +15,7 @@ class OrderService
      * @param int $userId
      * @param array $filters
      * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\CursorPaginator
      */
     public function getOrders(int $userId, array $filters = [], int $perPage = 10)
     {
@@ -30,6 +30,9 @@ class OrderService
 
         if (!empty($filters['date'])) {
             $query->whereDate('created_at', $filters['date']);
+        } elseif (empty($filters['search'])) {
+            // Default to last 30 days if no date filter and no search is applied
+            $query->where('created_at', '>=', now()->subDays(30));
         }
 
         if (!empty($filters['search'])) {
@@ -42,7 +45,7 @@ class OrderService
             });
         }
 
-        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+        return $query->orderBy('created_at', 'desc')->cursorPaginate($perPage);
     }
 
     /**

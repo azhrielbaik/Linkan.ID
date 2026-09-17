@@ -1,90 +1,259 @@
-@extends("admin_seller.layouts.app")
+@extends("admin_seller.layouts.settings")
 
 @section("page_title", __('admin.payout_title'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/payout.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/settings-tailwind.css') }}?v={{ time() }}">
+<style>
+    /* Payout Specific Scoped Styles */
+    .payout-card-border {
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    .payout-credit-card {
+        background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+        box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.4), 0 4px 6px -2px rgba(234, 88, 12, 0.2);
+    }
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+</style>
 @endpush
 
-@section("content")
-<div class="dashboard-payout-page">
+@section("settings_content")
+<div class="font-sans text-slate-800 pb-10">
 
-    @if(session('success'))
-        <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 12px 18px; margin-bottom: 20px; border-radius: 10px; font-weight: 500;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="payout-main-flex">
-        <!-- Earnings Card -->
-        <div class="earnings-card" style="padding: 30px 24px; border-radius: 20px; background: #5A5BF1; color: white; box-shadow: 0 4px 16px rgba(90,91,241,0.2); margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
-            <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.5px;">{{ __('admin.my_earnings') }}</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;">
-                <div style="flex: 1 1 180px; min-width: 180px; background: rgba(255,255,255,0.14); border-radius: 14px; padding: 18px 16px; display: flex; align-items: center; gap: 16px;">
-                    <div style="background: white; color: #5A5BF1; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-wallet"></i></div>
-                    <div>
-                        <div style="font-size: 12.5px; opacity: 0.9; font-weight: 500;">{{ __('admin.total_income') }}</div>
-                        <div style="font-size: 20px; font-weight: 800;">Rp {{ number_format($totalEarnings, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-                <div style="flex: 1 1 180px; min-width: 180px; background: rgba(255,255,255,0.14); border-radius: 14px; padding: 18px 16px; display: flex; align-items: center; gap: 16px;">
-                    <div style="background: white; color: #10B981; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-arrow-circle-up"></i></div>
-                    <div>
-                        <div style="font-size: 12.5px; opacity: 0.9; font-weight: 500;">{{ __('admin.total_withdrawal') }}</div>
-                        <div style="font-size: 20px; font-weight: 800;">Rp {{ number_format($totalWithdrawn, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-                <div style="flex: 1 1 180px; min-width: 180px; background: rgba(255,255,255,0.14); border-radius: 14px; padding: 18px 16px; display: flex; align-items: center; gap: 16px;">
-                    <div style="background: white; color: #3B82F6; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-coins"></i></div>
-                    <div>
-                        <div style="font-size: 12.5px; opacity: 0.9; font-weight: 500;">{{ __('admin.withdrawable_balance') }}</div>
-                        <div style="font-size: 20px; font-weight: 800;">Rp {{ number_format($currentBalance, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-            </div>
-            <div style="display: flex; gap: 14px; margin-top: 28px;">
-                <a href="{{ route('admin.payout.withdraw') }}" class="btn btn-withdraw" style="background: white; color: #5A5BF1; border: none; font-weight: 700; border-radius: 10px; padding: 12px 28px; font-size: 14.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 8px; text-decoration: none; transition: all 0.2s;">
-                    <i class="fas fa-paper-plane"></i> {{ __('admin.withdraw') }}
-                </a>
-                <a href="{{ route('admin.payout.history') }}" class="btn btn-history" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); font-weight: 700; border-radius: 10px; padding: 12px 28px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; text-decoration: none; transition: all 0.2s;">
-                    <i class="fas fa-history"></i> {{ __('admin.history') }}
-                </a>
-            </div>
-        </div>
-
-        <!-- Payment Card -->
-        <div class="payment-card" style="background: #5A5BF1; border-radius: 20px; box-shadow: 0 4px 16px rgba(90,91,241,0.2); padding: 32px 24px; text-align: center; color: white; display: flex; flex-direction: column; justify-content: center;">
-            <h2 style="font-size: 20px; font-weight: 800; color: white; margin-bottom: 8px; letter-spacing: -0.5px;">{{ __('admin.receipt_method') }}</h2>
-            <p style="color: rgba(255,255,255,0.9); font-size: 13.5px; margin-bottom: 24px;">{{ __('admin.funds_transferred_to') }}</p>
-            @if($payoutDetail)
-            <div class="bank-info" style="display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,0.14); border-radius: 14px; padding: 18px; margin-bottom: 18px; justify-content: center;">
-                @if($payoutDetail->method_type === 'Bank')
-                    <img src="/images/creditcard.png" alt="Bank" style="width: 50px; height: 50px; border-radius: 8px; background: #fff; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-                @elseif($payoutDetail->method_type === 'DANA')
-                    <img src="/images/dana.png" alt="DANA" style="width: 50px; height: 50px; border-radius: 8px; background: #fff; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-                @elseif($payoutDetail->method_type === 'ShopeePay')
-                    <img src="/images/shopeepay.png" alt="ShopeePay" style="width: 50px; height: 50px; border-radius: 8px; background: #fff; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-                @else
-                    <i class="fas fa-wallet" style="font-size: 32px; color: #5A5BF1; background: #fff; border-radius: 8px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;"></i>
-                @endif
-                <div style="text-align: left;">
-                    <div style="font-size: 16px; font-weight: 700; color: white;">{{ $payoutDetail->account_name }}</div>
-                    <div style="font-size: 13.5px; color: rgba(255,255,255,0.9); margin-top: 2px;">{{ $payoutDetail->method_type }} - {{ $payoutDetail->account_number }}</div>
-                    @if($payoutDetail->method_type === 'Bank' && $payoutDetail->bank_name)
-                        <div style="font-size: 12.5px; color: rgba(255,255,255,0.8); margin-top: 2px;">{{ $payoutDetail->bank_name }}</div>
-                    @endif
-                </div>
-            </div>
-            @else
-            <div style="padding: 24px; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.14); border-radius: 14px; margin-bottom: 18px; font-size: 14px;">
-                <p>{{ __('admin.no_payment_method') }}</p>
-            </div>
-            @endif
-            <a href="{{ route('admin.payout.method') }}" class="btn" style="margin-top: 10px; display: inline-block; background: white; color: #5A5BF1; font-weight: 700; border-radius: 10px; padding: 12px 32px; font-size: 14.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-decoration: none; transition: all 0.2s;">
-                <i class="fas fa-cog"></i> {{ $payoutDetail ? __('admin.edit_payout_method') : __('admin.set_payout_method') }}
-            </a>
+    {{-- Header Action --}}
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Payouts</h1>
+            <p class="text-sm text-slate-500 mt-1">Manage your earnings, balance, and withdrawal methods.</p>
         </div>
     </div>
 
+    @if(session('success'))
+        <div class="mb-6 bg-emerald-50 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-3 text-sm font-medium border border-emerald-200">
+            <i class="fas fa-check-circle text-emerald-500 text-lg"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- Top Metric Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        {{-- Total Earnings --}}
+        <div class="bg-white rounded-xl p-5 payout-card-border flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                    <i class="fas fa-chart-line text-sm"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-600">Total Earnings</span>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-slate-900">Rp {{ number_format($totalEarnings, 0, ',', '.') }}</div>
+                <p class="text-xs text-slate-500 mt-1">All-time gross income</p>
+            </div>
+        </div>
+
+        {{-- Available Balance --}}
+        <div class="bg-white rounded-xl p-5 payout-card-border flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                        <i class="fas fa-wallet text-sm"></i>
+                    </div>
+                    <span class="text-sm font-semibold text-slate-600">Available balance</span>
+                </div>
+                <span class="text-xs font-medium bg-green-100 text-green-700 px-2 py-0.5 rounded-md">Ready</span>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-slate-900">Rp {{ number_format($currentBalance, 0, ',', '.') }}</div>
+                <p class="text-xs text-slate-500 mt-1">Updates daily · Withdrawable</p>
+            </div>
+        </div>
+
+        {{-- Total Withdrawn --}}
+        <div class="bg-white rounded-xl p-5 payout-card-border flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                    <i class="fas fa-arrow-up-right-from-square text-sm"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-600">Total Withdrawn</span>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-slate-900">Rp {{ number_format($totalWithdrawn, 0, ',', '.') }}</div>
+                <p class="text-xs text-slate-500 mt-1">Successfully paid out to you</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Main Grid Layout --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {{-- Left Column: Payout History Table --}}
+        <div class="lg:col-span-2 bg-white rounded-xl payout-card-border overflow-hidden">
+            <div class="px-6 py-5 flex items-center justify-between" style="border-bottom: 1px solid #cbd5e1;">
+                <h2 class="text-lg font-bold text-slate-900">Recent Payouts</h2>
+                <a href="{{ route('admin.payout.history') }}" class="text-sm font-semibold text-[#ED842C] hover:text-[#d67322]">View All</a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                            <th class="px-6 py-3">Date</th>
+                            <th class="px-6 py-3">Payout ID</th>
+                            <th class="px-6 py-3">Net Amount</th>
+                            <th class="px-6 py-3">Method</th>
+                            <th class="px-6 py-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($history as $item)
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-slate-900">
+                                {{ \Carbon\Carbon::parse($item->created_at)->format('M d, Y') }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                #{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
+                            </td>
+                            <td class="px-6 py-4 text-sm font-bold text-slate-900">
+                                Rp {{ number_format($item->amount, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                {{ $item->method }}<br>
+                                <span class="text-xs opacity-80">...{{ substr($item->account_number, -4) }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                @if($item->status === 'completed' || $item->status === 'approved')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        Paid
+                                    </span>
+                                @elseif($item->status === 'pending')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                        Pending
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        {{ ucfirst($item->status) }}
+                                    </span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-500">
+                                No payouts found. Start selling to earn!
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="px-6 py-4 text-xs text-slate-500 bg-slate-50" style="border-top: 1px solid #cbd5e1;">
+                Showing {{ $history->count() }} most recent payout(s)
+            </div>
+        </div>
+
+        {{-- Right Column: Withdrawal & Account Details --}}
+        <div class="flex flex-col gap-6">
+            
+            {{-- Withdraw Action Card --}}
+            <div class="bg-white rounded-xl payout-card-border flex flex-col overflow-hidden">
+                <div class="px-6 py-4 flex items-center justify-between" style="border-bottom: 2px solid #cbd5e1;">
+                    <h3 class="text-base font-bold text-slate-900">Withdraw Funds</h3>
+                    <i class="fas fa-ellipsis-v text-slate-600 cursor-pointer"></i>
+                </div>
+                
+                <div class="p-6">
+                    <div class="text-[36px] font-extrabold text-slate-900 tracking-tight leading-none mb-2">
+                        Rp {{ number_format($currentBalance, 0, ',', '.') }}
+                    </div>
+                    <div class="text-[14px] text-slate-500 mb-6">
+                        Available balance for withdrawal
+                    </div>
+
+                    <div class="pt-5 space-y-4 mb-5 text-[15px]" style="border-top: 1px solid #cbd5e1;">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Gross balance</span>
+                            <span class="font-semibold text-slate-900">Rp {{ number_format($currentBalance, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Platform fee (5%)</span>
+                            <span class="font-semibold text-red-500">-Rp {{ number_format($currentBalance * 0.05, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-5 mb-6 flex justify-between items-center" style="border-top: 1px solid #cbd5e1;">
+                        <span class="text-[15px] font-bold text-slate-900">Net payout</span>
+                        <span class="text-[15px] font-bold text-slate-900">Rp {{ number_format($currentBalance * 0.95, 0, ',', '.') }}</span>
+                    </div>
+
+                    <a href="{{ route('admin.payout.withdraw') }}" class="block w-full py-3.5 px-4 bg-[#ED842C] hover:bg-[#d67322] text-white font-bold text-center rounded-full transition-colors no-underline">
+                        Withdraw Now
+                    </a>
+                </div>
+            </div>
+
+            {{-- Payout Account Card --}}
+            <div class="bg-white rounded-xl p-6 payout-card-border">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-bold text-slate-900">Payout account</h3>
+                    <a href="{{ route('admin.payout.method') }}" class="text-sm font-semibold text-[#ED842C] hover:text-[#d67322]">Change</a>
+                </div>
+
+                @if($payoutDetail)
+                    <div class="payout-credit-card rounded-xl p-5 text-white relative overflow-hidden">
+                        <!-- Decorative circles -->
+                        <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white opacity-10"></div>
+                        <div class="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-white opacity-10"></div>
+                        
+                        <div class="flex justify-between items-start mb-8 relative z-10">
+                            {{-- Chip --}}
+                            <div class="w-10 h-8 rounded bg-yellow-200/90 border border-yellow-300 opacity-80"></div>
+                            
+                            <span class="text-[10px] font-bold tracking-wider uppercase glass-effect px-2 py-1 rounded-md">
+                                {{ $payoutDetail->method_type }}
+                            </span>
+                        </div>
+                        
+                        <div class="text-xl font-mono tracking-widest mb-6 relative z-10 drop-shadow-md">
+                            **** **** **** {{ substr($payoutDetail->account_number, -4) }}
+                        </div>
+                        
+                        <div class="flex justify-between items-end relative z-10">
+                            <div>
+                                <div class="text-[9px] uppercase tracking-wider opacity-80 mb-1">Account Holder</div>
+                                <div class="text-sm font-bold truncate max-w-[140px]">{{ $payoutDetail->account_name }}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[9px] uppercase tracking-wider opacity-80 mb-1">
+                                    @if($payoutDetail->method_type === 'Bank')
+                                        Bank
+                                    @else
+                                        Provider
+                                    @endif
+                                </div>
+                                <div class="text-sm font-bold">{{ $payoutDetail->bank_name ?? $payoutDetail->method_type }}</div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-6 text-center">
+                        <div class="w-12 h-12 mx-auto bg-slate-200 rounded-full flex items-center justify-center text-slate-400 mb-3">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h4 class="text-sm font-semibold text-slate-700 mb-1">No Account Added</h4>
+                        <p class="text-xs text-slate-500 mb-4">Add a bank or e-wallet to withdraw funds.</p>
+                        <a href="{{ route('admin.payout.method') }}" class="inline-flex px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                            Add Account
+                        </a>
+                    </div>
+                @endif
+            </div>
+            
+        </div>
+    </div>
 </div>
 @endsection

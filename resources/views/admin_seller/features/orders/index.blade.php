@@ -488,18 +488,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let currentStatus = '';
+    let currentPageIndex = 1;
 
     function setTabFilter(elem) {
         $('.oh-tab').removeClass('active');
         $(elem).addClass('active');
         currentStatus = $(elem).data('status');
-        loadOrders(1);
+        loadOrders(null);
     }
 
     let searchTimeout;
     $('#searchInput').on('keyup', function() {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => loadOrders(1), 300);
+        searchTimeout = setTimeout(() => loadOrders(null), 300);
     });
 
     function toggleDropdown(id, event) {
@@ -525,7 +526,13 @@
         }
     }
 
-    function loadOrders(page = 1) {
+    function loadOrders(cursor = null, targetPage = 1) {
+        if (!cursor) {
+            currentPageIndex = 1;
+        } else {
+            currentPageIndex = targetPage;
+        }
+
         const dateStart = $('#dateFilterStart').val();
         const search = $('#searchInput').val().trim();
 
@@ -533,7 +540,8 @@
             <tr><td colspan="8" class="oh-empty"><i class="fas fa-circle-notch fa-spin"></i> Loading...</td></tr>
         `);
 
-        const requestData = { page: page };
+        const requestData = {};
+        if (cursor) requestData.cursor = cursor;
         if (currentStatus) requestData.status = currentStatus;
         if (dateStart) requestData.date = dateStart; // Backend receives 'date'
         if (search) requestData.search = search;
@@ -626,13 +634,23 @@
                     });
 
                     // Pagination logic
-                    if (response.pagination && response.pagination.last_page > 1) {
+                    if (response.pagination && (response.pagination.next_cursor || response.pagination.prev_cursor)) {
                         const p = response.pagination;
                         let pagHtml = '<div class="sl-pagination-container">';
-                        for (let i = 1; i <= p.last_page; i++) {
-                            const btnClass = (i === p.current_page) ? 'sl-page-btn active' : 'sl-page-btn';
-                            pagHtml += `<button type="button" class="${btnClass}" onclick="loadOrders(${i})"><span>${i}</span></button>`;
+                        
+                        // Previous page button (N-1)
+                        if (p.prev_cursor && currentPageIndex > 1) {
+                            pagHtml += `<button type="button" class="sl-page-btn" onclick="loadOrders('${p.prev_cursor}', ${currentPageIndex - 1})"><span>${currentPageIndex - 1}</span></button>`;
                         }
+
+                        // Current page button (N) - Active
+                        pagHtml += `<button type="button" class="sl-page-btn active" style="pointer-events: none;"><span>${currentPageIndex}</span></button>`;
+
+                        // Next page button (N+1)
+                        if (p.next_cursor) {
+                            pagHtml += `<button type="button" class="sl-page-btn" onclick="loadOrders('${p.next_cursor}', ${currentPageIndex + 1})"><span>${currentPageIndex + 1}</span></button>`;
+                        }
+                        
                         pagHtml += '</div>';
                         $('#ordersPaginationContainer').html(pagHtml);
                     } else {
@@ -732,7 +750,7 @@
     }
 
     function initOrdersPage() {
-        loadOrders(1);
+        loadOrders(null);
     }
 
     if (document.readyState === 'loading') {
