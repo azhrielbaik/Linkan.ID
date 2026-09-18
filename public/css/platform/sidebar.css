@@ -1,7 +1,7 @@
 /* =========================================================
    PLATFORM ADMIN SIDEBAR STYLES
    Linkan.ID Platform Admin System
-   Background: #fafafa (Ultra Light Gray)
+   Background: #fefcf6
    Active Theme: #ED842C
    ========================================================= */
 
@@ -9,8 +9,8 @@
 
 .sidebar {
     width: 250px;
-    background-color: #fafafa !important;
-    background: #fafafa !important;
+    background-color: #fefcf6 !important;
+    background: #fefcf6 !important;
     height: 100vh;
     position: fixed;
     top: 0;
@@ -607,4 +607,9 @@
 .linkan-swal-confirm-btn:hover {
     background: #D9701A !important;
     transform: translateY(-1px) !important;
+}
+
+.linkan-swal-single-btn {
+    max-width: 200px !important;
+    margin: 0 auto !important;
 }

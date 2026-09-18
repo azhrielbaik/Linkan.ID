@@ -48,6 +48,10 @@ function showPlatformModal(dataOrId, type, url, file) {
     const thumb = document.getElementById('modalDetailThumb');
     const placeholder = document.getElementById('modalDetailThumbPlaceholder');
     if (thumb && placeholder) {
+        thumb.onerror = function() {
+            this.style.display = 'none';
+            placeholder.style.display = 'flex';
+        };
         if (p.image) {
             thumb.src = p.image;
             thumb.style.display = 'block';
@@ -65,11 +69,11 @@ function showPlatformModal(dataOrId, type, url, file) {
     const statusBadge = document.getElementById('modalDetailStatusBadge');
     if (statusBadge) {
         if (p.is_active) {
-            statusBadge.className = 'badge badge-live';
-            statusBadge.innerHTML = '<i class="fas fa-circle" style="font-size: 7px;"></i> Aktif (Live)';
+            statusBadge.className = 'badge-live-dot';
+            statusBadge.textContent = 'Aktif (Live)';
         } else {
-            statusBadge.className = 'badge badge-takedown';
-            statusBadge.innerHTML = '<i class="fas fa-ban" style="font-size: 8px;"></i> Ditakedown';
+            statusBadge.className = 'badge-takedown-pill';
+            statusBadge.innerHTML = '<i class="fas fa-ban"></i> Ditakedown';
         }
     }
 
@@ -174,14 +178,20 @@ function showPlatformModal(dataOrId, type, url, file) {
         if (urlRow) urlRow.style.display = 'none';
     }
 
-    // 8. Deliverable URL
+    // 8. Deliverable URL / File
     const deliverableRow = document.getElementById('modalDetailDeliverableRow');
     const deliverableInput = document.getElementById('modalDetailDeliverableInput');
     const deliverableLink = document.getElementById('modalDetailDeliverableLink');
+    let hasDeliverable = false;
     if (p.deliverable_url && p.deliverable_url !== p.platform_url && p.deliverable_url.trim() !== '') {
+        hasDeliverable = true;
+        let fullDeliverableUrl = p.deliverable_url.trim();
+        if (!fullDeliverableUrl.startsWith('http://') && !fullDeliverableUrl.startsWith('https://')) {
+            fullDeliverableUrl = storageBaseUrl + '/' + fullDeliverableUrl.replace(/^\/+/, '');
+        }
         if (deliverableRow) deliverableRow.style.display = 'block';
         if (deliverableInput) deliverableInput.value = p.deliverable_url;
-        if (deliverableLink) deliverableLink.href = p.deliverable_url;
+        if (deliverableLink) deliverableLink.href = fullDeliverableUrl;
     } else {
         if (deliverableRow) deliverableRow.style.display = 'none';
     }
@@ -200,10 +210,11 @@ function showPlatformModal(dataOrId, type, url, file) {
         if (fileRow) fileRow.style.display = 'none';
     }
 
-    // 10. No fulfillment note
+    // 10. No fulfillment note (only show if none of URL, Deliverable, or File exist)
     const noFulfillment = document.getElementById('modalDetailNoFulfillment');
     if (noFulfillment) {
-        noFulfillment.style.display = (!hasUrl && !hasFile) ? 'flex' : 'none';
+        const hasAny = hasUrl || hasDeliverable || hasFile;
+        noFulfillment.style.display = (!hasAny) ? 'flex' : 'none';
     }
 
     // 11. Description

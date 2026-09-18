@@ -1101,6 +1101,341 @@ body.dark-mode .badge-default {
     cursor: not-allowed;
 }
 
+/* Avatar Fit Image */
+.avatar-fit-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.top-avatar, .ptd-avatar {
+    overflow: hidden;
+    position: relative;
+}
+
+/* Common Modal Card for Profile & Sessions */
+.admin-profile-modal, .admin-sessions-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.22s ease;
+    padding: 16px;
+}
+
+.admin-profile-modal.show, .admin-sessions-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.admin-profile-modal-content, .admin-sessions-modal-content {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-sessions-modal-content {
+    max-width: 480px;
+}
+
+.admin-profile-modal.show .admin-profile-modal-content,
+.admin-sessions-modal.show .admin-sessions-modal-content {
+    transform: scale(1);
+}
+
+/* Avatar Upload Section */
+.profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0 10px 0;
+    gap: 8px;
+    border-bottom: 1px dashed #e2e8f0;
+    margin-bottom: 4px;
+}
+
+.avatar-preview-box {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    border: 3px solid #fed7aa;
+    box-shadow: 0 4px 12px rgba(237, 132, 44, 0.2);
+    overflow: hidden;
+    position: relative;
+    background: #fafbfc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-preview-initials {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ed842c, #f97316);
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-avatar-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.btn-avatar-choose {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+.btn-avatar-choose:hover {
+    background: #ffedd5;
+    border-color: #fdba74;
+}
+
+.btn-avatar-delete {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+}
+
+.btn-avatar-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.avatar-upload-hint {
+    font-size: 10px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.field-badge-readonly {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #0284c7;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.field-badge-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ea580c;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    padding: 6px 12px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Sessions Modal Styling */
+.sessions-modal-subtitle {
+    font-size: 11.5px;
+    color: #64748b;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
+.sessions-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.session-item-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    transition: all 0.15s ease;
+}
+
+.session-item-card.is-current {
+    background: #fffcf8;
+    border-color: #fed7aa;
+    box-shadow: 0 2px 8px rgba(237, 132, 44, 0.08);
+}
+
+.session-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.session-item-card.is-current .session-card-icon {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.session-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.session-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.session-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-card-meta {
+    font-size: 11px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.session-badge-current {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #15803d;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 1px 7px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.session-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+    animation: sessionPulse 2s infinite ease-in-out;
+}
+
+@keyframes sessionPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+    70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.btn-revoke-others {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid #fecdd3;
+    background: #fff1f2;
+    color: #e11d48;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.btn-revoke-others:hover {
+    background: #ffe4e6;
+    border-color: #fda4af;
+    color: #be123c;
+}
+
+.btn-revoke-others:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Dark Mode Overrides for Profile & Sessions */
+html[data-theme="dark"] .admin-profile-modal-content,
+html[data-theme="dark"] .admin-sessions-modal-content,
+body.dark-mode .admin-profile-modal-content,
+body.dark-mode .admin-sessions-modal-content {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+html[data-theme="dark"] .session-item-card,
+body.dark-mode .session-item-card {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+html[data-theme="dark"] .session-card-title,
+body.dark-mode .session-card-title {
+    color: #f8fafc;
+}
+
+html[data-theme="dark"] .profile-avatar-section,
+body.dark-mode .profile-avatar-section {
+    border-color: #334155;
+}
+
 /* =========================================================
    MOBILE RESPONSIVE — HEADER PROFILE & DROPDOWN
    ========================================================= */

@@ -292,6 +292,14 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     // Theme & Tampilan Platform Admin
     Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->middleware('throttle:20,1')->name('theme.update');
     Route::post('/password/update', [PlatformAdminController::class, 'updatePassword'])->middleware('throttle:10,1')->name('password.update');
+
+    // Profil & Avatar Platform Admin
+    Route::post('/profile/update', [PlatformAdminController::class, 'updateProfile'])->middleware('throttle:15,1')->name('profile.update');
+    Route::delete('/profile/avatar', [PlatformAdminController::class, 'deleteAvatar'])->middleware('throttle:15,1')->name('profile.avatar.delete');
+
+    // Manajemen Sesi Aktif
+    Route::get('/sessions', [PlatformAdminController::class, 'getActiveSessions'])->name('sessions.index');
+    Route::post('/sessions/revoke-others', [PlatformAdminController::class, 'revokeOtherSessions'])->middleware('throttle:10,1')->name('sessions.revoke-others');
 });
 
 

@@ -8,24 +8,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
-    --platform-radius: 20px;
-    --platform-border: 1px solid #f1f5f9;
-    --platform-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-    --platform-card-shadow-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
-    --platform-card-padding: 20px 24px;
+    --platform-radius: 14px;
+    --platform-border: 1px solid #e2e8f0;
+    --platform-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    --platform-card-shadow-hover: 0 6px 16px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --platform-card-padding: 14px 18px;
     --platform-control-height: 40px;
-    --platform-summary-label-size: 11.5px;
-    --platform-summary-value-size: 22px;
+    --platform-summary-label-size: 11px;
+    --platform-summary-value-size: 19px;
     --platform-summary-sub-size: 11px;
-    --platform-summary-icon-size: 22px;
+    --platform-summary-icon-size: 16px;
 }
 
 .btn-filter,
 .btn-reset,
 .btn-search,
 .btn-export,
-.btn-open-ticket,
-.btn-act,
 .bulk-btn,
 .p-filter-select,
 .p-filter-search,
@@ -75,12 +73,24 @@ select.custom-dropdown-native-hidden {
 .btn-reset,
 .btn-search,
 .btn-export,
-.btn-open-ticket,
-.btn-act,
 .bulk-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+/* =========================================================
+   CLEAN & VIBRANT ORANGE & WHITE TABLE ACTION BUTTONS (SHARED)
+   ========================================================= */
+.action-btns .btn-act,
+.action-group .btn-action,
+.btn-open-ticket,
+.btn-detail,
+.btn-view,
+.btn-view-platform {
+    font-family: inherit;
+    text-decoration: none;
+    line-height: 1;
 }
 
 /* Modern Capsule Filter Button */
@@ -325,138 +335,181 @@ body {
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 24px;
+    gap: 14px;
+    margin-bottom: 20px;
 }
 
 .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 24px;
+    gap: 14px;
+    margin-bottom: 20px;
 }
 
-.stat-card {
+.stat-card,
+.p-ticket-stat {
     background: #ffffff;
-    border-radius: var(--platform-radius);
-    padding: var(--platform-card-padding);
-    box-shadow: var(--platform-card-shadow);
+    border-radius: var(--platform-radius, 14px);
+    padding: 14px 18px;
+    box-shadow: var(--platform-card-shadow, 0 1px 3px rgba(15, 23, 42, 0.04));
     display: flex;
     align-items: center;
-    gap: 16px;
-    border: var(--platform-border);
+    gap: 14px;
+    border: var(--platform-border, 1px solid #e2e8f0);
+    min-height: 72px;
+    box-sizing: border-box;
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
-.stat-card:hover {
+.stat-card:hover,
+.p-ticket-stat:hover {
     transform: translateY(-2px);
-    box-shadow: var(--platform-card-shadow-hover);
+    border-color: #cbd5e1;
+    box-shadow: var(--platform-card-shadow-hover, 0 6px 16px -2px rgba(15, 23, 42, 0.07));
 }
 
 .stat-icon-wrapper,
 .stat-icon-wrap,
 .p-ticket-stat-icon {
-    width: 32px;
-    height: 32px;
-    background: transparent !important;
-    background-color: transparent !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
+    background: #f1f5f9 !important;
+    color: #475569 !important;
     border: none !important;
-    border-radius: 0 !important;
     box-shadow: none !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--platform-summary-icon-size, 22px);
-    color: #64748b !important;
-    flex-shrink: 0;
     padding: 0 !important;
     margin: 0 !important;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover .stat-icon-wrapper,
+.stat-card:hover .stat-icon-wrap,
+.p-ticket-stat:hover .p-ticket-stat-icon {
+    transform: scale(1.05);
 }
 
 .stat-icon-wrapper i,
 .stat-icon-wrap i,
 .p-ticket-stat-icon i {
-    color: #64748b !important;
+    color: inherit !important;
     font-size: inherit;
 }
 
+/* Stat Card Contextual Variant Themes */
+.stat-card.active .stat-icon-wrapper,
+.stat-card.active .stat-icon-wrap,
+.stat-card.approved .stat-icon-wrapper,
+.stat-card.success .stat-icon-wrapper,
+.p-icon-resolved {
+    background: #ecfdf5 !important;
+    color: #059669 !important;
+}
+
+.stat-card.pending .stat-icon-wrapper,
+.p-icon-open,
+.p-icon-progress {
+    background: #fffbeb !important;
+    color: #d97706 !important;
+}
+
+.stat-card.susp .stat-icon-wrap,
+.stat-card.rejected .stat-icon-wrapper,
+.stat-card.failed .stat-icon-wrapper,
+.stat-card.takedown .stat-icon-wrapper {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+}
+
+.stat-card.commission .stat-icon-wrapper,
+.stat-card.payouts .stat-icon-wrapper {
+    background: #fff4ec !important;
+    color: #ed842c !important;
+}
+
+.stat-card.users .stat-icon-wrapper,
+.stat-card.users .stat-icon-wrap,
+.stat-card.volume .stat-icon-wrapper {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+}
+
+.stat-card.products .stat-icon-wrapper {
+    background: #f5f3ff !important;
+    color: #7c3aed !important;
+}
+
+.stat-info,
+.p-ticket-stat > div:not(.p-ticket-stat-icon) {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
 .stat-info .stat-label,
-.stat-info .label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
-    opacity: 0.9;
+.stat-info .label,
+.p-ticket-stat-lbl {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 2px !important;
+    line-height: 1.3 !important;
+    order: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-info .stat-val,
-.stat-info .value {
-    font-size: 20px;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.2;
+.stat-info .value,
+.p-ticket-stat-num {
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+    order: 2;
+    overflow-wrap: anywhere;
 }
 
 .stat-info .stat-sub {
-    font-size: 11px;
-    color: #94a3b8;
-    margin-top: 2px;
-}
-
-/* Stat Card Icon Variant Themes - Neutral standalone icons without shape */
-.stat-card .stat-icon-wrapper,
-.stat-card .stat-icon-wrap,
-.p-ticket-stat .p-ticket-stat-icon,
-.stat-card.total .stat-icon-wrapper,
-.stat-card.total .stat-icon-wrap,
-.stat-card.users .stat-icon-wrap,
-.stat-card.tx .stat-icon-wrap,
-.stat-card.comm .stat-icon-wrap,
-.stat-card.prod .stat-icon-wrap,
-.stat-card.volume .stat-icon-wrapper,
-.stat-card.commission .stat-icon-wrapper,
-.stat-card.active .stat-icon-wrapper,
-.stat-card.active .stat-icon-wrap,
-.stat-card.success .stat-icon-wrapper,
-.stat-card.approved .stat-icon-wrapper,
-.stat-card.products .stat-icon-wrapper,
-.stat-card.susp .stat-icon-wrap,
-.stat-card.takedown .stat-icon-wrapper,
-.stat-card.rejected .stat-icon-wrapper,
-.stat-card.failed .stat-icon-wrapper,
-.stat-card.users .stat-icon-wrapper,
-.stat-card.pending .stat-icon-wrapper,
-.stat-card.payouts .stat-icon-wrapper,
-.p-icon-total,
-.p-icon-open,
-.p-icon-progress,
-.p-icon-resolved {
-    background: transparent !important;
-    background-color: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    color: #64748b !important;
-}
-
-html[data-theme="dark"] .stat-card .stat-icon-wrapper,
-body.dark-mode .stat-card .stat-icon-wrapper,
-html[data-theme="dark"] .stat-card .stat-icon-wrap,
-body.dark-mode .stat-card .stat-icon-wrap,
-html[data-theme="dark"] .p-ticket-stat-icon,
-body.dark-mode .p-ticket-stat-icon,
-html[data-theme="dark"] .stat-card .stat-icon-wrapper i,
-body.dark-mode .stat-card .stat-icon-wrapper i,
-html[data-theme="dark"] .stat-card .stat-icon-wrap i,
-body.dark-mode .stat-card .stat-icon-wrap i,
-html[data-theme="dark"] .p-ticket-stat-icon i,
-body.dark-mode .p-ticket-stat-icon i {
-    background: transparent !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
     color: #94a3b8 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
+    order: 3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+html[data-theme="dark"] .stat-card,
+body.dark-mode .stat-card,
+html[data-theme="dark"] .p-ticket-stat,
+body.dark-mode .p-ticket-stat {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .stat-info .stat-val,
+body.dark-mode .stat-info .stat-val,
+html[data-theme="dark"] .stat-info .value,
+body.dark-mode .stat-info .value,
+html[data-theme="dark"] .p-ticket-stat-num,
+body.dark-mode .p-ticket-stat-num {
+    color: #f8fafc !important;
 }
 
 /* ==========================================================================
