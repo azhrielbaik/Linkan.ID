@@ -13,9 +13,9 @@
 <div class="microsite-container">
     
     @if($viewMode == 'gallery')
-        @include('admin_seller.microsites.partials._gallery')
+        @include('admin_seller.features.microsites.partials._gallery')
     @else
-        @include('admin_seller.microsites.partials._editor')
+        @include('admin_seller.features.microsites.partials._editor')
     @endif
 </div>
 
@@ -27,7 +27,7 @@
 
 
     <!-- JS TEMPLATES & HIDDEN MODALS -->
-    @include('admin_seller.microsites.partials._templates')
+    @include('admin_seller.features.microsites.partials._templates')
 
 </div>
 @endsection

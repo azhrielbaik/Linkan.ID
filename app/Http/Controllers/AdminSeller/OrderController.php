@@ -23,30 +23,19 @@ class OrderController extends Controller
         $filters = $request->only(['status', 'date', 'search']);
         $transactions = $this->orderService->getOrders($user->id, $filters);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'transactions' => $transactions->items(),
-                'pagination' => [
-                    'has_more_pages' => $transactions->hasMorePages(),
-                    'next_cursor' => $transactions->nextCursor() ? $transactions->nextCursor()->encode() : null,
-                    'prev_cursor' => $transactions->previousCursor() ? $transactions->previousCursor()->encode() : null,
-                ]
-            ]);
-        }
-
         return view('admin_seller.features.orders.index', compact('transactions'));
     }
 
     public function getOrderDetail($id)
     {
         $user = Auth::user();
-        $transaction = $this->orderService->getOrderDetail($user->id, $id);
+        $order = $this->orderService->getOrderDetail($user->id, $id);
 
-        if (!$transaction) {
+        if (!$order) {
             return response()->json(['error' => 'Transaction not found'], 404);
         }
 
-        return response()->json($transaction);
+        return view('admin_seller.features.orders.partials._detail', compact('order'));
     }
 
     public function updateTransactionStatus(Request $request, $id)

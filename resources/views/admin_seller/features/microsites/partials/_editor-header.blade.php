@@ -1,6 +1,6 @@
 <div class="editor-mode-header-bar">
     <h2 class="editor-mode-title">
-        <a href="{{ route('admin.microsites.index', ['mode' => 'gallery']) }}" class="back-link" title="Kembali ke daftar microsite" onclick="if(document.getElementById('digitalProductWizardPanel') && document.getElementById('digitalProductWizardPanel').style.display !== 'none') { event.preventDefault(); cancelDigitalProductWizard(); return false; }">
+        <a href="{{ route('admin.microsites.index', ['mode' => 'gallery']) }}" class="back-link" title="{{ __('microsite.back_to_list') }}" onclick="if(document.getElementById('digitalProductWizardPanel') && document.getElementById('digitalProductWizardPanel').style.display !== 'none') { event.preventDefault(); cancelDigitalProductWizard(); return false; }">
             <i class="fas fa-arrow-left"></i>
         </a>
         <i class="fas fa-sliders-h text-brand-orange"></i> {{ __('admin.edit_content_blocks') }}
@@ -18,7 +18,7 @@
             onclick="switchEditorPanel('elemen')"
         >
             <i class="fas fa-layer-group"></i>
-            <span>Elemen</span>
+            <span>{{ __('microsite.elements') }}</span>
         </button>
         <button
             type="button"
@@ -30,7 +30,7 @@
             onclick="switchEditorPanel('pengaturan')"
         >
             <i class="fa-solid fa-palette"></i>
-            <span>Pengaturan</span>
+            <span>{{ __('microsite.settings') }}</span>
         </button>
     </nav>
 </div>

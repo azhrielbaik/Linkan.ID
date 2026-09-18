@@ -5,8 +5,8 @@
                                 <i class="fas fa-id-card"></i>
                             </div>
                             <div>
-                                <h3 class="design-settings-section-title">Layout Profil</h3>
-                                <p class="design-settings-section-desc">Atur posisi dan tampilan bagian profil</p>
+                                <h3 class="design-settings-section-title">{{ __('microsite.layout_title') }}</h3>
+                                <p class="design-settings-section-desc">{{ __('microsite.layout_desc') }}</p>
                             </div>
                         </header>
 

@@ -70,7 +70,7 @@
         @endif
         
         <div style="color: #94a3b8; font-size: 12px;">
-            Stock: {{ $quantity['max'] ? $quantity['max'] : 'Unlimited' }}
+            Stock: {{ $quantity['max'] ? $quantity['max'] : __('microsite.unlimited') }}
         </div>
     </div>
 </div>
@@ -127,10 +127,10 @@
                 {!! $product['description'] ?? '' !!}
             </div>
 
-            {{-- 2. Area Harga (Pricing) & 3. Kuantitas --}}
+            {{-- 2. Area Harga (Pricing) & 3. {{ __('microsite.quantity') }} --}}
             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;">Harga Produk</label>
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;">{{ __('microsite.product_price') }}</label>
                     @if($pricing['type'] === 'fixed')
                         <div style="font-size: 20px; font-weight: 700; color: #FF9040;">
                             Rp {{ number_format((float)$pricing['fixed'], 0, ',', '.') }}
@@ -139,17 +139,17 @@
                         <div class="pwyw-container">
                             <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; focus-within: border-color: #FF9040;">
                                 <span style="padding: 8px 12px; background: #f1f5f9; color: #475569; font-weight: 600; border-right: 1px solid #cbd5e1;">Rp</span>
-                                <input type="number" id="priceInput_{{ $uniqueId }}" class="dp-pwyw-input" placeholder="Tentukan harga..." style="flex: 1; border: none; padding: 8px 12px; outline: none; width: 100%;" value="{{ $pricing['min'] }}" min="{{ $pricing['min'] }}" max="{{ $pricing['max'] ?: '' }}">
+                                <input type="number" id="priceInput_{{ $uniqueId }}" class="dp-pwyw-input" placeholder="{{ __('microsite.set_price') }}" style="flex: 1; border: none; padding: 8px 12px; outline: none; width: 100%;" value="{{ $pricing['min'] }}" min="{{ $pricing['min'] }}" max="{{ $pricing['max'] ?: '' }}">
                             </div>
                             <div id="priceWarn_{{ $uniqueId }}" style="color: #ef4444; font-size: 12px; margin-top: 5px; display: none;">
-                                Harga minimal adalah Rp {{ number_format((float)$pricing['min'], 0, ',', '.') }}{{ $pricing['max'] ? ' dan maksimal Rp ' . number_format((float)$pricing['max'], 0, ',', '.') : '' }}.
+                                {{ __('microsite.min_price_is') }} {{ number_format((float)$pricing['min'], 0, ',', '.') }}{{ $pricing['max'] ? ' ' . __('microsite.and_max') . ' ' . number_format((float)$pricing['max'], 0, ',', '.') : '' }}.
                             </div>
                         </div>
                     @endif
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;" for="qtyInput_{{ $uniqueId }}">Kuantitas</label>
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;" for="qtyInput_{{ $uniqueId }}">{{ __('microsite.quantity') }}</label>
                     <div style="display: inline-flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
                         <button type="button" aria-label="Decrease quantity" class="dp-qty-btn" onclick="updateDpQty('{{ $uniqueId }}', -1, {{ $quantity['min'] }}, {{ $quantity['max'] ?: 'null' }})" style="padding: 8px 12px; background: #f8fafc; border: none; border-right: 1px solid #cbd5e1; cursor: pointer; color: #475569; font-weight: bold;">-</button>
                         <input type="number" id="qtyInput_{{ $uniqueId }}" aria-label="Quantity" style="width: 50px; text-align: center; border: none; outline: none; padding: 8px 0; -moz-appearance: textfield;" value="{{ $quantity['min'] }}" readonly>
@@ -169,7 +169,7 @@
             @endphp
 
             <button onclick="{!! $ctaOnclick !!}" style="width: 100%; padding: 14px; border-radius: 8px; background: #FF9040; color: white; border: none; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 144, 64, 0.3);">
-                Akses Produk / Beli Sekarang
+                {{ __('microsite.access_product') }}
             </button>
         </div>
     </div>

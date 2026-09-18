@@ -7,7 +7,7 @@
                                     <i class="fas fa-check" id="dp-step-icon-1" style="display:none;"></i>
                                     <span id="dp-step-num-1">1</span>
                                 </div>
-                                <div class="dp-stepper-label">Detail Produk</div>
+                                <div class="dp-stepper-label">{{ __('microsite.product_details') }}</div>
                             </div>
                             <div class="dp-stepper-line"></div>
                             <div class="dp-stepper-item" id="dp-step-indicator-2">
@@ -15,7 +15,7 @@
                                     <i class="fas fa-check" id="dp-step-icon-2" style="display:none;"></i>
                                     <span id="dp-step-num-2">2</span>
                                 </div>
-                                <div class="dp-stepper-label">Pricing</div>
+                                <div class="dp-stepper-label">{{ __('microsite.pricing') }}</div>
                             </div>
                             <div class="dp-stepper-line"></div>
                             <div class="dp-stepper-item" id="dp-step-indicator-3">
@@ -23,23 +23,23 @@
                                     <i class="fas fa-check" id="dp-step-icon-3" style="display:none;"></i>
                                     <span id="dp-step-num-3">3</span>
                                 </div>
-                                <div class="dp-stepper-label">Penayangan</div>
+                                <div class="dp-stepper-label">{{ __('microsite.display') }}</div>
                             </div>
                         </div>
 
                         <!-- Wizard Body -->
                         <div class="wizard-body">
                             
-                            <!-- Step 1: Detail Produk -->
+                            <!-- Step 1: {{ __('microsite.product_details') }} -->
                             <div class="wizard-step" id="dp-step-1">
                                 
                                 <div class="dp-form-row-box">
-                                    <span class="dp-row-label">Nama Produk:</span>
-                                    <input type="text" id="dpTitle" class="dp-row-input" placeholder="Misal: Template Undangan..." oninput="updateDpTitle(this.value)" required maxlength="200" pattern="[^<>]*" title="Karakter &lt; dan &gt; tidak diperbolehkan untuk mencegah injeksi">
+                                    <span class="dp-row-label">{{ __('microsite.product_name') }}</span>
+                                    <input type="text" id="dpTitle" class="dp-row-input" placeholder="{{ __('microsite.product_name_placeholder') }}" oninput="updateDpTitle(this.value)" required maxlength="200" pattern="[^<>]*" title="Karakter &lt; dan &gt; tidak diperbolehkan untuk mencegah injeksi">
                                 </div>
 
                                 <div class="dp-form-row-box" style="display: block;">
-                                    <span class="dp-row-label" style="display: block; margin-bottom: 10px;">Deskripsi:</span>
+                                    <span class="dp-row-label" style="display: block; margin-bottom: 10px;">{{ __('microsite.description') }}</span>
                                     <div style="width: 100%;">
                                         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
                                         <style>
@@ -52,28 +52,28 @@
                                 </div>
 
                                 <!-- Media Upload Box -->
-                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.05em;">Media Produk (Maks. 5 File)</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.05em;">{{ __('microsite.product_media') }}</div>
                                 <div class="dp-upload-box" onclick="document.getElementById('dpFiles').click()">
                                     <input type="file" id="dpFiles" accept="image/jpeg,image/png,image/gif,video/mp4" multiple style="display: none;" onchange="handleDpFiles(this)">
                                     <i class="fas fa-cloud-upload-alt"></i>
-                                    <h4>Click to upload or drag and drop</h4>
-                                    <p>Format JPG, PNG, GIF, MP4 (Video)</p>
+                                    <h4>{{ __('microsite.click_to_upload') }}</h4>
+                                    <p>{{ __('microsite.format_media') }}</p>
                                 </div>
                                 <div id="dpFilesError" style="color: #ef4444; font-size: 13px; margin-top: -15px; margin-bottom: 15px; display: none;"></div>
                                 <div id="dpFilesPreview" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;"></div>
 
                                 <!-- Deliverable Selection -->
-                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Akses Produk (Deliverable)</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">{{ __('microsite.product_access') }}</div>
                                 <div class="dp-platform-cards-grid">
                                     <label class="dp-platform-card-wrapper active" id="dp-deliv-upload-wrapper">
                                         <input type="radio" name="dpDeliverableType" value="upload" onchange="changeDpDeliverableType(this.value)" checked>
                                         <div class="dp-platform-card">
                                             <div class="dp-platform-card-content">
                                                 <div class="dp-platform-card-header">
-                                                    <span class="dp-platform-card-title">Upload File</span>
+                                                    <span class="dp-platform-card-title">{{ __('microsite.upload_file') }}</span>
                                                     <span class="dp-platform-radio-circle"></span>
                                                 </div>
-                                                <p class="dp-platform-card-desc">Unggah file digital Anda secara langsung ke server kami.</p>
+                                                <p class="dp-platform-card-desc">{{ __('microsite.upload_file_desc') }}</p>
                                             </div>
                                         </div>
                                     </label>
@@ -83,10 +83,10 @@
                                         <div class="dp-platform-card">
                                             <div class="dp-platform-card-content">
                                                 <div class="dp-platform-card-header">
-                                                    <span class="dp-platform-card-title">Google Drive</span>
+                                                    <span class="dp-platform-card-title">{{ __('microsite.google_drive') }}</span>
                                                     <span class="dp-platform-radio-circle"></span>
                                                 </div>
-                                                <p class="dp-platform-card-desc">Berikan akses lewat tautan Google Drive.</p>
+                                                <p class="dp-platform-card-desc">Berikan akses lewat tautan {{ __('microsite.google_drive') }}.</p>
                                             </div>
                                         </div>
                                     </label>
@@ -96,7 +96,7 @@
                                         <div class="dp-platform-card">
                                             <div class="dp-platform-card-content">
                                                 <div class="dp-platform-card-header">
-                                                    <span class="dp-platform-card-title">Link Eksternal</span>
+                                                    <span class="dp-platform-card-title">{{ __('microsite.external_link') }}</span>
                                                     <span class="dp-platform-radio-circle"></span>
                                                 </div>
                                                 <p class="dp-platform-card-desc">Tautkan file dari platform atau website eksternal lainnya.</p>

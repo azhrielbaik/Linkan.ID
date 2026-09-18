@@ -34,7 +34,7 @@ class MicrositeController extends Controller
                 ->groupBy('link_id')
                 ->pluck('total', 'link_id');
 
-            return view('admin_seller.microsites.index', compact(
+            return view('admin_seller.features.microsites.index', compact(
                 'digitalProducts',
                 'appearances',
                 'viewsData',
@@ -61,13 +61,29 @@ class MicrositeController extends Controller
         
         $digitalProducts = $allDigitalProducts->whereIn('id', $productIds);
 
-        $imageElements = ImageElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
-        $dividerElements = DividerElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
-        $textElements = TextElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
-        $videoElements = VideoElement::where('appearance_id', $appearance->id)->orderBy('order_position')->get();
-        $socialMediaElements = SocialMediaElement::where('appearance_id', $appearance->id)->get();
+        $imageElements = ImageElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'image'; return $el; });
+        $dividerElements = DividerElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'divider'; return $el; });
+        $textElements = TextElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'text'; return $el; });
+        $videoElements = VideoElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'video'; return $el; });
+        $socialMediaElements = SocialMediaElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'social'; return $el; });
+        
+        $digitalProducts = $digitalProducts->map(function($el) { $el->type = 'digitalproduct'; return $el; });
 
-        return view('admin_seller.microsites.index', compact(
+        $allElements = collect()
+            ->concat($imageElements)
+            ->concat($dividerElements)
+            ->concat($textElements)
+            ->concat($videoElements)
+            ->concat($socialMediaElements)
+            ->concat($digitalProducts);
+
+        $allElements = $allElements->sortBy(function($element) use ($blocksOrder) {
+            $key = $element->type . '_' . $element->id;
+            $pos = array_search($key, $blocksOrder);
+            return $pos !== false ? $pos : 9999;
+        })->values();
+
+        return view('admin_seller.features.microsites.index', compact(
             'digitalProducts',
             'appearance',
             'imageElements',
@@ -75,6 +91,7 @@ class MicrositeController extends Controller
             'textElements',
             'videoElements',
             'socialMediaElements',
+            'allElements',
             'totalProducts',
             'viewMode'
         ));
