@@ -310,6 +310,137 @@
         span.relative.z-0.inline-flex > :last-child {
             display: none !important;
         }
+        /* --- GLOBAL DARK MODE OVERRIDES (FLEETY THEME) --- */
+        html.dark body, 
+        html.dark .container, 
+        html.dark .main-content, 
+        html.dark .content-wrapper,
+        html.dark .dashboard-mylinkan-page {
+            background-color: #141824 !important;
+            color: #ffffff !important;
+        }
+        
+        html.dark .header, 
+        html.dark .sidebar,
+        html.dark .sidebar .logo-area,
+        html.dark .section-header,
+        html.dark .microsite-main-header {
+            background-color: #1c212e !important;
+            border-color: #2a3241 !important;
+        }
+        
+        html.dark .header h1, 
+        html.dark .nav-item {
+            color: #ffffff !important;
+        }
+        html.dark .nav-item:hover, 
+        html.dark .nav-item.active {
+            background-color: #2a3241 !important;
+        }
+        
+        /* Dashboard Cards & Containers */
+        html.dark .bg-white,
+        html.dark .microsite-card,
+        html.dark .card-body-details {
+            background-color: #1c212e !important;
+            color: #ffffff !important;
+            border-color: #2a3241 !important;
+        }
+        
+        html.dark .bg-slate-50, 
+        html.dark .bg-gray-50,
+        html.dark .bg-slate-100,
+        html.dark .card-thumbnail-container {
+            background-color: #0f131c !important; /* Slightly darker inner areas */
+            border-color: #2a3241 !important;
+        }
+        
+        html.dark .url-pill {
+            background-color: #2a3241 !important;
+            color: #cbd5e1 !important;
+        }
+        
+        /* Text Colors */
+        html.dark .text-slate-900, 
+        html.dark .text-gray-900,
+        html.dark .text-slate-800,
+        html.dark .microsite-name,
+        html.dark .sidebar a,
+        html.dark .sidebar a i,
+        html.dark .sidebar .nav-text,
+        html.dark h3 {
+            color: #ffffff !important;
+        }
+        
+        html.dark .sidebar a:hover,
+        html.dark .sidebar a:hover .nav-text,
+        html.dark .sidebar a.active,
+        html.dark .sidebar a.active .nav-text {
+            color: #ffffff !important;
+            background-color: #2a3241 !important;
+        }
+
+        html.dark .text-slate-500, 
+        html.dark .text-gray-500,
+        html.dark .text-slate-600 {
+            color: #94a3b8 !important;
+        }
+        html.dark .text-slate-700 {
+            color: #cbd5e1 !important;
+        }
+        
+        /* Borders */
+        html.dark .border-slate-300, 
+        html.dark .border-gray-300, 
+        html.dark .border-slate-200,
+        html.dark .border-slate-100,
+        html.dark .border-b,
+        html.dark .border-t,
+        html.dark .border,
+        html.dark hr,
+        html.dark [style*="border"] {
+            border-color: #2a3241 !important;
+        }
+        
+        /* Action Icons */
+        html.dark .action-icon {
+            color: #94a3b8 !important;
+        }
+        html.dark .action-icon:hover {
+            color: #ffffff !important;
+        }
+
+        /* Tables */
+        html.dark table th {
+            background-color: #141824 !important;
+            color: #94a3b8 !important;
+            border-bottom-color: #2a3241 !important;
+        }
+        html.dark table td {
+            border-bottom-color: #2a3241 !important;
+        }
+        
+        /* Notifications Dropdown */
+        html.dark .seller-notif-dropdown {
+            background-color: #1c212e !important;
+            border-color: #2a3241 !important;
+            color: #ffffff !important;
+        }
+        html.dark .seller-notif-dropdown .seller-notif-title,
+        html.dark .seller-notif-dropdown .notif-title {
+            color: #ffffff !important;
+        }
+        html.dark .seller-notif-dropdown .notif-desc {
+            color: #94a3b8 !important;
+        }
+        html.dark .seller-notif-dropdown .notif-item:hover {
+            background-color: #2a3241 !important;
+        }
+        html.dark .seller-notif-header,
+        html.dark .seller-notif-footer {
+            background-color: #141824 !important;
+            border-color: #2a3241 !important;
+        }
     </style>
     @stack('styles')
     @stack('page-styles')
@@ -351,6 +482,89 @@
                 <div class="header-right">
                     <div class="header-actions">
                         <a href="{{ route('admin.settings') }}" class="action-icon" title="Pengaturan"><i class="fas fa-cog"></i></a>
+
+                        {{-- Dark Mode Toggle Switch --}}
+                        <style>
+                            .theme-switch-wrapper {
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 15px;
+                            }
+                            
+                            .theme-switch {
+                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                background-color: #f1f5f9;
+                                border-radius: 50px;
+                                padding: 4px;
+                                cursor: pointer;
+                                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+                                width: 76px;
+                                height: 38px;
+                                transition: background-color 0.3s ease;
+                            }
+                            
+                            .theme-switch-slider {
+                                position: absolute;
+                                top: 4px;
+                                left: 4px;
+                                width: 34px;
+                                height: 30px;
+                                background-color: #ffffff;
+                                border-radius: 20px;
+                                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+                                z-index: 1;
+                                transform: translateX(34px); /* default (light mode): slider on the right (sun) */
+                            }
+                            
+                            .theme-switch-icon {
+                                position: relative;
+                                z-index: 2;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                width: 34px;
+                                height: 30px;
+                                font-size: 15px;
+                                color: #94a3b8;
+                                transition: color 0.3s ease;
+                            }
+                            
+                            /* Dark mode states */
+                            html.dark .theme-switch {
+                                background-color: #1e293b;
+                                box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+                            }
+                            
+                            html.dark .theme-switch-slider {
+                                background-color: #334155;
+                                transform: translateX(0); /* dark mode: slider on the left (moon) */
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                            }
+                            
+                            /* Active icon colors */
+                            html:not(.dark) .icon-sun {
+                                color: #FF9040; /* Lime/Yellow tone for light mode active */
+                            }
+                            html.dark .icon-moon {
+                                color: #eab308; /* Yellow tone for dark mode active */
+                            }
+                        </style>
+
+                        <div class="theme-switch-wrapper">
+                            <div class="theme-switch" onclick="toggleDarkMode()">
+                                <div class="theme-switch-slider"></div>
+                                <div class="theme-switch-icon icon-moon">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div class="theme-switch-icon icon-sun">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- Seller Notification Bell & Dropdown --}}
                         @inject('dashboardService', 'App\Services\AdminSeller\DashboardService')
@@ -621,6 +835,23 @@
                 hideGlobalLoader();
             }
         });
+    </script>
+    <script>
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Initialize dark mode on load
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
     </script>
 </body>
 </html>

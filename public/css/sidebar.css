@@ -273,3 +273,60 @@
 .sidebar {
     view-transition-name: sidebar;
 }
+/* --- DARK MODE OVERRIDES --- */
+html.dark .lang-toggle {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .lang-toggle a {
+    color: #94a3b8 !important;
+}
+
+html.dark .lang-toggle a:hover {
+    background: #2a3241 !important;
+}
+
+html.dark .lang-toggle a.active {
+    background: #FF9040 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(255, 144, 64, 0.1) !important;
+}
+
+/* Dark mode logo toggling */
+html.dark .sidebar .logo-light {
+    display: none !important;
+}
+
+html.dark .sidebar .logo-dark {
+    display: block !important;
+}
+
+html.dark body.mini-sidebar .logo-dark {
+    display: none !important;
+}
+
+/* Mini Logo CSS */
+.sidebar .logo-mini {
+    display: none;
+    width: 35px;
+    height: auto;
+}
+
+body.mini-sidebar .logo-container {
+    justify-content: center !important;
+}
+
+body.mini-sidebar .logo-mini-light {
+    display: block !important;
+    margin: 0 auto;
+}
+
+html.dark body.mini-sidebar .logo-mini-light {
+    display: none !important;
+}
+
+html.dark body.mini-sidebar .logo-mini-dark {
+    display: block !important;
+    margin: 0 auto;
+}

@@ -6,7 +6,11 @@
     
     <div class="sidebar-inner-scroll">
     <div class="logo-container" style="justify-content: space-between; width: 100%; align-items: center;">
-        <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo">
+        <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo logo-light">
+        <img src="{{ asset('images/Logo-white.svg') }}" alt="Logo" class="logo logo-dark" style="display: none;">
+        
+        <img src="{{ asset('images/Logo-mini.png') }}" alt="Logo Mini" class="logo-mini logo-mini-light" style="display: none;">
+        <img src="{{ asset('images/Logo-mini-white.png') }}" alt="Logo Mini" class="logo-mini logo-mini-dark" style="display: none;">
         
         <div style="display: flex; align-items: center; gap: 8px;">
             <div class="lang-toggle">

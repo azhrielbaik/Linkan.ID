@@ -634,3 +634,223 @@
         text-transform: uppercase;
     }
 }
+/* === DARK MODE PER-PAGE IMPLEMENTATION (FLEETY THEME) === */
+html.dark .dashboard-beranda-page .hero-banner {
+    background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+html.dark .dashboard-beranda-page .stat-card-item {
+    background: #1c212e;
+    border-color: #2a3241;
+}
+
+html.dark .dashboard-beranda-page .stat-card-item .stat-val {
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .stat-card-item .stat-lbl {
+    color: #94a3b8;
+}
+
+html.dark .dashboard-beranda-page .section-header h3 {
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .product-course-card {
+    background: #1c212e;
+    border-color: #2a3241;
+}
+
+html.dark .dashboard-beranda-page .product-course-card .pc-title {
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .product-course-card .pc-stats {
+    color: #94a3b8;
+}
+
+html.dark .dashboard-beranda-page .product-course-card .pc-price {
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .product-course-card .pc-footer {
+    border-top-color: #2a3241;
+}
+
+html.dark .dashboard-beranda-page .product-course-card .btn-outline {
+    border-color: #2a3241;
+    color: #cbd5e1;
+}
+html.dark .dashboard-beranda-page .product-course-card .btn-outline:hover {
+    background: #2a3241;
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .action-btn-outline {
+    border-color: #2a3241;
+    color: #cbd5e1;
+}
+html.dark .dashboard-beranda-page .action-btn-outline:hover {
+    background: #2a3241;
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .todo-card {
+    background: #1c212e;
+    border-color: #2a3241;
+}
+
+html.dark .dashboard-beranda-page .todo-header h3 {
+    color: #ffffff;
+}
+
+html.dark .dashboard-beranda-page .todo-item {
+    border-bottom-color: #2a3241;
+}
+html.dark .dashboard-beranda-page .todo-item:hover {
+    background: #2a3241;
+}
+
+html.dark .dashboard-beranda-page .todo-content h4 {
+    color: #ffffff;
+}
+html.dark .dashboard-beranda-page .todo-content p {
+    color: #94a3b8;
+}
+
+/* Fix inline styles with !important in dark mode */
+html.dark .dashboard-beranda-page .suspension-alert-card,
+html.dark .dashboard-beranda-page .suspension-alert-card > div[style*='background: #fef2f2'] {
+    background-color: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .suspension-alert-card h2,
+html.dark .dashboard-beranda-page .suspension-alert-card strong {
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-beranda-page .suspension-alert-card span,
+html.dark .dashboard-beranda-page .suspension-alert-card p {
+    color: #cbd5e1 !important;
+}
+
+html.dark .dashboard-beranda-page .announcement-item {
+    background-color: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .announcement-item > div > div > div {
+    color: #cbd5e1 !important;
+}
+
+html.dark .dashboard-beranda-page .announcement-item > div > div > div:first-child {
+    color: #ffffff !important;
+}
+
+/* Fix dashboard right widgets in dark mode */
+html.dark .dashboard-beranda-page .widget-card {
+    background-color: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .widget-card h3 {
+    color: #ffffff !important;
+}
+
+html.dark .dashboard-beranda-page .widget-card p {
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-beranda-page .profile-avatar-circle {
+    background-color: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .avatar-inner {
+    background-color: #1c212e !important;
+}
+
+html.dark .dashboard-beranda-page .chart-widget-body {
+    background-color: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .activities-widget .activity-info .title {
+    color: #ffffff !important;
+}
+
+html.dark .dashboard-beranda-page .activities-widget .activity-info .desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-beranda-page .activities-widget .activity-item {
+    border-bottom-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .activities-widget .btn-see-all {
+    background-color: #0f131c !important;
+    color: #cbd5e1 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .activities-widget .btn-see-all:hover {
+    background-color: #2a3241 !important;
+    color: #ffffff !important;
+}
+
+/* Fix transactions list in dark mode */
+html.dark .dashboard-beranda-page .transactions-list {
+    background-color: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .tx-table th {
+    border-bottom-color: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-beranda-page .tx-table td {
+    border-bottom-color: #2a3241 !important;
+}
+
+html.dark .dashboard-beranda-page .tx-name,
+html.dark .dashboard-beranda-page .tx-item-title {
+    color: #ffffff !important;
+}
+
+html.dark .dashboard-beranda-page .tx-date {
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-beranda-page .tx-avatar {
+    background-color: #2a3241 !important;
+    color: #ffffff !important;
+}
+
+html.dark .dashboard-beranda-page .tx-action {
+    background-color: transparent !important;
+    border-color: #2a3241 !important;
+    color: #6366f1 !important;
+}
+
+html.dark .dashboard-beranda-page .tx-action:hover {
+    background-color: #2a3241 !important;
+    border-color: #6366f1 !important;
+    color: #818cf8 !important;
+}
+
+/* tx-status background adjustment for dark mode */
+html.dark .dashboard-beranda-page .tx-status {
+    background: rgba(22, 101, 52, 0.2) !important;
+    color: #4ade80 !important;
+}
+html.dark .dashboard-beranda-page .tx-status.pending {
+    background: rgba(133, 77, 14, 0.2) !important;
+    color: #facc15 !important;
+}
+html.dark .dashboard-beranda-page .tx-status.failed {
+    background: rgba(153, 27, 27, 0.2) !important;
+    color: #f87171 !important;
+}
