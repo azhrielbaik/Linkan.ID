@@ -1,12 +1,4 @@
-{{-- Linkan.ID Platform Admin Sidebar --}}
-<link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}?v={{ time() }}">
-<link rel="stylesheet" href="{{ asset('css/platform/theme.css') }}?v={{ time() }}">
-<link rel="stylesheet" href="{{ asset('css/platform/custom-dropdown.css') }}?v={{ time() }}">
-<link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}?v={{ time() }}">
-<link rel="stylesheet" href="{{ asset('css/platform/gooey-search.css') }}?v={{ time() }}">
-<link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}?v={{ time() }}">
-
-<meta name="csrf-token" content="{{ csrf_token() }}">
+{{-- Core platform stylesheets and csrf-token meta are loaded properly in the layout <head> --}}
 
 <script>
     if (localStorage.getItem('sidebar-mini') === 'true') {
@@ -28,15 +20,13 @@
 
     <div class="sidebar-inner-scroll">
         <div class="logo-container">
-            <img src="{{ asset('images/Logo.svg') }}" alt="Logo" class="logo">
-
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="lang-toggle">
-                    <a href="{{ route('lang.switch', 'id') }}" data-turbo="false" class="{{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
-                    <a href="{{ route('lang.switch', 'en') }}" data-turbo="false" class="{{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
-                </div>
-                <i class="fas fa-times sidebar-close" onclick="toggleSidebar()"></i>
-            </div>
+            <a href="{{ route('platform-admin.dashboard') }}" class="sidebar-logo-link" title="Linkan.ID Platform Admin">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Logo Linkan.ID" class="logo">
+                <img src="{{ asset('images/Logo-mini.png') }}" alt="Logomark Linkan.ID" class="logo-mini">
+            </a>
+            <button type="button" class="sidebar-close" onclick="toggleSidebar()" aria-label="Tutup Menu">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
 
         <div class="menu-label">{{ __('sidebar.main_menu') }}</div>
@@ -107,6 +97,10 @@
 
 <script>
     function toggleSidebar() {
+        if (window.innerWidth > 900) {
+            toggleMinimize();
+            return;
+        }
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('sidebarBackdrop');
         if (sidebar) {
@@ -122,6 +116,19 @@
         const isMini = document.body.classList.contains('mini-sidebar');
         localStorage.setItem('sidebar-mini', isMini ? 'true' : 'false');
     }
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 900) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (sidebar && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+            if (backdrop && backdrop.classList.contains('show')) {
+                backdrop.classList.remove('show');
+            }
+        }
+    });
 
     // Global Modal Konfirmasi Linkan.ID
     window.showConfirmModal = function(options) {
@@ -199,9 +206,12 @@
     document.addEventListener('submit', function (event) {
         const form = event.target;
         if (!(form instanceof HTMLFormElement) || form.id === 'platformLogoutForm') return;
+        if ((form.method && form.method.toUpperCase() === 'GET') || form.classList.contains('search-form') || form.classList.contains('filter-form') || form.classList.contains('p-filter-inputs')) return;
 
-        const submitButton = form.querySelector('button[type="submit"]:not([disabled])');
-        if (submitButton) setPlatformActionLoading(submitButton);
+        const submitButton = event.submitter || form.querySelector('button[type="submit"]:not([disabled])');
+        if (submitButton && !submitButton.classList.contains('gooey-search-btn') && !submitButton.classList.contains('btn-filter')) {
+            setPlatformActionLoading(submitButton);
+        }
     });
 </script>
 
@@ -209,15 +219,15 @@
 @include('platformadmin.partials.toast')
 
 {{-- Dynamic Theme & Dark Mode Script --}}
-<script src="{{ asset('js/platform/theme.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/platform/theme.js') }}"></script>
 {{-- Modern Custom Dropdown Engine --}}
-<script src="{{ asset('js/platform/custom-dropdown.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/platform/custom-dropdown.js') }}"></script>
 {{-- Modern Expanding Capsule Tab Navbar Engine --}}
-<script src="{{ asset('js/platform/tabs.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/platform/tabs.js') }}"></script>
 {{-- Modern Gooey Search Bar & Animated Autocomplete Engine --}}
-<script src="{{ asset('js/platform/gooey-search.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/platform/gooey-search.js') }}"></script>
 {{-- Modern Date Range Picker Engine --}}
-<script src="{{ asset('js/platform/custom-datepicker.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/platform/custom-datepicker.js') }}"></script>
 
 {{-- Modern Table Enhancement Engine --}}
 <script>

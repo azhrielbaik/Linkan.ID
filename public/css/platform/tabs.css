@@ -16,8 +16,9 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    width: auto;
+    width: fit-content;
     max-width: 100%;
+    align-self: flex-start;
     margin-bottom: 20px;
     padding: 4px;
     border: 1px solid #e2e8f0;

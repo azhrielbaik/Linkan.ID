@@ -4,13 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('platform.dashboard') }} — Platform Admin</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @include('platformadmin.partials.head_assets')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/platform/berandaplatform.css') }}">
 </head>
 <body>
@@ -22,7 +17,7 @@
         {{-- Header Bar --}}
         <div class="platform-header">
             <div class="platform-header-left">
-                <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <button type="button" class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar" title="Buka/Tutup Menu"><i class="fas fa-bars"></i></button>
                 <h1>{{ __('platform.dashboard') }}</h1>
             </div>
             <div class="header-right">
@@ -160,8 +155,8 @@
         };
     </script>
     @vite(['resources/js/app.js'])
-    <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/berandaplatform.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/notifications.js') }}"></script>
+    <script src="{{ asset('js/platform/berandaplatform.js') }}"></script>
     <script src="{{ asset('js/platform/activity.js') }}"></script>
 </body>
 </html>

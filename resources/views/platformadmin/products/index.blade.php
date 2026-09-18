@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('platform.product_management') }} — Platform Admin</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/products.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/tabs.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}?v={{ time() }}">
+    @include('platformadmin.partials.head_assets')
+    <link rel="stylesheet" href="{{ asset('css/platform/products.css') }}">
 </head>
 <body>
 
@@ -23,7 +17,7 @@
         {{-- Header --}}
         <div class="platform-header">
             <div class="platform-header-left">
-                <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <button type="button" class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar" title="Buka/Tutup Menu"><i class="fas fa-bars"></i></button>
                 <h1>{{ __('platform.product_management') }}</h1>
             </div>
             <div class="header-right">
@@ -106,7 +100,7 @@
                     </select>
 
                     {{-- Filter Rentang Tanggal --}}
-                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-placeholder="Tanggal Upload">
+                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="Tanggal Upload">
                         <i class="fas fa-calendar-alt date-picker-icon"></i>
                         <span class="date-range-display">{{ $startDate && $endDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') . ' - ' . \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') : ($startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') : 'Tanggal Upload') }}</span>
                         <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="{{ $startDate ? '' : 'display: none;' }}"><i class="fas fa-times"></i></button>
@@ -549,8 +543,7 @@
         };
     </script>
     @vite(['resources/js/app.js'])
-    <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/custom-datepicker.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/products.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/notifications.js') }}"></script>
+    <script src="{{ asset('js/platform/products.js') }}"></script>
 </body>
 </html>

@@ -1,5 +1,8 @@
 {{-- Platform Admin Notification Component --}}
 <div class="header-actions">
+    {{-- Modern Clean Language Dropdown --}}
+    @include('platformadmin.partials.language_dropdown')
+
     <div class="notif-wrapper">
         <button type="button" class="action-icon notif-bell-btn" id="platformNotifBtn" onclick="togglePlatformNotif(event)" title="Notifikasi Platform" aria-label="Notifikasi Platform">
             <i class="far fa-bell"></i>

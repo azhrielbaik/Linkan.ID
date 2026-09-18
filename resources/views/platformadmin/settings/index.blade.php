@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('platform.platform_settings') }} — Platform Admin</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/platform/global.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}?v={{ time() }}">
+    @include('platformadmin.partials.head_assets')
+    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}">
 </head>
 <body>
 
@@ -311,7 +307,7 @@
         };
     </script>
     @vite(['resources/js/app.js'])
-    <script src="{{ asset('js/platform/notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/platform/settings.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/platform/notifications.js') }}"></script>
+    <script src="{{ asset('js/platform/settings.js') }}"></script>
 </body>
 </html>

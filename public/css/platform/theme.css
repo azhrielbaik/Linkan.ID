@@ -23,8 +23,28 @@
     background: var(--p-primary) !important;
 }
 
-.hamburger-btn {
+.hamburger-btn:hover,
+.hamburger-btn:focus-visible {
     color: var(--p-primary) !important;
+    border-color: var(--p-primary) !important;
+}
+
+.lang-dropdown-btn:hover,
+.lang-dropdown-btn.active {
+    border-color: var(--p-primary) !important;
+    color: var(--p-primary) !important;
+}
+
+.lang-dropdown-btn:hover .lang-globe-icon,
+.lang-dropdown-btn.active .lang-globe-icon,
+.lang-dropdown-btn:hover .lang-chevron-icon,
+.lang-dropdown-btn.active .lang-chevron-icon {
+    color: var(--p-primary) !important;
+}
+
+.lang-item-check,
+.ptd-lang-option.active {
+    background: var(--p-primary) !important;
 }
 
 .sidebar a:hover,

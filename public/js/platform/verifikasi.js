@@ -259,21 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterEndDate = document.getElementById("filterEndDate");
     const filterDateBox = document.getElementById("verificationDateRange");
 
-    // Auto submit form saat rentang tanggal berubah dari custom date picker
-    if (filterForm && filterDateBox) {
-        filterDateBox.addEventListener("dateRangeChange", function () {
-            filterForm.submit();
-        });
-
-        const clearBtn = filterDateBox.querySelector(".date-range-clear-btn");
-        if (clearBtn) {
-            clearBtn.addEventListener("click", function () {
-                if (filterStartDate) filterStartDate.value = "";
-                if (filterEndDate) filterEndDate.value = "";
-                filterForm.submit();
-            });
-        }
-    }
+    // Custom date picker di verificationDateRange di-handle otomatis oleh custom-datepicker.js (auto-submit form)
 
     // Checkbox selection untuk bulk verification
     document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
