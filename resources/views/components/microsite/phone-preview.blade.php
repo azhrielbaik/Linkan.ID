@@ -144,8 +144,8 @@
                                     <div class="empty-state-icon-wrapper">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
-                                    <div class="empty-state-title">Belum Ada Elemen</div>
-                                    <p class="empty-state-desc">Klik "Tambah Element" di sebelah kiri untuk menambahkan profil atau komponen ke microsite ini.</p>
+                                    <div class="empty-state-title">{{ __('microsite.no_elements_yet') }}</div>
+                                    <p class="empty-state-desc">{{ __('microsite.click_add_element') }}</p>
                                 </div>
 
                                 <!-- LIVE PROFILE SECTION (HIDDEN UNTIL PROFILE ELEMENT IS ADDED IN LEFT PANEL) -->
@@ -363,13 +363,13 @@
                                                     @else
                                                         <div class="live-video-placeholder">
                                                             <i class="fab fa-youtube live-video-placeholder-icon"></i>
-                                                            URL YouTube Tidak Valid
+                                                            {{ __('microsite.invalid_youtube_url') }}
                                                         </div>
                                                     @endif
                                                 @else
                                                     <div class="live-video-placeholder">
                                                         <i class="fab fa-youtube live-video-placeholder-icon"></i>
-                                                        Masukkan URL YouTube
+                                                        {{ __('microsite.enter_youtube_url') }}
                                                     </div>
                                                 @endif
                                             </div>
@@ -423,7 +423,7 @@
                     <!-- SLEEK REDESIGNED VERTICAL BROWSER URL PILL (RIGHT SIDE OF PHONE) -->
                     <div class="preview-url-browser-bar">
                         <!-- TOP: HTTPS GREEN LOCK BADGE -->
-                        <div class="ssl-secure-badge" title="Akses Aman HTTPS (SSL Active)">
+                        <div class="ssl-secure-badge" title="{{ __('microsite.ssl_active') }}">
                             <i class="fas fa-lock"></i>
                         </div>
 
@@ -435,12 +435,12 @@
                         <!-- BOTTOM: VERTICAL ACTION BUTTON STACK -->
                         <div class="vertical-action-stack">
                             <!-- Copy Button -->
-                            <button class="js-copy-url btn-vertical-action btn-copy" type="button" data-url="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" title="Salin Tautan Microsite">
+                            <button class="js-copy-url btn-vertical-action btn-copy" type="button" data-url="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" title="{{ __('microsite.copy_microsite_link') }}">
                                 <i class="fas fa-copy"></i>
                             </button>
                             
                             <!-- Open External Link Button -->
-                            <a href="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" target="_blank" class="btn-vertical-action btn-external" title="Buka Microsite di Tab Baru">
+                            <a href="{{ url('/' . ($appearance->alias ?? Auth::user()->username)) }}" target="_blank" class="btn-vertical-action btn-external" title="{{ __('microsite.open_microsite_new_tab') }}">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>

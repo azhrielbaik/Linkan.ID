@@ -498,26 +498,26 @@
                                 align-items: center;
                                 background-color: #f1f5f9;
                                 border-radius: 50px;
-                                padding: 4px;
+                                padding: 0;
                                 cursor: pointer;
-                                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-                                width: 76px;
-                                height: 38px;
-                                transition: background-color 0.3s ease;
+                                box-shadow: inset 3px 3px 6px rgba(0,0,0,0.08), inset -3px -3px 6px rgba(255,255,255,0.9);
+                                width: 80px;
+                                height: 40px;
+                                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                                overflow: hidden;
                             }
                             
                             .theme-switch-slider {
                                 position: absolute;
-                                top: 4px;
-                                left: 4px;
-                                width: 34px;
-                                height: 30px;
-                                background-color: #ffffff;
-                                border-radius: 20px;
-                                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+                                top: 0;
+                                left: 0;
+                                width: 50%;
+                                height: 100%;
+                                background-color: #f1f5f9;
+                                box-shadow: -4px 0 8px rgba(0,0,0,0.1);
+                                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
                                 z-index: 1;
-                                transform: translateX(34px); /* default (light mode): slider on the right (sun) */
+                                transform: translateX(100%); /* default (light mode): slider on the right (sun) */
                             }
                             
                             .theme-switch-icon {
@@ -526,9 +526,9 @@
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
-                                width: 34px;
-                                height: 30px;
-                                font-size: 15px;
+                                width: 50%;
+                                height: 100%;
+                                font-size: 16px;
                                 color: #94a3b8;
                                 transition: color 0.3s ease;
                             }
@@ -536,21 +536,41 @@
                             /* Dark mode states */
                             html.dark .theme-switch {
                                 background-color: #1e293b;
-                                box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+                                box-shadow: inset 3px 3px 6px rgba(0,0,0,0.4), inset -2px -2px 5px rgba(255,255,255,0.05);
                             }
                             
                             html.dark .theme-switch-slider {
-                                background-color: #334155;
+                                background-color: #1e293b;
                                 transform: translateX(0); /* dark mode: slider on the left (moon) */
-                                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                                box-shadow: 4px 0 8px rgba(0,0,0,0.4);
                             }
                             
                             /* Active icon colors */
                             html:not(.dark) .icon-sun {
-                                color: #FF9040; /* Lime/Yellow tone for light mode active */
+                                color: #FF9040; /* Yellow/Green tone for light mode active */
                             }
                             html.dark .icon-moon {
-                                color: #eab308; /* Yellow tone for dark mode active */
+                                color: #fef08a; /* Bright yellow for dark mode active */
+                            }
+                            html:not(.dark) .icon-moon {
+                                color: #cbd5e1;
+                            }
+                            html.dark .icon-sun {
+                                color: #4a5568;
+                            }
+                            
+                            /* Mobile responsive adjustments */
+                            @media (max-width: 600px) {
+                                .theme-switch-wrapper {
+                                    margin: 0 !important;
+                                }
+                                .theme-switch {
+                                    width: 64px;
+                                    height: 32px;
+                                }
+                                .theme-switch-icon {
+                                    font-size: 13px;
+                                }
                             }
                         </style>
 
@@ -558,10 +578,10 @@
                             <div class="theme-switch" onclick="toggleDarkMode()">
                                 <div class="theme-switch-slider"></div>
                                 <div class="theme-switch-icon icon-moon">
-                                    <i class="fas fa-moon"></i>
+                                    <i class="far fa-moon"></i>
                                 </div>
                                 <div class="theme-switch-icon icon-sun">
-                                    <i class="fas fa-sun"></i>
+                                    <i class="far fa-sun"></i>
                                 </div>
                             </div>
                         </div>

@@ -1,4 +1,5 @@
 (function() {
+    window.MicrositeBuilder = window.MicrositeBuilder || {};
 // State management for Digital Product Wizard
     let currentDpStep = 1;
     const maxDpStep = 3;
@@ -72,7 +73,7 @@
     document.addEventListener("DOMContentLoaded", initDpQuill);
     document.addEventListener("turbo:load", initDpQuill);
 
-    function openDigitalProductWizard() {
+    window.MicrositeBuilder.openDigitalProductWizard = function() {
         // Hide add element panel
         document.getElementById('addElementPanel').classList.remove('show');
         const btnToggleIcon = document.getElementById('btnToggleIcon');
@@ -828,8 +829,7 @@
     }
 
     // Expose functions to window
-    window.openDigitalProductWizard = openDigitalProductWizard;
-    window.openEditDigitalProductWizard = openEditDigitalProductWizard;
+        window.openEditDigitalProductWizard = openEditDigitalProductWizard;
     window.cancelDigitalProductWizard = cancelDigitalProductWizard;
     window.updateDpTitle = updateDpTitle;
     window.handleDpFiles = handleDpFiles;

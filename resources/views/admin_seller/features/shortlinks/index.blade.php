@@ -17,22 +17,22 @@
     <div class="dashboard-grid">
         <!-- LEFT COLUMN -->
         <div class="left-col">
-            @include('admin_seller.shortlinks.partials.stat-chart')
-            @include('admin_seller.shortlinks.partials.search-filter')
+            @include('admin_seller.features.shortlinks.partials._stat-chart')
+            @include('admin_seller.features.shortlinks.partials._search-filter')
 
         </div>
 
-        @include('admin_seller.shortlinks.partials.create-form')
+        @include('admin_seller.features.shortlinks.partials._create-form')
     </div>
 
-            @include('admin_seller.shortlinks.partials.list-items')
+            @include('admin_seller.features.shortlinks.partials._list-items')
 </div>
 
 <!-- PANEL OVERLAY -->
 <div id="sl-overlay"></div>
 
 <!-- SLIDE OUT PANEL -->
-@include('admin_seller.shortlinks.partials.side-panel')
+@include('admin_seller.features.shortlinks.partials._side-panel')
 
 @endsection
 

@@ -38,12 +38,12 @@ class DigitalProductController extends Controller
             ->where('transactions.status', 'success')
             ->count();
 
-        return view('admin_seller.features.digital_products.index', compact('products', 'totalSales', 'totalOrders'));
+        return view('admin_seller.features.digital-products.index', compact('products', 'totalSales', 'totalOrders'));
     }
 
     public function create()
     {
-        return view('admin_seller.features.digital_products.form');
+        return view('admin_seller.features.digital-products.form');
     }
 
     public function store(StoreDigitalProductRequest $request)
@@ -72,7 +72,7 @@ class DigitalProductController extends Controller
     {
         $product = $this->digitalProductService->getProduct($id, Auth::id());
         
-        return view('admin_seller.features.digital_products.form', compact('product'));
+        return view('admin_seller.features.digital-products.form', compact('product'));
     }
     
     
@@ -80,7 +80,7 @@ class DigitalProductController extends Controller
     {
         $user = Auth::user();
         $product = \App\Models\DigitalProduct::where('id', $id)->where('user_id', $user->id)->firstOrFail();
-        return view('admin_seller.features.digital_products.show', compact('product', 'user'));
+        return view('admin_seller.features.digital-products.show', compact('product', 'user'));
     }
     public function update(UpdateDigitalProductRequest $request, $id)
     {

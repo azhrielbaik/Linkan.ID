@@ -5,8 +5,8 @@
                                 <i class="fas fa-image"></i>
                             </div>
                             <div>
-                                <h3 class="design-settings-section-title">Background Halaman</h3>
-                                <p class="design-settings-section-desc">Pilih gambar atau warna untuk latar belakang</p>
+                                <h3 class="design-settings-section-title">{{ __('microsite.bg_title') }}</h3>
+                                <p class="design-settings-section-desc">{{ __('microsite.bg_desc') }}</p>
                             </div>
                         </header>
 
@@ -18,7 +18,7 @@
                                 class="bg-sub-tab-btn {{ ($appearance && $appearance->background_type === 'image') ? 'is-active' : '' }}"
                                 onclick="switchBackgroundTab('gambar')"
                             >
-                                <i class="fas fa-image"></i> Gambar
+                                <i class="fas fa-image"></i> {{ __('microsite.bg_image') }}
                             </button>
                             <button
                                 type="button"
@@ -26,7 +26,7 @@
                                 class="bg-sub-tab-btn {{ (!$appearance || $appearance->background_type !== 'image') ? 'is-active' : '' }}"
                                 onclick="switchBackgroundTab('warna')"
                             >
-                                <i class="fas fa-palette"></i> Warna
+                                <i class="fas fa-palette"></i> {{ __('microsite.bg_color') }}
                             </button>
                         </div>
 
@@ -64,7 +64,7 @@
                                 <div class="bg-option-preview bg-option-none">
                                     <i class="fas fa-ban"></i>
                                 </div>
-                                <span class="bg-option-label">Tanpa Gambar</span>
+                                <span class="bg-option-label">{{ __('microsite.bg_none') }}</span>
                             </label>
 
                             @foreach($backgroundImages as $filename => $label)
@@ -90,16 +90,16 @@
                             <div class="bg-color-presets">
                                 @php
                                     $colorPresets = [
-                                        '#FFFFFF' => 'Putih',
-                                        '#F8FAFC' => 'Abu Terang',
-                                        '#F0FDF4' => 'Hijau Lembut',
-                                        '#FFF7ED' => 'Oranye Lembut',
-                                        '#EFF6FF' => 'Biru Lembut',
-                                        '#FDF4FF' => 'Ungu Lembut',
-                                        '#FFF1F2' => 'Merah Muda',
+                                        '#FFFFFF' => __('microsite.color_white'),
+                                        '#F8FAFC' => __('microsite.color_light_gray'),
+                                        '#F0FDF4' => __('microsite.color_soft_green'),
+                                        '#FFF7ED' => __('microsite.color_soft_orange'),
+                                        '#EFF6FF' => __('microsite.color_soft_blue'),
+                                        '#FDF4FF' => __('microsite.color_soft_purple'),
+                                        '#FFF1F2' => __('microsite.color_pink'),
                                         '#FAFAF9' => 'Stone',
-                                        '#1E293B' => 'Biru Gelap',
-                                        '#111827' => 'Hitam',
+                                        '#1E293B' => __('microsite.color_dark_blue'),
+                                        '#111827' => __('microsite.color_black'),
                                     ];
                                     $currentBgColor = ($appearance && $appearance->background_type === 'color')
                                         ? ($appearance->background_color ?? '#FFFFFF')
@@ -119,7 +119,7 @@
                             </div>
 
                             <div class="bg-color-custom-row">
-                                <label class="profile-form-label" for="bgColorCustomPicker">Warna Custom</label>
+                                <label class="profile-form-label" for="bgColorCustomPicker">{{ __('microsite.bg_custom_color') }}</label>
                                 <div class="bg-color-picker-wrapper">
                                     <input
                                         type="color"

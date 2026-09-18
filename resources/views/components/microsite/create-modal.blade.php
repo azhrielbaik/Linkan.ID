@@ -2,7 +2,7 @@
     <div class="new-microsite-modal-wrapper">
         
         <!-- FLOATING DETACHED CLOSE BUTTON -->
-        <button type="button" class="floating-close-btn" onclick="closeNewMicrositeModal()" title="Tutup Modal">&times;</button>
+        <button type="button" class="floating-close-btn" onclick="closeNewMicrositeModal()" title="{{ __('microsite.close_modal') }}">&times;</button>
 
         <div class="new-microsite-modal-card">
             
@@ -13,15 +13,15 @@
                         <i class="fas fa-brush" class="upload-text-highlight"></i> {{ __('admin.create_new_microsite') }}
                     </h3>
                     <p class="new-microsite-modal-subtitle" id="wizardSubtitle">
-                        Langkah 1 dari 2: Pilih Tujuan Pembuatan Microsite
+                        {{ __('microsite.create_step_1_title') }}
                     </p>
                 </div>
                 
                 <div class="wizard-header-right">
                     <!-- STEP DOTS INDICATOR -->
                     <div class="wizard-step-dots">
-                        <span class="step-dot active" id="dotStep1" onclick="goToStep(1)" title="Langkah 1: Tujuan Pembuatan"></span>
-                        <span class="step-dot" id="dotStep2" onclick="goToStep(2)" title="Langkah 2: Detail Microsite"></span>
+                        <span class="step-dot active" id="dotStep1" onclick="goToStep(1)" title="{{ __('microsite.create_step_1') }}"></span>
+                        <span class="step-dot" id="dotStep2" onclick="goToStep(2)" title="{{ __('microsite.create_step_2') }}"></span>
                     </div>
                 </div>
             </div>
@@ -144,12 +144,12 @@
                         </div>
 
                         <div class="form-field-item form-field-margin">
-                            <label class="field-label">Alamat Microsite <span class="required-asterisk">*</span></label>
+                            <label class="field-label">{{ __('microsite.microsite_address') }} <span class="required-asterisk">*</span></label>
                             <div style="display: flex; align-items: stretch; width: 100%;">
                                 <span style="background-color: #f3f4f6; border: 1px solid #d1d5db; border-right: none; border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #4b5563; font-size: 0.875rem; white-space: nowrap; display: flex; align-items: center;">linkan.id/</span>
                                 <input type="text" name="alias" id="micrositeAliasInput" class="form-control-input" style="border-top-left-radius: 0; border-bottom-left-radius: 0; flex: 1;" placeholder="alamat-anda" maxlength="12" value="{{ old('alias', Auth::user()->username) }}" required>
                             </div>
-                            <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">Maksimal 12 karakter. Hanya huruf, angka, dan tanda hubung (-).</small>
+                            <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">{{ __('microsite.address_helper') }}</small>
                         </div>
 
                         <div class="form-field-item form-field-margin">

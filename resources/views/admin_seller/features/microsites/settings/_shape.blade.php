@@ -5,8 +5,8 @@
                                 <i class="fas fa-vector-square"></i>
                             </div>
                             <div>
-                                <h3 class="design-settings-section-title">Bentuk Blok</h3>
-                                <p class="design-settings-section-desc">Atur sudut blok elemen di microsite</p>
+                                <h3 class="design-settings-section-title">{{ __('microsite.shape_title') }}</h3>
+                                <p class="design-settings-section-desc">{{ __('microsite.shape_desc') }}</p>
                             </div>
                         </header>
 

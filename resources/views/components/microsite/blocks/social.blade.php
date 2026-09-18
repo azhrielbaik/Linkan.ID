@@ -1,17 +1,19 @@
-                                @php 
-                                    $elementId = 'socialBlock_' . $socialEl->id; 
-                                    $isActive = $socialEl->is_active ?? true;
-                                    $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
-                                @endphp
-                                <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="social" data-db-id="{{ $socialEl->id }}">
+@props(['elementId', 'data', 'isActive' => true])
+@php
+    $platforms = [];
+    if ($data) {
+        $platforms = is_string($data?->platforms) ? json_decode($data?->platforms, true) : ($data?->platforms ?? []);
+    }
+@endphp
+<div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="social" data-db-id="{{ $data?->id }}">
                                     <div class="block-item-card js-toggle-edit-form" data-type="Social" data-target-id="{{ $elementId }}">
-                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon js-stop-propagation" title="Tarik ke atas/bawah untuk ubah urutan"></i>
+                                        <i class="fas fa-grip-vertical drag-handle drag-handle-icon js-stop-propagation" title="{{ __('microsite.drag_drop') }}"></i>
                                         <div class="block-item-icon-wrapper">
                                             <i class="fas fa-share-alt"></i>
                                         </div>
                                         <div class="block-item-content">
                                             <div class="block-item-title-wrapper">
-                                                <span>Media Sosial</span>
+                                                <span>{{ __('microsite.social_title') }}</span>
                                             </div>
                                         </div>
                                         <div class="block-item-actions js-stop-propagation" >
@@ -26,18 +28,18 @@
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" data-type="Social" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
-                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">Edit</span>
+                                                <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">{{ __('microsite.btn_edit') }}</span>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <!-- Form Edit untuk Media Sosial -->
+                                    <!-- Form Edit untuk {{ __('microsite.social_title') }} -->
                                     <div id="formBody_{{ $elementId }}" class="edit-form-body" style="max-height: 0; opacity: 0; margin-top: 0;">
                                         <div class="edit-form-content">
                                             <form id="socialForm_{{ $elementId }}">
                                                 <div class="social-edit-header">
-                                                    <h4 class="form-section-title" style="margin-bottom: 5px;"><i class="fas fa-share-alt"></i> Pengaturan Media Sosial</h4>
-                                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Aktifkan platform yang ingin Anda tampilkan.</p>
+                                                    <h4 class="form-section-title" style="margin-bottom: 5px;"><i class="fas fa-share-alt"></i> Pengaturan {{ __('microsite.social_title') }}</h4>
+                                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">{{ __('microsite.social_active_desc') }}</p>
                                                 </div>
 
                                                 <div class="social-platforms-list" id="social_platforms_list_{{ $elementId }}">
@@ -69,7 +71,7 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="platform-input-container">
-                                                                    <label class="form-label-custom">URL atau Username {{ $platInfo['label'] }}</label>
+                                                                    <label class="form-label-custom">{{ __('microsite.url_or_username') }} {{ $platInfo['label'] }}</label>
                                                                     <input type="text" id="input_{{ $platKey }}_{{ $elementId }}" class="form-input-custom platform-input-trigger js-update-social-preview js-update-social-preview" data-platform="{{ $platKey }}" data-element="{{ $elementId }}" value="{{ $platforms[$platKey] }}" placeholder="{{ $platInfo['placeholder'] }}" data-target-id="{{ $elementId }}" data-target-id="{{ $elementId }}">
                                                                 </div>
                                                             </div>
@@ -80,7 +82,7 @@
                                                 <!-- ADD PLATFORM BUTTON -->
                                                 <div style="margin-top: 16px; text-align: center;">
                                                     <button type="button" class="btn btn-outline btn-primary btn-sm js-open-social-selector" data-target-id="{{ $elementId }}" style="border-radius: 8px; width: 100%; border: 1px dashed #cbd5e1; color: #64748b; background: white; padding: 12px; transition: all 0.2s;"  >
-                                                        <i class="fas fa-plus"></i> Tambah Platform Media Sosial
+                                                        <i class="fas fa-plus"></i> Tambah Platform {{ __('microsite.social_title') }}
                                                     </button>
                                                 </div>
 

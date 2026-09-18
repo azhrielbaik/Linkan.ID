@@ -1,6 +1,6 @@
     <!-- COMBINED HEADER & MODE SWITCH -->
     <div class="section-header microsite-main-header">
-        @include('admin_seller.microsites.partials._gallery_header')
+        @include('admin_seller.features.microsites.partials._gallery-header')
     </div>
 
         <!-- GALLERY LIST VIEW -->

@@ -4,6 +4,7 @@
  */
 (function () {
     'use strict';
+    window.MicrositeBuilder = window.MicrositeBuilder || {};
 
     let currentStep = 1;
 
@@ -95,7 +96,7 @@
         }
     }
 
-    function toggleAddElementPanel() {
+    window.MicrositeBuilder.toggleAddElementPanel = function() {
         const panel = document.getElementById('addElementPanel');
         const btn = document.getElementById('btnToggleAddElement');
         const icon = document.getElementById('btnToggleIcon');
@@ -951,8 +952,8 @@
     // DYNAMIC IMAGE ELEMENT LOGIC
     let imageElementCounter = 0;
 
-    function addGambarElement() {
-        toggleAddElementPanel(); // Hide side menu
+    window.MicrositeBuilder.addGambarElement = function() {
+        window.MicrositeBuilder.toggleAddElementPanel(); // Hide side menu
 
         imageElementCounter++;
         const elementId = 'imageBlock_' + new Date().getTime();
@@ -1019,8 +1020,8 @@
         // Oleh karena itu, kita biarkan saja tanpa href dan pointer-events tetap none di `a` tag-nya.
     }
     // DIVIDER ELEMENT LOGIC
-    function addDividerElement() {
-        if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    window.MicrositeBuilder.addDividerElement = function() {
+        if (typeof window.MicrositeBuilder.toggleAddElementPanel === "function") window.MicrositeBuilder.toggleAddElementPanel();
         const tempId = 'temp_' + Date.now();
         const list = document.getElementById('elementBlocksList');
 
@@ -1240,8 +1241,8 @@
     }
 
     // TEXT ELEMENT LOGIC
-    function addTextElement() {
-        if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    window.MicrositeBuilder.addTextElement = function() {
+        if (typeof window.MicrositeBuilder.toggleAddElementPanel === "function") window.MicrositeBuilder.toggleAddElementPanel();
         const tempId = 'textBlock_' + Date.now();
         const list = document.getElementById('elementBlocksList');
 
@@ -1592,8 +1593,8 @@
     }
 
     // VIDEO ELEMENT LOGIC
-    function addVideoElement() {
-        if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    window.MicrositeBuilder.addVideoElement = function() {
+        if (typeof window.MicrositeBuilder.toggleAddElementPanel === "function") window.MicrositeBuilder.toggleAddElementPanel();
         const tempId = 'videoBlock_' + Date.now();
         const list = document.getElementById('elementBlocksList');
 
@@ -1889,8 +1890,8 @@
     }
 
     // SOCIAL MEDIA ELEMENT LOGIC
-    function addSocialMediaElement() {
-        if (typeof toggleAddElementPanel === 'function') toggleAddElementPanel();
+    window.MicrositeBuilder.addSocialMediaElement = function() {
+        if (typeof window.MicrositeBuilder.toggleAddElementPanel === "function") window.MicrositeBuilder.toggleAddElementPanel();
         const tempId = 'socialBlock_' + Date.now();
         const list = document.getElementById('elementBlocksList');
 
@@ -2423,7 +2424,12 @@
             btn.classList.add('active');
             
             // Show content
+            
+            if (subtab === 'emoji' && window.MicrositeBuilder && window.MicrositeBuilder.renderEmojiPicker) {
+                window.MicrositeBuilder.renderEmojiPicker(id);
+            }
             document.getElementById('advSubTab_emoji_' + id).style.display = (subtab === 'emoji') ? 'block' : 'none';
+
             document.getElementById('advSubTab_fontawesome_' + id).style.display = (subtab === 'fontawesome') ? 'block' : 'none';
             document.getElementById('advSubTab_url_' + id).style.display = (subtab === 'url') ? 'block' : 'none';
             
@@ -2787,8 +2793,7 @@
     window.closeNewMicrositeModal = closeNewMicrositeModal;
     window.selectPurposeCard = selectPurposeCard;
     window.goToStep = goToStep;
-    window.toggleAddElementPanel = toggleAddElementPanel;
-    window.closeAllEditForms = closeAllEditForms;
+        window.closeAllEditForms = closeAllEditForms;
     window.toggleProfileEditForm = toggleProfileEditForm;
     window.previewProfileBanner = previewProfileBanner;
     window.previewProfileAvatar = previewProfileAvatar;
@@ -2810,18 +2815,15 @@
     window.syncProfileBio = syncProfileBio;
     window.showDeleteConfirmModal = showDeleteConfirmModal;
     window.closeDeleteConfirmModal = closeDeleteConfirmModal;
-    window.addGambarElement = addGambarElement;
-    window.toggleImageEditForm = toggleImageEditForm;
+        window.toggleImageEditForm = toggleImageEditForm;
     window.updateDynamicImageLink = updateDynamicImageLink;
-    window.addDividerElement = addDividerElement;
-    window.toggleDividerEditForm = toggleDividerEditForm;
+        window.toggleDividerEditForm = toggleDividerEditForm;
     window.adjustDividerSize = adjustDividerSize;
     window.updateDividerPreview = updateDividerPreview;
     window.updateSegmentedControl = updateSegmentedControl;
     window.saveDynamicDivider = saveDynamicDivider;
     window.removeDynamicDivider = removeDynamicDivider;
-    window.addTextElement = addTextElement;
-    window.toggleTextEditForm = toggleTextEditForm;
+        window.toggleTextEditForm = toggleTextEditForm;
     window.execCmd = execCmd;
     window.changeTextSize = changeTextSize;
     window.applyCustomSize = applyCustomSize;
@@ -2829,14 +2831,12 @@
     window.updateTextPreview = updateTextPreview;
     window.saveDynamicText = saveDynamicText;
     window.removeDynamicText = removeDynamicText;
-    window.addVideoElement = addVideoElement;
-    window.toggleVideoEditForm = toggleVideoEditForm;
+        window.toggleVideoEditForm = toggleVideoEditForm;
     window.updateVideoPreview = updateVideoPreview;
     window.saveDynamicVideo = saveDynamicVideo;
     window.removeDynamicVideo = removeDynamicVideo;
     window.toggleElementVisibility = toggleElementVisibility;
-    window.addSocialMediaElement = addSocialMediaElement;
-    window.toggleSocialEditForm = toggleSocialEditForm;
+        window.toggleSocialEditForm = toggleSocialEditForm;
     window.toggleSocialInput = toggleSocialInput;
     window.updateSocialPreview = updateSocialPreview;
     window.saveDynamicSocialMedia = saveDynamicSocialMedia;
@@ -2847,6 +2847,39 @@
     window.removeSocialPlatformFromForm = removeSocialPlatformFromForm;
     window.toggleSocialPlatformSelection = toggleSocialPlatformSelection;
     window.finishSocialPlatformSelection = finishSocialPlatformSelection;
+
+
+    window.MicrositeBuilder = window.MicrositeBuilder || {};
+    
+    window.MicrositeBuilder.EMOJI_DICTIONARY = [
+        { category: "Smileys & Emotion", id: "cat_smileys", icons: ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾"] },
+        { category: "People & Body", id: "cat_people", icons: ["👋","🤚","🖐️","✋","🖖","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦾","🦿","🦵","🦶","👂","🦻","👃","🧠","🫀","🫁","🦷","🦴","👀","👁️","👅","👄","💋","🩸"] },
+        { category: "Animals & Nature", id: "cat_animals", icons: ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐻‍❄️","🐨","🐯","🦁","🐮","🐷","🐽","🐸","🐵","🙈","🙉","🙊","🐒","🐔","🐧","🐦","🐤","🐣","🐥","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🪱","🐛","🦋","🐌","🐞","🐜","🪰","🪲","🪳","🦟","🦗","🕷️","🕸️","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦞","🦀","🐡","🐠","🐟","🐬","🐳","🐋","🦈","🦭","🐊","🐅","🐆","🦓","🦍","🦧","🦣","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🦬","🐃","🐂","🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐕‍🦺","🐈","🐈‍⬛","🪶","🐓","🦃","🦤","🦚","🦜","🦢","🦩","🕊️","🐇","🦝","🦨","🦡","🦫","🦦","🦥","🐁","🐀","🐿️","🦔","🐉","🐲","🌵","🎄","🌲","🌳","🌴","🪵","🌱","🌿","☘️","🍀","🎍","🪴","🎋","🍃","🍂","🍁","🍄","🐚","🪨","🌾","💐","🌷","🌹","🥀","🌺","🌸","🌼","🌻","🌞","🌝","🌛","🌜","🌚","🌕","🌖","🌗","🌘","🌑","🌒","🌓","🌔","🌙","🌎","🌍","🌏","🪐","💫","⭐️","🌟","✨","⚡️","☄️","💥","🔥","🌪️","🌈","☀️","🌤️","⛅️","🌥️","☁️","🌦️","🌧️","⛈️","🌩️","🌨️","❄️","☃️","⛄️","🌬️","💨","💧","💦","☔️","☂️","🌊","🌫️"] },
+        { category: "Food & Drink", id: "cat_food", icons: ["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥬","🥒","🌶️","🫑","🌽","🥕","🧄","🧅","🥔","🍠","🥐","🥯","🍞","🥖","🥨","🧀","🥚","🍳","🧈","🥞","🧇","🥓","🥩","🍗","🍖","🦴","🌭","🍔","🍟","🍕","🫓","🥪","🥙","🧆","🌮","🌯","🫔","🥗","🥘","🫕","🥫","🍝","🍜","🍲","🍛","🍣","🍱","🥟","🦪","🍤","🍙","🍚","🍘","🍥","🥠","🥮","🍢","🍡","🍧","🍨","🍦","🥧","🧁","🍰","🎂","🍮","🍭","🍬","🍫","🍿","🍩","🍪","🌰","🥜","🍯","🥛","🍼","🫖","☕️","🍵","🧃","🥤","🧋","🍶","🍺","🍻","🥂","🍷","🥃","🍸","🍹","🧉","🍾","🧊","🥄","🍴","🍽️","🥣","🥡","🥢","🧂"] },
+        { category: "Travel & Places", id: "cat_travel", icons: ["🚗","🚕","🚙","🚌","🚎","🏎️","🚓","🚑","🚒","🚐","🛻","🚚","🚛","🚜","🦯","🦽","🦼","🛴","🚲","🛵","🏍️","🛺","🚨","🚔","🚍","🚘","🚖","🚡","🚠","🚟","🚃","🚋","🚞","🚝","🚄","🚅","🚈","🚂","🚆","🚇","🚊","🚉","✈️","🛫","🛬","🛩️","💺","🛰️","🚀","🛸","🚁","🛶","⛵️","🚤","🛥️","🛳️","⛴️","🚢","⚓️","🪝","⛽️","🚧","🚦","🚥","🚏","🗺️","🗿","🗽","🗼","🏰","🏯","🏟️","🎡","🎢","🎠","⛲️","⛱️","🏖️","🏝️","🏜️","🌋","⛰️","🏔️","🗻","🏕️","⛺️","🛖","🏠","🏡","🏘️","🏚️","🏗️","🏭","🏢","🏬","🏣","🏤","🏥","🏦","🏨","🏪","🏫","🏩","💒","🏛️","⛪️","🕌","🛕","🕍","⛩️","🕋","⛩️"] },
+        { category: "Objects", id: "cat_objects", icons: ["⌚️","📱","📲","💻","⌨️","🖥️","🖨️","🖱️","🖲️","🕹️","🗜️","💽","💾","💿","📀","📼","📷","📸","📹","🎥","📽️","🎞️","📞","☎️","📟","📠","📺","📻","🎙️","🎚️","🎛️","🧭","⏱️","⏲️","⏰","🕰️","⌛️","⏳","📡","🔋","🔌","💡","🔦","🕯️","🪔","🧯","🛢️","💸","💵","💴","💶","💷","🪙","💰","💳","💎","⚖️","🪜","🧰","🪛","🔧","🔨","⚒️","🛠️","⛏️","🪚","🔩","⚙️","🪤","🧱","⛓️","🧲","🔫","💣","🧨","🪓","🔪","🗡️","⚔️","🛡️","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿","💈","⚗️","🔭","🔬","🕳️","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡️","🧹","🪠","🧺","🧻","🚽","🚰","🚿","🛁","🛀","🧼","🪥","🪒","🧽","🪣","🧴","🛎️","🔑","🗝️","🚪","🪑","🛋️","🛏️","🛌","🧸","🪆","🖼️","🪞","🪟","🛍️","🛒","🎁","🎈","🎏","🎀","🪄","🪅","🎊","🎉","🎎","🏮","🎐","🧧","✉️","📩","📨","📧","💌","📥","📤","📦","🏷️","🪧","📪","📫","📬","📭","📮","📯","📜","📃","📄","📑","🧾","📊","📈","📉","🗒️","🗓️","📆","📅","🗑️","📇","🗃️","🗳️","🗄️","📋","📁","📂","🗂️","🗞️","📰","📓","📔","📒","📕","📗","📘","📙","📚","📖","🔖","🧷","🔗","📎","🖇️","📐","📏","🧮","📌","📍","✂️","🖊️","🖋️","✒️","🖌️","🖍️","📝","✏️","🔍","🔎","🔏","🔐","🔒","🔓"] }
+    ];
+
+    window.MicrositeBuilder.renderEmojiPicker = function(targetId) {
+        const container = document.getElementById('emojiScroll_' + targetId);
+        if (!container) return;
+        
+        // Cegah double render
+        if (container.dataset.rendered === 'true') return;
+
+        let html = '';
+        window.MicrositeBuilder.EMOJI_DICTIONARY.forEach(cat => {
+            html += '<div class="emoji-section-title" id="' + cat.id + '_' + targetId + '">' + cat.category + '</div>';
+            html += '<div class="emoji-grid">';
+            cat.icons.forEach(emoji => {
+                html += '<div class="emoji-item js-pick-emoji" data-target-id="' + targetId + '" data-emoji="' + emoji + '">' + emoji + '</div>';
+            });
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+        container.dataset.rendered = 'true';
+    };
 
 })();
 
