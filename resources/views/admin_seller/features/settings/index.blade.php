@@ -14,7 +14,7 @@
 
                 <!-- Profile Picture -->
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-6 mb-10">
-                    <div class="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
+                    <div class="relative w-24 h-24 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
                         @if($user->avatar)
                             <img id="avatar-preview" src="{{ Storage::url($user->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
                             <span id="avatar-initial" class="text-3xl font-bold text-slate-400 hidden">
@@ -33,7 +33,7 @@
                         <div class="flex items-center gap-3 mb-2 flex-wrap">
                             <label class="px-4 py-2 bg-[#ED842C] hover:bg-[#d07323] text-white text-sm font-semibold rounded-lg cursor-pointer transition flex items-center gap-2">
                                 <i class="fas fa-upload"></i> Upload Image
-                                <input type="file" name="avatar" class="hidden" accept="image/png, image/jpeg, image/gif" onchange="previewImage(this)">
+                                <input type="file" name="avatar" class="hidden image-cropper" data-crop-ratio="1" data-crop-shape="circle" accept="image/png, image/jpeg, image/gif" onchange="previewImage(this)">
                             </label>
                             <button type="button" class="px-4 py-2 border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition flex items-center gap-2" onclick="removeAvatar()">
                                 <i class="far fa-trash-alt"></i> Remove

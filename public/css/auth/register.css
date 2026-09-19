@@ -180,6 +180,55 @@ body {
     transform: translateY(-1px);
 }
 
+.auth-divider {
+    text-align: center;
+    margin: 32px 0;
+    color: #667085;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+}
+
+.auth-divider::before, .auth-divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 42%;
+    height: 1px;
+    background-color: #D0D5DD;
+}
+
+.auth-divider::before { left: 0; }
+.auth-divider::after { right: 0; }
+
+.btn-google {
+    width: 100%;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid #D0D5DD;
+    border-radius: 16px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #121212;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-google:hover {
+    background: #f9fafb;
+    border-color: #98A2B3;
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+}
+
 .footer-text {
     font-size: 14px;
     color: #667085;

@@ -57,6 +57,9 @@ class RegisterController extends Controller
             return $user;
         });
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
+        // Auto login setelah registrasi
+        Auth::login($newUser);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Registrasi berhasil! Selamat datang di dashboard Anda.');
     }
 }

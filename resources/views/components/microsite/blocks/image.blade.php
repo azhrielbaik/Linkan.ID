@@ -36,7 +36,7 @@
                                             <div>
                                                 <label class="profile-form-label">Unggah {{ __('microsite.image_title') }}</label>
                                                 <div class="upload-dropzone dynamic-dropzone" style="padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-                                                    <input type="file" accept="image/jpeg, image/png, image/gif" class="dropzone-input js-preview-image" data-target-id="{{ $elementId }}">
+                                                    <input type="file" accept="image/jpeg, image/png, image/gif" class="dropzone-input image-cropper js-preview-image" data-target-id="{{ $elementId }}">
                                                     
                                                     <div id="placeholder_{{ $elementId }}" style="display: {{ $data?->image_path ? 'none' : 'flex' }}; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
                                                         <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #6366F1;"></i>

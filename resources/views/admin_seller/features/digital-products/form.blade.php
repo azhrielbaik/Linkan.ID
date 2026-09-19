@@ -153,7 +153,7 @@
                     </div>
                     <img id="image-upload-preview" class="image-upload-preview" src="{{ isset($product) && $product->image ? asset('storage/' . $product->image) : '' }}" style="display: {{ (isset($product) && $product->image) ? 'block' : 'none' }}">
                 </div>
-                <input type="file" id="productImage" name="image" accept=".png,.jpg,.jpeg" style="display: none">
+                <input type="file" id="productImage" name="image" class="image-cropper" data-crop-ratio="1.7777" accept=".png,.jpg,.jpeg" style="display: none">
                 
                 <div id="file-input-container" style="display: {{ (isset($product) && $product->platform_type == 'upload') || !isset($product) ? 'block' : 'none' }};">
                     <div class="form-row-box" onclick="document.getElementById('platform_file').click()" style="cursor: pointer; justify-content: space-between;">

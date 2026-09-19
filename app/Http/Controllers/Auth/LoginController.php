@@ -184,15 +184,38 @@ class LoginController extends Controller
             });
 
             if (!$user) {
-                // Kalau user belum ada, redirect ke halaman register dengan data Google
-                return redirect()->route('register')->with([
-                    'google_data' => [
+                // Auto-register user
+                $baseUsername = Str::slug($googleUser->name, '');
+                if (empty($baseUsername)) {
+                    $baseUsername = explode('@', $googleUser->email)[0];
+                }
+                $username = $baseUsername;
+                $counter = 1;
+                while (User::where('username', $username)->exists()) {
+                    $username = $baseUsername . $counter;
+                    $counter++;
+                }
+
+                $user = DB::transaction(function () use ($googleUser, $username) {
+                    $newUser = User::create([
                         'name' => $googleUser->name,
                         'email' => $googleUser->email,
-                        'google_id' => $googleUser->id
-                    ],
-                    'error' => 'Email Anda belum terdaftar. Silakan lengkapi data untuk mendaftar.'
-                ]);
+                        'username' => strtolower($username),
+                        'password' => Hash::make(Str::random(24)),
+                        'google_id' => $googleUser->id,
+                        'is_link_active' => true,
+                        'role' => 'admin_seller'
+                    ]);
+
+                    ActivityLogger::log(
+                        'user_register',
+                        "Pengguna baru {$newUser->name} ({$newUser->email}) mendaftar via Google.",
+                        ['username' => $newUser->username, 'role' => $newUser->role, 'login_type' => 'google_oauth'],
+                        $newUser->id
+                    );
+
+                    return $newUser;
+                });
             }
 
             Auth::login($user);

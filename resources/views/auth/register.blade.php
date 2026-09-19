@@ -32,6 +32,8 @@
                     @csrf
                     @if(isset($googleData))
                         <input type="hidden" name="google_id" value="{{ $googleData['google_id'] }}">
+                    @elseif(old('google_id'))
+                        <input type="hidden" name="google_id" value="{{ old('google_id') }}">
                     @endif
 
                     <div class="form-input-group">
@@ -84,6 +86,13 @@
 
                     <button type="submit" class="btn-submit">{{ __('auth.register_btn') }}</button>
                 </form>
+
+                <div class="auth-divider">{{ __('auth.or') }}</div>
+
+                <a href="{{ url('/login/google') }}" class="btn-google">
+                    <img src="{{ asset('images/google.png') }}" alt="Google Logo">
+                    Daftar dengan Google
+                </a>
 
                 <div class="footer-text">
                     {{ __('auth.already_have_account') }} <a href="{{ route('login') }}">{{ __('auth.login_link') }}</a>
