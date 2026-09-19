@@ -12,7 +12,7 @@
   .platform-sidebar.open {
     transform: translateX(0);
   }
-  .hamburger-btn { display: inline-block; }
+  .hamburger-btn { display: inline-flex; }
 
   /* Main content takes full width */
   .platform-main { margin-left: 0; }

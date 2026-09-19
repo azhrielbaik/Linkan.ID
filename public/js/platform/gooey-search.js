@@ -80,6 +80,25 @@
             container.appendChild(searchBtn);
         }
 
+        searchBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (!container.classList.contains('is-expanded')) {
+                container.classList.add('is-expanded');
+                input.focus();
+                return;
+            }
+            const form = container.closest('form');
+            if (form) {
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit(searchBtn);
+                } else {
+                    form.submit();
+                }
+            } else {
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+
         // 4. Create Floating Autocomplete Dropdown List
         let dropdown = container.querySelector('.gooey-autocomplete-dropdown');
         if (!dropdown) {
@@ -103,7 +122,7 @@
 
         // Expand on Container / Placeholder Click
         container.addEventListener('click', function (e) {
-            if (e.target.closest('.gooey-search-clear') || e.target.closest('.gooey-autocomplete-dropdown')) {
+            if (e.target.closest('.gooey-search-clear') || e.target.closest('.gooey-autocomplete-dropdown') || e.target.closest('.gooey-search-btn')) {
                 return;
             }
             container.classList.add('is-expanded');

@@ -56,6 +56,18 @@
             </a>
         </div>
 
+        {{-- Quick Language Selector in Profile Dropdown --}}
+        <div class="ptd-lang-selector-row">
+            <div class="ptd-lang-info">
+                <i class="fas fa-globe ptd-lang-icon"></i>
+                <span>{{ App::getLocale() == 'id' ? 'Bahasa' : 'Language' }}</span>
+            </div>
+            <div class="ptd-lang-pills">
+                <a href="{{ route('lang.switch', 'id') }}" data-turbo="false" class="ptd-lang-option {{ App::getLocale() == 'id' ? 'active' : '' }}">ID</a>
+                <a href="{{ route('lang.switch', 'en') }}" data-turbo="false" class="ptd-lang-option {{ App::getLocale() == 'en' ? 'active' : '' }}">EN</a>
+            </div>
+        </div>
+
         {{-- Security Status Badge --}}
         <div class="ptd-session-box">
             <span class="ptd-dot"></span>
