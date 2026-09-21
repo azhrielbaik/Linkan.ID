@@ -1395,6 +1395,10 @@
                 padding: 20px 22px;
                 border-radius: 20px;
             }
+            /* Sembunyikan baris kedua di tablet/mobile */
+            .testi-marquee-row:nth-child(2) {
+                display: none;
+            }
             .testi-avatar {
                 width: 40px;
                 height: 40px;
@@ -1577,6 +1581,10 @@
             .testimonials-section {
                 padding-top: 60px;
                 padding-bottom: 40px;
+            }
+            /* Sembunyikan baris kedua di mobile - hanya 1 baris */
+            .testi-marquee-row:nth-child(2) {
+                display: none;
             }
             .testi-card {
                 padding: 24px;

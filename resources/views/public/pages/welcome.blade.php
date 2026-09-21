@@ -242,7 +242,7 @@
                                     <span>@rakanmy</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å¡â‚¬ Digital Creator</span>
+                            <span class="testi-role-tag">🌟 Digital Creator</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -269,7 +269,7 @@
                                     <span>@frsbrly</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€ºÂÃ¯Â¸Â Brand Founder</span>
+                            <span class="testi-role-tag">🛍️ Brand Founder</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -296,7 +296,7 @@
                                     <span>@nadiasaf</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã¢Å“Â¨ Beauty & Lifestyle</span>
+                            <span class="testi-role-tag">✨ Beauty & Lifestyle</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -323,7 +323,7 @@
                                     <span>@dimas.tech</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÅ¡ Course Instructor</span>
+                            <span class="testi-role-tag">📚 Course Instructor</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -350,7 +350,7 @@
                                     <span>@claraveron</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å½Â¨ UI/UX Designer</span>
+                            <span class="testi-role-tag">🎨 UI/UX Designer</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -377,7 +377,7 @@
                                     <span>@rianhidayat</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÂ¦ E-Commerce Seller</span>
+                            <span class="testi-role-tag">📦 E-Commerce Seller</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -405,7 +405,7 @@
                                     <span>@rakanmy</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å¡â‚¬ Digital Creator</span>
+                            <span class="testi-role-tag">🌟 Digital Creator</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -432,7 +432,7 @@
                                     <span>@frsbrly</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€ºÂÃ¯Â¸Â Brand Founder</span>
+                            <span class="testi-role-tag">🛍️ Brand Founder</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -459,7 +459,7 @@
                                     <span>@nadiasaf</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã¢Å“Â¨ Beauty & Lifestyle</span>
+                            <span class="testi-role-tag">✨ Beauty & Lifestyle</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -486,7 +486,7 @@
                                     <span>@dimas.tech</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÅ¡ Course Instructor</span>
+                            <span class="testi-role-tag">📚 Course Instructor</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -513,7 +513,7 @@
                                     <span>@claraveron</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å½Â¨ UI/UX Designer</span>
+                            <span class="testi-role-tag">🎨 UI/UX Designer</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -540,7 +540,7 @@
                                     <span>@rianhidayat</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÂ¦ E-Commerce Seller</span>
+                            <span class="testi-role-tag">📦 E-Commerce Seller</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -573,7 +573,7 @@
                                     <span>@mhmdazrl</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€™Â¡ Tech Creator</span>
+                            <span class="testi-role-tag">💡 Tech Creator</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -600,7 +600,7 @@
                                     <span>@bayuaditya</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œË† Affiliate Marketer</span>
+                            <span class="testi-role-tag">📈 Affiliate Marketer</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -627,7 +627,7 @@
                                     <span>@siti_craft</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Â§Â¶ Artisan & Handmade</span>
+                            <span class="testi-role-tag">🧶 Artisan & Handmade</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -654,7 +654,7 @@
                                     <span>@kevinsan</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å½â„¢Ã¯Â¸Â Podcaster & Host</span>
+                            <span class="testi-role-tag">🎙️ Podcaster & Host</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -681,7 +681,7 @@
                                     <span>@mayangrn</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã¢Å“Ë†Ã¯Â¸Â Travel Blogger</span>
+                            <span class="testi-role-tag">✈️ Travel Blogger</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -708,7 +708,7 @@
                                     <span>@bagastri</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÂ¸ Commercial Photo</span>
+                            <span class="testi-role-tag">📸 Commercial Photo</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -736,7 +736,7 @@
                                     <span>@mhmdazrl</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€™Â¡ Tech Creator</span>
+                            <span class="testi-role-tag">💡 Tech Creator</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -763,7 +763,7 @@
                                     <span>@bayuaditya</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œË† Affiliate Marketer</span>
+                            <span class="testi-role-tag">📈 Affiliate Marketer</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -790,7 +790,7 @@
                                     <span>@siti_craft</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Â§Â¶ Artisan & Handmade</span>
+                            <span class="testi-role-tag">🧶 Artisan & Handmade</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -817,7 +817,7 @@
                                     <span>@kevinsan</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸Å½â„¢Ã¯Â¸Â Podcaster & Host</span>
+                            <span class="testi-role-tag">🎙️ Podcaster & Host</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -844,7 +844,7 @@
                                     <span>@mayangrn</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã¢Å“Ë†Ã¯Â¸Â Travel Blogger</span>
+                            <span class="testi-role-tag">✈️ Travel Blogger</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -871,7 +871,7 @@
                                     <span>@bagastri</span>
                                 </div>
                             </div>
-                            <span class="testi-role-tag">Ã°Å¸â€œÂ¸ Commercial Photo</span>
+                            <span class="testi-role-tag">📸 Commercial Photo</span>
                         </div>
                         <div class="testi-stars">
                             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
