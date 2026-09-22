@@ -3,8 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Linkan.ID</title>
+
+    @php
+        $contactTitle = app()->getLocale() == 'id'
+            ? 'Hubungi Kami - Linkan.id | Bantuan & Dukungan'
+            : 'Contact Us - Linkan.id | Help & Support';
+        $contactDesc = app()->getLocale() == 'id'
+            ? 'Ada pertanyaan atau butuh bantuan? Hubungi tim Linkan.id. Kami siap membantu Anda terkait akun, produk digital, pembayaran, dan fitur platform.'
+            : 'Have questions or need help? Contact the Linkan.id team. We are ready to assist you with accounts, digital products, payments, and platform features.';
+        $contactUrl = url('/contact');
+    @endphp
+
+    <title>{{ $contactTitle }}</title>
+    <meta name="description" content="{{ $contactDesc }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ $contactUrl }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ $contactUrl }}">
+    <meta property="og:site_name" content="Linkan.ID">
+    <meta property="og:title" content="{{ $contactTitle }}">
+    <meta property="og:description" content="{{ $contactDesc }}">
+    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
+    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $contactTitle }}">
+    <meta name="twitter:description" content="{{ $contactDesc }}">
+    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
+
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/pages/contact.css') }}">
 </head>

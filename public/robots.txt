@@ -1,2 +1,35 @@
+# =============================================
+# robots.txt — Linkan.ID
+# =============================================
+
+# Allow all crawlers on public pages
 User-agent: *
-Disallow:
+
+# Block private/authenticated areas
+Disallow: /admin
+Disallow: /admin/
+Disallow: /platform-admin
+Disallow: /platform-admin/
+
+# Block transactional/utility pages (no SEO value)
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /forgot-password
+Disallow: /verify-otp
+Disallow: /reset-password-otp
+Disallow: /create-new-password
+Disallow: /password-reset-success
+Disallow: /midtrans/
+Disallow: /transaction/
+Disallow: /cart/
+Disallow: /p/
+
+# Block internal API endpoints
+Disallow: /track-click
+Disallow: /test-email
+
+# Sitemap location
+Sitemap: https://linkan.id/sitemap.xml

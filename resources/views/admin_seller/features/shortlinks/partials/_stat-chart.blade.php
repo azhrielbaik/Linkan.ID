@@ -10,7 +10,7 @@
             <div class="stat-icon stat-icon-orange"><i class="fas fa-chart-line"></i></div>
             <div class="stat-info">
                 <span>{{ __('shortlink.total_clicks') }}</span>
-                <strong>2,280</strong>
+                <strong>{{ number_format($totalClicksAllTime ?? 0, 0, ',', '.') }}</strong>
             </div>
         </div>
         <div class="stat-box">
@@ -22,15 +22,16 @@
         </div>
     </div>
 
-    <div class="chart-container" style="min-height: 180px; width: 100%;">
-        <div id="performanceStatChart"></div>
+    <div class="chart-container" style="min-height: 180px; width: 100%; display: block;">
+        <div id="performanceStatChart" style="width: 100%; min-height: 180px;"></div>
     </div>
     
 @push("scripts")
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dataVals = [300, 280, 260, 310, 250, 400, 220, 350, 450, 240, 410, 380];
-        const dataLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function initPerformanceChart() {
+        const dataVals = @json($chartData ?? []);
+        const dataLabels = @json($chartLabels ?? []);
         
         const options = {
             series: [{
@@ -40,13 +41,14 @@
             chart: {
                 type: 'bar',
                 height: 180,
+                width: '100%',
                 toolbar: { show: false },
                 parentHeightOffset: 0
             },
             plotOptions: {
                 bar: {
                     borderRadius: 4,
-                    columnWidth: '50%'
+                    columnWidth: '80%'
                 }
             },
             colors: ['#5A5BF1'],
@@ -67,11 +69,19 @@
 
         const chartContainer = document.querySelector("#performanceStatChart");
         if (chartContainer) {
+            chartContainer.innerHTML = ''; // Clear previous chart instance if turbo reloads
             const chart = new ApexCharts(chartContainer, options);
             chart.render();
         }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPerformanceChart);
+    } else {
+        initPerformanceChart();
+    }
+    
+    document.addEventListener('turbo:load', initPerformanceChart);
 </script>
 @endpush
-    <button class="hide-chart-btn"><i class="fas fa-chevron-up"></i> {{ __('shortlink.hide_chart') }}</button>
 </div>

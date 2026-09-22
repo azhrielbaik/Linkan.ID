@@ -17,12 +17,17 @@ class Localization
      */
     public function handle(Request $request, Closure $next)
     {
-        if (session()->has('locale')) {
-            App::setLocale(session()->get('locale'));
+        $locale = $request->segment(1);
+
+        if (in_array($locale, ['en', 'id'])) {
+            App::setLocale($locale);
+            \Illuminate\Support\Facades\URL::defaults(['locale' => $locale]);
+            session()->put('locale', $locale); // Keep backup for routes without prefix
         } else {
-            // Set default locale to 'id' if not set
-            App::setLocale('id');
-            session()->put('locale', 'id');
+            // For routes without the {locale} prefix (like shortlinks)
+            $fallbackLocale = session()->get('locale', 'id');
+            App::setLocale($fallbackLocale);
+            \Illuminate\Support\Facades\URL::defaults(['locale' => $fallbackLocale]);
         }
 
         return $next($request);

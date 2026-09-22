@@ -3,7 +3,7 @@
 @section("page_title", "Shortlink")
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/shortlink-create.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/shortlink-create.css') }}?v={{ filemtime(public_path('css/pages/shortlink-create.css')) }}" data-turbo-track="reload">
 @endpush
 
 @section("content")
