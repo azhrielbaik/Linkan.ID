@@ -75,11 +75,18 @@ class ShortlinkController extends Controller
         return strtolower(preg_replace('/^www\./', '', $host));
     }
 
-    private function ipBreakdown(Shortlink $shortlink): array
+    private function ipBreakdown(Shortlink $shortlink, $startDate = null, $endDate = null, $source = null): array
     {
-        return $shortlink->clicks()
-            ->select('ip_address', DB::raw('count(*) as total'))
-            ->groupBy('ip_address')
+        $query = $shortlink->clicks()->select('ip_address', DB::raw('count(*) as total'));
+        
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        if ($source) {
+            $query->where('source', $source);
+        }
+
+        return $query->groupBy('ip_address')
             ->orderByDesc('total')
             ->get()
             ->map(fn ($row) => ['label' => $row->ip_address ?? 'Unknown', 'total' => (int) $row->total])
@@ -87,9 +94,18 @@ class ShortlinkController extends Controller
             ->all();
     }
 
-    private function deviceBreakdown(Shortlink $shortlink): array
+    private function deviceBreakdown(Shortlink $shortlink, $startDate = null, $endDate = null, $source = null): array
     {
-        $clicks = $shortlink->clicks()->select('user_agent')->get();
+        $query = $shortlink->clicks()->select('user_agent');
+        
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        if ($source) {
+            $query->where('source', $source);
+        }
+        
+        $clicks = $query->get();
         $breakdown = ['Mobile' => 0, 'Tablet' => 0, 'Desktop' => 0];
         
         foreach ($clicks as $click) {
@@ -210,16 +226,33 @@ class ShortlinkController extends Controller
             }
         }
 
-        ShortlinkClick::create([
+        $visitorId = request()->cookie('linkan_visitor');
+        $isNewVisitor = false;
+        
+        if (!$visitorId) {
+            $visitorId = (string) \Illuminate\Support\Str::uuid();
+            $isNewVisitor = true;
+        }
+
+        $click = ShortlinkClick::create([
             'shortlink_id' => $shortlink->id,
             'user_id' => $shortlink->user_id,
             'source' => $this->detectSource(request()),
             'referer' => request()->header('referer'),
             'ip_address' => request()->ip(),
             'user_agent' => request()->header('user-agent'),
+            'visitor_id' => $visitorId,
+            'device_type' => \App\Services\DeviceDetector::detect((string) request()->header('user-agent')),
         ]);
 
-        return redirect($shortlink->destination);
+        \App\Jobs\ProcessClickLocation::dispatch($click->id, request()->ip());
+
+        $response = redirect($shortlink->destination);
+        if ($isNewVisitor) {
+            $response->cookie('linkan_visitor', $visitorId, 60 * 24 * 365);
+        }
+
+        return $response;
     }
 
     public function passwordForm($slug)
@@ -280,7 +313,27 @@ class ShortlinkController extends Controller
 
         $shortlinks = $query->paginate(6);
 
-        return view('admin_seller.features.shortlinks.index', compact('shortlinks'));
+        $clicksPerMonth = ShortlinkClick::where('user_id', $user->getKey())
+            ->whereYear('created_at', now()->year)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->pluck('total', 'month');
+
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $chartLabels[] = now()->month($i)->shortMonthName;
+            $chartData[] = (int) $clicksPerMonth->get($i, 0);
+        }
+
+        $totalClicksAllTime = ShortlinkClick::where('user_id', $user->getKey())->count();
+
+        return view('admin_seller.features.shortlinks.index', compact(
+            'shortlinks',
+            'chartLabels',
+            'chartData',
+            'totalClicksAllTime'
+        ));
     }
 
     public function analytics(Request $request, Shortlink $shortlink)
@@ -289,12 +342,14 @@ class ShortlinkController extends Controller
 
         [$startDate, $endDate] = $this->resolveDateRange($request);
 
-        $totalClicks = $shortlink->clicks()->count();
+        $totalClicks = $shortlink->clicks()->whereBetween('created_at', [$startDate, $endDate])->count();
+        $uniqueClicks = $shortlink->clicks()->whereBetween('created_at', [$startDate, $endDate])->distinct('visitor_id')->count('visitor_id');
         $sources = $this->sourceSummary($shortlink);
 
         return view('admin_seller.features.shortlinks.analytics', [
             'shortlink' => $shortlink,
             'totalClicks' => $totalClicks,
+            'uniqueClicks' => $uniqueClicks,
             'sources' => $sources,
             'startDate' => $startDate->toDateString(),
             'endDate' => $endDate->toDateString(),
@@ -306,28 +361,81 @@ class ShortlinkController extends Controller
         $shortlink = $this->ownedShortlink($request, $shortlink);
 
         [$startDate, $endDate] = $this->resolveDateRange($request);
+        $sourceFilter = $request->query('source');
 
-        $clicksByDate = $shortlink->clicks()
-            ->selectRaw('DATE(created_at) as click_date, count(*) as total')
-            ->whereBetween('created_at', [$startDate, $endDate])
+        $clicksQuery = $shortlink->clicks()
+            ->whereBetween('created_at', [$startDate, $endDate]);
+            
+        if ($sourceFilter) {
+            $clicksQuery->where('source', $sourceFilter);
+        }
+
+        $clicksByDate = (clone $clicksQuery)
+            ->selectRaw('DATE(created_at) as click_date, count(*) as total, count(distinct visitor_id) as unique_clicks')
             ->groupBy('click_date')
-            ->pluck('total', 'click_date');
+            ->get()
+            ->keyBy('click_date');
 
         $labels = [];
-        $clicks = [];
+        $totalClicksDaily = [];
+        $uniqueClicksDaily = [];
 
         $cursor = $startDate->copy();
         while ($cursor->lte($endDate)) {
             $key = $cursor->toDateString();
             $labels[] = $cursor->format('d M');
-            $clicks[] = (int) ($clicksByDate[$key] ?? 0);
+            $stat = $clicksByDate->get($key);
+            $totalClicksDaily[] = (int) ($stat->total ?? 0);
+            $uniqueClicksDaily[] = (int) ($stat->unique_clicks ?? 0);
             $cursor->addDay();
         }
+        
+        $timeBehavior = (clone $clicksQuery)
+            ->selectRaw('DAYNAME(created_at) as day_name, count(*) as total')
+            ->groupBy('day_name')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn($row) => ['label' => $row->day_name, 'total' => (int) $row->total])
+            ->values()
+            ->all();
+
+        $geoBreakdown = (clone $clicksQuery)
+            ->select('country', DB::raw('count(*) as total'))
+            ->whereNotNull('country')
+            ->groupBy('country')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn($row) => ['label' => $row->country, 'total' => (int) $row->total])
+            ->values()
+            ->all();
+
+        $deviceBreakdown = (clone $clicksQuery)
+            ->select('device_type', DB::raw('count(*) as total'))
+            ->whereNotNull('device_type')
+            ->groupBy('device_type')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn($row) => ['label' => $row->device_type, 'total' => (int) $row->total])
+            ->values()
+            ->all();
+
+        if (empty($deviceBreakdown)) {
+            $deviceBreakdown = $this->deviceBreakdown($shortlink, $startDate, $endDate, $sourceFilter);
+        }
+
+        // Sources list shouldn't be filtered by itself to allow switching sources
+        $sourcesQuery = $shortlink->clicks()
+            ->whereBetween('created_at', [$startDate, $endDate]);
 
         return response()->json([
             'labels' => $labels,
-            'clicks' => $clicks,
-            'sources' => $shortlink->clicks()
+            'clicks' => $totalClicksDaily,
+            'unique_clicks' => $uniqueClicksDaily,
+            'time_behavior' => $timeBehavior,
+            'geo_breakdown' => $geoBreakdown,
+            'device_breakdown' => $deviceBreakdown,
+            'ip_breakdown' => $this->ipBreakdown($shortlink, $startDate, $endDate, $sourceFilter),
+            'sources' => $sourcesQuery
                 ->select('source', DB::raw('count(*) as total'))
                 ->groupBy('source')
                 ->orderByDesc('total')
@@ -335,11 +443,10 @@ class ShortlinkController extends Controller
                 ->map(fn ($row) => ['label' => $row->source, 'total' => (int) $row->total])
                 ->values()
                 ->all(),
-            'total_clicks' => $shortlink->clicks()->count(),
+            'total_clicks' => (clone $clicksQuery)->count(),
+            'unique_total' => (clone $clicksQuery)->distinct('visitor_id')->count('visitor_id'),
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
-            'ip_breakdown' => $this->ipBreakdown($shortlink),
-            'device_breakdown' => $this->deviceBreakdown($shortlink),
         ]);
     }
 }

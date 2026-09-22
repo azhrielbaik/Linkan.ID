@@ -14,6 +14,10 @@ class ShortlinkClick extends Model
         'referer',
         'ip_address',
         'user_agent',
+        'visitor_id',
+        'country',
+        'city',
+        'device_type',
     ];
 
     public function shortlink(): BelongsTo

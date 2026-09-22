@@ -24,6 +24,10 @@ public function boot(): void
         \Illuminate\Support\Facades\URL::forceScheme('https');
     }
 
+    if ($this->app->runningInConsole()) {
+        \Illuminate\Support\Facades\URL::defaults(['locale' => 'id']);
+    }
+
     \Midtrans\Config::$serverKey = env('SB-Mid-server-qbA7U8pOrHFCGy-0LlFclqIG');
     \Midtrans\Config::$isProduction = false; // true untuk production
     \Midtrans\Config::$isSanitized = true;

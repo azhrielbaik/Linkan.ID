@@ -70,7 +70,27 @@
         @endforelse
     </div>
     
-    <div class="mt-20">
-        {{ $shortlinks->appends(request()->except('page'))->links() }}
+    <div id="shortlinksPaginationContainer" style="display: flex; justify-content: center; margin-top: 30px; width: 100%;">
+        <div class="sl-pagination-container">
+            @php
+                $currentPage = $shortlinks->currentPage();
+            @endphp
+            
+            @if (!$shortlinks->onFirstPage())
+                <a href="{{ $shortlinks->appends(request()->except('page'))->previousPageUrl() }}" class="sl-page-btn" style="text-decoration: none;">
+                    <span>{{ $currentPage - 1 }}</span>
+                </a>
+            @endif
+            
+            <button type="button" class="sl-page-btn active" style="pointer-events: none;">
+                <span>{{ $currentPage }}</span>
+            </button>
+            
+            @if ($shortlinks->hasMorePages())
+                <a href="{{ $shortlinks->appends(request()->except('page'))->nextPageUrl() }}" class="sl-page-btn" style="text-decoration: none;">
+                    <span>{{ $currentPage + 1 }}</span>
+                </a>
+            @endif
+        </div>
     </div>
 </div>

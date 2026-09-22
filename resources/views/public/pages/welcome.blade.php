@@ -1,14 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('public.meta_title') }}</title>
     <meta name="description" content="{{ __('public.meta_desc') }}">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url('/') }}">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:site_name" content="Linkan.ID">
+    <meta property="og:title" content="{{ __('public.meta_title') }}">
+    <meta property="og:description" content="{{ __('public.meta_desc') }}">
+    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@LinkanID">
+    <meta name="twitter:title" content="{{ __('public.meta_title') }}">
+    <meta name="twitter:description" content="{{ __('public.meta_desc') }}">
+    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
+
+    <!-- Schema.org WebSite (untuk Sitelink Search Box di Google) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Linkan.ID",
+      "url": "{{ url('/') }}",
+      "description": "{{ __('public.meta_desc') }}",
+      "inLanguage": "{{ app()->getLocale() == 'id' ? 'id-ID' : 'en-US' }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ url('/') }}/{username}"
+        },
+        "query-input": "required name=username"
+      }
+    }
+    </script>
+
+    <!-- Schema.org Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Linkan.ID",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('images/Logo.png') }}",
+      "sameAs": []
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+
+    <!-- Preconnect untuk performa font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-    <script src="{{ asset('js/pages/welcome-scroll.js') }}"></script>
+
+    <!-- Script dengan defer agar tidak render-blocking -->
+    <script src="{{ asset('js/pages/welcome-scroll.js') }}" defer></script>
     <link rel="stylesheet" href="{{ asset('css/pages/welcome.css') }}">
 </head>
 <body>

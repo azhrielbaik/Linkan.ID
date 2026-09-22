@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('public.faq_title', ['default' => 'FAQ - Frequently Asked Questions | Linkan.id']) }}</title>
+
+    @php
+        $faqTitle = app()->getLocale() == 'id'
+            ? 'FAQ - Pertanyaan yang Sering Ditanyakan | Linkan.id'
+            : 'FAQ - Frequently Asked Questions | Linkan.id';
+        $faqDesc = app()->getLocale() == 'id'
+            ? 'Temukan jawaban lengkap seputar fitur Linkan.id, cara pembayaran, pengelolaan produk digital, payout saldo, dan keamanan akun Anda.'
+            : 'Find complete answers about Linkan.id features, payment methods, digital product management, balance payout, and account security.';
+        $faqUrl = url('/faq');
+    @endphp
+
+    <title>{{ $faqTitle }}</title>
+    <meta name="description" content="{{ $faqDesc }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ $faqUrl }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ $faqUrl }}">
+    <meta property="og:site_name" content="Linkan.ID">
+    <meta property="og:title" content="{{ $faqTitle }}">
+    <meta property="og:description" content="{{ $faqDesc }}">
+    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
+    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $faqTitle }}">
+    <meta name="twitter:description" content="{{ $faqDesc }}">
+    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
+
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
     <!-- Google Fonts -->
@@ -13,9 +43,99 @@
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{{ asset('js/pages/faq-config.js') }}"></script>
+    <script src="{{ asset('js/pages/faq-config.js') }}" defer></script>
 
     <link rel="stylesheet" href="{{ asset('css/pages/faq.css') }}">
+
+    <!-- FAQPage Schema — untuk Google Rich Results (Featured Snippet) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Apa itu Linkan.id?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Linkan.id adalah platform bio-link all-in-one yang dirancang untuk kreator konten, pebisnis online, dan profesional. Dengan Linkan.id, Anda dapat menampilkan semua tautan penting, menjual produk digital, menerima donasi, dan mengarahkan audiens dengan satu tautan simpel yang berkelas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apa saja fitur unggulan Linkan.id?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Fitur unggulan Linkan.id meliputi: Kustomisasi Microsite atau Bio-Link yang responsif, Penjualan Produk Digital seperti Ebook, Template, Video, dan Kursus, Integrasi Payment Gateway otomatis dengan QRIS, Virtual Account, dan E-Wallet, Analisis Pengunjung dan Pelacakan Konversi Real-Time, serta dukungan Custom Domain."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana sistem pembayaran untuk pembeli?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Linkan.id terhubung secara otomatis dengan payment gateway berizin resmi. Pembeli dapat membayar menggunakan QRIS (semua e-wallet dan m-banking), Virtual Account (BCA, Mandiri, BNI, BRI), serta dompet digital (GoPay, OVO, ShopeePay, DANA) dengan konfirmasi pembayaran instan 24/7."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana sistem pembagian komisi di Linkan.id?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Admin Platform hanya mengenakan komisi platform transparan sebesar 5% dari setiap transaksi produk digital yang sukses. Biaya ini dipotong secara otomatis saat penarikan saldo, tanpa ada biaya langganan tersembunyi."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana cara menarik dana (payout) ke rekening saya?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Buka menu Finansial lalu Penarikan Saldo di dashboard Anda. Daftarkan nomor rekening bank atau e-wallet Anda yang valid. Setelah diverifikasi, Anda dapat mengajukan permintaan payout yang diproses dalam 1x24 jam kerja."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Produk digital apa saja yang dapat dijual di Linkan.id?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Anda dapat menjual hampir semua tipe produk digital seperti: E-Book dan dokumen PDF, Template Notion, Canva, atau Figma, Preset Lightroom dan aset desain, Tiket webinar atau rekaman video pelatihan, serta Kode lisensi software atau tautan private grup Telegram/Discord."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana pembeli mengakses file produk setelah membayar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Setelah pembayaran berhasil, pembeli langsung diarahkan ke halaman invoice sukses dengan tombol unduh instan. Sistem Linkan.id juga otomatis mengirimkan email konfirmasi berisi link akses unduhan ke alamat email pembeli."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apakah saya bisa menggunakan Custom Domain sendiri?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ya! Pengguna paket Pro atau Unlimited dapat menghubungkan nama domain pribadi. Cukup arahkan CNAME record DNS domain Anda ke server Linkan.id sesuai panduan yang tersedia di dashboard."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Cara ganti atau mereset password akun Linkan.id?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Jika lupa password, klik tautan Lupa Password pada halaman login, lalu masukkan alamat email akun Anda. Kami akan mengirimkan kode OTP ke email Anda untuk memverifikasi identitas, kemudian Anda dapat membuat password baru."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apakah Linkan.id gratis digunakan?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ya! Linkan.id tersedia dalam paket Gratis yang sudah mencakup fitur link tak terbatas, toko produk digital, statistik pengunjung, dan kustomisasi tampilan. Tersedia juga paket berbayar dengan fitur lebih lengkap mulai dari Rp 99.000 per bulan."
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-to-content">Skip to content</a>

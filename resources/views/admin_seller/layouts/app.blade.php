@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     @stack('styles')
     @stack('page-styles')
     <style>
@@ -872,6 +873,156 @@
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
+    </script>
+
+    <!-- Global Image Cropper Modal -->
+    <style>
+        /* Circular Crop Mask */
+        #global-cropper-modal.cropper-circle-mode .cropper-view-box,
+        #global-cropper-modal.cropper-circle-mode .cropper-face {
+            border-radius: 50%;
+        }
+    </style>
+    <div id="global-cropper-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100000; justify-content: center; align-items: center;">
+        <div style="background: #fff; padding: 20px; border-radius: 12px; max-width: 90%; max-height: 90%; display: flex; flex-direction: column; width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: #1a1a1a; margin: 0;">Sesuaikan Gambar</h3>
+                <button type="button" onclick="closeGlobalCropper()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #666;"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="flex: 1; overflow: hidden; max-height: 60vh; background: #f0f0f0; border-radius: 8px;">
+                <img id="global-cropper-image" src="" style="max-width: 100%; display: block;" alt="Crop Preview">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                <button type="button" onclick="closeGlobalCropper()" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #333; font-weight: 600; cursor: pointer;">Batal</button>
+                <button type="button" id="global-cropper-save" style="padding: 10px 20px; border-radius: 8px; border: none; background: #ED842C; color: #fff; font-weight: 600; cursor: pointer;">Gunakan Gambar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let globalCropperInstance = null;
+        let globalCropperInput = null;
+
+        function closeGlobalCropper() {
+            document.getElementById('global-cropper-modal').style.display = 'none';
+            if (globalCropperInstance) {
+                globalCropperInstance.destroy();
+                globalCropperInstance = null;
+            }
+            if (globalCropperInput) {
+                globalCropperInput.value = ''; // Reset input if cancelled so user can re-select
+                globalCropperInput = null;
+            }
+        }
+
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.matches('.image-cropper') && e.target.files && e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // If it's already cropped (our flag), let the normal process continue
+                if (file.isCropped) return;
+                
+                // Stop the event from propagating to other listeners (like previewImage) yet
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                // Check if it's an image
+                if (!file.type.match(/^image\//)) {
+                    alert('Silakan pilih file gambar yang valid.');
+                    e.target.value = '';
+                    return;
+                }
+
+                globalCropperInput = e.target;
+                
+                let ratio = parseFloat(globalCropperInput.getAttribute('data-crop-ratio'));
+                if (isNaN(ratio)) ratio = NaN; // Free ratio
+
+                let shape = globalCropperInput.getAttribute('data-crop-shape');
+                const modalEl = document.getElementById('global-cropper-modal');
+                if (shape === 'circle') {
+                    modalEl.classList.add('cropper-circle-mode');
+                } else {
+                    modalEl.classList.remove('cropper-circle-mode');
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const imageElement = document.getElementById('global-cropper-image');
+                    imageElement.src = evt.target.result;
+                    modalEl.style.display = 'flex';
+
+                    if (globalCropperInstance) {
+                        globalCropperInstance.destroy();
+                    }
+
+                    globalCropperInstance = new Cropper(imageElement, {
+                        aspectRatio: ratio,
+                        viewMode: 1, // Restrict the crop box not to exceed the size of the canvas
+                        dragMode: 'move', // Allow moving the image instead of creating a new crop box
+                        autoCropArea: 0.9, // 90% of the container
+                        cropBoxMovable: false, // Fix the crop box position
+                        cropBoxResizable: false, // Fix the crop box size
+                        toggleDragModeOnDblclick: false,
+                        background: true,
+                        responsive: true,
+                        restore: false,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }, true); // use capture phase so we intercept before bubble listeners
+
+        document.getElementById('global-cropper-save').addEventListener('click', function() {
+            if (!globalCropperInstance || !globalCropperInput) return;
+
+            const saveBtn = this;
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = 'Memproses...';
+            saveBtn.disabled = true;
+
+            globalCropperInstance.getCroppedCanvas({
+                imageSmoothingQuality: 'high',
+            }).toBlob(function(blob) {
+                if (!blob) {
+                    alert('Gagal memproses gambar. Silakan coba lagi.');
+                    saveBtn.innerText = originalText;
+                    saveBtn.disabled = false;
+                    return;
+                }
+
+                const originalName = globalCropperInput.files[0].name;
+                const extension = originalName.substring(originalName.lastIndexOf('.')) || '.jpg';
+                const newName = originalName.replace(extension, '_cropped.jpg');
+
+                const file = new File([blob], newName, {
+                    type: 'image/jpeg',
+                    lastModified: new Date().getTime()
+                });
+                file.isCropped = true;
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                const inputElement = globalCropperInput; // store ref before closing
+                inputElement.files = dataTransfer.files;
+
+                // Close modal
+                document.getElementById('global-cropper-modal').style.display = 'none';
+                globalCropperInstance.destroy();
+                globalCropperInstance = null;
+                globalCropperInput = null;
+                
+                saveBtn.innerText = originalText;
+                saveBtn.disabled = false;
+
+                // Trigger change event manually so original preview scripts can run
+                const newEvent = new Event('change', { bubbles: true });
+                inputElement.dispatchEvent(newEvent);
+
+            }, 'image/jpeg', 0.9);
+        });
     </script>
 </body>
 </html>

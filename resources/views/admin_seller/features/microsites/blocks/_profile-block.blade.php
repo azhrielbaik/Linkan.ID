@@ -34,7 +34,7 @@
                                         <div>
                                             <label class="profile-form-label">Gambar Sampul (Banner)</label>
                                             <div class="upload-dropzone banner-dropzone">
-                                                <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input js-preview-profile-banner" >
+                                                <input type="file" name="banner" id="inputBannerFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input image-cropper js-preview-profile-banner" data-crop-ratio="3">
                                                 
                                                 <div id="bannerPreviewPlaceholder" class="banner-placeholder {{ ($appearance && $appearance->banner) ? 'd-none' : 'd-flex' }}">
                                                     <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
@@ -65,7 +65,7 @@
                                         <div>
                                             <label class="profile-form-label">Foto Profil</label>
                                             <div class="upload-dropzone avatar-dropzone">
-                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input js-preview-profile-avatar" >
+                                                <input type="file" name="profile_image" id="inputAvatarFile" accept="image/jpeg, image/png, image/gif" class="dropzone-input image-cropper js-preview-profile-avatar" data-crop-ratio="1" data-crop-shape="circle">
                                                 <input type="hidden" name="profile_image_base64" id="inputAvatarBase64">
                                                 
                                                 <div class="avatar-dropzone-inner">
