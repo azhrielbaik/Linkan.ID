@@ -285,6 +285,7 @@ Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'r
     // Pengaturan Platform & Broadcast (Aksi Kritis: Rate Limiting 10-15/menit)
     Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->middleware('throttle:10,1')->name('settings.update');
+    Route::post('/settings/emergency-switches', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateEmergencySwitches'])->middleware('throttle:10,1')->name('settings.emergency');
     Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.store');
     Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
     Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');

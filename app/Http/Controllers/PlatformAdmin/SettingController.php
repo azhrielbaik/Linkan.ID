@@ -25,11 +25,20 @@ class SettingController extends Controller
         $commissionPercent = (float) PlatformSetting::get('platform_commission_percent', 5);
         $minWithdrawAmount = (float) PlatformSetting::get('min_withdraw_amount', 10000);
 
+        $freezePayouts = (bool) PlatformSetting::get('freeze_payouts', 0);
+        $freezePayoutsMessage = PlatformSetting::get('freeze_payouts_message', '');
+        $disableCheckout = (bool) PlatformSetting::get('disable_checkout', 0);
+        $disableCheckoutMessage = PlatformSetting::get('disable_checkout_message', '');
+
         $announcements = BroadcastAnnouncement::with('admin')->latest()->get();
 
         return view('platformadmin.settings.index', compact(
             'commissionPercent',
             'minWithdrawAmount',
+            'freezePayouts',
+            'freezePayoutsMessage',
+            'disableCheckout',
+            'disableCheckoutMessage',
             'announcements'
         ));
     }
@@ -80,6 +89,75 @@ class SettingController extends Controller
         });
 
         return back()->with('success', __('messages.financial_settings_updated'));
+    }
+
+    /**
+     * Menyimpan perubahan sakelar darurat (Emergency Switches / Maintenance Mode Parsial)
+     * dengan verifikasi kata sandi admin.
+     */
+    public function updateEmergencySwitches(Request $request)
+    {
+        $request->validate([
+            'admin_password'           => 'required|string',
+            'freeze_payouts'           => 'nullable',
+            'freeze_payouts_message'   => 'nullable|string|max:255',
+            'disable_checkout'         => 'nullable',
+            'disable_checkout_message' => 'nullable|string|max:255',
+        ], [
+            'admin_password.required' => 'Password admin wajib dimasukkan untuk mengonfirmasi perubahan sakelar darurat.',
+        ]);
+
+        if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
+            return back()->withInput()->with('error', __('platform.invalid_admin_password'));
+        }
+
+        $newFreezePayouts = $request->boolean('freeze_payouts') ? '1' : '0';
+        $newFreezeMsg = trim($request->input('freeze_payouts_message', ''));
+        $newDisableCheckout = $request->boolean('disable_checkout') ? '1' : '0';
+        $newCheckoutMsg = trim($request->input('disable_checkout_message', ''));
+
+        $oldFreeze = (string) PlatformSetting::get('freeze_payouts', '0');
+        $oldCheckout = (string) PlatformSetting::get('disable_checkout', '0');
+
+        DB::transaction(function () use ($newFreezePayouts, $newFreezeMsg, $newDisableCheckout, $newCheckoutMsg, $oldFreeze, $oldCheckout) {
+            PlatformSetting::set('freeze_payouts', $newFreezePayouts, 'Status pembekuan penarikan dana');
+            PlatformSetting::set('freeze_payouts_message', $newFreezeMsg, 'Pesan kustom pembekuan penarikan dana');
+            PlatformSetting::set('disable_checkout', $newDisableCheckout, 'Status penonaktifan checkout produk');
+            PlatformSetting::set('disable_checkout_message', $newCheckoutMsg, 'Pesan kustom penonaktifan checkout');
+
+            $logDetails = [];
+            $logActions = [];
+
+            if ($oldFreeze !== $newFreezePayouts) {
+                $statusStr = $newFreezePayouts === '1' ? 'DIAKTIFKAN (Dibekukan)' : 'DINONAKTIFKAN (Normal)';
+                $logActions[] = "Freeze Payouts {$statusStr}";
+                $logDetails['freeze_payouts'] = [
+                    'from' => $oldFreeze,
+                    'to'   => $newFreezePayouts,
+                    'msg'  => $newFreezeMsg
+                ];
+            }
+
+            if ($oldCheckout !== $newDisableCheckout) {
+                $statusStr = $newDisableCheckout === '1' ? 'DIAKTIFKAN (Ditutup)' : 'DINONAKTIFKAN (Normal)';
+                $logActions[] = "Disable Checkout {$statusStr}";
+                $logDetails['disable_checkout'] = [
+                    'from' => $oldCheckout,
+                    'to'   => $newDisableCheckout,
+                    'msg'  => $newCheckoutMsg
+                ];
+            }
+
+            $actionSummary = !empty($logActions) ? implode(', ', $logActions) : 'Pembaruan pesan/konfigurasi sakelar darurat';
+
+            ActivityLogger::log(
+                'update_emergency_switches',
+                "Mengubah status sakelar darurat platform: {$actionSummary}",
+                $logDetails
+            );
+        });
+
+        return back()->with('success', 'Pengaturan sakelar darurat (Maintenance Mode Parsial) berhasil diperbarui.');
     }
 
     /**

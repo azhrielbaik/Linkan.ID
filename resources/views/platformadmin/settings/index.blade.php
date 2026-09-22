@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('platform.platform_settings') }} — Platform Admin</title>
     @include('platformadmin.partials.head_assets')
-    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform/settings.css') }}?v={{ file_exists(public_path('css/platform/settings.css')) ? filemtime(public_path('css/platform/settings.css')) : time() }}">
 </head>
 <body>
 
@@ -171,6 +171,150 @@
 
             </div>
 
+            {{-- Card: Sakelar Darurat (Emergency Switches / Maintenance Mode Parsial) --}}
+            <div class="setting-card emergency-card" style="margin-bottom: 28px;">
+                <div class="setting-card-header emergency-card-header">
+                    <div class="setting-card-icon emergency-icon">
+                        <i class="fas fa-power-off"></i>
+                    </div>
+                    <div class="setting-card-title-wrap">
+                        <div class="emergency-header-flex">
+                            <div>
+                                <div class="emergency-title-row">
+                                    <h2>Sakelar Darurat (Emergency Kill-Switch)</h2>
+                                    <span class="emergency-sub-tag"><i class="fas fa-bolt"></i> Pemeliharaan Parsial</span>
+                                </div>
+                                <p class="emergency-header-desc">
+                                    Kendalikan fitur-fitur transaksi & pencairan dana secara terisolasi untuk perlindungan instan tanpa mematikan seluruh situs web.
+                                </p>
+                            </div>
+                            <div class="emergency-status-wrapper">
+                                @if($freezePayouts || $disableCheckout)
+                                    <div class="emergency-status-badge status-danger" id="globalEmergencyBadge">
+                                        <span class="pulse-dot"></span>
+                                        <span>Mode Darurat Aktif</span>
+                                    </div>
+                                @else
+                                    <div class="emergency-status-badge status-normal" id="globalEmergencyBadge">
+                                        <span class="status-dot-green"></span>
+                                        <span>Semua Layanan Normal</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="emergencySettingsForm" action="{{ route('platform-admin.settings.emergency') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="admin_password" id="form_emergency_admin_password">
+
+                    <div class="emergency-switches-grid">
+                        {{-- Switch 1: Freeze Payouts --}}
+                        <div class="emergency-item {{ $freezePayouts ? 'active-warning' : '' }}" id="card_freeze_payouts">
+                            <div class="emergency-item-top">
+                                <div class="emergency-item-icon icon-payout">
+                                    <i class="fas fa-money-bill-transfer"></i>
+                                </div>
+                                <div class="emergency-item-info">
+                                    <div class="emergency-item-title-wrap">
+                                        <span class="emergency-item-title">Freeze Payouts</span>
+                                        <span class="status-pill-switch {{ $freezePayouts ? 'pill-danger' : 'pill-success' }}" id="badge_freeze_status">
+                                            {{ $freezePayouts ? 'DIBEKUKAN' : 'NORMAL' }}
+                                        </span>
+                                    </div>
+                                    <p class="emergency-item-desc">
+                                        Kunci pengajuan penarikan dana baru seller dan bekukan persetujuan pencairan sementara saat audit pembukuan atau kendala bank.
+                                    </p>
+                                </div>
+                                <div class="switch-toggle-wrap">
+                                    <label class="switch-toggle switch-payout" title="Aktifkan/Nonaktifkan Freeze Payouts">
+                                        <input type="checkbox" name="freeze_payouts" id="toggle_freeze_payouts" value="1" {{ $freezePayouts ? 'checked' : '' }} onchange="handleEmergencyToggle(this)">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="emergency-custom-msg-box">
+                                <label for="freeze_payouts_message" class="msg-box-label">
+                                    <i class="fas fa-bullhorn" style="color: #f59e0b;"></i>
+                                    <span>Pesan Peringatan untuk Seller</span>
+                                </label>
+                                <div class="msg-input-wrapper">
+                                    <i class="fas fa-comment-dots msg-input-icon"></i>
+                                    <input type="text" id="freeze_payouts_message" name="freeze_payouts_message" 
+                                           value="{{ old('freeze_payouts_message', $freezePayoutsMessage) }}"
+                                           placeholder="Contoh: Layanan penarikan dana sedang dibekukan sementara untuk audit sistem..." 
+                                           class="msg-input-field" maxlength="255">
+                                </div>
+                                <div class="quick-chips">
+                                    <span class="chip-label">Template:</span>
+                                    <button type="button" class="quick-chip" onclick="applyMessageTemplate('freeze_payouts_message', 'Layanan penarikan dana sedang ditangguhkan sementara untuk audit pembukuan rutin.')">Audit Rutin</button>
+                                    <button type="button" class="quick-chip" onclick="applyMessageTemplate('freeze_payouts_message', 'Layanan penarikan dana sedang dibekukan sementara karena gangguan jaringan perbankan nasional.')">Gangguan Bank</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Switch 2: Disable Checkout --}}
+                        <div class="emergency-item {{ $disableCheckout ? 'active-danger' : '' }}" id="card_disable_checkout">
+                            <div class="emergency-item-top">
+                                <div class="emergency-item-icon icon-checkout">
+                                    <i class="fas fa-cart-shopping"></i>
+                                </div>
+                                <div class="emergency-item-info">
+                                    <div class="emergency-item-title-wrap">
+                                        <span class="emergency-item-title">Disable Checkout</span>
+                                        <span class="status-pill-switch {{ $disableCheckout ? 'pill-danger' : 'pill-success' }}" id="badge_checkout_status">
+                                            {{ $disableCheckout ? 'DINONAKTIFKAN' : 'NORMAL' }}
+                                        </span>
+                                    </div>
+                                    <p class="emergency-item-desc">
+                                        Tutup sementara proses transaksi pembelian produk digital publik saat pemeliharaan payment gateway atau sinkronisasi katalog.
+                                    </p>
+                                </div>
+                                <div class="switch-toggle-wrap">
+                                    <label class="switch-toggle switch-checkout" title="Aktifkan/Nonaktifkan Checkout">
+                                        <input type="checkbox" name="disable_checkout" id="toggle_disable_checkout" value="1" {{ $disableCheckout ? 'checked' : '' }} onchange="handleEmergencyToggle(this)">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="emergency-custom-msg-box">
+                                <label for="disable_checkout_message" class="msg-box-label">
+                                    <i class="fas fa-bullhorn" style="color: #ef4444;"></i>
+                                    <span>Pesan Peringatan untuk Pembeli</span>
+                                </label>
+                                <div class="msg-input-wrapper">
+                                    <i class="fas fa-comment-dots msg-input-icon"></i>
+                                    <input type="text" id="disable_checkout_message" name="disable_checkout_message" 
+                                           value="{{ old('disable_checkout_message', $disableCheckoutMessage) }}"
+                                           placeholder="Contoh: Layanan checkout sedang dinonaktifkan sementara untuk pemeliharaan sistem..." 
+                                           class="msg-input-field" maxlength="255">
+                                </div>
+                                <div class="quick-chips">
+                                    <span class="chip-label">Template:</span>
+                                    <button type="button" class="quick-chip" onclick="applyMessageTemplate('disable_checkout_message', 'Layanan checkout sedang dinonaktifkan sementara untuk pemeliharaan sistem berkala.')">Maintenance Rutin</button>
+                                    <button type="button" class="quick-chip" onclick="applyMessageTemplate('disable_checkout_message', 'Layanan checkout sedang dinonaktifkan sementara karena peningkatan sistem payment gateway.')">Upgrade Gateway</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Footer Action Toolbar --}}
+                    <div class="emergency-footer-bar">
+                        <div class="emergency-footer-info">
+                            <i class="fas fa-lock emergency-security-icon"></i>
+                            <span>Perubahan sakelar darurat diproteksi kata sandi admin dan terekam dalam Log Audit.</span>
+                        </div>
+                        <button type="button" class="btn-save-emergency-pro" onclick="openEmergencyPasswordModal()">
+                            <i class="fas fa-lock"></i>
+                            <span>Simpan Status Sakelar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             {{-- Card 3: Tabel Riwayat Broadcast (Clean Full Width Card) --}}
             <div class="setting-card settings-table-card" style="margin-top: 24px;">
                 <div class="settings-table-header">
@@ -301,6 +445,55 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Password Admin untuk Sakelar Darurat -->
+    <div id="emergencyPasswordModal" class="modal" onclick="if(event.target === this) closeEmergencyPasswordModal()">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-power-off" style="color: #ea580c;"></i> Konfirmasi Kata Sandi Admin</h3>
+                <button type="button" class="modal-close" onclick="closeEmergencyPasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+                    Anda akan mengubah konfigurasi <strong>Sakelar Darurat (Maintenance Mode Parsial)</strong> platform. Masukkan kata sandi admin Anda untuk memverifikasi otorisasi keamanan.
+                </p>
+
+                <div class="modal-summary-box" style="background: #fff7ed; border-color: #fed7aa;">
+                    <div style="margin-bottom: 8px; color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
+                        <span><strong>Freeze Payouts:</strong></span>
+                        <span id="summary_freeze_payouts" style="font-weight: 800;"></span>
+                    </div>
+                    <div style="color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
+                        <span><strong>Disable Checkout:</strong></span>
+                        <span id="summary_disable_checkout" style="font-weight: 800;"></span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="modal_emergency_admin_password" style="font-size: 12.5px; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-key" style="color: #ea580c;"></i>
+                        <span>Kata Sandi Admin Platform</span>
+                    </label>
+                    <div style="position: relative;">
+                        <input type="password" id="modal_emergency_admin_password" class="form-control"
+                               placeholder="Masukkan kata sandi admin Anda..."
+                               style="width: 100%; padding-right: 44px;"
+                               onkeydown="if(event.key === 'Enter'){ event.preventDefault(); submitEmergencySettings(); }">
+                        <button type="button" onclick="toggleEmergencyPasswordVisibility()" class="btn-toggle-eye">
+                            <i class="fas fa-eye" id="toggleEmergencyPasswordIcon"></i>
+                        </button>
+                    </div>
+                    <div id="emergencyPasswordErrorMsg" style="display: none; color: #dc2626; font-size: 12px; font-weight: 600; margin-top: 6px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" onclick="closeEmergencyPasswordModal()">{{ __('platform.cancel') }}</button>
+                <button type="button" class="btn-modal-submit-primary" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);" onclick="submitEmergencySettings()">
+                    <i class="fas fa-lock"></i> Konfirmasi & Terapkan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.PlatformSettingsConfig = {
             deleteText: '{{ __('platform.delete') }}'
@@ -308,6 +501,6 @@
     </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}"></script>
-    <script src="{{ asset('js/platform/settings.js') }}"></script>
+    <script src="{{ asset('js/platform/settings.js') }}?v={{ file_exists(public_path('js/platform/settings.js')) ? filemtime(public_path('js/platform/settings.js')) : time() }}"></script>
 </body>
 </html>
