@@ -124,6 +124,12 @@ class PayoutService
      */
     public function processWithdrawal(User $user, array $data): array
     {
+        if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
+            $msg = PlatformSetting::get('freeze_payouts_message')
+                ?: 'Layanan penarikan dana sedang dibekukan sementara oleh sistem untuk audit atau pemeliharaan perbankan.';
+            throw new \Exception($msg);
+        }
+
         $commissionPercent = (float) PlatformSetting::get('platform_commission_percent', 5);
         $amount = (float) $data['amount_raw'];
         $commission = $amount * ($commissionPercent / 100);

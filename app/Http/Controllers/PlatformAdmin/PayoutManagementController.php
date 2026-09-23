@@ -99,6 +99,10 @@ class PayoutManagementController extends Controller
             'admin_password.required' => 'Password admin wajib dimasukkan untuk mengonfirmasi persetujuan penarikan dana.',
         ]);
 
+        if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
+            return back()->with('error', 'Pencairan dana tidak dapat disetujui karena mode "Freeze Payouts" sedang aktif di Pengaturan Platform. Nonaktifkan status pembekuan terlebih dahulu jika ingin memproses dana.');
+        }
+
         if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
             return back()->with('error', __('platform.invalid_payout_password'));
         }

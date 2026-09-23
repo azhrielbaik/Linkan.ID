@@ -96,6 +96,16 @@
             </div>
         </div>
 
+        @if(!empty($isCheckoutDisabled))
+            <div class="mb-6 bg-amber-50 border border-amber-300 rounded-xl p-4 text-amber-900 flex items-start gap-3 shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5 shrink-0"></i>
+                <div class="text-[13px] leading-relaxed">
+                    <strong class="block font-bold text-amber-950 mb-1">Pemberitahuan Sistem (Pemeliharaan Checkout):</strong>
+                    <span>{{ $disableCheckoutMessage ?? 'Layanan pembelian produk sedang dinonaktifkan sementara untuk pemeliharaan sistem. Silakan coba beberapa saat lagi.' }}</span>
+                </div>
+            </div>
+        @endif
+
         <form id="checkout-form" class="flex-1 flex flex-col">
             <!-- Buyer Info -->
             <div class="mb-8">
@@ -125,9 +135,15 @@
                     <span class="font-semibold text-gray-800">Rp 0</span>
                 </div>
                 
-                <button type="button" id="select-method" class="w-full bg-[#ED842C] hover:bg-blue-800 text-white text-[16px] font-semibold py-4 rounded-[16px] transition-colors shadow-lg shadow-blue-900/20 active:scale-[0.98]">
-                    {{ $totalAmount > 0 ? 'Pay' : 'Dapatkan Gratis' }}
-                </button>
+                @if(!empty($isCheckoutDisabled))
+                    <button type="button" disabled class="w-full bg-gray-200 text-gray-500 text-[15px] font-semibold py-4 rounded-[16px] cursor-not-allowed shadow-none flex items-center justify-center gap-2 select-none">
+                        <i class="fa-solid fa-lock text-sm"></i> Checkout Dinonaktifkan Sementara
+                    </button>
+                @else
+                    <button type="button" id="select-method" class="w-full bg-[#ED842C] hover:bg-blue-800 text-white text-[16px] font-semibold py-4 rounded-[16px] transition-colors shadow-lg shadow-blue-900/20 active:scale-[0.98]">
+                        {{ $totalAmount > 0 ? 'Pay' : 'Dapatkan Gratis' }}
+                    </button>
+                @endif
             </div>
         </form>
     </div>
@@ -137,7 +153,9 @@
     let paymentSelected = false;
     let transactionResult = null;
 
-    document.getElementById('select-method').addEventListener('click', function () {
+    const selectMethodBtn = document.getElementById('select-method');
+    if (selectMethodBtn) {
+        selectMethodBtn.addEventListener('click', function () {
         const form = document.getElementById('checkout-form');
         if (!form.checkValidity()) {
             form.reportValidity();
@@ -290,6 +308,7 @@
             Swal.fire('Error', error.message, 'error');
         });
     });
+    }
 </script>
 </body>
 </html>

@@ -39,6 +39,22 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="mb-6 bg-red-50 text-red-700 px-4 py-3 rounded-lg flex items-center gap-3 text-sm font-medium border border-red-200">
+            <i class="fas fa-exclamation-circle text-red-500 text-lg"></i> {{ session('error') }}
+        </div>
+    @endif
+
+    @if(!empty($isPayoutFrozen))
+        <div class="mb-6 bg-amber-50 text-amber-900 px-4 py-3.5 rounded-xl flex items-start gap-3 text-sm font-medium border border-amber-300 shadow-sm">
+            <i class="fas fa-exclamation-triangle text-amber-600 text-lg mt-0.5 shrink-0"></i>
+            <div>
+                <strong class="font-bold text-amber-950 block mb-0.5">Pemberitahuan Sistem (Layanan Payout Sedang Ditangguhkan):</strong>
+                <span>{{ $freezeMessage ?? 'Layanan penarikan dana sedang ditangguhkan sementara oleh sistem untuk audit berkala atau pemeliharaan jaringan perbankan. Anda tetap dapat mengumpulkan saldo dari penjualan produk.' }}</span>
+            </div>
+        </div>
+    @endif
+
     {{-- Top Metric Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         {{-- Total Earnings --}}
@@ -190,9 +206,15 @@
                         <span class="text-[15px] font-bold text-slate-900">Rp {{ number_format($currentBalance * 0.95, 0, ',', '.') }}</span>
                     </div>
 
-                    <a href="{{ route('admin.payout.withdraw') }}" class="block w-full py-3.5 px-4 bg-[#ED842C] hover:bg-[#d67322] text-white font-bold text-center rounded-full transition-colors no-underline">
-                        Withdraw Now
-                    </a>
+                    @if(!empty($isPayoutFrozen))
+                        <button type="button" disabled class="block w-full py-3.5 px-4 bg-slate-200 text-slate-400 font-bold text-center rounded-full cursor-not-allowed shadow-none select-none flex items-center justify-center gap-2" title="Layanan penarikan dana sedang ditangguhkan sementara">
+                            <i class="fas fa-lock text-sm"></i> Penarikan Ditangguhkan
+                        </button>
+                    @else
+                        <a href="{{ route('admin.payout.withdraw') }}" class="block w-full py-3.5 px-4 bg-[#ED842C] hover:bg-[#d67322] text-white font-bold text-center rounded-full transition-colors no-underline">
+                            Withdraw Now
+                        </a>
+                    @endif
                 </div>
             </div>
 

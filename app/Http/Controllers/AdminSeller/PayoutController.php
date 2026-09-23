@@ -21,12 +21,20 @@ class PayoutController extends Controller
     {
         $user = Auth::user();
         $data = $this->payoutService->getPayoutOverview($user);
+        $data['isPayoutFrozen'] = (bool) PlatformSetting::get('freeze_payouts', 0);
+        $data['freezeMessage'] = PlatformSetting::get('freeze_payouts_message') ?: 'Layanan penarikan dana (payout) sedang ditangguhkan sementara oleh sistem untuk audit atau pemeliharaan jaringan perbankan. Anda tetap dapat mengumpulkan saldo dari penjualan produk.';
 
         return view('admin_seller.features.payouts.index', $data);
     }
 
     public function showWithdrawForm()
     {
+        if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
+            $msg = PlatformSetting::get('freeze_payouts_message')
+                ?: 'Layanan penarikan dana (payout) sedang ditangguhkan sementara untuk audit sistem atau pemeliharaan jaringan perbankan.';
+            return redirect()->route('admin.payout.index')->with('error', $msg);
+        }
+
         $user = Auth::user();
         $data = $this->payoutService->getWithdrawFormSettings($user);
 
@@ -61,6 +69,12 @@ class PayoutController extends Controller
 
     public function processWithdrawal(Request $request)
     {
+        if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
+            $msg = PlatformSetting::get('freeze_payouts_message')
+                ?: 'Layanan penarikan dana (payout) sedang ditangguhkan sementara untuk audit sistem atau pemeliharaan jaringan perbankan.';
+            return redirect()->route('admin.payout.index')->with('error', $msg);
+        }
+
         $user = Auth::user();
         
         $currentBalance = (float) $this->payoutService->getPayoutOverview($user)['currentBalance'];

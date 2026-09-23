@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateDigitalProductRequest;
 use App\Mail\SendDigitalProductMail;
 use App\Models\DigitalProduct;
 use App\Models\Transaction;
+use App\Models\PlatformSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -92,67 +93,92 @@ public function checkoutSuccess(Request $request, $id)
 }
 
     public function checkout(CheckoutDigitalProductRequest $request, $id)
-{
-    $product = DigitalProduct::findOrFail($id);
+    {
+        $product = DigitalProduct::findOrFail($id);
 
-    if ($product->is_active === false || $product->is_active === 0) {
-        return back()->with('error', 'Produk tidak dapat dibeli karena telah dinonaktifkan oleh Admin.');
-    }
+        $isCheckoutDisabled = (bool) PlatformSetting::get('disable_checkout', 0);
+        $disableCheckoutMessage = PlatformSetting::get('disable_checkout_message') 
+            ?: 'Layanan checkout sedang dinonaktifkan sementara untuk pemeliharaan sistem. Silakan coba beberapa saat lagi.';
 
-    if ($product->user && $product->user->isSuspended()) {
-        return back()->with('error', 'Produk tidak dapat dibeli karena akun penjual sedang ditangguhkan.');
-    }
+        if ($isCheckoutDisabled && $request->isMethod('post')) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $disableCheckoutMessage
+                ], 403);
+            }
+            return back()->with('error', $disableCheckoutMessage);
+        }
 
-    // Ambil qty dari session jika tidak ada permintaan POST
-    $qty = $request->isMethod('post')
-        ? $request->qty
-        : session("cart.qty.$id", 1);
+        if ($product->is_active === false || $product->is_active === 0) {
+            return back()->with('error', 'Produk tidak dapat dibeli karena telah dinonaktifkan oleh Admin.');
+        }
 
-    $customPrice = session("cart.price.$id");
-    
-    // Panggil Service untuk menghitung harga & membuat Token Midtrans
-    try {
-        $checkoutData = $this->checkoutService->generateSnapToken(
-            $product, 
-            $qty, 
-            $customPrice, 
-            $request->input('name', 'Guest'), 
-            $request->input('email', 'guest@example.com')
-        );
-    } catch (\Exception $e) {
-        return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
-    }
+        if ($product->user && $product->user->isSuspended()) {
+            return back()->with('error', 'Produk tidak dapat dibeli karena akun penjual sedang ditangguhkan.');
+        }
 
-    $totalPrice = $checkoutData['totalPrice'];
-    $itemPrice = $checkoutData['itemPrice'];
-    $snapToken = $checkoutData['snapToken'];
-    $orderId = $checkoutData['orderId'];
+        // Ambil qty dari session jika tidak ada permintaan POST
+        $qty = $request->isMethod('post')
+            ? $request->qty
+            : session("cart.qty.$id", 1);
 
-    if ($request->isMethod('post')) {
-        $validated = $request->validated();
+        $customPrice = session("cart.price.$id");
+        
+        // Panggil Service untuk menghitung harga & membuat Token Midtrans
+        try {
+            $checkoutData = $this->checkoutService->generateSnapToken(
+                $product, 
+                $qty, 
+                $customPrice, 
+                $request->input('name', 'Guest'), 
+                $request->input('email', 'guest@example.com')
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
+        }
 
-        if ($totalPrice == 0) {
-            // Langsung store untuk transaksi gratis (status otomatis success)
-            $transaction = $this->checkoutService->storeTransaction([
-                'order_id' => $orderId,
-                'transaction_status' => 'success',
-                'product_id' => $product->id,
-                'buyer_email' => $request->email,
-                'buyer_name' => $request->name,
-                'qty' => $qty,
-                'total_price' => 0
-            ]);
+        $totalPrice = $checkoutData['totalPrice'];
+        $itemPrice = $checkoutData['itemPrice'];
+        $snapToken = $checkoutData['snapToken'];
+        $orderId = $checkoutData['orderId'];
 
-            $redirectUrl = null;
-            $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
-            if ($buyerUser) {
-                $redirectUrl = route('public.profile', ['username' => $buyerUser->username]);
+        if ($request->isMethod('post')) {
+            $validated = $request->validated();
+
+            if ($totalPrice == 0) {
+                // Langsung store untuk transaksi gratis (status otomatis success)
+                $transaction = $this->checkoutService->storeTransaction([
+                    'order_id' => $orderId,
+                    'transaction_status' => 'success',
+                    'product_id' => $product->id,
+                    'buyer_email' => $request->email,
+                    'buyer_name' => $request->name,
+                    'qty' => $qty,
+                    'total_price' => 0
+                ]);
+
+                $redirectUrl = null;
+                $buyerUser = \App\Models\User::where('email', $transaction->buyer_email)->first();
+                if ($buyerUser) {
+                    $redirectUrl = route('public.profile', ['username' => $buyerUser->username]);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Produk gratis berhasil didapatkan & email terkirim',
+                    'redirect' => $redirectUrl
+                ]);
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Produk gratis berhasil didapatkan & email terkirim',
-                'redirect' => $redirectUrl
+            return view('public.checkout', [
+                'product' => $product,
+                'snapToken' => $snapToken,
+                'savedQty' => $qty,
+                'itemPrice' => $itemPrice,
+                'orderId' => $orderId,
+                'isCheckoutDisabled' => $isCheckoutDisabled,
+                'disableCheckoutMessage' => $disableCheckoutMessage,
             ]);
         }
 
@@ -161,18 +187,11 @@ public function checkoutSuccess(Request $request, $id)
             'snapToken' => $snapToken,
             'savedQty' => $qty,
             'itemPrice' => $itemPrice,
-            'orderId' => $orderId
+            'orderId' => $orderId,
+            'isCheckoutDisabled' => $isCheckoutDisabled,
+            'disableCheckoutMessage' => $disableCheckoutMessage,
         ]);
     }
-
-    return view('public.checkout', [
-        'product' => $product,
-        'snapToken' => $snapToken,
-        'savedQty' => $qty,
-        'itemPrice' => $itemPrice,
-        'orderId' => $orderId
-    ]);
-}
 public function midtransCallback(Request $request)
 {
     \Illuminate\Support\Facades\Log::info('Midtrans Webhook Raw Payload: ', $request->all());
