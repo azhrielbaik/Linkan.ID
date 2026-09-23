@@ -42,9 +42,15 @@ class PayoutService
             ->where('status', 'pending')
             ->sum(DB::raw('COALESCE(gross_amount, amount)'));
 
-        // 5. Saldo yang dapat ditarik: total pendapatan dikurangi penarikan approved dan pending hold
+        // 5. Total dana transaksi yang sedang dibekukan karena sengketa aktif (pending / under_review)
+        $frozenDisputeAmount = (float) DB::table('disputes')
+            ->where('seller_id', $user->id)
+            ->whereIn('status', ['pending', 'under_review'])
+            ->sum('amount');
+
+        // 6. Saldo yang dapat ditarik: total pendapatan dikurangi penarikan approved, pending hold, dan sengketa tertahan
         // Catatan: Payout yang rejected TIDAK dihitung sebagai pengurang sehingga otomatis kembali ke saldo user
-        $currentBalance = max(0, $totalEarnings - $approvedGross - $pendingGross);
+        $currentBalance = max(0, $totalEarnings - $approvedGross - $pendingGross - $frozenDisputeAmount);
 
         // Self-healing: sinkronkan nilai users.balance jika terdapat ketidaksesuaian
         $userBalance = (float) ($user->balance ?? 0);
@@ -59,6 +65,7 @@ class PayoutService
             'totalEarnings' => $totalEarnings,
             'totalWithdrawn' => $totalWithdrawn,
             'currentBalance' => $currentBalance,
+            'frozenDisputeAmount' => $frozenDisputeAmount,
             'payoutDetail' => $payoutDetail,
             'history' => $this->getPayoutHistory($user->id)->take(10)
         ];
@@ -137,8 +144,18 @@ class PayoutService
 
         DB::transaction(function() use ($user, $data, $amount, $commission, $amountAfterCommission) {
             $freshUser = DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
-            if (!$freshUser || (float) $freshUser->balance < $amount) {
-                throw new \Exception('Saldo Anda tidak mencukupi untuk melakukan penarikan ini.');
+            $frozenDisputeAmount = (float) DB::table('disputes')
+                ->where('seller_id', $user->id)
+                ->whereIn('status', ['pending', 'under_review'])
+                ->sum('amount');
+            $withdrawableBalance = max(0, (float) ($freshUser->balance ?? 0) - $frozenDisputeAmount);
+
+            if (!$freshUser || $withdrawableBalance < $amount) {
+                $err = 'Saldo Anda tidak mencukupi untuk melakukan penarikan ini.';
+                if ($frozenDisputeAmount > 0) {
+                    $err .= ' (Terdapat dana tertahan sengketa sebesar Rp ' . number_format($frozenDisputeAmount, 0, ',', '.') . ')';
+                }
+                throw new \Exception($err);
             }
 
             DB::table('payout_transactions')->insert([

@@ -112,6 +112,13 @@
                 Back to Home
             </a>
         </div>
+
+        <!-- Dispute / Help Link -->
+        <div class="mt-4 text-center">
+            <a href="{{ route('public.dispute.create', ['order_id' => $transaction->order_id ?? request('order_id')]) }}" class="text-[12.5px] font-semibold text-gray-500 hover:text-[#E58C17] transition-colors inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Ada kendala dengan produk? Ajukan komplain / sengketa
+            </a>
+        </div>
     </div>
 
 </body>

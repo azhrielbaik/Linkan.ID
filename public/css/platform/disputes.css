@@ -1,0 +1,247 @@
+/* =====================================================================
+   DISPUTES & REFUND MANAGEMENT STYLES (PLATFORM ADMIN)
+   Seamlessly integrates with Linkan.ID Platform Admin Design System
+   ===================================================================== */
+
+/* Status Badges */
+.badge-dsp-pending, .dsp-badge-pending {
+    background: #fff7ed !important;
+    color: #c2410c !important;
+    border: 1px solid #fed7aa !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.badge-dsp-review, .dsp-badge-review {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border: 1px solid #bfdbfe !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.badge-dsp-refunded, .dsp-badge-refunded {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.badge-dsp-rejected, .dsp-badge-rejected {
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #cbd5e1 !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+/* Reason Tag */
+.dsp-reason-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 2px 7px;
+    border-radius: 5px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Action Button */
+.btn-dsp-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #0f172a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-dsp-action:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    transform: translateY(-1px);
+}
+
+/* Detail Split View (show.blade.php) */
+.dsp-detail-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 22px;
+    align-items: start;
+    margin-top: 4px;
+}
+
+@media (max-width: 1024px) {
+    .dsp-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dsp-detail-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    margin-bottom: 20px;
+}
+
+.dsp-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.dsp-detail-header h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dsp-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8fafc;
+    font-size: 12.5px;
+}
+
+.dsp-info-label {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.dsp-info-val {
+    color: #0f172a;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* Rekening Box */
+.dsp-bank-box {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.dsp-bank-badge {
+    font-size: 12px;
+    font-weight: 800;
+    color: #0f172a;
+    background: #e2e8f0;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.dsp-acc-number {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.5px;
+    font-family: monospace;
+}
+
+.dsp-acc-name {
+    font-size: 12.5px;
+    color: #475569;
+    font-weight: 600;
+}
+
+/* Evidence Preview */
+.dsp-evidence-box {
+    margin-top: 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+    text-align: center;
+    padding: 12px;
+}
+
+.dsp-evidence-img {
+    max-width: 100%;
+    max-height: 380px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal Styling */
+.dsp-modal-confirm {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.dsp-modal-confirm.show {
+    display: flex;
+}
+
+.dsp-modal-box {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    animation: modalScale 0.2s ease;
+}
+
+@keyframes modalScale {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

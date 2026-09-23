@@ -172,7 +172,7 @@
             </div>
 
             {{-- Card: Sakelar Darurat (Emergency Switches / Maintenance Mode Parsial) --}}
-            <div class="setting-card emergency-card" style="margin-bottom: 28px;">
+            <div class="setting-card emergency-card" style="margin-bottom: 24px;">
                 <div class="setting-card-header emergency-card-header">
                     <div class="setting-card-icon emergency-icon">
                         <i class="fas fa-power-off"></i>

@@ -60,6 +60,18 @@
                 <i class="fas fa-receipt"></i><span class="nav-text">{{ __('sidebar.transaction_logs') }}</span>
             </a>
 
+            <a href="{{ route('platform-admin.disputes.index') }}" class="{{ request()->routeIs('platform-admin.disputes*') ? 'active' : '' }}">
+                <i class="fas fa-scale-balanced"></i><span class="nav-text">Sengketa & Refund</span>
+                @php
+                    $pendingDisputesCount = \App\Models\Dispute::whereIn('status', ['pending', 'under_review'])->count();
+                @endphp
+                @if($pendingDisputesCount > 0)
+                    <span style="background: #ea580c; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: auto;">
+                        {{ $pendingDisputesCount }}
+                    </span>
+                @endif
+            </a>
+
             <a href="{{ route('platform-admin.tickets.index') }}" class="{{ request()->routeIs('platform-admin.tickets*') ? 'active' : '' }}">
                 <i class="fas fa-headset"></i><span class="nav-text">{{ __('platform.pusat_bantuan') }}</span>
                 @php

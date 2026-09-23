@@ -972,6 +972,7 @@
             <div class="footer-links">
                 <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>
                 <a href="{{ route('contact.form') }}" class="footer-link scramble-link" data-value="{{ __('layout.contact_us') }}">{{ __('layout.contact_us') }}</a>
+                <a href="{{ route('public.dispute.create') }}" class="footer-link scramble-link" data-value="Pusat Resolusi & Sengketa">Pusat Resolusi & Sengketa</a>
             </div>
         </div>
     </footer>
