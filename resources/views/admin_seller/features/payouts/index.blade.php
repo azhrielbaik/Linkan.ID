@@ -55,6 +55,16 @@
         </div>
     @endif
 
+    @if(!empty($frozenDisputeAmount) && $frozenDisputeAmount > 0)
+        <div class="mb-6 bg-red-50 text-red-900 px-4 py-3.5 rounded-xl flex items-start gap-3 text-sm font-medium border border-red-200 shadow-sm">
+            <i class="fas fa-shield-halved text-red-600 text-lg mt-0.5 shrink-0"></i>
+            <div>
+                <strong class="font-bold text-red-950 block mb-0.5">Penahanan Dana Sementara (Sengketa Aktif):</strong>
+                <span>Terdapat dana sebesar <strong>Rp {{ number_format($frozenDisputeAmount, 0, ',', '.') }}</strong> yang sedang dibekukan sementara oleh admin platform karena adanya pengaduan sengketa transaksi dari pembeli yang sedang dalam proses investigasi.</span>
+            </div>
+        </div>
+    @endif
+
     {{-- Top Metric Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         {{-- Total Earnings --}}

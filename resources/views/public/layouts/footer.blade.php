@@ -4,6 +4,7 @@
         <nav class="flex gap-[30px]">
             <a href="{{ route('about') }}" class="no-underline text-[#666] text-[16px] transition-colors duration-300 hover:text-[#ff7733]">{{ __('layout.about_us') }}</a>
             <a href="{{ route('contact.form') }}" class="no-underline text-[#666] text-[16px] transition-colors duration-300 hover:text-[#ff7733]">{{ __('layout.contact_us') }}</a>
+            <a href="{{ route('public.dispute.create') }}" class="no-underline text-[#666] text-[16px] transition-colors duration-300 hover:text-[#ff7733]">Pusat Resolusi & Sengketa</a>
         </nav>
     </div>
 </footer>

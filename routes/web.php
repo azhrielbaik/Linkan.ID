@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 
 // Root fallback
 Route::get('/', fn () => redirect('/id'));
+Route::get('/bantuan/sengketa', fn () => redirect('/id/bantuan/sengketa'));
 
 // Switch Language Route (Redirects to new locale)
 Route::get('/lang/{lang}', function ($lang) {
@@ -116,6 +117,11 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
 
     // Digital product payment flow (public callbacks & result pages)
     Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction'])->name('transaction.store');
+
+    // Layanan Pengaduan Sengketa & Refund Pembeli (Public Dispute & Complaint)
+    Route::get('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'create'])->name('public.dispute.create');
+    Route::post('/bantuan/sengketa/check-order', [\App\Http\Controllers\PublicDisputeController::class, 'checkOrder'])->middleware('throttle:30,1')->name('public.dispute.check_order');
+    Route::post('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'store'])->middleware('throttle:10,1')->name('public.dispute.store');
 
     // Password-protected shortlink
     Route::get('/p/{slug}', [ShortlinkController::class, 'passwordForm'])->name('shortlink.password.form');
@@ -329,6 +335,13 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         // Manajemen Sesi Aktif
         Route::get('/sessions', [PlatformAdminController::class, 'getActiveSessions'])->name('sessions.index');
         Route::post('/sessions/revoke-others', [PlatformAdminController::class, 'revokeOtherSessions'])->middleware('throttle:10,1')->name('sessions.revoke-others');
+
+        // Manajemen Sengketa & Refund Pembeli (Dispute & Refund Management)
+        Route::get('/disputes', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'index'])->name('disputes.index');
+        Route::get('/disputes/{id}', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'show'])->name('disputes.show');
+        Route::post('/disputes/{id}/review', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'startReview'])->middleware('throttle:15,1')->name('disputes.review');
+        Route::post('/disputes/{id}/refund', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'processRefund'])->middleware('throttle:10,1')->name('disputes.refund');
+        Route::post('/disputes/{id}/reject', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'rejectDispute'])->middleware('throttle:10,1')->name('disputes.reject');
     });
 
 

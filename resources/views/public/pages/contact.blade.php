@@ -81,13 +81,13 @@
     </div>
 
     <!-- HERO TITLE -->
-    <h1 class="page-title">Letâ€™s talk with us</h1>
+    <h1 class="page-title">Let's talk with us</h1>
 
     <!-- CONTACT CONTAINER (2 CARDS) -->
     <div class="contact-container">
         <!-- LEFT CARD: INFO -->
         <div class="info-card">
-            <p class="info-card-title">Comment, Suggestion?Simply Fill In the Form</p>
+            <p class="info-card-title">Comment, Suggestion? Simply Fill In the Form</p>
             <div class="info-list">
                 <!-- Location -->
                 <div class="info-item">

@@ -173,6 +173,14 @@
                                         <span class="badge badge-failed">
                                             <i class="fas fa-times-circle"></i> {{ __('platform.failed_status') }}
                                         </span>
+                                    @elseif($txStatus === 'disputed')
+                                        <span class="badge" style="background: #fff7ed; color: #ea580c; border: 1.5px solid #fed7aa; font-weight: 700;">
+                                            <i class="fas fa-scale-balanced"></i> Disputed
+                                        </span>
+                                    @elseif($txStatus === 'refunded')
+                                        <span class="badge" style="background: #ecfdf5; color: #047857; border: 1.5px solid #a7f3d0; font-weight: 700;">
+                                            <i class="fas fa-rotate-left"></i> Refunded
+                                        </span>
                                     @else
                                         <span class="badge badge-pending">
                                             <i class="fas fa-clock"></i> {{ __('platform.pending_status') }}

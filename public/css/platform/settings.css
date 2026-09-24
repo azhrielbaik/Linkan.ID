@@ -900,28 +900,44 @@ tbody tr:hover td {
     box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.08);
 }
 
+/* =====================================================================
+   EMERGENCY SWITCHES & PARTIAL MAINTENANCE STYLES (COMPACT & PRECISE)
+   ===================================================================== */
+.emergency-card {
+    border-radius: 16px;
+    padding: 20px 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+}
+
+.emergency-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+}
+
 .emergency-card-header {
     display: flex;
-    align-items: flex-start;
-    gap: 18px;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid #f1f5f9;
 }
 
 .setting-card-icon.emergency-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: #fff7ed;
     color: #ea580c;
     border: 1.5px solid #fed7aa;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 19px;
+    font-size: 16px;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.14);
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.12);
     transition: all 0.2s ease;
 }
 
@@ -935,85 +951,84 @@ tbody tr:hover td {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 10px;
+    width: 100%;
 }
 
 .emergency-title-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .emergency-title-row h2 {
-    font-size: 17.5px;
+    font-size: 15px;
     font-weight: 800;
     color: #0f172a;
     margin: 0;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
 }
 
 .emergency-sub-tag {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 10.5px;
+    gap: 4px;
+    font-size: 9.5px;
     font-weight: 800;
     color: #dc2626;
     background: #fef2f2;
     border: 1px solid #fee2e2;
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 9999px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
 }
 
 .emergency-header-desc {
-    font-size: 13px;
+    font-size: 11.5px;
     color: #64748b;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 /* Status Badges */
 .emergency-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 16px;
+    gap: 6px;
+    padding: 5px 12px;
     border-radius: 9999px;
-    font-size: 12.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.1px;
+    transition: all 0.25s ease;
 }
 
 .emergency-status-badge.status-normal {
     background: #f0fdf4;
     color: #15803d;
     border: 1px solid #bbf7d0;
-    box-shadow: 0 2px 6px rgba(21, 128, 61, 0.08);
 }
 
 .status-dot-green {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.25);
 }
 
 .emergency-status-badge.status-danger {
     background: #fef2f2;
     color: #b91c1c;
     border: 1px solid #fecaca;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .pulse-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background-color: #dc2626;
     animation: pulseAnimation 1.6s infinite;
@@ -1026,7 +1041,7 @@ tbody tr:hover td {
     }
     70% {
         transform: scale(1.15);
-        box-shadow: 0 0 0 7px rgba(220, 38, 38, 0);
+        box-shadow: 0 0 0 5px rgba(220, 38, 38, 0);
     }
     100% {
         transform: scale(0.95);
@@ -1034,22 +1049,21 @@ tbody tr:hover td {
     }
 }
 
-/* Grid & Items */
+/* Compact Grid & Control Items */
 .emergency-switches-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 22px;
-    margin-top: 4px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
 }
 
 .emergency-item {
     position: relative;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    border-radius: 13px;
+    padding: 14px 16px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1057,51 +1071,49 @@ tbody tr:hover td {
 
 .emergency-item:hover {
     border-color: #cbd5e1;
-    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.07);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
 .emergency-item.active-warning {
     background: linear-gradient(180deg, #fffdfa 0%, #fff7ed 100%);
     border-color: #f59e0b;
-    box-shadow: 0 8px 25px -4px rgba(245, 158, 11, 0.18);
+    box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.15);
 }
 
 .emergency-item.active-danger {
     background: linear-gradient(180deg, #fffafa 0%, #fef2f2 100%);
     border-color: #ef4444;
-    box-shadow: 0 8px 25px -4px rgba(239, 68, 68, 0.18);
+    box-shadow: 0 4px 14px -2px rgba(239, 68, 68, 0.15);
 }
 
 .emergency-item-top {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
 .emergency-item-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 13px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 19px;
+    font-size: 15px;
     flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
 }
 
 .icon-payout {
     background: #fef3c7;
     color: #d97706;
-    border: 1.5px solid #fde68a;
+    border: 1px solid #fde68a;
 }
 
 .icon-checkout {
     background: #fee2e2;
     color: #dc2626;
-    border: 1.5px solid #fecaca;
+    border: 1px solid #fecaca;
 }
 
 .emergency-item-info {
@@ -1112,26 +1124,26 @@ tbody tr:hover td {
 .emergency-item-title-wrap {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
 
 .emergency-item-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.2px;
 }
 
 .status-pill-switch {
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 800;
-    padding: 3px 9px;
-    border-radius: 6px;
-    letter-spacing: 0.4px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
 
 .status-pill-switch.pill-success {
@@ -1144,27 +1156,26 @@ tbody tr:hover td {
     background: #fee2e2;
     color: #b91c1c;
     border: 1px solid #fca5a5;
-    box-shadow: 0 1px 3px rgba(185, 28, 28, 0.1);
 }
 
 .emergency-item-desc {
-    font-size: 12.5px;
+    font-size: 11.5px;
     color: #64748b;
-    line-height: 1.55;
+    line-height: 1.45;
     margin: 0;
 }
 
-/* Custom Switch Toggle */
+/* Compact Precise Switch Toggle (40x22px) */
 .switch-toggle-wrap {
     flex-shrink: 0;
-    padding-top: 2px;
+    padding-top: 1px;
 }
 
 .switch-toggle {
     position: relative;
     display: inline-block;
-    width: 56px;
-    height: 30px;
+    width: 40px;
+    height: 22px;
     flex-shrink: 0;
 }
 
@@ -1182,105 +1193,104 @@ tbody tr:hover td {
     right: 0;
     bottom: 0;
     background-color: #cbd5e1;
-    transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 34px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .switch-slider:before {
     position: absolute;
     content: "";
-    height: 24px;
-    width: 24px;
+    height: 16px;
+    width: 16px;
     left: 3px;
     bottom: 3px;
     background-color: #ffffff;
-    transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.2);
 }
 
 .switch-payout input:checked + .switch-slider {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    box-shadow: 0 3px 12px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
 }
 
 .switch-checkout input:checked + .switch-slider {
     background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-    box-shadow: 0 3px 12px rgba(225, 29, 72, 0.4);
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
 }
 
 .switch-toggle input:checked + .switch-slider:before {
-    transform: translateX(26px);
+    transform: translateX(18px);
 }
 
-/* Announcement Composer inside switch card */
+/* Compact Warning Message Input */
 .emergency-custom-msg-box {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px dashed #e2e8f0;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f1f5f9;
 }
 
 .msg-box-label {
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 700;
     color: #475569;
-    margin-bottom: 7px;
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
 }
 
 .msg-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .msg-input-icon {
     position: absolute;
-    left: 12px;
+    left: 10px;
     color: #94a3b8;
-    font-size: 13.5px;
+    font-size: 11px;
     pointer-events: none;
 }
 
 .msg-input-field {
     width: 100%;
-    padding: 9px 12px 9px 34px;
+    padding: 6px 10px 6px 28px;
     background: #ffffff;
-    border: 1.5px solid #d1d5db;
-    border-radius: 10px;
-    font-size: 12.5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 11.5px;
     color: #1e293b;
     transition: all 0.2s ease;
     outline: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .msg-input-field:focus {
     border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 0 0 2.5px rgba(245, 158, 11, 0.15);
 }
 
 .emergency-item.active-danger .msg-input-field:focus {
     border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 0 2.5px rgba(239, 68, 68, 0.15);
 }
 
 .quick-chips {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
-    margin-top: 4px;
 }
 
 .chip-label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: #94a3b8;
 }
@@ -1289,10 +1299,10 @@ tbody tr:hover td {
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     color: #475569;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 6px;
+    padding: 2px 7px;
+    border-radius: 5px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -1303,30 +1313,30 @@ tbody tr:hover td {
     border-color: #cbd5e1;
 }
 
-/* Footer Toolbar */
+/* Compact Footer Toolbar */
 .emergency-footer-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 24px;
-    padding-top: 20px;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
     border-top: 1px solid #f1f5f9;
 }
 
 .emergency-footer-info {
     display: flex;
     align-items: center;
-    gap: 9px;
-    font-size: 12.5px;
+    gap: 7px;
+    font-size: 11.5px;
     color: #64748b;
     font-weight: 500;
 }
 
 .emergency-security-icon {
     color: #f59e0b;
-    font-size: 15px;
+    font-size: 12.5px;
     flex-shrink: 0;
 }
 
@@ -1334,23 +1344,23 @@ tbody tr:hover td {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: #ffffff;
     border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-size: 13.5px;
+    border-radius: 9px;
+    padding: 8px 18px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 9px;
-    transition: all 0.25s ease;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    gap: 7px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
     letter-spacing: 0.1px;
 }
 
 .btn-save-emergency-pro:hover {
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.22);
 }
 
 .btn-save-emergency-pro:active {
