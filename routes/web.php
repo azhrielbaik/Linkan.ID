@@ -35,12 +35,19 @@ Route::get('/', fn () => redirect('/id'));
 // Switch Language Route (Redirects to new locale)
 Route::get('/lang/{lang}', function ($lang) {
     if (in_array($lang, ['en', 'id'])) {
-        $segments = request()->headers->get('referer') ? explode('/', parse_url(request()->headers->get('referer'), PHP_URL_PATH)) : [];
-        $currentLocale = app()->getLocale();
-        $index = array_search($currentLocale, $segments);
-        if ($index !== false) {
-            $segments[$index] = $lang;
-            return redirect(implode('/', $segments));
+        $referer = request()->headers->get('referer');
+        if ($referer) {
+            $parsed = parse_url($referer);
+            $path = $parsed['path'] ?? '/';
+            $segments = explode('/', ltrim($path, '/'));
+
+            // The locale is typically the first segment in the path
+            if (isset($segments[0]) && in_array($segments[0], ['id', 'en'])) {
+                $segments[0] = $lang;
+                $newPath = '/' . implode('/', $segments);
+                $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
+                return redirect($newPath . $query);
+            }
         }
         return redirect('/' . $lang);
     }
@@ -50,6 +57,12 @@ Route::get('/lang/{lang}', function ($lang) {
 // External callbacks (No locale needed)
 Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
 Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
+
+// Fallback for admin orders detail without locale prefix
+Route::get('/admin/orders/{id}', function (\Illuminate\Http\Request $request, $id) {
+    $locale = session('locale', config('app.locale', 'id'));
+    return redirect()->to("/{$locale}/admin/orders/{$id}");
+})->middleware(['auth']);
 
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
     Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');

@@ -17,6 +17,8 @@ class DashboardService
      */
     public function getDashboardStats(User $user): array
     {
+        app(OrderService::class)->autoCancelExpiredPendingOrders($user->id, 24);
+
         $digitalProducts = DigitalProduct::where('user_id', $user->id)->get();
         $totalProducts = $digitalProducts->count();
 

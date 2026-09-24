@@ -1,4 +1,51 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // ============================================================
+    // FIREFOX PERFORMANCE: Pause animasi CSS saat off-screen
+    // Mengurangi beban GPU/CPU secara signifikan di Firefox
+    // ============================================================
+    (function() {
+        'use strict';
+        // Pause/resume animasi berdasarkan visibility
+        function setupAnimationPause() {
+            const animatedSelectors = [
+                '.bg-playground',
+                '.orb-1', '.orb-2', '.orb-3', '.orb-4',
+                '.float-rocket', '.float-lightning', '.float-star',
+                '.shape-1', '.shape-2', '.shape-3',
+                '.shape-4', '.shape-5', '.shape-6',
+                '.phone-mock',
+                '.hero-badge',
+                '.marquee-section',
+                '.cta-playground'
+            ];
+            const elements = [];
+            animatedSelectors.forEach(sel => {
+                document.querySelectorAll(sel).forEach(el => elements.push(el));
+            });
+            if (elements.length === 0) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const state = entry.isIntersecting ? 'running' : 'paused';
+                    entry.target.style.animationPlayState = state;
+                    // Pause anak-anak yang juga beranimasi
+                    entry.target.querySelectorAll('*').forEach(child => {
+                        child.style.animationPlayState = state;
+                    });
+                });
+            }, {
+                threshold: 0.01,
+                rootMargin: '100px 0px 100px 0px'
+            });
+            elements.forEach(el => observer.observe(el));
+        }
+        // Jalankan setelah DOM siap
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupAnimationPause);
+        } else {
+            setupAnimationPause();
+        }
+    })();
+
     const reveals = document.querySelectorAll(".reveal, .reveal-scale");
 
     const revealOptions = {

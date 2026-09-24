@@ -5,7 +5,7 @@
    Theme: #ED842C | Background: #F6F6F6 | Card Stroke: 1px subtle
    ========================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+/* Font Plus Jakarta Sans di-load via <link rel="preconnect"> di <head> blade — jangan @import di sini */
 
 :root {
     --platform-radius: 14px;
@@ -1467,3 +1467,20 @@ td.row-number,
         border-radius: 16px;
     }
 }
+
+/* ===== FIREFOX PERFORMANCE: prefers-reduced-motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    .stat-card,
+    .stat-card:hover,
+    .btn-filter,
+    .btn-reset,
+    .btn-pag-arrow,
+    .toast-item,
+    .modal-card,
+    .modal-container {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}
+

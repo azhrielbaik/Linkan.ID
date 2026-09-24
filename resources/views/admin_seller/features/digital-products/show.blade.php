@@ -143,49 +143,6 @@
         font-size: 14px;
     }
 
-    .qty-wrap {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 30px;
-    }
-    .label {
-        font-size: 16px;
-        font-weight: 600;
-        color: #334155;
-        width: 70px;
-    }
-    
-    .qty-selector {
-        display: flex;
-        align-items: center;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    .qty-btn {
-        background: #f8fafc;
-        border: none;
-        padding: 8px 16px;
-        cursor: pointer;
-        font-size: 18px;
-        color: #3b82f6;
-        transition: 0.2s;
-    }
-    .qty-btn:hover {
-        background: #e2e8f0;
-    }
-    .qty-input {
-        width: 50px;
-        text-align: center;
-        border: none;
-        border-left: 1px solid #cbd5e1;
-        border-right: 1px solid #cbd5e1;
-        font-size: 16px;
-        padding: 8px 0;
-        outline: none;
-    }
-    
     .action-buttons {
         display: flex;
         gap: 16px;
@@ -209,23 +166,6 @@
     }
     .btn-buy:hover {
         background: #4f46e5;
-    }
-    .btn-cart {
-        flex: 1;
-        background: #f87171;
-        color: #fff;
-        border: none;
-        padding: 14px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-        text-align: center;
-        text-decoration: none;
-    }
-    .btn-cart:hover {
-        background: #ef4444;
     }
 
     .delivery-info {
@@ -279,6 +219,65 @@
     .tab-content.active {
         display: block;
     }
+
+    /* Tab Description Rich Text & List Styling */
+    #tab-description {
+        font-size: 16px;
+        color: #475569;
+        line-height: 1.8;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+    #tab-description p {
+        margin-bottom: 12px;
+        line-height: 1.8;
+    }
+    #tab-description ul,
+    #tab-description ol {
+        margin-top: 8px;
+        margin-bottom: 16px;
+        padding-left: 28px;
+        list-style-position: outside;
+    }
+    #tab-description ul {
+        list-style-type: disc;
+    }
+    #tab-description ol {
+        list-style-type: decimal;
+    }
+    #tab-description li {
+        margin-bottom: 6px;
+        line-height: 1.7;
+        padding-left: 4px;
+    }
+    #tab-description ul ul,
+    #tab-description ol ol,
+    #tab-description ul ol,
+    #tab-description ol ul {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        padding-left: 22px;
+    }
+    #tab-description img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 12px 0;
+    }
+    #tab-description table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        display: block;
+        overflow-x: auto;
+    }
+    #tab-description blockquote {
+        border-left: 4px solid #ed842c;
+        padding-left: 14px;
+        margin: 12px 0;
+        color: #64748b;
+        font-style: italic;
+    }
     
     @media (max-width: 992px) {
         .product-top {
@@ -297,7 +296,7 @@
             /* Break out of the .content-wrapper 16px padding on mobile */
             margin-left: -16px;
             margin-right: -16px;
-            padding: 16px 12px;
+            padding: 16px 16px;
             border-radius: 0;
             border-left: none;
             border-right: none;
@@ -310,6 +309,23 @@
         }
         .tab-content {
             padding: 0;
+        }
+        /* Mobile List & Tab Description: Ensure bullet & numbers are never cut off */
+        #tab-description ul,
+        #tab-description ol {
+            padding-left: 28px !important;
+            margin-left: 0 !important;
+            margin-bottom: 14px !important;
+        }
+        #tab-description li {
+            padding-left: 4px !important;
+            margin-bottom: 6px !important;
+        }
+        #tab-description ul ul,
+        #tab-description ol ol,
+        #tab-description ul ol,
+        #tab-description ol ul {
+            padding-left: 20px !important;
         }
         .main-img-wrap {
             height: auto;
@@ -326,6 +342,40 @@
             overflow-x: auto;
             white-space: nowrap;
         }
+    }
+
+    /* Dark Mode Support */
+    html.dark .product-detail-admin {
+        background: #1e293b;
+        color: #f8fafc;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    html.dark .title,
+    html.dark .price-current {
+        color: #f8fafc;
+    }
+    html.dark .short-desc,
+    html.dark .tab-content,
+    html.dark #tab-description {
+        color: #cbd5e1;
+    }
+    html.dark .main-img-wrap {
+        background: #0f172a;
+    }
+    html.dark .rating-wrap,
+    html.dark .action-buttons,
+    html.dark .bottom-section,
+    html.dark .tabs {
+        border-color: #334155;
+    }
+    html.dark .tab {
+        color: #94a3b8;
+    }
+    html.dark .tab.active {
+        color: #ed842c;
+    }
+    html.dark .tab.active::after {
+        background: #ed842c;
     }
 </style>
 
@@ -401,18 +451,8 @@
                 <div class="reviews">(236 reviews)</div>
             </div>
             
-            <div class="qty-wrap">
-                <div class="label">QTY:</div>
-                <div class="qty-selector">
-                    <button type="button" class="qty-btn" onclick="updateMainQty(-1)">-</button>
-                    <input type="text" id="mainQtyInput" class="qty-input" value="1" readonly>
-                    <button type="button" class="qty-btn" onclick="updateMainQty(1)">+</button>
-                </div>
-            </div>
-            
             <div class="action-buttons">
                 <a href="{{ route('admin.digital-products.edit', $product->id) }}" class="btn-buy" style="background:#ED842C;"><i class="fas fa-pen"></i> Edit Produk</a>
-                <a href="{{ route('product.show', $product->id) }}" target="_blank" class="btn-cart" style="background:#475569;"><i class="fas fa-external-link-alt"></i> Lihat Halaman Publik</a>
             </div>
         </div>
     </div>
@@ -434,16 +474,6 @@
 </div>
 
 <script>
-    let mainQty = 1;
-    const mainQtyInput = document.getElementById('mainQtyInput');
-    
-    function updateMainQty(change) {
-        if (mainQty + change >= 1) {
-            mainQty += change;
-            mainQtyInput.value = mainQty;
-        }
-    }
-    
     function changeImage(el, src) {
         document.getElementById('mainDisplayImage').src = src;
         document.querySelectorAll('.thumbnail-gallery img').forEach(img => img.classList.remove('active'));

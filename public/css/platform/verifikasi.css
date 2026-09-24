@@ -560,6 +560,7 @@ tbody tr:hover td {
     height: 100%;
     background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 1050;
     align-items: center;
     justify-content: center;

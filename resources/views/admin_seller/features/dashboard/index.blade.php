@@ -298,20 +298,20 @@
                         </thead>
                         <tbody>
                             @forelse($recentTransactions ?? [] as $tx)
-                                <tr>
-                                    <td data-label="{{ __('dashboard.th_buyer') }}">
+                                <tr class="tx-row">
+                                    <td class="td-buyer" data-label="{{ __('dashboard.th_buyer') }}">
                                         <div class="tx-buyer">
                                             <div class="tx-avatar">{{ strtoupper(substr($tx->buyer_name, 0, 1)) }}</div>
-                                            <div>
+                                            <div class="tx-buyer-info">
                                                 <span class="tx-name">{{ $tx->buyer_name }}</span>
                                                 <span class="tx-date">{{ \Carbon\Carbon::parse($tx->created_at)->format('d/m/Y') }}</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-label="{{ __('dashboard.th_product') }}">
+                                    <td class="td-product" data-label="{{ __('dashboard.th_product') }}">
                                         <div class="tx-item-title">{{ $tx->product_title }}</div>
                                     </td>
-                                    <td data-label="{{ __('dashboard.th_status') }}">
+                                    <td class="td-status" data-label="{{ __('dashboard.th_status') }}">
                                         @php
                                             $txStatus = $tx->status instanceof \BackedEnum ? $tx->status->value : (string) $tx->status;
                                         @endphp
@@ -323,13 +323,13 @@
                                             <span class="tx-status failed"><i class="fas fa-times"></i> {{ ucfirst($txStatus) }}</span>
                                         @endif
                                     </td>
-                                    <td data-label="{{ __('dashboard.th_action') }}">
-                                        <a href="{{ route('admin.orders') }}" class="tx-action"><i class="fas fa-arrow-right"></i></a>
+                                    <td class="td-action" data-label="{{ __('dashboard.th_action') }}">
+                                        <a href="{{ route('admin.orders') }}" class="tx-action" aria-label="Detail Pesanan"><i class="fas fa-arrow-right"></i></a>
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="4" style="text-align: center; padding: 30px; color: #64748b;">{{ __('dashboard.no_recent_transactions') }}</td>
+                                <tr class="tx-empty-row">
+                                    <td colspan="4" class="td-empty" style="text-align: center; padding: 30px; color: #64748b;">{{ __('dashboard.no_recent_transactions') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -455,7 +455,8 @@
                         ],
                         chart: {
                             type: 'area',
-                            height: '100%',
+                            height: 120,
+                            width: '100%',
                             parentHeightOffset: 0,
                             sparkline: { enabled: true },
                             toolbar: { show: false }

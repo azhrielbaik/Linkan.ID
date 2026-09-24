@@ -16,8 +16,8 @@
             <div class="oh-tabs">
                 <a href="{{ request()->fullUrlWithQuery(['status' => '']) }}" class="oh-tab {{ request('status') == '' ? 'active' : '' }}" style="text-decoration: none;">All Order</a>
                 <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" class="oh-tab {{ request('status') == 'pending' ? 'active' : '' }}" style="text-decoration: none;">Pending</a>
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'success']) }}" class="oh-tab {{ request('status') == 'success' ? 'active' : '' }}" style="text-decoration: none;">Completed</a>
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'failed']) }}" class="oh-tab {{ request('status') == 'failed' ? 'active' : '' }}" style="text-decoration: none;">Cancelled</a>
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'success']) }}" class="oh-tab {{ in_array(request('status'), ['success', 'completed', 'complete']) ? 'active' : '' }}" style="text-decoration: none;">Completed</a>
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'failed']) }}" class="oh-tab {{ in_array(request('status'), ['failed', 'cancelled', 'cancel']) ? 'active' : '' }}" style="text-decoration: none;">Cancelled</a>
             </div>
             
             <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
@@ -56,15 +56,8 @@
                         $buyerName = $transaction->buyer_name ?: 'Anonymous';
                         $initial = strtoupper(substr($buyerName, 0, 1));
                         
-                        $statusClass = 'status-pending';
-                        $statusText = 'Pending';
-                        if ($transaction->status === 'success') {
-                            $statusClass = 'status-success';
-                            $statusText = 'Completed';
-                        } elseif ($transaction->status === 'failed') {
-                            $statusClass = 'status-failed';
-                            $statusText = 'Cancelled';
-                        }
+                        $statusClass = $transaction->status_class;
+                        $statusText = $transaction->status_label;
                         
                         $paymentMethod = $transaction->payment_method ?: '-';
                         if ($paymentMethod !== '-') {
@@ -158,65 +151,114 @@
 @endsection
 
 @push("scripts")
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function toggleDropdown(id, event) {
         event.stopPropagation();
         const dropdown = document.getElementById('dropdown_' + id);
         const btn = event.currentTarget;
+        const isShown = dropdown && dropdown.classList.contains('show');
         
         // Close others
-        $('.dropdown-content').removeClass('show');
-        $('.action-btn').removeClass('active');
+        document.querySelectorAll('.dropdown-content').forEach(el => el.classList.remove('show'));
+        document.querySelectorAll('.action-btn').forEach(el => el.classList.remove('active'));
         
-        if (!dropdown.classList.contains('show')) {
+        if (dropdown && !isShown) {
             dropdown.classList.add('show');
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
         }
     }
 
     // Close dropdowns when clicking outside
-    window.onclick = function(event) {
+    window.addEventListener('click', function(event) {
         if (!event.target.closest('.action-dropdown')) {
-            $('.dropdown-content').removeClass('show');
-            $('.action-btn').removeClass('active');
+            document.querySelectorAll('.dropdown-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.action-btn').forEach(el => el.classList.remove('active'));
         }
-    }
+    });
+
+    const orderDetailBaseUrl = "{{ route('admin.orders.detail', ['id' => '__ID__']) }}";
 
     window.openDetailModal = function(id) {
-        $('.dropdown-content').removeClass('show');
-        $('.action-btn').removeClass('active');
+        document.querySelectorAll('.dropdown-content').forEach(el => el.classList.remove('show'));
+        document.querySelectorAll('.action-btn').forEach(el => el.classList.remove('active'));
         
-        $('#orderDetailContent').html(`<div style="text-align:center; padding: 40px; color: #94a3b8;"><i class="fas fa-circle-notch fa-spin"></i> Loading details...</div>`);
-        
+        const contentContainer = document.getElementById('orderDetailContent');
+        const titleContainer = document.getElementById('panelOrderTitle');
         const overlay = document.getElementById('orderPanelOverlay');
         const panel = document.getElementById('orderDetailPanel');
-        
-        overlay.style.display = 'block';
-        setTimeout(() => {
-            overlay.style.opacity = '1';
-            panel.classList.add('is-open');
-        }, 10);
 
-        $.get(`/admin/orders/${id}`, function(htmlResponse) {
-            $('#orderDetailContent').html(htmlResponse);
+        if (titleContainer) {
+            titleContainer.textContent = `Order #${id}`;
+        }
+        
+        if (contentContainer) {
+            contentContainer.innerHTML = `
+                <div style="text-align:center; padding: 50px 20px; color: #94a3b8;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 28px; color: #ED842C; margin-bottom: 12px; display: inline-block;"></i>
+                    <p style="font-size: 14px; margin: 0; font-weight: 500;">Memuat detail pesanan...</p>
+                </div>
+            `;
+        }
+        
+        if (overlay) {
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                if (panel) panel.classList.add('is-open');
+            }, 10);
+        }
+
+        const fetchUrl = orderDetailBaseUrl.replace('__ID__', id);
+
+        fetch(fetchUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(htmlResponse => {
+            if (contentContainer) {
+                contentContainer.innerHTML = htmlResponse;
+            }
             const hiddenTitle = document.getElementById('panelOrderTitleHidden');
-            if (hiddenTitle) {
-                $('#panelOrderTitle').text(hiddenTitle.innerText);
+            if (hiddenTitle && titleContainer) {
+                titleContainer.textContent = hiddenTitle.textContent.trim();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching order detail:', error);
+            if (contentContainer) {
+                contentContainer.innerHTML = `
+                    <div style="text-align: center; padding: 45px 20px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 32px; color: #f59e0b; margin-bottom: 12px; display: inline-block;"></i>
+                        <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Gagal Memuat Detail</h4>
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Terjadi kendala saat mengambil data pesanan. Silakan coba kembali.</p>
+                        <button type="button" onclick="openDetailModal(${id})" style="padding: 9px 20px; border-radius: 8px; background: #ED842C; color: #ffffff; border: none; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(237, 132, 44, 0.25);">
+                            <i class="fas fa-redo"></i> Coba Lagi
+                        </button>
+                    </div>
+                `;
             }
         });
-    }
+    };
 
     window.closeDetailPanel = function() {
         const overlay = document.getElementById('orderPanelOverlay');
         const panel = document.getElementById('orderDetailPanel');
         
-        panel.classList.remove('is-open');
-        overlay.style.opacity = '0';
-        
-        setTimeout(() => { 
-            overlay.style.display = 'none'; 
-        }, 300);
-    }
+        if (panel) panel.classList.remove('is-open');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+            }, 300);
+        }
+    };
 </script>
 @endpush

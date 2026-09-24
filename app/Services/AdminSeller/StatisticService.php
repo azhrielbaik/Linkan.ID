@@ -30,10 +30,17 @@ class StatisticService
             ->where('transactions.status', 'success')
             ->sum('transactions.total_price');
 
+        $totalTransactions = DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->where('transactions.status', 'success')
+            ->count();
+
         return [
             'totalViews' => $totalViews,
             'totalClicks' => $totalClicks,
             'totalSales' => $totalSales,
+            'totalTransactions' => $totalTransactions,
         ];
     }
 

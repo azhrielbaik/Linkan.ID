@@ -1,12 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* PAGE BASE STYLES */
-body,
-.main-content,
-.content-wrapper,
-.dashboard-mylinkan-page,
-.dashboard-wrapper {
+html:not(.dark) body,
+html:not(.dark) .main-content,
+html:not(.dark) .content-wrapper,
+html:not(.dark) .dashboard-mylinkan-page,
+html:not(.dark) .dashboard-wrapper {
     background-color: #fff !important;
+}
+
+html.dark body,
+html.dark .main-content,
+html.dark .content-wrapper,
+html.dark .dashboard-mylinkan-page,
+html.dark .dashboard-wrapper {
+    background-color: #0f131c !important;
+    color: #f8fafc !important;
 }
 
 .microsite-container {
@@ -99,20 +108,46 @@ input[type="file"]::file-selector-button {
     box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.1);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .dashboard-mylinkan-page {
-        margin-left: -25px;
-        margin-right: -25px;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .microsite-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     .dashboard-mylinkan-page .microsite-actions-bar {
         flex-wrap: wrap;
         width: 100%;
+        gap: 10px;
     }
 
     .dashboard-mylinkan-page .search-box,
     .dashboard-mylinkan-page .search-box input {
         width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dashboard-mylinkan-page .microsite-actions-bar .btn-action-secondary,
+    .dashboard-mylinkan-page .microsite-actions-bar .btn-action-primary {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        min-width: 120px;
+        box-sizing: border-box;
     }
 
     .dashboard-mylinkan-page .section-header h2.gallery-title {
@@ -127,6 +162,8 @@ input[type="file"]::file-selector-button {
     .dashboard-mylinkan-page .microsite-gallery-grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 16px;
+        width: 100%;
+        box-sizing: border-box;
     }
 }
 
@@ -4818,4 +4855,1030 @@ div[id^="previewCont_"] {
 .live-social-icon-btn i,
 .preview-social-links a i {
     color: white !important;
+}
+
+/* ==========================================================================
+   DARK MODE STYLES FOR MICROSITE (GALLERY & BUILDER/EDITOR)
+   ========================================================================== */
+
+/* Base Layout & Containers */
+html.dark .dashboard-mylinkan-page,
+html.dark .microsite-container {
+    color: #f8fafc;
+}
+
+/* Header & Actions Bar */
+html.dark .dashboard-mylinkan-page .header-title-section h1,
+html.dark .gallery-title,
+html.dark .editor-mode-title {
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-mylinkan-page .header-title-section p,
+html.dark .dashboard-mylinkan-page .section-header-desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-mylinkan-page .search-box input {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-mylinkan-page .search-box input:focus {
+    background: #1c212e !important;
+    border-color: #ed842c !important;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.2) !important;
+}
+
+html.dark .dashboard-mylinkan-page .search-box input::placeholder {
+    color: #64748b !important;
+}
+
+html.dark .dashboard-mylinkan-page .search-box i {
+    color: #94a3b8 !important;
+}
+
+/* Action Buttons (Gallery & Global) */
+html.dark .dashboard-mylinkan-page .btn-action-secondary,
+html.dark .btn-action-secondary {
+    background: #1c212e !important;
+    color: #e2e8f0 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-mylinkan-page .btn-action-secondary:hover,
+html.dark .btn-action-secondary:hover {
+    background: #2a3241 !important;
+    color: #ffffff !important;
+    border-color: #3b4559 !important;
+}
+
+html.dark .dashboard-mylinkan-page .btn-action-secondary.\!text-red-500,
+html.dark .btn-action-secondary.\!text-red-500 {
+    color: #f87171 !important;
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-mylinkan-page .btn-action-secondary.\!text-red-500:hover,
+html.dark .btn-action-secondary.\!text-red-500:hover {
+    background: #3c1414 !important;
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+}
+
+/* Stat Cards */
+html.dark .dashboard-mylinkan-page .stat-card {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .dashboard-mylinkan-page .stat-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .dashboard-mylinkan-page .stat-icon {
+    background: #2d241c !important;
+    color: #ed842c !important;
+}
+
+html.dark .dashboard-mylinkan-page .stat-info .stat-value {
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-mylinkan-page .stat-info .stat-label {
+    color: #94a3b8 !important;
+}
+
+/* Microsite Cards (Gallery) */
+html.dark .microsite-card,
+html.dark .dashboard-mylinkan-page .microsite-card {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .dashboard-mylinkan-page .microsite-card:hover {
+    border-color: #ed842c !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+}
+
+html.dark .card-thumbnail-container,
+html.dark .dashboard-mylinkan-page .card-thumbnail-container {
+    background: linear-gradient(135deg, #151a24 0%, #0f131c 100%) !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-mylinkan-page .card-body-details {
+    background: #1c212e !important;
+}
+
+html.dark .dashboard-mylinkan-page .microsite-name {
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-mylinkan-page .url-pill {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #ed842c !important;
+}
+
+html.dark .dashboard-mylinkan-page .url-pill:hover {
+    background: #2d241c !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .dashboard-mylinkan-page .stat-tag {
+    background: #0f131c !important;
+    color: #94a3b8 !important;
+    border: 1px solid #2a3241 !important;
+}
+
+/* Empty State Box in Gallery */
+html.dark .dashboard-mylinkan-page .bg-white.rounded-xl.border-dashed {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dashboard-mylinkan-page .bg-white.rounded-xl.border-dashed h3 {
+    color: #f8fafc !important;
+}
+
+html.dark .dashboard-mylinkan-page .bg-white.rounded-xl.border-dashed p {
+    color: #94a3b8 !important;
+}
+
+html.dark .dashboard-mylinkan-page .bg-white.rounded-xl.border-dashed .bg-gray-50 {
+    background: #0f131c !important;
+}
+
+/* ==========================================================================
+   MICROSITE BUILDER / EDITOR DARK MODE
+   ========================================================================== */
+
+/* Editor Header & Back Link */
+html.dark .editor-mode-header-bar {
+    background: transparent !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .editor-mode-title .back-link {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .editor-mode-title .back-link:hover {
+    background: #2a3241 !important;
+    color: #ed842c !important;
+    border-color: #ed842c !important;
+}
+
+/* Editor Tab Switcher (Elemen | Pengaturan) */
+html.dark .editor-panel-tab-switcher {
+    background: #ed842c !important;
+}
+
+html.dark .editor-panel-tab-btn {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+html.dark .editor-panel-tab-btn.is-active {
+    background: #1c212e !important;
+    color: #ed842c !important;
+}
+
+html.dark .editor-panel-tab-btn.is-active::before {
+    background: #1c212e !important;
+}
+
+html.dark .editor-panel-tab-btn.is-active i {
+    color: #ed842c !important;
+}
+
+/* Add Element Section */
+html.dark .add-element-panel-inner {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .element-option-card {
+    background: #0f131c !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .element-option-card:hover {
+    background: #242c3d !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .option-card-title {
+    color: #f8fafc !important;
+}
+
+html.dark .option-card-desc {
+    color: #94a3b8 !important;
+}
+
+/* Edit Elements Section Header */
+html.dark .element-header-title {
+    color: #f8fafc !important;
+}
+
+html.dark .element-header-subtitle {
+    color: #94a3b8 !important;
+}
+
+/* Draggable Block Cards */
+html.dark .block-item-card,
+html.dark .dashboard-mylinkan-page .block-item-card {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.dark .block-item-card:hover,
+html.dark .dashboard-mylinkan-page .block-item-card:hover {
+    background: #1c212e !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .profile-block-icon,
+html.dark .block-item-icon-wrapper {
+    background: #0f131c !important;
+    color: #ed842c !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .block-item-content span,
+html.dark .block-item-title-wrapper span {
+    color: #f8fafc !important;
+}
+
+html.dark .drag-handle-icon {
+    color: #64748b !important;
+}
+
+html.dark .visibility-status-text {
+    color: #94a3b8 !important;
+}
+
+html.dark .toggle-slider {
+    background-color: #334155 !important;
+}
+
+html.dark input:checked + .toggle-slider {
+    background-color: #ed842c !important;
+}
+
+/* Block Buttons */
+html.dark .btn-profile-edit,
+html.dark .btn-edit-block {
+    background: #0f131c !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .btn-profile-edit:hover,
+html.dark .btn-edit-block:hover {
+    background: #242c3d !important;
+    color: #ed842c !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .btn-element-action,
+html.dark .btn-delete-icon {
+    background: #0f131c !important;
+    color: #f87171 !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .btn-element-action:hover,
+html.dark .btn-delete-icon:hover {
+    background: #3c1414 !important;
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+}
+
+/* Block Edit Form Bodies */
+html.dark .profile-edit-form-body,
+html.dark .edit-form-body,
+html.dark .edit-form-content {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .profile-form-header,
+html.dark .dynamic-setting-header {
+    color: #f8fafc !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .profile-form-label,
+html.dark .dynamic-form-label-bold,
+html.dark .dp-row-label {
+    color: #e2e8f0 !important;
+}
+
+/* File Upload & Dropzones */
+html.dark .upload-dropzone,
+html.dark .banner-dropzone,
+html.dark .avatar-dropzone,
+html.dark .dp-upload-box {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .upload-dropzone:hover,
+html.dark .banner-dropzone:hover,
+html.dark .avatar-dropzone:hover,
+html.dark .dp-upload-box:hover {
+    border-color: #ed842c !important;
+}
+
+html.dark .dropzone-text-primary,
+html.dark .dp-upload-box h4 {
+    color: #f8fafc !important;
+}
+
+html.dark .dropzone-text-secondary,
+html.dark .dp-upload-box p {
+    color: #94a3b8 !important;
+}
+
+html.dark .dropzone-browse-text {
+    color: #ed842c !important;
+}
+
+html.dark .avatar-placeholder {
+    background: #151a24 !important;
+}
+
+/* Shape Selectors inside Profile Block */
+html.dark .shape-option-label {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .shape-option-text {
+    color: #e2e8f0 !important;
+}
+
+html.dark .shape-preview {
+    border-color: #475569 !important;
+    background: #2a3241 !important;
+}
+
+html.dark .shape-option-label:has(input:checked) {
+    border-color: #ed842c !important;
+    background: #2d241c !important;
+}
+
+/* Text Editors & Toolbars */
+html.dark .text-editor-container {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .text-editor-toolbar {
+    background: #151a24 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .toolbar-btn {
+    background: #1c212e !important;
+    color: #e2e8f0 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .toolbar-btn:hover {
+    background: #242c3d !important;
+    color: #ed842c !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .toolbar-select {
+    background: #1c212e !important;
+    color: #e2e8f0 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .toolbar-color-picker {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .toolbar-separator,
+html.dark .toolbar-divider {
+    background: #2a3241 !important;
+}
+
+html.dark .text-editor-body {
+    background: #0f131c !important;
+    color: #f8fafc !important;
+}
+
+html.dark .text-editor-body:focus {
+    background: #0f131c !important;
+}
+
+html.dark .char-counter {
+    color: #94a3b8 !important;
+}
+
+/* Input Fields & Textareas */
+html.dark .profile-form-input,
+html.dark .profile-form-textarea,
+html.dark .dp-row-input,
+html.dark .input-group input,
+html.dark .input-group select,
+html.dark .input-group textarea,
+html.dark .form-control,
+html.dark .ql-editor {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .profile-form-input:focus,
+html.dark .profile-form-textarea:focus,
+html.dark .dp-row-input:focus,
+html.dark .input-group input:focus,
+html.dark .input-group select:focus,
+html.dark .input-group textarea:focus {
+    border-color: #ed842c !important;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.15) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #64748b !important;
+}
+
+/* Form Action Buttons */
+html.dark .form-actions-wrapper .btn-secondary,
+html.dark .btn-secondary,
+html.dark .btn-cancel-profile,
+html.dark .dp-btn-prev {
+    background: #0f131c !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .form-actions-wrapper .btn-secondary:hover,
+html.dark .btn-secondary:hover,
+html.dark .btn-cancel-profile:hover,
+html.dark .dp-btn-prev:hover {
+    background: #242c3d !important;
+    color: #ffffff !important;
+    border-color: #3b4559 !important;
+}
+
+html.dark .form-actions-wrapper .btn-primary,
+html.dark .btn-primary,
+html.dark .btn-submit-profile,
+html.dark .dp-btn-next {
+    background: #ed842c !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+html.dark .form-actions-wrapper .btn-primary:hover,
+html.dark .btn-primary:hover,
+html.dark .btn-submit-profile:hover,
+html.dark .dp-btn-next:hover {
+    background: #d97320 !important;
+}
+
+/* Digital Product Block Details Card */
+html.dark .dp-detail-card {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark .dp-detail-card h5 {
+    color: #f8fafc !important;
+}
+
+html.dark .dp-detail-card div[style*="border-bottom"] {
+    border-color: #2a3241 !important;
+}
+
+html.dark .dp-detail-card .btn {
+    background: #1c212e !important;
+    color: #f8fafc !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dp-detail-card .btn:hover {
+    background: #242c3d !important;
+    border-color: #ed842c !important;
+}
+
+/* ==========================================================================
+   DESIGN SETTINGS PANEL (Pengaturan)
+   ========================================================================== */
+
+html.dark .design-settings-section {
+    border-color: #2a3241 !important;
+}
+
+html.dark .design-settings-section-title {
+    color: #f8fafc !important;
+}
+
+html.dark .design-settings-section-desc {
+    color: #94a3b8 !important;
+}
+
+/* Background Sub-tab Switcher */
+html.dark .background-sub-tab-switcher {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .bg-sub-tab-btn {
+    color: #94a3b8 !important;
+}
+
+html.dark .bg-sub-tab-btn:hover {
+    color: #f8fafc !important;
+}
+
+html.dark .bg-sub-tab-btn.is-active {
+    background: #1c212e !important;
+    color: #ed842c !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Background Image Option */
+html.dark .bg-option-preview {
+    border-color: #2a3241 !important;
+    background-color: #0f131c !important;
+}
+
+html.dark .bg-option-none {
+    background: #151a24 !important;
+    color: #64748b !important;
+}
+
+html.dark .background-image-option:hover .bg-option-preview {
+    border-color: #ed842c !important;
+}
+
+html.dark .background-image-option.is-selected .bg-option-preview {
+    border-color: #ed842c !important;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.3) !important;
+}
+
+html.dark .bg-option-label {
+    color: #94a3b8 !important;
+}
+
+html.dark .background-image-option.is-selected .bg-option-label {
+    color: #ed842c !important;
+}
+
+/* Background Color Swatches */
+html.dark .bg-color-preset-swatch {
+    border-color: #2a3241 !important;
+}
+
+html.dark .bg-color-preset-swatch.is-selected {
+    border-color: #ed842c !important;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.35) !important;
+}
+
+/* Layout Options */
+html.dark .profile-layout-card {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .profile-layout-card.is-selected {
+    border-color: #ed842c !important;
+    background: #2d241c !important;
+}
+
+html.dark .layout-card-label {
+    color: #e2e8f0 !important;
+}
+
+html.dark .profile-layout-card.is-selected .layout-card-label {
+    color: #ed842c !important;
+}
+
+html.dark .layout-preview {
+    background: #151a24 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .lp-line,
+html.dark .lp-block {
+    background: #334155 !important;
+}
+
+/* Block Shape Options */
+html.dark .block-shape-option {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .block-shape-option.is-selected {
+    border-color: #ed842c !important;
+    background: #2d241c !important;
+}
+
+html.dark .block-shape-label {
+    color: #e2e8f0 !important;
+}
+
+html.dark .block-shape-option.is-selected .block-shape-label {
+    color: #ed842c !important;
+}
+
+html.dark .block-shape-preview {
+    background: #2a3241 !important;
+    border-color: #475569 !important;
+}
+
+/* ==========================================================================
+   MODALS, WIZARDS & POPUPS
+   ========================================================================== */
+
+/* New Microsite Creation Modal */
+html.dark .new-microsite-modal-card {
+    background: #1c212e !important;
+    border: 1px solid #2a3241 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .floating-close-btn {
+    background: #1c212e !important;
+    color: #e2e8f0 !important;
+    border-color: #2a3241 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .floating-close-btn:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+}
+
+html.dark .new-microsite-modal-title {
+    color: #f8fafc !important;
+}
+
+html.dark .new-microsite-modal-subtitle {
+    color: #94a3b8 !important;
+}
+
+html.dark .image-style-option-card {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .image-style-option-card:hover {
+    background: #242c3d !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .option-main-title {
+    color: #f8fafc !important;
+}
+
+html.dark .option-sub-desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .option-thumb-box {
+    background: #151a24 !important;
+}
+
+html.dark .option-chevron-arrow {
+    color: #64748b !important;
+}
+
+html.dark .alias-input-wrapper {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .alias-prefix {
+    background: #151a24 !important;
+    border-color: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .alias-input {
+    background: #0f131c !important;
+    color: #f8fafc !important;
+}
+
+html.dark .btn-wizard-prev {
+    background: #0f131c !important;
+    color: #e2e8f0 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .btn-wizard-prev:hover {
+    background: #242c3d !important;
+    color: #ffffff !important;
+}
+
+html.dark .step-dot {
+    background: #334155 !important;
+}
+
+html.dark .step-dot.active {
+    background: #ed842c !important;
+}
+
+/* Digital Product Wizard */
+html.dark .dp-wizard-container {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dp-stepper-label {
+    color: #94a3b8 !important;
+}
+
+html.dark .dp-stepper-item.active .dp-stepper-label {
+    color: #f8fafc !important;
+}
+
+html.dark .dp-stepper-circle {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .dp-stepper-item.active .dp-stepper-circle {
+    background: #ed842c !important;
+    color: #ffffff !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .dp-stepper-line {
+    background: #2a3241 !important;
+}
+
+html.dark .dp-form-row-box {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dp-platform-card {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark .dp-platform-card-title {
+    color: #f8fafc !important;
+}
+
+html.dark .dp-platform-card-desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .dp-platform-radio-circle {
+    border-color: #475569 !important;
+    background: #2a3241 !important;
+}
+
+html.dark input[type="radio"]:checked + .dp-platform-card,
+html.dark .dp-platform-card-wrapper:has(input:checked) .dp-platform-card {
+    border-color: #ed842c !important;
+    background: #2d241c !important;
+}
+
+html.dark .dp-schedule-toggle-box,
+html.dark div[style*="justify-content: space-between"][style*="background: #fff"] {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark #dpDeliverableFilePreview {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .btn-add-platform-dashed {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .btn-add-platform-dashed:hover {
+    border-color: #ed842c !important;
+    color: #ed842c !important;
+    background: #1c212e !important;
+}
+
+html.dark .platform-item-row {
+    background: #0f131c !important;
+    border-color: #2a3241 !important;
+}
+
+/* Phone Preview Modal */
+html.dark .preview-modal-overlay {
+    background: rgba(10, 14, 22, 0.85) !important;
+}
+
+html.dark .phone-modal-header {
+    background: #1c212e !important;
+    color: #f8fafc !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .phone-modal-header span {
+    color: #f8fafc !important;
+}
+
+/* ==========================================================================
+   LIVE PHONE PREVIEW & SURROUNDING ELEMENTS IN BUILDER
+   ========================================================================== */
+
+/* Outer sticky container around phone preview */
+html.dark .dashboard-mylinkan-page .editor-sticky-preview,
+html.dark .editor-sticky-preview.clean-sticky-preview,
+html.dark .editor-sticky-preview {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Phone Preview Title Header */
+html.dark .phone-preview-header {
+    background: transparent !important;
+}
+
+html.dark .phone-preview-title {
+    color: #f8fafc !important;
+}
+
+html.dark .phone-preview-icon {
+    color: #ed842c !important;
+}
+
+/* Flex Container surrounding Phone & Vertical Bar */
+html.dark .phone-preview-flex-container {
+    background: transparent !important;
+}
+
+/* Vertical Browser URL Bar (Right side of phone preview) */
+html.dark .preview-url-browser-bar {
+    background: #1c212e !important;
+    border: 1px solid #2a3241 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* SSL Secure Badge in URL Bar */
+html.dark .ssl-secure-badge {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Domain Path in URL Bar */
+html.dark .vertical-domain-path .domain-prefix {
+    color: #94a3b8 !important;
+}
+
+html.dark .vertical-domain-path .domain-username {
+    color: #ed842c !important;
+}
+
+/* Vertical Action Buttons in URL Bar */
+html.dark .btn-vertical-action.btn-copy {
+    background: rgba(237, 132, 44, 0.15) !important;
+    border: 1px solid rgba(237, 132, 44, 0.3) !important;
+    color: #ed842c !important;
+}
+
+html.dark .btn-vertical-action.btn-copy:hover {
+    background: #ed842c !important;
+    color: #ffffff !important;
+    border-color: #ed842c !important;
+}
+
+html.dark .btn-vertical-action.btn-external {
+    background: #0f131c !important;
+    border: 1px solid #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .btn-vertical-action.btn-external:hover {
+    background: #242c3d !important;
+    color: #f8fafc !important;
+    border-color: #3b4559 !important;
+}
+
+/* Phone Mockup Frame & Status Bar */
+html.dark .mockup-phone {
+    background-color: #0b0e14 !important;
+    border-color: #ed842c !important;
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7) !important;
+}
+
+html.dark .mockup-phone .mockup-phone-camera {
+    background-color: #0b0e14 !important;
+}
+
+html.dark .mockup-phone-status-bar {
+    color: #94a3b8 !important;
+}
+
+html.dark .mockup-phone-status-icons {
+    color: #94a3b8 !important;
+}
+
+html.dark .mockup-home-gesture-bar {
+    background: #475569 !important;
+}
+
+/* Phone Empty State inside preview */
+html.dark .phone-empty-state .empty-state-title {
+    color: #cbd5e1 !important;
+}
+
+html.dark .phone-empty-state .empty-state-desc {
+    color: #64748b !important;
+}
+
+html.dark .phone-empty-state .empty-state-icon-wrapper {
+    background: rgba(237, 132, 44, 0.15) !important;
+    color: #ed842c !important;
+}
+
+/* Draggable Element Block Cards (Beside Preview in left panel) */
+html.dark .draggable-element-block {
+    background: #1c212e !important;
+    border: 1px solid #2a3241 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .edit-element-header .element-header-subtitle {
+    color: #94a3b8 !important;
+}
+
+/* Segment Controls inside element edit forms */
+html.dark .segment-control-wrapper {
+    background: #0f131c !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .segment-btn {
+    color: #94a3b8 !important;
+}
+
+html.dark input:checked + .segment-btn {
+    color: #f8fafc !important;
+    background: #242c3d !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Slider Controls inside element edit forms */
+html.dark .slider-control-container {
+    background: #0f131c !important;
+    border: 1px solid #2a3241 !important;
+}
+
+html.dark .slider-control-title {
+    color: #e2e8f0 !important;
+}
+
+html.dark .slider-value-badge {
+    background: rgba(237, 132, 44, 0.18) !important;
+    color: #ed842c !important;
+}
+
+html.dark .btn-slider-adjust {
+    background: #1c212e !important;
+    border: 1px solid #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .btn-slider-adjust:hover {
+    color: #ed842c !important;
+    border-color: #ed842c !important;
+    background: #242c3d !important;
+}
+
+html.dark .modern-range {
+    background: #2a3241 !important;
 }

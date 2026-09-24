@@ -366,6 +366,65 @@
         .tab-content.active {
             display: block;
         }
+
+        /* Tab Description Rich Text & List Styling */
+        #tab-description {
+            font-size: 16px;
+            color: #475569;
+            line-height: 1.8;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        #tab-description p {
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        #tab-description ul,
+        #tab-description ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 28px;
+            list-style-position: outside;
+        }
+        #tab-description ul {
+            list-style-type: disc;
+        }
+        #tab-description ol {
+            list-style-type: decimal;
+        }
+        #tab-description li {
+            margin-bottom: 6px;
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        #tab-description ul ul,
+        #tab-description ol ol,
+        #tab-description ul ol,
+        #tab-description ol ul {
+            margin-top: 4px;
+            margin-bottom: 4px;
+            padding-left: 22px;
+        }
+        #tab-description img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        #tab-description table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            display: block;
+            overflow-x: auto;
+        }
+        #tab-description blockquote {
+            border-left: 4px solid #ed842c;
+            padding-left: 14px;
+            margin: 12px 0;
+            color: #64748b;
+            font-style: italic;
+        }
         
         @media (max-width: 768px) {
             .product-top {
@@ -376,6 +435,23 @@
             }
             .action-buttons {
                 flex-direction: column;
+            }
+            /* Mobile List & Tab Description: Ensure bullet & numbers are never cut off */
+            #tab-description ul,
+            #tab-description ol {
+                padding-left: 28px !important;
+                margin-left: 0 !important;
+                margin-bottom: 14px !important;
+            }
+            #tab-description li {
+                padding-left: 4px !important;
+                margin-bottom: 6px !important;
+            }
+            #tab-description ul ul,
+            #tab-description ol ol,
+            #tab-description ul ol,
+            #tab-description ol ul {
+                padding-left: 20px !important;
             }
         }
 

@@ -17,8 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'midtrans/callback',
             'midtrans-callback'
         ]);
-        $middleware->web(append: [
+        $middleware->web(prepend: [
             \App\Http\Middleware\Localization::class,
+        ], append: [
             \App\Http\Middleware\CheckSuspended::class,
         ]);
         $middleware->alias([
