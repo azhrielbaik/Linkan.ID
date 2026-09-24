@@ -70,7 +70,7 @@
 
                 <div class="auth-divider">{{ __('auth.or') }}</div>
 
-                <a href="{{ url('/login/google') }}" class="btn-google">
+                <a href="{{ route('google.login') }}" class="btn-google">
                     <img src="{{ asset('images/google.png') }}" alt="Google Logo">
                     {{ __('auth.login_google') }}
                 </a>

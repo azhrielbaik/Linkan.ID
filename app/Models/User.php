@@ -35,6 +35,7 @@ class User extends Authenticatable
         'suspended_at',
         'suspended_until',
         'suspend_reason',
+        'notification_preferences',
     ];
 
     /**
@@ -55,11 +56,12 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'is_link_active'    => 'boolean',
-            'suspended_at'      => 'datetime',
-            'suspended_until'   => 'datetime',
+            'email_verified_at'        => 'datetime',
+            'password'                 => 'hashed',
+            'is_link_active'           => 'boolean',
+            'suspended_at'             => 'datetime',
+            'suspended_until'          => 'datetime',
+            'notification_preferences' => 'array',
         ];
     }
 

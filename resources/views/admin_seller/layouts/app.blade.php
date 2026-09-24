@@ -8,6 +8,8 @@
     <title>@yield('title', 'Linkan Dashboard')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
@@ -873,7 +875,7 @@
 
                             <hr class="pd-divider">
 
-                            <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;" onsubmit="if(window.sellerEventSource) window.sellerEventSource.close();">
+                            <form action="{{ route('logout') }}" method="POST" data-turbo="false" style="margin: 0; padding: 0;" onsubmit="if(window.sellerEventSource) window.sellerEventSource.close();">
                                 @csrf
                                 <button type="submit" class="pd-item pd-logout">
                                     <i class="fas fa-sign-out-alt"></i> Log Out

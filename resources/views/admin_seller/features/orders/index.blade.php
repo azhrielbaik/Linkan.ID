@@ -4,26 +4,41 @@
 
 @section("content")
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/order-history.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/order-history.css') }}?v={{ filemtime(public_path('css/admin/order-history.css')) }}" data-turbo-track="reload">
 @endpush
 
 <div class="order-history-card">
     <div class="order-history-title">Pesanan Masuk</div>
     
     <form method="GET" action="{{ url()->current() }}" id="filterForm">
-        <input type="hidden" name="status" value="{{ request('status') }}">
+        <input type="hidden" name="status" id="filterStatusInput" value="{{ request('status') }}">
         <div class="oh-controls">
+            <!-- Desktop Tabs -->
             <div class="oh-tabs">
                 <a href="{{ request()->fullUrlWithQuery(['status' => '']) }}" class="oh-tab {{ request('status') == '' ? 'active' : '' }}" style="text-decoration: none;">All Order</a>
                 <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" class="oh-tab {{ request('status') == 'pending' ? 'active' : '' }}" style="text-decoration: none;">Pending</a>
                 <a href="{{ request()->fullUrlWithQuery(['status' => 'success']) }}" class="oh-tab {{ in_array(request('status'), ['success', 'completed', 'complete']) ? 'active' : '' }}" style="text-decoration: none;">Completed</a>
                 <a href="{{ request()->fullUrlWithQuery(['status' => 'failed']) }}" class="oh-tab {{ in_array(request('status'), ['failed', 'cancelled', 'cancel']) ? 'active' : '' }}" style="text-decoration: none;">Cancelled</a>
             </div>
+
+            <!-- Mobile Status Select Dropdown ("Kotak Drop Down") -->
+            <div class="oh-mobile-status-wrapper">
+                <div class="oh-status-select-container">
+                    <i class="fas fa-layer-group oh-status-icon"></i>
+                    <select id="mobileStatusSelect" class="oh-status-select" onchange="document.getElementById('filterStatusInput').value = this.value; document.getElementById('filterForm').submit();">
+                        <option value="" {{ request('status') == '' ? 'selected' : '' }}>Semua Status (All Order)</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu (Pending)</option>
+                        <option value="success" {{ in_array(request('status'), ['success', 'completed', 'complete']) ? 'selected' : '' }}>Selesai (Completed)</option>
+                        <option value="failed" {{ in_array(request('status'), ['failed', 'cancelled', 'cancel']) ? 'selected' : '' }}>Dibatalkan (Cancelled)</option>
+                    </select>
+                    <i class="fas fa-chevron-down oh-status-chevron"></i>
+                </div>
+            </div>
             
-            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div class="oh-filters-right">
                 <div class="oh-search">
                     <i class="fas fa-search" style="color:#94a3b8;"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pesanan...">
                 </div>
                 <div class="oh-date-picker">
                     <i class="far fa-calendar-alt"></i>
@@ -34,7 +49,7 @@
         </div>
     </form>
 
-    <div style="overflow-x: auto;">
+    <div class="oh-table-responsive">
         <table class="oh-table" id="ordersTable">
             <thead>
                 <tr>
@@ -85,7 +100,7 @@
                         </td>
                         <td>{{ $paymentMethod }}</td>
                         <td><i class="far fa-clock" style="color: #cbd5e1; margin-right: 6px;"></i> {{ $transaction->created_at->format('H:i') }}</td>
-                        <td style="color: #ED842C;">{{ \Illuminate\Support\Str::limit($productTitle, 15) }}</td>
+                        <td style="color: #ED842C; font-weight: 700;" title="{{ $productTitle }}">{{ \Illuminate\Support\Str::limit($productTitle, 30) }}</td>
                         <td>
                             <div class="status-badge {{ $statusClass }}">
                                 <span class="status-dot"></span> {{ $statusText }}

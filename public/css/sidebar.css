@@ -273,6 +273,7 @@
 .sidebar {
     view-transition-name: sidebar;
 }
+
 /* --- DARK MODE OVERRIDES --- */
 html.dark .lang-toggle {
     background: #0f131c !important;

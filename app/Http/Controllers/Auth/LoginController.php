@@ -123,6 +123,10 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $locale = in_array($request->segment(1), ['id', 'en']) 
+            ? $request->segment(1) 
+            : session('locale', config('app.locale', 'id'));
+
         if ($user = Auth::user()) {
             ActivityLogger::log(
                 'user_logout',
@@ -136,7 +140,10 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        // Restore locale to session so that login page displays in correct language
+        session(['locale' => $locale]);
+
+        return redirect()->route('login', ['locale' => $locale]);
     }
 
     public function redirectToGoogle()

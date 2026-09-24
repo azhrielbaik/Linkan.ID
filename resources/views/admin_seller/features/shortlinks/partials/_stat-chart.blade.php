@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="stat-box">
-            <div class="stat-icon stat-icon-blue"><i class="fas fa-link"></i></div>
+            <div class="stat-icon stat-icon-orange"><i class="fas fa-link"></i></div>
             <div class="stat-info">
                 <span>{{ __('shortlink.total_links') }}</span>
                 <strong>{{ $shortlinks->total() }}</strong>
@@ -51,7 +51,7 @@
                     columnWidth: '80%'
                 }
             },
-            colors: ['#5A5BF1'],
+            colors: ['#FF9040'],
             xaxis: {
                 categories: dataLabels,
                 labels: { style: { colors: '#94a3b8', fontSize: '11px' } },

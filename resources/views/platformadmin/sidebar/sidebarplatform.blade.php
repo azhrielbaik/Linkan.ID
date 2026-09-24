@@ -92,7 +92,7 @@
         <hr>
 
         <div class="marketing-tools">
-            <form action="{{ route('logout') }}" method="POST" style="display: flex; align-items: center;" id="platformLogoutForm" onsubmit="if(window.platformEventSource) window.platformEventSource.close();">
+            <form action="{{ route('logout') }}" method="POST" data-turbo="false" style="display: flex; align-items: center;" id="platformLogoutForm" onsubmit="if(window.platformEventSource) window.platformEventSource.close();">
                 @csrf
                 <button type="button" onclick="confirmPlatformLogout()">
                     <i class="fas fa-sign-out-alt"></i>
