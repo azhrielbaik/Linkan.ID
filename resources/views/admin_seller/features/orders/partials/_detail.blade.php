@@ -2,7 +2,7 @@
 <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
         <span style="color: #64748b; font-weight: 600; font-size: 13px;">Status</span>
-        <span style="font-weight: 800; color: {{ $order->status === 'success' ? '#ED842C' : ($order->status === 'failed' ? '#ef4444' : '#1e293b') }}; text-transform: capitalize; font-size: 13px;">{{ $order->status }}</span>
+        <span style="font-weight: 800; color: {{ $order->status_label === 'Completed' ? '#16a34a' : ($order->status_label === 'Cancelled' ? '#ef4444' : '#f59e0b') }}; text-transform: capitalize; font-size: 13px;">{{ $order->status_label }}</span>
     </div>
     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
         <span style="color: #64748b; font-weight: 600; font-size: 13px;">Date</span>

@@ -19,11 +19,11 @@ html{scroll-behavior:smooth;}
 
 /* ===== ANIMATED BACKGROUND ===== */
 .bg-playground{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(160deg,#FFF8F2 0%,#FFF0E0 30%,#E8F0FE 70%,#FFF8F2 100%);}
-.bg-playground .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform;}
-.orb-1{width:500px;height:500px;background:var(--orange);top:-15%;left:-10%;animation:orbMove1 28s infinite alternate ease-in-out;}
-.orb-2{width:600px;height:600px;background:var(--blue);bottom:-25%;right:-15%;animation:orbMove2 32s infinite alternate ease-in-out;}
-.orb-3{width:400px;height:400px;background:var(--red);top:50%;left:55%;opacity:.3;animation:orbMove3 24s infinite alternate ease-in-out;}
-.orb-4{width:300px;height:300px;background:linear-gradient(135deg,var(--orange),var(--red));top:10%;right:20%;opacity:.25;animation:orbMove1 20s infinite alternate-reverse ease-in-out;}
+.bg-playground .orb{position:absolute;border-radius:50%;opacity:.35;will-change:transform;contain:strict;}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,var(--orange) 0%,transparent 70%);top:-15%;left:-10%;animation:orbMove1 28s infinite alternate ease-in-out;isolation:isolate;}
+.orb-2{width:600px;height:600px;background:radial-gradient(circle,var(--blue) 0%,transparent 70%);bottom:-25%;right:-15%;animation:orbMove2 32s infinite alternate ease-in-out;isolation:isolate;}
+.orb-3{width:400px;height:400px;background:radial-gradient(circle,var(--red) 0%,transparent 70%);top:50%;left:55%;opacity:.3;animation:orbMove3 24s infinite alternate ease-in-out;isolation:isolate;}
+.orb-4{width:300px;height:300px;background:radial-gradient(circle,var(--orange) 0%,var(--red) 50%,transparent 70%);top:10%;right:20%;opacity:.25;animation:orbMove1 20s infinite alternate-reverse ease-in-out;isolation:isolate;}
 
 @keyframes orbMove1{0%{transform:translate(0,0) scale(1);}50%{transform:translate(120px,-80px) scale(1.15);}100%{transform:translate(-60px,100px) scale(.9);}}
 @keyframes orbMove2{0%{transform:translate(0,0) scale(1);}50%{transform:translate(-100px,60px) scale(1.1);}100%{transform:translate(80px,-80px) scale(.95);}}
@@ -37,8 +37,8 @@ html{scroll-behavior:smooth;}
 .confetti-triangle{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid var(--orange);background:none!important;}
 
 /* ===== GLASS UTILITY ===== */
-.glass{background:var(--glass-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow);}
-.glass-strong{background:rgba(255,255,255,0.75);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1.5px solid rgba(255,255,255,0.9);border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(0,0,0,0.08);}
+.glass{background:var(--glass-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow);}
+.glass-strong{background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,0.95);border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(0,0,0,0.08);}
 
 /* ===== SCROLL ANIMATIONS ===== */
 .reveal{opacity:0;transform:translateY(50px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);}
@@ -262,3 +262,16 @@ html{scroll-behavior:smooth;}
 /* ===== GRADIENT TEXT ===== */
 .gradient-text{background:linear-gradient(135deg,var(--orange),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .gradient-text-blue{background:linear-gradient(135deg,var(--blue),#0088FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ===== FIREFOX PERFORMANCE: prefers-reduced-motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    .orb-1,.orb-2,.orb-3,.orb-4,
+    .float-rocket,.float-lightning,.float-star,
+    .shape-1,.shape-2,.shape-3,.shape-4,.shape-5,.shape-6,
+    .phone-mock,.hero-badge,.marquee-track,
+    .cta-box::before,.cta-box::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+

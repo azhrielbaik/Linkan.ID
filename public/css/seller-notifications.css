@@ -242,9 +242,21 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .seller-notif-dropdown {
-        width: 320px;
-        right: -50px;
+        position: fixed !important;
+        top: 62px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: calc(100vw - 24px) !important;
+        margin: 0 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18) !important;
+        z-index: 1002 !important;
+        transform: translateY(-8px) !important;
+    }
+    .seller-notif-dropdown.show {
+        transform: translateY(0) !important;
     }
 }

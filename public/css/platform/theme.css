@@ -925,6 +925,7 @@ body.dark-mode .badge-default {
     bottom: 0;
     background: rgba(15, 23, 42, 0.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -1144,6 +1145,7 @@ body.dark-mode .badge-default {
     bottom: 0;
     background: rgba(15, 23, 42, 0.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 9999;
     display: flex;
     align-items: center;

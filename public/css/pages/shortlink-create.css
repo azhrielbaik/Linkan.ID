@@ -1202,98 +1202,139 @@ body,
 
 @media (max-width: 768px) {
 
-    /* Force white background on wrapper and components */
-    body,
-    .dashboard-wrapper,
-    .dashboard-grid,
-    .left-col,
-    .right-col,
-    .content-wrapper,
-    .main-content {
-        background-color: #fff !important;
+    /* Wrapper and layout container matching microsite spacing */
+    .dashboard-wrapper {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     .dashboard-grid {
         margin-top: 0px !important;
-        gap: 0px !important;
+        gap: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
-    /* Show Performance Card (graphic) on mobile, style edge-to-edge, flat merge with divider */
-    .left-col>.card.performance-card {
+    .left-col,
+    .right-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Performance Card with clean spacing and rounded corners */
+    .left-col > .card.performance-card {
         display: block !important;
-        margin: 0 -16px !important;
-        /* Tarik ujung layar */
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: none !important;
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+        margin: 0 0 16px 0 !important;
+        border-radius: 14px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        padding: 16px !important;
         background: #fff !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     /* Collapsible Creation Form on Mobile as a distinct card container */
+    .mobile-form-collapse {
+        margin-bottom: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
     .mobile-form-collapse-header {
-        margin: 0 -16px !important;
-        /* Tarik ujung layar */
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: none !important;
+        margin: 0 0 16px 0 !important;
+        border-radius: 14px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
         background: #fff !important;
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+        padding: 14px 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .mobile-form-collapse.is-open .mobile-form-collapse-header {
-        margin: 0 -16px !important;
-        /* Pastikan state open juga mepet */
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
+        margin: 0 !important;
+        border-radius: 14px 14px 0 0 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #f1f5f9 !important;
         background: #fbfbfc !important;
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+        padding: 14px 16px !important;
     }
 
-    .mobile-form-collapse-body>form>.card {
-        margin: 0 -16px !important;
-        /* Tarik card ujung layar */
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: none !important;
-    }
-
-    /* Unified Container layout for search card and engagement card, flat merge with divider */
-    .left-col>.card.search-filter-card {
-        margin: 0 -16px !important;
-        /* Tarik ujung layar */
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: none !important;
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+    .mobile-form-collapse.is-open .mobile-form-collapse-body {
+        border: 1px solid #e2e8f0 !important;
+        border-top: none !important;
+        border-radius: 0 0 14px 14px !important;
         background: #fff !important;
+        overflow: hidden;
+        margin-bottom: 16px !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
     }
 
-    .dashboard-wrapper>.card.engagement-card {
-        margin: 0 -16px !important;
-        /* Tarik list ke ujung layar menutupi padding content-wrapper */
+    .mobile-form-collapse-body > form > .card {
+        margin: 0 !important;
         border-radius: 0 !important;
         border: none !important;
+        border-bottom: 1px solid #f1f5f9 !important;
         box-shadow: none !important;
+        padding: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobile-form-collapse-body > form > .card:last-child {
+        border-bottom: none !important;
+    }
+
+    /* Search & Filter Card */
+    .left-col > .card.search-filter-card {
+        margin: 0 0 16px 0 !important;
+        border-radius: 14px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        padding: 16px !important;
+        background: #fff !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .dashboard-wrapper > .card.engagement-card {
+        margin: 0 0 24px 0 !important;
+        border-radius: 14px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
         padding: 0 !important;
         background: #fff !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
     }
 
-    /* Search input styling matching screenshot */
+    /* Search input styling */
     .left-col input[name="search"] {
         border-radius: 100px !important;
         background: #f4f4f6 !important;
-        border: none !important;
-        padding: 12px 40px 12px 40px !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 12px 40px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .desktop-sort-wrapper {
@@ -1308,6 +1349,8 @@ body,
         padding: 4px;
         margin-top: 12px;
         gap: 4px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .segment-tab {
@@ -1342,16 +1385,16 @@ body,
     .mobile-list-subheader {
         display: flex;
         justify-content: space-between;
-        padding: 12px 10px;
-        /* Tipis di pinggir */
+        padding: 12px 16px !important;
         background: #f9f9fb;
-        border-top: 1px solid #e2e8f0;
+        border-top: none !important;
         border-bottom: 1px solid #e2e8f0;
         font-size: 11px;
         font-weight: 700;
         color: #888;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        box-sizing: border-box !important;
     }
 
     .mobile-list-subheader span {
@@ -1364,6 +1407,8 @@ body,
     .engagement-list {
         padding: 0 !important;
         gap: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .engagement-item {
@@ -1371,14 +1416,15 @@ body,
         flex-direction: row !important;
         align-items: center !important;
         justify-content: space-between !important;
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+        padding: 14px 16px !important;
         border: none !important;
         border-bottom: 1px dashed #e2e8f0 !important;
         box-shadow: none !important;
         border-radius: 0 !important;
         margin: 0 !important;
         gap: 12px;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .engagement-item:last-child {
@@ -1436,6 +1482,7 @@ body,
         display: flex;
         gap: 8px;
         align-items: center;
+        flex-shrink: 0;
     }
 
     .mobile-action-circle-btn {
@@ -1461,11 +1508,12 @@ body,
     }
 
     /* Pagination Container on mobile */
-    .dashboard-wrapper>.card.engagement-card>div:last-child {
-        padding: 16px 10px !important;
-        /* Tipis di pinggir */
+    .dashboard-wrapper > .card.engagement-card > div:last-child {
+        padding: 16px !important;
         border-top: 1px solid #e2e8f0;
         margin-top: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 }
 

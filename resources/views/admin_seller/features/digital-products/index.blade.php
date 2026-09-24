@@ -229,20 +229,134 @@
         .store-header-row {
             flex-direction: column;
             align-items: flex-start;
-            gap: 16px;
+            gap: 14px;
+            margin-bottom: 20px;
         }
         .store-header-actions {
             width: 100%;
-            flex-direction: column;
-            align-items: stretch;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
         .store-search-box {
-            width: 100%;
+            flex: 1;
+            width: auto;
         }
         .btn-create {
             text-align: center;
             justify-content: center;
+            white-space: nowrap;
+            padding: 9px 14px;
         }
+
+        /* 2-Column Mobile Grid for Store Product Cards */
+        .store-product-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 12px !important;
+            margin-bottom: 30px;
+        }
+
+        .store-product-card {
+            border-radius: 12px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .store-card-img-wrap {
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .store-card-img-wrap .no-img {
+            font-size: 26px !important;
+        }
+
+        /* Floating Delete button on mobile */
+        .btn-delete-float {
+            top: 6px !important;
+            right: 6px !important;
+            width: 26px !important;
+            height: 26px !important;
+            font-size: 11px !important;
+            opacity: 0.9 !important;
+        }
+
+        /* Floating Edit Icon on mobile */
+        .store-floating-icon {
+            bottom: -12px !important;
+            right: 10px !important;
+            width: 26px !important;
+            height: 26px !important;
+        }
+        .store-floating-icon i {
+            font-size: 10px !important;
+        }
+
+        /* Card Content on mobile */
+        .store-card-content {
+            padding: 12px 8px 10px 8px !important;
+        }
+
+        .store-card-title {
+            font-size: 12.5px !important;
+            line-height: 1.35 !important;
+            margin: 0 0 6px 0 !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal !important;
+            height: 2.7em;
+            word-break: break-word;
+        }
+
+        .store-card-footer {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+        }
+
+        .store-card-price-col {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 3px;
+        }
+
+        .store-price-main {
+            font-size: 12.5px !important;
+            font-weight: 800;
+        }
+
+        .store-price-strike {
+            font-size: 10px !important;
+        }
+
+        .store-card-rating {
+            font-size: 9px !important;
+            gap: 1.5px !important;
+        }
+    }
+
+    /* Dark Mode Support */
+    html.dark .store-product-card {
+        background: #1c212e !important;
+        border-color: #2a3241 !important;
+    }
+    html.dark .store-card-img-wrap {
+        background: #141824 !important;
+    }
+    html.dark .store-card-title,
+    html.dark .store-price-main,
+    html.dark .store-header-row h2 {
+        color: #ffffff !important;
+    }
+    html.dark .store-search-box {
+        background: #1c212e !important;
+        border-color: #2a3241 !important;
+    }
+    html.dark .store-search-box input {
+        background: transparent !important;
+        color: #ffffff !important;
     }
 </style>
 @endpush

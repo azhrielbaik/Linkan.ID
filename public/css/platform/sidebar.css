@@ -5,7 +5,7 @@
    Active Theme: #ED842C
    ========================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+/* Font dimuat di <head> blade — tidak perlu @import di sini */
 
 .sidebar {
     width: 250px;
@@ -371,6 +371,7 @@
     height: 100vh;
     background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     z-index: 1040;
 }
 
