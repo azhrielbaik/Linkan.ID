@@ -90,7 +90,7 @@
     </div>
 
     <div class="marketing-tools">
-        <form action="{{ route('logout') }}" method="POST" style="display: flex; align-items: center;">
+        <form action="{{ route('logout') }}" method="POST" data-turbo="false" onsubmit="if(window.sellerEventSource) window.sellerEventSource.close();" style="display: flex; align-items: center; width: 100%;">
             @csrf
             <button type="submit">
                 <i class="fas fa-sign-out-alt"></i>

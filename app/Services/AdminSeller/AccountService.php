@@ -51,6 +51,42 @@ class AccountService
     }
 
     /**
+     * Change user password securely.
+     */
+    public function changePassword(User $user, string $newPassword): void
+    {
+        DB::transaction(function () use ($user, $newPassword) {
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            ActivityLogger::log(
+                'change_password',
+                "User {$user->name} berhasil mengubah kata sandi akun.",
+                ['user_id' => $user->id],
+                $user->id
+            );
+        });
+    }
+
+    /**
+     * Update notification preferences for a user.
+     */
+    public function updateNotificationPreferences(User $user, array $preferences): void
+    {
+        DB::transaction(function () use ($user, $preferences) {
+            $user->notification_preferences = $preferences;
+            $user->save();
+
+            ActivityLogger::log(
+                'update_notification_preferences',
+                "User {$user->name} memperbarui preferensi notifikasi email.",
+                ['preferences' => $preferences],
+                $user->id
+            );
+        });
+    }
+
+    /**
      * Soft delete user account.
      */
     public function deleteAccount(User $user): void

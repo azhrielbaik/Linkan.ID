@@ -64,6 +64,16 @@ Route::get('/admin/orders/{id}', function (\Illuminate\Http\Request $request, $i
     return redirect()->to("/{$locale}/admin/orders/{$id}");
 })->middleware(['auth']);
 
+// Fallbacks for auth pages without locale prefix
+Route::get('/login', function () {
+    $locale = session('locale', config('app.locale', 'id'));
+    return redirect()->to("/{$locale}/login");
+});
+Route::get('/register', function () {
+    $locale = session('locale', config('app.locale', 'id'));
+    return redirect()->to("/{$locale}/register");
+});
+
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
     Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
     
@@ -187,6 +197,13 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         // Account
         Route::get('/account', [AccountController::class, 'edit'])->name('account');
         Route::post('/account', [AccountController::class, 'update'])->name('account.update');
+        Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
+        Route::post('/account/notifications', [AccountController::class, 'updateNotifications'])->name('account.notifications');
+        Route::post('/account/email', [AccountController::class, 'requestEmailChange'])->name('account.email.request');
+        Route::get('/account/email/verify/{token}', [AccountController::class, 'verifyEmailChange'])->name('account.email.verify');
+        Route::delete('/account/google', [AccountController::class, 'disconnectGoogle'])->name('account.google.disconnect');
+        Route::delete('/account/sessions/{sessionId}', [AccountController::class, 'revokeSession'])->name('account.session.revoke');
+        Route::delete('/account/sessions', [AccountController::class, 'revokeAllSessions'])->name('account.sessions.revoke-all');
         Route::delete('/account', [AccountController::class, 'delete'])->middleware('throttle:5,1')->name('account.delete');
 
         // Payout
