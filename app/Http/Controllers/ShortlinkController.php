@@ -313,9 +313,13 @@ class ShortlinkController extends Controller
 
         $shortlinks = $query->paginate(6);
 
+        $monthExpr = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+            ? "cast(strftime('%m', created_at) as integer)"
+            : 'MONTH(created_at)';
+
         $clicksPerMonth = ShortlinkClick::where('user_id', $user->getKey())
             ->whereYear('created_at', now()->year)
-            ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->selectRaw("{$monthExpr} as month, COUNT(*) as total")
             ->groupBy('month')
             ->pluck('total', 'month');
 
@@ -390,8 +394,12 @@ class ShortlinkController extends Controller
             $cursor->addDay();
         }
         
+        $dayNameExpr = DB::getDriverName() === 'sqlite'
+            ? "case strftime('%w', created_at) when '0' then 'Sunday' when '1' then 'Monday' when '2' then 'Tuesday' when '3' then 'Wednesday' when '4' then 'Thursday' when '5' then 'Friday' when '6' then 'Saturday' end"
+            : 'DAYNAME(created_at)';
+
         $timeBehavior = (clone $clicksQuery)
-            ->selectRaw('DAYNAME(created_at) as day_name, count(*) as total')
+            ->selectRaw("{$dayNameExpr} as day_name, count(*) as total")
             ->groupBy('day_name')
             ->orderByDesc('total')
             ->get()
