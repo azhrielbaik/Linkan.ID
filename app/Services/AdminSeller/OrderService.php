@@ -4,21 +4,14 @@ namespace App\Services\AdminSeller;
 
 use App\Models\Transaction;
 use App\Models\DigitalProduct;
+use App\Support\Pagination\EncryptedCursorPaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
     /**
-     * Get paginated orders for a seller.
-     *
-     * @param int $userId
-     * @param array $filters
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\CursorPaginator
-     */
-    /**
-     * Get paginated orders for a seller.
+     * Get paginated orders for a seller with obfuscated cursor URLs.
      *
      * @param int $userId
      * @param array $filters
@@ -62,7 +55,9 @@ class OrderService
             });
         }
 
-        return $query->orderBy('created_at', 'desc')->cursorPaginate($perPage);
+        $cursor = EncryptedCursorPaginator::decryptCursor(request('cursor'));
+
+        return $query->orderBy('created_at', 'desc')->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
     }
 
     /**

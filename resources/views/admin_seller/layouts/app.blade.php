@@ -1042,12 +1042,15 @@
         function toggleDarkMode() {
             const html = document.documentElement;
             html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
             
-            if (html.classList.contains('dark')) {
+            if (isDark) {
                 localStorage.setItem('theme', 'dark');
             } else {
                 localStorage.setItem('theme', 'light');
             }
+
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { isDark: isDark } }));
         }
 
         // Initialize dark mode on load

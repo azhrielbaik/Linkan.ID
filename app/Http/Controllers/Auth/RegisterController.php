@@ -17,6 +17,7 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $googleData = session('google_data');
+
         return view('auth.register', compact('googleData'));
     }
 
@@ -26,7 +27,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:100',
             'username' => 'required|string|min:3|max:30|unique:users|alpha_dash',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $userData = [
@@ -35,7 +36,7 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_link_active' => true,
-            'role' => 'admin_seller'
+            'role' => 'admin_seller',
         ];
 
         // Jika ada data dari Google, tambahkan google_id

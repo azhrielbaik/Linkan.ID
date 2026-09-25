@@ -36,6 +36,7 @@ class User extends Authenticatable
         'suspended_until',
         'suspend_reason',
         'notification_preferences',
+        'last_email_change_requested_at',
     ];
 
     /**
@@ -56,12 +57,13 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at'        => 'datetime',
-            'password'                 => 'hashed',
-            'is_link_active'           => 'boolean',
-            'suspended_at'             => 'datetime',
-            'suspended_until'          => 'datetime',
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'is_link_active' => 'boolean',
+            'suspended_at' => 'datetime',
+            'suspended_until' => 'datetime',
             'notification_preferences' => 'array',
+            'last_email_change_requested_at' => 'datetime',
         ];
     }
 
@@ -82,9 +84,6 @@ class User extends Authenticatable
 
     /**
      * Cek apakah user memiliki role tertentu.
-     *
-     * @param string|array ...$roles
-     * @return bool
      */
     public function hasRole(string|array ...$roles): bool
     {

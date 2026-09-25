@@ -5,6 +5,7 @@ namespace App\Services\AdminSeller;
 use App\Models\User;
 use App\Models\UserPayoutDetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\PlatformSetting;
 
 class PayoutService
@@ -43,10 +44,7 @@ class PayoutService
             ->sum(DB::raw('COALESCE(gross_amount, amount)'));
 
         // 5. Total dana transaksi yang sedang dibekukan karena sengketa aktif (pending / under_review)
-        $frozenDisputeAmount = (float) DB::table('disputes')
-            ->where('seller_id', $user->id)
-            ->whereIn('status', ['pending', 'under_review'])
-            ->sum('amount');
+        $frozenDisputeAmount = $this->getFrozenDisputeAmount($user->id);
 
         // 6. Saldo yang dapat ditarik: total pendapatan dikurangi penarikan approved, pending hold, dan sengketa tertahan
         // Catatan: Payout yang rejected TIDAK dihitung sebagai pengurang sehingga otomatis kembali ke saldo user
@@ -144,10 +142,7 @@ class PayoutService
 
         DB::transaction(function() use ($user, $data, $amount, $commission, $amountAfterCommission) {
             $freshUser = DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
-            $frozenDisputeAmount = (float) DB::table('disputes')
-                ->where('seller_id', $user->id)
-                ->whereIn('status', ['pending', 'under_review'])
-                ->sum('amount');
+            $frozenDisputeAmount = $this->getFrozenDisputeAmount($user->id);
             $withdrawableBalance = max(0, (float) ($freshUser->balance ?? 0) - $frozenDisputeAmount);
 
             if (!$freshUser || $withdrawableBalance < $amount) {
@@ -200,5 +195,23 @@ class PayoutService
             ->where('user_id', $userId)
             ->latest()
             ->get();
+    }
+
+    /**
+     * Calculate total frozen funds for active disputes defensively.
+     *
+     * @param int $sellerId
+     * @return float
+     */
+    private function getFrozenDisputeAmount(int $sellerId): float
+    {
+        if (!Schema::hasTable('disputes')) {
+            return 0.0;
+        }
+
+        return (float) DB::table('disputes')
+            ->where('seller_id', $sellerId)
+            ->whereIn('status', ['pending', 'under_review'])
+            ->sum('amount');
     }
 }

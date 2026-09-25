@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ResetPasswordOtpMail;
-use App\Models\PasswordResetRequest;
 use App\Models\ActivityLog;
+use App\Models\PasswordResetRequest;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
@@ -35,11 +35,11 @@ class ForgotPasswordController extends Controller
             'email' => 'required|email|max:255',
         ], [
             'email.required' => 'Email address is required.',
-            'email.email'    => 'Please enter a valid email address.',
+            'email.email' => 'Please enter a valid email address.',
         ]);
 
         $email = strtolower(trim($request->email));
-        $requestKey = 'password-reset-request|' . $request->ip() . '|' . hash('sha256', $email);
+        $requestKey = 'password-reset-request|'.$request->ip().'|'.hash('sha256', $email);
         if (RateLimiter::tooManyAttempts($requestKey, 3)) {
             return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
         }
@@ -47,7 +47,7 @@ class ForgotPasswordController extends Controller
 
         $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
         }
 
@@ -62,20 +62,20 @@ class ForgotPasswordController extends Controller
             PasswordResetRequest::where('user_id', $user->id)
                 ->whereIn('status', ['pending', 'approved'])
                 ->update([
-                    'status'      => 'rejected',
+                    'status' => 'rejected',
                     'admin_notes' => 'Digantikan oleh permintaan kode OTP baru',
                     'resolved_at' => now(),
                 ]);
 
             // Simpan request OTP baru dengan status langsung approved
             $resetRequest = PasswordResetRequest::create([
-                'user_id'     => $user->id,
-                'email'       => $user->email,
+                'user_id' => $user->id,
+                'email' => $user->email,
                 'reset_token_hash' => hash('sha256', $resetToken),
-                'reason'      => 'Permintaan reset password via email OTP',
-                'otp_hash'    => Hash::make($otp),
-                'status'      => 'approved',
-                'expires_at'  => now()->addMinutes($expiresMinutes),
+                'reason' => 'Permintaan reset password via email OTP',
+                'otp_hash' => Hash::make($otp),
+                'status' => 'approved',
+                'expires_at' => now()->addMinutes($expiresMinutes),
                 'resolved_at' => now(),
             ]);
 
@@ -93,7 +93,8 @@ class ForgotPasswordController extends Controller
         try {
             Mail::to($user->email)->send(new ResetPasswordOtpMail($otp, $user->name ?? 'Pengguna', $expiresMinutes));
         } catch (\Throwable $e) {
-            Log::error('Gagal mengirim email OTP Reset Password: ' . $e->getMessage());
+            Log::error('Gagal mengirim email OTP Reset Password: '.$e->getMessage());
+
             return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
         }
 
@@ -113,20 +114,20 @@ class ForgotPasswordController extends Controller
     public function showVerifyOtpForm(Request $request)
     {
         $token = $request->query('token') ?? session('reset_token');
-        if (!$token) {
+        if (! $token) {
             return redirect()->route('password.request');
         }
 
         $latestRequest = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))
             ->where('status', 'approved')
             ->first();
-        if (!$latestRequest || $latestRequest->used_at) {
+        if (! $latestRequest || $latestRequest->used_at) {
             return redirect()->route('password.request')->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
         }
 
         return view('auth.verify-otp', [
-            'email'         => ActivityLog::maskEmail($latestRequest->email),
-            'token'         => $token,
+            'email' => ActivityLog::maskEmail($latestRequest->email),
+            'token' => $token,
             'latestRequest' => $latestRequest,
         ]);
     }
@@ -138,7 +139,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         $tokenHash = hash('sha256', $request->token);
-        $resendKey = 'password-reset-resend|' . $request->ip() . '|' . $tokenHash;
+        $resendKey = 'password-reset-resend|'.$request->ip().'|'.$tokenHash;
         if (RateLimiter::tooManyAttempts($resendKey, 1)) {
             return redirect()->route('password.verify-otp', ['token' => $request->token])
                 ->with('status', 'Silakan tunggu sebentar sebelum meminta kode baru.');
@@ -149,7 +150,7 @@ class ForgotPasswordController extends Controller
             ->where('status', 'approved')
             ->first();
 
-        if (!$resetRequest || $resetRequest->used_at || !$resetRequest->user) {
+        if (! $resetRequest || $resetRequest->used_at || ! $resetRequest->user) {
             return redirect()->route('password.request')
                 ->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
         }
@@ -181,8 +182,9 @@ class ForgotPasswordController extends Controller
                 1
             ));
         } catch (\Throwable $e) {
-            Log::error('Gagal mengirim ulang email OTP Reset Password: ' . $e->getMessage());
+            Log::error('Gagal mengirim ulang email OTP Reset Password: '.$e->getMessage());
             $newRequest->update(['status' => 'rejected', 'resolved_at' => now()]);
+
             return redirect()->route('password.verify-otp', ['token' => $request->token])
                 ->with('status', 'Jika kode belum diterima, silakan coba lagi setelah beberapa saat.');
         }
@@ -202,13 +204,13 @@ class ForgotPasswordController extends Controller
     public function checkOtpStatus(Request $request)
     {
         $token = $request->query('token');
-        if (!$token) {
+        if (! $token) {
             return response()->json(['status' => 'error'], 400);
         }
 
         $req = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))->first();
 
-        if (!$req) {
+        if (! $req) {
             return response()->json(['status' => 'none']);
         }
 
@@ -225,24 +227,25 @@ class ForgotPasswordController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'token'    => 'required|string|size:64',
+            'token' => 'required|string|size:64',
             'otp_code' => 'required|string|size:4',
         ], [
             'otp_code.required' => 'Please enter the 4-digit code.',
-            'otp_code.size'     => 'The verification code must be 4 digits.',
+            'otp_code.size' => 'The verification code must be 4 digits.',
         ]);
 
         $resetReq = PasswordResetRequest::where('reset_token_hash', hash('sha256', $request->token))
             ->where('status', 'approved')
             ->first();
 
-        if (!$resetReq) {
+        if (! $resetReq) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.'
+                    'message' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
                 ], 422);
             }
+
             return back()->withInput()->withErrors([
                 'otp_code' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
             ]);
@@ -252,22 +255,24 @@ class ForgotPasswordController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.'
+                    'message' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.',
                 ], 422);
             }
+
             return back()->withInput()->withErrors([
                 'otp_code' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.',
             ]);
         }
 
-        $otpKey = 'password-reset-otp|' . $request->ip() . '|' . $resetReq->id;
+        $otpKey = 'password-reset-otp|'.$request->ip().'|'.$resetReq->id;
         if ($resetReq->attempts >= 5 || RateLimiter::tooManyAttempts($otpKey, 5)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.'
+                    'message' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.',
                 ], 422);
             }
+
             return back()->withErrors([
                 'otp_code' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.',
             ]);
@@ -276,13 +281,14 @@ class ForgotPasswordController extends Controller
         $resetReq->increment('attempts');
         RateLimiter::hit($otpKey, 900);
 
-        if (!Hash::check(trim($request->otp_code), $resetReq->otp_hash)) {
+        if (! Hash::check(trim($request->otp_code), $resetReq->otp_hash)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Kode OTP salah. Silakan periksa kembali.'
+                    'message' => 'Kode OTP salah. Silakan periksa kembali.',
                 ], 422);
             }
+
             return back()->withInput()->withErrors([
                 'otp_code' => 'Kode OTP salah. Silakan periksa kembali.',
             ]);
@@ -308,7 +314,7 @@ class ForgotPasswordController extends Controller
     public function showCreatePasswordForm(Request $request)
     {
         $resetRequest = PasswordResetRequest::with('user')->find(session('otp_request_id'));
-        if (!$resetRequest || $resetRequest->status !== 'approved' || $resetRequest->isExpired() || $resetRequest->used_at) {
+        if (! $resetRequest || $resetRequest->status !== 'approved' || $resetRequest->isExpired() || $resetRequest->used_at) {
             return redirect()->route('password.request');
         }
 
@@ -323,21 +329,21 @@ class ForgotPasswordController extends Controller
     public function submitCreatePassword(Request $request)
     {
         $resetRequest = PasswordResetRequest::with('user')->find(session('otp_request_id'));
-        if (!$resetRequest || $resetRequest->status !== 'approved' || $resetRequest->isExpired() || $resetRequest->used_at) {
+        if (! $resetRequest || $resetRequest->status !== 'approved' || $resetRequest->isExpired() || $resetRequest->used_at) {
             return redirect()->route('password.request')->withErrors(['email' => 'Sesi reset password tidak valid atau sudah kedaluwarsa.']);
         }
 
         $request->validate([
-            'password'              => 'required|string|min:8|same:password_confirmation',
+            'password' => 'required|string|min:8|same:password_confirmation',
             'password_confirmation' => 'required|string|min:8',
         ], [
             'password.required' => 'Please enter a new password.',
-            'password.min'      => 'Password must be at least 8 characters.',
-            'password.same'     => 'Password confirmation does not match.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.same' => 'Password confirmation does not match.',
         ]);
 
         $user = $resetRequest->user;
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('password.request')->withErrors(['email' => 'User not found.']);
         }
 

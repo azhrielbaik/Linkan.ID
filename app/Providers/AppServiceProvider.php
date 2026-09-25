@@ -35,6 +35,16 @@ public function boot(): void
 
     \Illuminate\Pagination\Paginator::defaultView('platformadmin.partials.pagination');
     \Illuminate\Pagination\Paginator::defaultSimpleView('platformadmin.partials.pagination');
+
+    \Illuminate\Pagination\CursorPaginator::currentCursorResolver(function ($cursorName = 'cursor', $default = null) {
+        $raw = request()->input($cursorName, $default);
+        return \App\Support\Pagination\EncryptedCursorPaginator::decryptCursor($raw);
+    });
+
+    $this->app->bind(
+        \Illuminate\Pagination\CursorPaginator::class,
+        \App\Support\Pagination\EncryptedCursorPaginator::class
+    );
 }
 
 }

@@ -132,7 +132,7 @@
             @endphp
             
             @if ($transactions->previousCursor())
-                <a href="{{ $transactions->appends(request()->except(['cursor', 'p']))->previousPageUrl() }}&p={{ $p - 1 }}" class="sl-page-btn" style="text-decoration: none;">
+                <a href="{{ $transactions->appends(array_merge(request()->except(['cursor', 'p']), ['p' => $p - 1]))->previousPageUrl() }}" class="sl-page-btn" style="text-decoration: none;">
                     <span>{{ $p - 1 }}</span>
                 </a>
             @endif
@@ -142,7 +142,7 @@
             </button>
             
             @if ($transactions->nextCursor())
-                <a href="{{ $transactions->appends(request()->except(['cursor', 'p']))->nextPageUrl() }}&p={{ $p + 1 }}" class="sl-page-btn" style="text-decoration: none;">
+                <a href="{{ $transactions->appends(array_merge(request()->except(['cursor', 'p']), ['p' => $p + 1]))->nextPageUrl() }}" class="sl-page-btn" style="text-decoration: none;">
                     <span>{{ $p + 1 }}</span>
                 </a>
             @endif

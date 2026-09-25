@@ -1,24 +1,23 @@
 <?php
 
-use App\Http\Controllers\AdminSeller\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminSeller\AccountController;
+use App\Http\Controllers\AdminSeller\DashboardController;
+use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
+use App\Http\Controllers\AdminSeller\OrderController;
+use App\Http\Controllers\AdminSeller\PayoutController;
+use App\Http\Controllers\AdminSeller\SettingController;
+use App\Http\Controllers\AdminSeller\StatisticController;
 use App\Http\Controllers\AppearanceController;
-use App\Http\Controllers\ImageElementController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\AdminSeller\DashboardController;
 use App\Http\Controllers\DigitalProductController;
-use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
-use App\Http\Controllers\AdminSeller\OrderController;
-use App\Http\Controllers\AdminSeller\PayoutController;
 use App\Http\Controllers\PlatformAdmin\VerifikasiController;
 use App\Http\Controllers\PlatformAdminController;
 use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\AdminSeller\SettingController;
 use App\Http\Controllers\ShortlinkController;
-use App\Http\Controllers\AdminSeller\StatisticController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +26,6 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-
 
 // Root fallback
 Route::get('/', fn () => redirect('/id'));
@@ -45,13 +43,16 @@ Route::get('/lang/{lang}', function ($lang) {
             // The locale is typically the first segment in the path
             if (isset($segments[0]) && in_array($segments[0], ['id', 'en'])) {
                 $segments[0] = $lang;
-                $newPath = '/' . implode('/', $segments);
-                $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
-                return redirect($newPath . $query);
+                $newPath = '/'.implode('/', $segments);
+                $query = isset($parsed['query']) ? '?'.$parsed['query'] : '';
+
+                return redirect($newPath.$query);
             }
         }
-        return redirect('/' . $lang);
+
+        return redirect('/'.$lang);
     }
+
     return redirect()->back();
 })->name('lang.switch');
 
@@ -62,22 +63,30 @@ Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('tr
 // Fallback for admin orders detail without locale prefix
 Route::get('/admin/orders/{id}', function (\Illuminate\Http\Request $request, $id) {
     $locale = session('locale', config('app.locale', 'id'));
+
     return redirect()->to("/{$locale}/admin/orders/{$id}");
 })->middleware(['auth']);
 
 // Fallbacks for auth pages without locale prefix
 Route::get('/login', function () {
     $locale = session('locale', config('app.locale', 'id'));
+
     return redirect()->to("/{$locale}/login");
 });
 Route::get('/register', function () {
     $locale = session('locale', config('app.locale', 'id'));
+
     return redirect()->to("/{$locale}/register");
 });
+Route::get('/auth/google/connect', function () {
+    $locale = session('locale', config('app.locale', 'id'));
+
+    return redirect()->to("/{$locale}/auth/google/connect");
+})->middleware('auth');
 
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
     Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
-    
+
     // Static pages
     Route::view('/pricing', 'pricing')->name('pricing');
     Route::view('/faq', 'public.pages.faq')->name('FAQ');
@@ -93,6 +102,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
     // Google OAuth
     Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('google.callback');
+    Route::get('/auth/google/connect', [LoginController::class, 'redirectToGoogleConnect'])->middleware('auth')->name('google.connect');
 
     // Password Reset via Admin Platform OTP (4-Step Flow)
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
@@ -165,7 +175,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
         Route::post('/appearance/design-settings', [AppearanceController::class, 'updateDesignSettings'])->name('appearance.design-settings.update');
 
-
         // Microsite Elements
         Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');
         Route::delete('/elements/image/{id}', [\App\Http\Controllers\ImageElementController::class, 'destroy'])->name('elements.image.destroy');
@@ -205,7 +214,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/account', [AccountController::class, 'update'])->name('account.update');
         Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
         Route::post('/account/notifications', [AccountController::class, 'updateNotifications'])->name('account.notifications');
-        Route::post('/account/email', [AccountController::class, 'requestEmailChange'])->name('account.email.request');
+        Route::post('/account/email/request-otp', [AccountController::class, 'requestEmailChangeOtp'])->name('account.email.request-otp');
+        Route::post('/account/email/verify-otp', [AccountController::class, 'verifyEmailChangeOtp'])->name('account.email.verify-otp');
         Route::get('/account/email/verify/{token}', [AccountController::class, 'verifyEmailChange'])->name('account.email.verify');
         Route::delete('/account/google', [AccountController::class, 'disconnectGoogle'])->name('account.google.disconnect');
         Route::delete('/account/sessions/{sessionId}', [AccountController::class, 'revokeSession'])->name('account.session.revoke');
@@ -333,13 +343,13 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
         Route::get('/logs/transactions/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionSuggest'])->middleware('throttle:60,1')->name('logs.transactions.suggest');
 
-    // Pengaturan Platform & Broadcast (Aksi Kritis: Rate Limiting 10-15/menit)
-    Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->middleware('throttle:10,1')->name('settings.update');
-    Route::post('/settings/emergency-switches', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateEmergencySwitches'])->middleware('throttle:10,1')->name('settings.emergency');
-    Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.store');
-    Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
-    Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');
+        // Pengaturan Platform & Broadcast (Aksi Kritis: Rate Limiting 10-15/menit)
+        Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->middleware('throttle:10,1')->name('settings.update');
+        Route::post('/settings/emergency-switches', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateEmergencySwitches'])->middleware('throttle:10,1')->name('settings.emergency');
+        Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.store');
+        Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
+        Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');
 
         // Theme & Tampilan Platform Admin
         Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->middleware('throttle:20,1')->name('theme.update');
@@ -360,8 +370,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/disputes/{id}/refund', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'processRefund'])->middleware('throttle:10,1')->name('disputes.refund');
         Route::post('/disputes/{id}/reject', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'rejectDispute'])->middleware('throttle:10,1')->name('disputes.reject');
     });
-
-
 
 });
 

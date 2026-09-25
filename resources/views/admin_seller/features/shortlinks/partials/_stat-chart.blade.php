@@ -30,6 +30,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     function initPerformanceChart() {
+        const isDark = document.documentElement.classList.contains('dark');
         const dataVals = @json($chartData ?? []);
         const dataLabels = @json($chartLabels ?? []);
         
@@ -43,7 +44,11 @@
                 height: 180,
                 width: '100%',
                 toolbar: { show: false },
-                parentHeightOffset: 0
+                parentHeightOffset: 0,
+                background: 'transparent'
+            },
+            theme: {
+                mode: isDark ? 'dark' : 'light'
             },
             plotOptions: {
                 bar: {
@@ -54,7 +59,7 @@
             colors: ['#FF9040'],
             xaxis: {
                 categories: dataLabels,
-                labels: { style: { colors: '#94a3b8', fontSize: '11px' } },
+                labels: { style: { colors: isDark ? '#94a3b8' : '#64748b', fontSize: '11px' } },
                 axisBorder: { show: false },
                 axisTicks: { show: false },
                 tooltip: { enabled: false }
@@ -63,6 +68,7 @@
             grid: { show: false, padding: { top: 0, bottom: 0, left: 0, right: 0 } },
             dataLabels: { enabled: false },
             tooltip: {
+                theme: isDark ? 'dark' : 'light',
                 y: { formatter: function(val) { return val } }
             }
         };
@@ -82,6 +88,19 @@
     }
     
     document.addEventListener('turbo:load', initPerformanceChart);
+    window.addEventListener('theme-changed', initPerformanceChart);
+
+    if (window.MutationObserver && !window._statChartThemeObserverBound) {
+        window._statChartThemeObserverBound = true;
+        const themeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    initPerformanceChart();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    }
 </script>
 @endpush
 </div>
