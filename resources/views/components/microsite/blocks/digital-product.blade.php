@@ -1,7 +1,8 @@
+@props(['elementId' => null, 'data' => null, 'digitalProduct' => null, 'isActive' => null])
 @php
-    $uniqueId = uniqid('dp_editor_');
-    $elementId = 'digitalproduct_' . $digitalProduct->id;
-    $isActive = $digitalProduct->is_active ?? true;
+    $digitalProduct = $data ?? $digitalProduct;
+    $elementId = $elementId ?? ('digitalproduct_' . $digitalProduct->id);
+    $isActive = $isActive ?? ($digitalProduct->is_active ?? true);
     $priceDisplay = $digitalProduct->pricing_type === 'fixed' 
                     ? 'Rp ' . number_format($digitalProduct->price, 0, ',', '.') 
                     : 'Mulai dari Rp ' . number_format($digitalProduct->price_min, 0, ',', '.');
@@ -60,13 +61,11 @@
                             <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tipe Pengiriman</span>
                             <span style="font-weight: 600; color: #0f172a;">{{ $deliverableText }}</span>
                         </div>
-                        <div>
-                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Ketersediaan</span>
-                            <span style="font-weight: 600; color: #0f172a;">{{ $digitalProduct->has_quantity_limit ? 'Terbatas (' . $digitalProduct->quantity . ')' : 'Tanpa Batas' }}</span>
-                        </div>
-                        <div>
-                            <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Status Rilis</span>
-                            <span style="font-weight: 600;">{!! $digitalProduct->is_scheduled ? '<span style="color: #10b981;"><i class="fas fa-clock"></i> Terjadwal</span>' : '<span style="color: #64748b;"><i class="fas fa-minus-circle"></i> Reguler</span>' !!}</span>
+                    </div>
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #e2e8f0;">
+                        <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Deskripsi</span>
+                        <div style="color: #475569; font-size: 13px; line-height: 1.5;">
+                            {{ $digitalProduct->description ? \Illuminate\Support\Str::limit($digitalProduct->description, 100) : 'Tidak ada deskripsi.' }}
                         </div>
                     </div>
                 </div>

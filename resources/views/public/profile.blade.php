@@ -405,49 +405,9 @@
             </div>
         @endif
         
-        @php
-            $blocksOrder = [];
-            if ($appearance && $appearance->blocks_order) {
-                $blocksOrder = explode(',', $appearance->blocks_order);
-            } else {
-                $blocksOrder = ['profile'];
-            }
-            
-            // Append missing elements to ensure they always render even if blocks_order is out of sync
-            if (isset($imageElements)) {
-                foreach($imageElements as $el) {
-                    $id = 'image_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($dividerElements)) {
-                foreach($dividerElements as $el) {
-                    $id = 'divider_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($textElements)) {
-                foreach($textElements as $el) {
-                    $id = 'text_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($videoElements)) {
-                foreach($videoElements as $el) {
-                    $id = 'video_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-            if (isset($socialMediaElements)) {
-                foreach($socialMediaElements as $el) {
-                    $id = 'social_' . $el->id;
-                    if (!in_array($id, $blocksOrder)) $blocksOrder[] = $id;
-                }
-            }
-        @endphp
-
-        @foreach($blocksOrder as $blockId)
-            @if($blockId === 'profile')
+        @foreach($sortedBlocks ?? [] as $block)
+            @if($block['type'] === 'profile')
+                @php $appearance = $block['data']; @endphp
                 <div class="live-profile-section" data-profile-layout="{{ $appearance->profile_layout ?? 'classic' }}">
                     @if($appearance && $appearance->banner)
                         <div class="preview-banner">
@@ -505,11 +465,8 @@
                     </div>
                 </div>
 
-            @elseif(str_starts_with($blockId, 'image_'))
-                @php
-                    $elId = str_replace('image_', '', $blockId);
-                    $imageEl = isset($imageElements) ? $imageElements->firstWhere('id', $elId) : null;
-                @endphp
+            @elseif($block['type'] === 'image')
+                @php $imageEl = $block['data']; @endphp
                 @if($imageEl && $imageEl->image_path)
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="margin-bottom: 12px; border-radius: {{ $blockRadius }}; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%;">
@@ -523,28 +480,22 @@
                     </div>
                     </div>
                 @endif
-            @elseif(str_starts_with($blockId, 'divider_'))
-                @php
-                    $elId = str_replace('divider_', '', $blockId);
-                    $dividerEl = isset($dividerElements) ? $dividerElements->firstWhere('id', $elId) : null;
+            @elseif($block['type'] === 'divider')
+                @php 
+                    $dividerEl = $block['data'];
+                    $padding = $block['padding'];
+                    $height = $block['height'];
+                    $border = $block['border'];
                 @endphp
                 @if($dividerEl)
-                    @php 
-                        $padding = $dividerEl->type === 'line' ? ($dividerEl->size / 2) . 'px 0' : '0';
-                        $height = $dividerEl->type === 'line' ? '0' : $dividerEl->size . 'px';
-                        $border = $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none';
-                    @endphp
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     <div style="width: 100%; padding: {{ $padding }};">
                         <div style="width: 100%; border-top: {{ $border }}; height: {{ $height }};"></div>
                     </div>
                     </div>
                 @endif
-            @elseif(str_starts_with($blockId, 'text_'))
-                @php
-                    $elId = str_replace('text_', '', $blockId);
-                    $textEl = isset($textElements) ? $textElements->firstWhere('id', $elId) : null;
-                @endphp
+            @elseif($block['type'] === 'text')
+                @php $textEl = $block['data']; @endphp
                 @if($textEl)
                     <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
                     @if(isset($textEl->has_button) && $textEl->has_button)
@@ -583,47 +534,36 @@
                     @endif
                     </div>
                 @endif
-            @elseif(str_starts_with($blockId, 'video_'))
-                @php
-                    $elId = str_replace('video_', '', $blockId);
-                    $videoEl = isset($videoElements) ? $videoElements->firstWhere('id', $elId) : null;
+            @elseif($block['type'] === 'video')
+                @php 
+                    $videoEl = $block['data'];
+                    $embedUrl = $block['embed_url'] ?? '';
                 @endphp
-                @if($videoEl && $videoEl->video_url)
-                    @php
-                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $videoEl->video_url, $match);
-                        $videoId = $match[1] ?? '';
-                        $autoplay = $videoEl->is_autoplay ? '&autoplay=1&mute=1' : '';
-                        $embedUrl = $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0{$autoplay}" : '';
-                    @endphp
-                    @if($embedUrl)
-                        <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
-                            <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: {{ $blockRadius }}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <iframe src="{{ $embedUrl }}" title="YouTube Video Player" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
+                @if($videoEl && !empty($embedUrl))
+                    <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
+                        <div style="margin-bottom: 12px; width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: {{ $blockRadius }}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                            <iframe src="{{ $embedUrl }}" title="YouTube Video Player" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                    @endif
+                    </div>
                 @endif
-            @elseif(str_starts_with($blockId, 'social_'))
+            @elseif($block['type'] === 'social')
                 @php
-                    $elId = str_replace('social_', '', $blockId);
-                    $socialEl = isset($socialMediaElements) ? $socialMediaElements->firstWhere('id', $elId) : null;
+                    $socialEl = $block['data'];
+                    $platforms = $block['platforms'] ?? [];
+                    $availableIcons = [
+                        'linkedin' => ['icon' => 'fab fa-linkedin', 'color' => '#0077b5'],
+                        'reddit' => ['icon' => 'fab fa-reddit', 'color' => '#FF4500'],
+                        'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C'],
+                        'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2'],
+                        'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000'],
+                        'whatsapp' => ['icon' => 'fab fa-whatsapp', 'color' => '#25D366'],
+                        'telegram' => ['icon' => 'fab fa-telegram', 'color' => '#0088cc'],
+                        'tiktok' => ['icon' => 'fab fa-tiktok', 'color' => '#000000'],
+                        'twitter' => ['icon' => 'fab fa-x-twitter', 'color' => '#000000'],
+                        'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335'],
+                    ];
                 @endphp
                 @if($socialEl)
-                    @php
-                        $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
-                        $availableIcons = [
-                            'linkedin' => ['icon' => 'fab fa-linkedin', 'color' => '#0077b5'],
-                            'reddit' => ['icon' => 'fab fa-reddit', 'color' => '#FF4500'],
-                            'instagram' => ['icon' => 'fab fa-instagram', 'color' => '#E1306C'],
-                            'facebook' => ['icon' => 'fab fa-facebook', 'color' => '#1877F2'],
-                            'youtube' => ['icon' => 'fab fa-youtube', 'color' => '#FF0000'],
-                            'whatsapp' => ['icon' => 'fab fa-whatsapp', 'color' => '#25D366'],
-                            'telegram' => ['icon' => 'fab fa-telegram', 'color' => '#0088cc'],
-                            'tiktok' => ['icon' => 'fab fa-tiktok', 'color' => '#000000'],
-                            'twitter' => ['icon' => 'fab fa-x-twitter', 'color' => '#000000'],
-                            'email' => ['icon' => 'fas fa-envelope', 'color' => '#ea4335'],
-                        ];
-                    @endphp
                     <div style="display: flex; justify-content: center; gap: 12px; padding: 10px 0; margin-bottom: 12px; width: 100%; box-sizing: border-box; border-radius: {{ $blockRadius }};">
                         @foreach($platforms as $plat => $url)
                             @if(!empty($url) && isset($availableIcons[$plat]))
@@ -634,55 +574,14 @@
                         @endforeach
                     </div>
                 @endif
-            @elseif(str_starts_with($blockId, 'digitalproduct_'))
+            @elseif($block['type'] === 'digitalproduct')
                 @php
-                    $elId = str_replace('digitalproduct_', '', $blockId);
-                    $digitalProduct = isset($products) ? $products->firstWhere('id', $elId) : null;
+                    $productData = $block['product_data'];
+                    $media = $block['media'];
                 @endphp
-                @if($digitalProduct && ($digitalProduct->is_active ?? true))
-                    @php
-                        // Format the product array for the component
-                        $mediaFiles = is_string($digitalProduct->media_files) ? json_decode($digitalProduct->media_files, true) : ($digitalProduct->media_files ?? []);
-                        $media = [];
-                        foreach($mediaFiles as $file) {
-                            if (is_array($file)) {
-                                $media[] = [
-                                    'type' => $file['type'] ?? 'image/jpeg',
-                                    'url' => isset($file['path']) ? asset('storage/' . $file['path']) : ($file['url'] ?? '')
-                                ];
-                            }
-                        }
-
-                        $productData = [
-                            'id' => $digitalProduct->id,
-                            'title' => $digitalProduct->title,
-                            'description' => $digitalProduct->description,
-                            'pricing' => [
-                                'type' => $digitalProduct->pricing_type,
-                                'fixed' => $digitalProduct->price,
-                                'min' => $digitalProduct->price_min,
-                                'max' => $digitalProduct->price_max,
-                            ],
-                            'quantity' => [
-                                'min' => $digitalProduct->quantity_min ?? 1,
-                                'max' => $digitalProduct->has_quantity_limit ? $digitalProduct->quantity : null,
-                            ],
-                            'schedule' => [
-                                'enabled' => $digitalProduct->is_scheduled,
-                                'start' => $digitalProduct->start_time,
-                                'end' => $digitalProduct->end_time,
-                            ],
-                            'deliverable' => [
-                                'type' => $digitalProduct->deliverable_type ?? 'external',
-                                'url' => $digitalProduct->deliverable_type !== 'upload' ? $digitalProduct->deliverable_url : '',
-                                'file' => $digitalProduct->deliverable_type === 'upload' ? $digitalProduct->deliverable_url : ''
-                            ]
-                        ];
-                    @endphp
-                    <div class="dp-wrapper" style="width: 50%; padding: 0 10px; box-sizing: border-box;">
-                        <x-microsite.digital-product-view :product="$productData" :media="$media" />
-                    </div>
-                @endif
+                <div class="dp-wrapper" style="width: 50%; padding: 0 10px; box-sizing: border-box;">
+                    <x-microsite.digital-product-view :product="$productData" :media="$media" />
+                </div>
             @endif
         @endforeach
 

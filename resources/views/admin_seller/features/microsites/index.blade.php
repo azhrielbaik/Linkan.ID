@@ -46,6 +46,10 @@
         }
     };
 </script>
+<script src="{{ asset('js/microsite-editor/modules/modal-manager.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/microsite-editor/modules/drag-order.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/microsite-editor/modules/preview-sync.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('js/microsite-editor/modules/element-handlers.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor.js') }}?v={{ time() }}"></script>
 
 

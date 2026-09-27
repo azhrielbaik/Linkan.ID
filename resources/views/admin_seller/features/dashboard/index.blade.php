@@ -380,14 +380,50 @@
                 
                 <div class="activities-list">
                     @forelse($recentActivities ?? [] as $activity)
+                        @php
+                            $type = $activity['type'] ?? 'default';
+                            $status = $activity['status'] ?? 'default';
+                            $styleMap = [
+                                'transaction' => [
+                                    'icon'  => 'fas fa-shopping-cart',
+                                    'bg'    => '#EEF0FE',
+                                    'color' => '#5A5BF1',
+                                ],
+                                'payout' => [
+                                    'icon'  => 'fas fa-wallet',
+                                    'bg'    => in_array($status, ['rejected', 'failed']) ? '#FEF2F2' : '#ECFDF5',
+                                    'color' => in_array($status, ['rejected', 'failed']) ? '#EF4444' : '#10B981',
+                                ],
+                                'system_alert' => [
+                                    'icon'  => 'fas fa-exclamation-triangle',
+                                    'bg'    => '#FEF2F2',
+                                    'color' => '#EF4444',
+                                ],
+                                'appeal' => [
+                                    'icon'  => 'fas fa-balance-scale',
+                                    'bg'    => '#EFF6FF',
+                                    'color' => '#3B82F6',
+                                ],
+                                'broadcast' => [
+                                    'icon'  => 'fas fa-bullhorn',
+                                    'bg'    => '#FFFBEB',
+                                    'color' => '#F59E0B',
+                                ],
+                            ];
+                            $actStyle = $styleMap[$type] ?? [
+                                'icon'  => 'fas fa-bell',
+                                'bg'    => '#F1F5F9',
+                                'color' => '#64748B',
+                            ];
+                        @endphp
                         <div class="activity-item">
                             <div class="activity-left">
-                                <div class="activity-icon" style="background: {{ $activity['icon_bg'] }}; color: {{ $activity['icon_color'] }};">
-                                    <i class="{{ $activity['icon'] }}"></i>
+                                <div class="activity-icon" style="background: {{ $actStyle['bg'] }}; color: {{ $actStyle['color'] }};">
+                                    <i class="{{ $actStyle['icon'] }}"></i>
                                 </div>
                                 <div class="activity-info">
                                     <span class="title">{{ $activity['title'] }}</span>
-                                    <span class="desc">{!! strip_tags($activity['message']) !!}</span>
+                                    <span class="desc">{{ $activity['message'] }}</span>
                                 </div>
                             </div>
                             <a href="{{ $activity['url'] }}" class="activity-action">{{ __('dashboard.view') }}</a>

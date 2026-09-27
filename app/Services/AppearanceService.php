@@ -4,6 +4,12 @@ namespace App\Services;
 
 use App\Models\Appearance;
 use App\Models\User;
+use App\Models\ImageElement;
+use App\Models\DividerElement;
+use App\Models\TextElement;
+use App\Models\VideoElement;
+use App\Models\SocialMediaElement;
+use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
@@ -11,6 +17,200 @@ use Illuminate\Http\UploadedFile;
 
 class AppearanceService
 {
+    /**
+     * Menyusun urutan elemen microsite untuk tampilan publik.
+     * Mengembalikan array structured blocks yang siap di-render langsung oleh Blade view.
+     *
+     * @param Appearance $appearance
+     * @param User $user
+     * @return array
+     */
+    public function getSortedBlocksForPublic(Appearance $appearance, User $user): array
+    {
+        $blocksOrder = [];
+        if ($appearance && $appearance->blocks_order) {
+            $blocksOrder = explode(',', $appearance->blocks_order);
+        } else {
+            $blocksOrder = ['profile'];
+        }
+
+        // Ambil elemen-elemen aktif per appearance
+        $imageElements = ImageElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');
+        $dividerElements = DividerElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');
+        $textElements = TextElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');
+        $videoElements = VideoElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');
+        $socialMediaElements = SocialMediaElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');
+
+        // Append missing elements to ensure they always render even if blocks_order is out of sync
+        foreach ($imageElements as $el) {
+            $id = 'image_' . $el->id;
+            if (!in_array($id, $blocksOrder)) {
+                $blocksOrder[] = $id;
+            }
+        }
+        foreach ($dividerElements as $el) {
+            $id = 'divider_' . $el->id;
+            if (!in_array($id, $blocksOrder)) {
+                $blocksOrder[] = $id;
+            }
+        }
+        foreach ($textElements as $el) {
+            $id = 'text_' . $el->id;
+            if (!in_array($id, $blocksOrder)) {
+                $blocksOrder[] = $id;
+            }
+        }
+        foreach ($videoElements as $el) {
+            $id = 'video_' . $el->id;
+            if (!in_array($id, $blocksOrder)) {
+                $blocksOrder[] = $id;
+            }
+        }
+        foreach ($socialMediaElements as $el) {
+            $id = 'social_' . $el->id;
+            if (!in_array($id, $blocksOrder)) {
+                $blocksOrder[] = $id;
+            }
+        }
+
+        // Ambil digital products yang ada di blocksOrder
+        $productIds = [];
+        foreach ($blocksOrder as $block) {
+            if (str_starts_with($block, 'digitalproduct_')) {
+                $productIds[] = str_replace('digitalproduct_', '', $block);
+            }
+        }
+        $products = DigitalProduct::where('user_id', $user->id)
+            ->whereIn('id', $productIds)
+            ->where('is_active', 1)
+            ->get()
+            ->keyBy('id');
+
+        $sortedBlocks = [];
+
+        foreach ($blocksOrder as $blockId) {
+            if ($blockId === 'profile') {
+                $sortedBlocks[] = [
+                    'id'   => 'profile',
+                    'type' => 'profile',
+                    'data' => $appearance,
+                ];
+            } elseif (str_starts_with($blockId, 'image_')) {
+                $elId = str_replace('image_', '', $blockId);
+                $imageEl = $imageElements->get($elId);
+                if ($imageEl && $imageEl->image_path) {
+                    $sortedBlocks[] = [
+                        'id'   => $blockId,
+                        'type' => 'image',
+                        'data' => $imageEl,
+                    ];
+                }
+            } elseif (str_starts_with($blockId, 'divider_')) {
+                $elId = str_replace('divider_', '', $blockId);
+                $dividerEl = $dividerElements->get($elId);
+                if ($dividerEl) {
+                    $sortedBlocks[] = [
+                        'id'      => $blockId,
+                        'type'    => 'divider',
+                        'data'    => $dividerEl,
+                        'padding' => $dividerEl->type === 'line' ? ($dividerEl->size / 2) . 'px 0' : '0',
+                        'height'  => $dividerEl->type === 'line' ? '0' : $dividerEl->size . 'px',
+                        'border'  => $dividerEl->type === 'line' ? '2px solid #cbd5e1' : 'none',
+                    ];
+                }
+            } elseif (str_starts_with($blockId, 'text_')) {
+                $elId = str_replace('text_', '', $blockId);
+                $textEl = $textElements->get($elId);
+                if ($textEl) {
+                    $sortedBlocks[] = [
+                        'id'   => $blockId,
+                        'type' => 'text',
+                        'data' => $textEl,
+                    ];
+                }
+            } elseif (str_starts_with($blockId, 'video_')) {
+                $elId = str_replace('video_', '', $blockId);
+                $videoEl = $videoElements->get($elId);
+                if ($videoEl && $videoEl->video_url) {
+                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $videoEl->video_url, $match);
+                    $videoId = $match[1] ?? '';
+                    $autoplay = $videoEl->is_autoplay ? '&autoplay=1&mute=1' : '';
+                    $embedUrl = $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0{$autoplay}" : '';
+                    if ($embedUrl) {
+                        $sortedBlocks[] = [
+                            'id'        => $blockId,
+                            'type'      => 'video',
+                            'data'      => $videoEl,
+                            'embed_url' => $embedUrl,
+                        ];
+                    }
+                }
+            } elseif (str_starts_with($blockId, 'social_')) {
+                $elId = str_replace('social_', '', $blockId);
+                $socialEl = $socialMediaElements->get($elId);
+                if ($socialEl) {
+                    $platforms = is_string($socialEl->platforms) ? json_decode($socialEl->platforms, true) : ($socialEl->platforms ?? []);
+                    $sortedBlocks[] = [
+                        'id'        => $blockId,
+                        'type'      => 'social',
+                        'data'      => $socialEl,
+                        'platforms' => $platforms,
+                    ];
+                }
+            } elseif (str_starts_with($blockId, 'digitalproduct_')) {
+                $elId = str_replace('digitalproduct_', '', $blockId);
+                $digitalProduct = $products->get($elId);
+                if ($digitalProduct && ($digitalProduct->is_active ?? true)) {
+                    $mediaFiles = is_string($digitalProduct->media_files) ? json_decode($digitalProduct->media_files, true) : ($digitalProduct->media_files ?? []);
+                    $media = [];
+                    foreach ($mediaFiles as $file) {
+                        if (is_array($file)) {
+                            $media[] = [
+                                'type' => $file['type'] ?? 'image/jpeg',
+                                'url'  => isset($file['path']) ? asset('storage/' . $file['path']) : ($file['url'] ?? '')
+                            ];
+                        }
+                    }
+
+                    $productData = [
+                        'id' => $digitalProduct->id,
+                        'title' => $digitalProduct->title,
+                        'description' => $digitalProduct->description,
+                        'pricing' => [
+                            'type'  => $digitalProduct->pricing_type,
+                            'fixed' => $digitalProduct->price,
+                            'min'   => $digitalProduct->price_min,
+                            'max'   => $digitalProduct->price_max,
+                        ],
+                        'quantity' => [
+                            'min' => $digitalProduct->quantity_min ?? 1,
+                            'max' => $digitalProduct->has_quantity_limit ? $digitalProduct->quantity : null,
+                        ],
+                        'schedule' => [
+                            'enabled' => $digitalProduct->is_scheduled,
+                            'start'   => $digitalProduct->start_time,
+                            'end'     => $digitalProduct->end_time,
+                        ],
+                        'deliverable' => [
+                            'type' => $digitalProduct->deliverable_type ?? 'external',
+                            'url'  => $digitalProduct->deliverable_type !== 'upload' ? $digitalProduct->deliverable_url : '',
+                            'file' => $digitalProduct->deliverable_type === 'upload' ? $digitalProduct->deliverable_url : ''
+                        ]
+                    ];
+
+                    $sortedBlocks[] = [
+                        'id'           => $blockId,
+                        'type'         => 'digitalproduct',
+                        'data'         => $digitalProduct,
+                        'product_data' => $productData,
+                        'media'        => $media,
+                    ];
+                }
+            }
+        }
+
+        return $sortedBlocks;
+    }
     /**
      * Memproses dan menyimpan data Appearance.
      */
