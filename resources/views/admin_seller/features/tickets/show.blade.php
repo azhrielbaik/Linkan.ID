@@ -12,13 +12,13 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <div class="ticket-alert ticket-alert-success">
             <i class="fas fa-check-circle" style="font-size: 16px;"></i> {{ session('success') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
+        <div class="ticket-alert ticket-alert-error">
             <ul style="margin: 0; padding-left: 18px;">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -29,7 +29,7 @@
 
     <!-- Back Button & Header -->
     <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <a href="{{ route('admin.tickets.index') }}" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-size: 13px; font-weight: 600; background: #ffffff; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; transition: all 0.2s;">
+        <a href="{{ route('admin.tickets.index') }}" class="ticket-back-btn">
             <i class="fas fa-arrow-left"></i> Kembali ke Daftar Tiket
         </a>
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -45,11 +45,11 @@
         <!-- Left Column: Chat Conversation Thread -->
         <div class="ticket-chat-card">
             
-            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px;">
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
+            <div class="ticket-thread-header">
+                <h2 class="ticket-thread-title">
                     {{ $ticket->subject }}
                 </h2>
-                <div style="font-size: 12px; color: #64748b;">
+                <div class="ticket-thread-meta">
                     Dibuat pada: <strong>{{ $ticket->created_at->format('d M Y, H:i') }} WIB</strong> • Kategori: <strong style="color: #DE6C20;">{{ $ticket->category_label }}</strong>
                 </div>
             </div>
@@ -123,14 +123,14 @@
                 <div class="ticket-reply-box">
                     <form action="{{ route('admin.tickets.reply', $ticket->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+                        <div class="ticket-reply-header">
                             <i class="fas fa-reply" style="color: #DE6C20;"></i> Kirim Balasan / Informasi Tambahan
                         </div>
                         <textarea name="message" class="ticket-reply-textarea" placeholder="Tulis balasan atau penjelasan tambahan untuk tim admin..." required></textarea>
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <label for="reply_attachment" style="font-size: 12px; color: #64748b; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px;">
+                                <label for="reply_attachment" class="ticket-attachment-label">
                                     <i class="fas fa-paperclip"></i> Tambah Gambar / Bukti
                                 </label>
                                 <input type="file" name="attachment" id="reply_attachment" style="display: none;" accept="image/*" onchange="previewAttachmentName(this)">
@@ -143,7 +143,7 @@
                     </form>
                 </div>
             @else
-                <div style="margin-top: 20px; background: #f1f5f9; border-radius: 10px; padding: 14px 18px; text-align: center; color: #64748b; font-size: 13px;">
+                <div class="ticket-closed-notice">
                     <i class="fas fa-lock"></i> Tiket ini telah ditutup oleh Admin. Anda dapat membuat tiket baru jika memiliki kendala lain.
                 </div>
             @endif
@@ -152,23 +152,23 @@
 
         <!-- Right Column: Ticket Info & Summary -->
         <div class="ticket-sidebar-card">
-            <h3 style="font-size: 14px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+            <h3 class="ticket-sidebar-title">
                 Informasi Tiket
             </h3>
 
-            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+            <div class="ticket-sidebar-info">
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Kode Tiket</div>
+                    <div class="ticket-info-label">Kode Tiket</div>
                     <div style="font-weight: 800; color: #DE6C20;">#{{ $ticket->ticket_code }}</div>
                 </div>
 
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Kategori</div>
-                    <div style="font-weight: 600; color: #0f172a;">{{ $ticket->category_label }}</div>
+                    <div class="ticket-info-label">Kategori</div>
+                    <div class="ticket-info-value">{{ $ticket->category_label }}</div>
                 </div>
 
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Status Tiket</div>
+                    <div class="ticket-info-label">Status Tiket</div>
                     <div style="margin-top: 2px;">
                         <span class="badge-status {{ $ticket->status_badge_class }}">
                             {{ $ticket->status_label }}
@@ -177,7 +177,7 @@
                 </div>
 
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Prioritas</div>
+                    <div class="ticket-info-label">Prioritas</div>
                     <div style="margin-top: 2px;">
                         <span class="badge-priority {{ $ticket->priority_badge_class }}">
                             {{ $ticket->priority }}
@@ -186,17 +186,17 @@
                 </div>
 
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Waktu Dibuat</div>
-                    <div>{{ $ticket->created_at->format('d M Y, H:i') }} WIB</div>
+                    <div class="ticket-info-label">Waktu Dibuat</div>
+                    <div class="ticket-info-value">{{ $ticket->created_at->format('d M Y, H:i') }} WIB</div>
                 </div>
 
                 <div>
-                    <div style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">Terakhir Diperbarui</div>
-                    <div>{{ $ticket->last_replied_at ? $ticket->last_replied_at->format('d M Y, H:i') . ' WIB' : '-' }}</div>
+                    <div class="ticket-info-label">Terakhir Diperbarui</div>
+                    <div class="ticket-info-value">{{ $ticket->last_replied_at ? $ticket->last_replied_at->format('d M Y, H:i') . ' WIB' : '-' }}</div>
                 </div>
             </div>
 
-            <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; line-height: 1.5;">
+            <div class="ticket-sidebar-footer">
                 <i class="fas fa-info-circle" style="color: #DE6C20;"></i> Setiap kali admin membalas, Anda juga akan menerima notifikasi melalui email.
             </div>
         </div>

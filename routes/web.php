@@ -353,8 +353,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
         Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');
 
-        // Theme & Tampilan Platform Admin
-        Route::post('/theme', [\App\Http\Controllers\PlatformAdmin\ThemeController::class, 'update'])->middleware('throttle:20,1')->name('theme.update');
         Route::post('/password/update', [PlatformAdminController::class, 'updatePassword'])->middleware('throttle:10,1')->name('password.update');
 
         // Profil & Avatar Platform Admin

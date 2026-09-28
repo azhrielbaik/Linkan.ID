@@ -636,6 +636,34 @@
             background-color: #141824 !important;
             border-color: #2a3241 !important;
         }
+
+        /* Form Inputs & Controls in Dark Mode */
+        html.dark input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+        html.dark textarea,
+        html.dark select {
+            background-color: #0f131c !important;
+            border-color: #2a3241 !important;
+            color: #f1f5f9 !important;
+        }
+        html.dark input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+        html.dark textarea:focus,
+        html.dark select:focus {
+            border-color: #ED842C !important;
+        }
+        html.dark input::placeholder,
+        html.dark textarea::placeholder {
+            color: #64748b !important;
+        }
+        html.dark input[readonly],
+        html.dark input:disabled {
+            background-color: #141824 !important;
+            border-color: #2a3241 !important;
+            color: #64748b !important;
+        }
+        html.dark select option {
+            background-color: #1c212e !important;
+            color: #f1f5f9 !important;
+        }
     </style>
     @stack('styles')
     @stack('page-styles')

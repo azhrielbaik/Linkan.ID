@@ -98,29 +98,9 @@
         }, 2000);
     }
 
-    // Persist to Server via AJAX
+    // Theme persistence is managed strictly via localStorage
     function saveThemeToServer(payload) {
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-            || document.querySelector('input[name="_token"]')?.value;
-
-        fetch('/platform-admin/theme', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token || '',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                showSaveIndicator();
-            }
-        })
-        .catch(err => {
-            console.warn('Theme preference saved locally. Server sync error:', err);
-        });
+        showSaveIndicator();
     }
 
     // User Action: Set Mode
