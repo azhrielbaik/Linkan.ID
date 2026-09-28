@@ -50,3 +50,4 @@ scope_styles.js
 
 # Server error logs
 public/error_log
+tests
