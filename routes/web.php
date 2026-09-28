@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSeller\AccountController;
 use App\Http\Controllers\AdminSeller\DashboardController;
 use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
 use App\Http\Controllers\AdminSeller\OrderController;
 use App\Http\Controllers\AdminSeller\PayoutController;
+use App\Http\Controllers\AdminSeller\PurchaseController;
 use App\Http\Controllers\AdminSeller\SettingController;
 use App\Http\Controllers\AdminSeller\StatisticController;
 use App\Http\Controllers\AppearanceController;
@@ -18,7 +18,6 @@ use App\Http\Controllers\PlatformAdmin\VerifikasiController;
 use App\Http\Controllers\PlatformAdminController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ShortlinkController;
-use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +59,19 @@ Route::get('/lang/{lang}', function ($lang) {
 Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
 Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
 
+// Fallbacks for admin elements AJAX routes without locale prefix
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle']);
+    Route::post('/elements/order', [\App\Http\Controllers\AppearanceController::class, 'updateOrder']);
+    Route::post('/elements/video', [\App\Http\Controllers\VideoElementController::class, 'store']);
+    Route::put('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'update']);
+    Route::delete('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'destroy']);
+    Route::post('/elements/text', [\App\Http\Controllers\TextElementController::class, 'store']);
+    Route::put('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'update']);
+    Route::delete('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'destroy']);
+    Route::delete('/elements/digital-product/{id}', [\App\Http\Controllers\DigitalProductElementController::class, 'destroy']);
+});
+
 // Fallback for admin orders detail without locale prefix
 Route::get('/admin/orders/{id}', function (\Illuminate\Http\Request $request, $id) {
     $locale = session('locale', config('app.locale', 'id'));
@@ -73,11 +85,15 @@ Route::get('/login', function () {
 
     return redirect()->to("/{$locale}/login");
 });
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
+
 Route::get('/register', function () {
     $locale = session('locale', config('app.locale', 'id'));
 
     return redirect()->to("/{$locale}/register");
 });
+Route::post('/register', [RegisterController::class, 'register']);
+
 Route::get('/auth/google/connect', function () {
     $locale = session('locale', config('app.locale', 'id'));
 
@@ -114,12 +130,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
     Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
     Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
     Route::get('/password-reset-success', [ForgotPasswordController::class, 'showSuccessPage'])->name('password.success');
-
-    // Legacy route fallback
-    Route::get('/reset-password-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.otp');
-    Route::post('/reset-password-otp/submit', [ForgotPasswordController::class, 'verifyOtp'])->name('password.otp.submit');
-    Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.reset');
-    Route::post('/reset-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.update');
 
     // Contact
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.form');
@@ -204,7 +214,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         // Visibility Toggle Route
         Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');
 
-        Route::post('/elements/order', [\App\Http\Controllers\ImageElementController::class, 'updateOrder'])->name('elements.order.update');
+        Route::post('/elements/order', [AppearanceController::class, 'updateOrder'])->name('elements.order.update');
 
         // Settings (general)
         Route::get('/settings', [SettingController::class, 'index'])->name('settings');
@@ -249,14 +259,10 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::prefix('digital-products')->name('digital-products.')->group(function () {
             Route::get('/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
             Route::post('/transaction', [DigitalProductController::class, 'storeTransaction'])->name('transaction');
-            Route::get('/success', [DigitalProductController::class, 'success'])->name('success');
-            Route::get('/failed', [DigitalProductController::class, 'failed'])->name('failed');
-            Route::get('/pending', [DigitalProductController::class, 'pending'])->name('pending');
-            Route::post('/midtrans-callback', [DigitalProductController::class, 'midtransCallback'])->name('midtrans-callback');
         });
 
         // My Purchases
-        Route::get('/purchases', [AdminController::class, 'myPurchase'])->name('purchases');
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
 
         // Shortlinks
         Route::prefix('shortlinks')->name('shortlinks.')->group(function () {
@@ -303,10 +309,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/notifications/read', [PlatformAdminController::class, 'markNotificationRead'])->name('notifications.read');
         Route::post('/notifications/read-all', [PlatformAdminController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
         Route::get('/notifications/stream', [PlatformAdminController::class, 'streamNotifications'])->name('notifications.stream');
-
-        // Verifikasi (role-gated, sudah dalam group ini)
-        Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
-        Route::post('/verification/{id}', [VerificationController::class, 'verify'])->middleware('throttle:30,1')->name('verification.verify');
 
         // Manajemen User & Banding Suspend (Aksi Kritis: Rate Limiting 15/menit)
         Route::get('/users', [PlatformAdminController::class, 'users'])->name('users');
@@ -382,8 +384,9 @@ Route::get('/test-email', fn () => view('emails.send-digital-product'));
 
 /*
 |--------------------------------------------------------------------------
-| Slug Redirect — MUST remain last
+| Profile & Shortlink Catch-all Redirect — MUST remain last
 |--------------------------------------------------------------------------
+| Menangani pengalihan shortlink (/{slug}) dan tampilan profil microsite
+| (/{username}) via ShortlinkController::redirect secara terpadu.
 */
-Route::get('/{slug}', [ShortlinkController::class, 'redirect'])->name('shortlink.redirect');
 Route::get('/{username}', [ShortlinkController::class, 'redirect'])->name('public.profile');

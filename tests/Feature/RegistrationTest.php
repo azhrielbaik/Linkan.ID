@@ -24,9 +24,9 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        // It should redirect to login page with a success message
-        $response->assertRedirect('/login');
-        $response->assertSessionHas('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
+        // It should redirect to dashboard with a success message
+        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertSessionHas('success');
 
         // Check if user was actually created in database
         $this->assertDatabaseHas('users', [

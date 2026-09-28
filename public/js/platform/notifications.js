@@ -150,8 +150,47 @@ function renderPlatformNotifs(filterType) {
         return;
     }
 
+    const typeMeta = {
+        product: {
+            badge: "Verifikasi",
+            badgeClass: "badge-product",
+            icon: "fas fa-box-open",
+            iconBg: "#EEF0FE",
+            iconColor: "#5A5BF1",
+        },
+        payout: {
+            badge: "Payout",
+            badgeClass: "badge-payout",
+            icon: "fas fa-money-bill-wave",
+            iconBg: "#fef3c7",
+            iconColor: "#d97706",
+        },
+        appeal: {
+            badge: "Banding",
+            badgeClass: "badge-appeal",
+            icon: "fas fa-shield-alt",
+            iconBg: "#fee2e2",
+            iconColor: "#dc2626",
+        },
+        log_cleanup: {
+            badge: "Pembersihan",
+            badgeClass: "badge-appeal",
+            icon: "fas fa-history",
+            iconBg: "#fef3c7",
+            iconColor: "#d97706",
+        },
+    };
+
     let html = "";
     items.forEach((item) => {
+        const meta = typeMeta[item.type] || {
+            badge: "Info",
+            badgeClass: "badge-info",
+            icon: "fas fa-bell",
+            iconBg: "#f1f5f9",
+            iconColor: "#64748b",
+        };
+
         let messageHtml = "";
         if (item.type === "product") {
             messageHtml = `Seller <strong>${item.seller_name}</strong> mengajukan verifikasi produk <em>"${item.product_name}"</em>.`;
@@ -167,13 +206,13 @@ function renderPlatformNotifs(filterType) {
 
         html += `
             <a href="${item.url}" class="notif-item ${item.is_read ? "is-read" : "is-unread"}" onclick="markPlatformNotifRead(event, '${item.id}')">
-                <div class="notif-icon-box" style="background-color: ${item.icon_bg}; color: ${item.icon_color};">
-                    <i class="${item.icon}"></i>
+                <div class="notif-icon-box" style="background-color: ${meta.iconBg}; color: ${meta.iconColor};">
+                    <i class="${meta.icon}"></i>
                 </div>
                 <div class="notif-body">
                     <div class="notif-item-top">
                         <div class="notif-item-title">${item.title}</div>
-                        <span class="notif-tag ${item.badge_class}">${item.badge}</span>
+                        <span class="notif-tag ${meta.badgeClass}">${meta.badge}</span>
                     </div>
                     <div class="notif-item-msg">${messageHtml}</div>
                     <div class="notif-item-time">

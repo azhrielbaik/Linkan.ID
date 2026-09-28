@@ -76,21 +76,4 @@ class ImageElementController extends Controller
         }
         return response()->json(['success' => false], 404);
     }
-
-    public function updateOrder(Request $request)
-    {
-        $request->validate([
-            'blocks_order' => 'required|string',
-            'appearance_id' => 'required|integer|exists:appearances,id'
-        ]);
-
-        $user = auth()->user();
-        $appearance = Appearance::where('user_id', $user->id)->findOrFail($request->appearance_id);
-
-        $appearance->blocks_order = $request->blocks_order;
-        \Illuminate\Support\Facades\Log::info('Saving blocks_order: ' . $request->blocks_order);
-        $appearance->save();
-
-        return response()->json(['success' => true]);
-    }
 }

@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Services\AppearanceService;
 
 class PublicPageController extends Controller
 {
+    public function __construct(
+        private AppearanceService $appearanceService
+    ) {}
+
     public function show($username)
     {
         // Parameter $username is now an alias for the Appearance
@@ -41,32 +46,9 @@ class PublicPageController extends Controller
             ]);
         }
 
-        // Filter digital products based on blocks_order
-        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
-        $productIds = [];
-        foreach ($blocksOrder as $block) {
-            if (str_starts_with($block, 'digitalproduct_')) {
-                $productIds[] = str_replace('digitalproduct_', '', $block);
-            }
-        }
+        // Susun urutan blok elemen microsite secara bersih melalui AppearanceService
+        $sortedBlocks = $this->appearanceService->getSortedBlocksForPublic($appearance, $user);
 
-        $products = \App\Models\DigitalProduct::where('user_id', $user->id)
-            ->whereIn('id', $productIds)
-            ->where('is_active', 1)
-            ->get();
-
-        // Ambil data shortlink user (masih per user untuk saat ini, atau mungkin tidak ditampilkan)
-        $shortlinks = \App\Models\Shortlink::where('user_id', $user->id)
-            ->latest()
-            ->get();
-
-        // Ambil data image, divider, dan text elements yang aktif per appearance
-        $imageElements = \App\Models\ImageElement::where('appearance_id', $appearance->id)->where('is_active', true)->get();
-        $dividerElements = \App\Models\DividerElement::where('appearance_id', $appearance->id)->where('is_active', true)->get();
-        $textElements = \App\Models\TextElement::where('appearance_id', $appearance->id)->where('is_active', true)->get();
-        $videoElements = \App\Models\VideoElement::where('appearance_id', $appearance->id)->where('is_active', true)->get();
-        $socialMediaElements = \App\Models\SocialMediaElement::where('appearance_id', $appearance->id)->where('is_active', true)->get();
-
-        return view('public.profile', compact('user', 'appearance', 'products', 'shortlinks', 'imageElements', 'dividerElements', 'textElements', 'videoElements', 'socialMediaElements'));
+        return view('public.profile', compact('user', 'appearance', 'sortedBlocks'));
     }
 }

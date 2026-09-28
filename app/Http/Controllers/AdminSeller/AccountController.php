@@ -3,22 +3,12 @@
 namespace App\Http\Controllers\AdminSeller;
 
 use App\Http\Controllers\Controller;
-use App\Mail\EmailChangeOtpMail;
-use App\Mail\EmailChangeVerificationMail;
-use App\Models\EmailChangeOtp;
-use App\Models\PendingEmailChange;
 use App\Models\User;
-use App\Services\ActivityLogger;
 use App\Services\AdminSeller\AccountService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 
 class AccountController extends Controller
 {
@@ -69,17 +59,7 @@ class AccountController extends Controller
             ->limit(5)
             ->get();
 
-        $rateLimitKey = 'email_change|'.$user->id;
-        $hasDbCooldown = $user->last_email_change_requested_at && $user->last_email_change_requested_at->copy()->addDay()->isFuture();
-        $emailChangeCooldown = RateLimiter::tooManyAttempts($rateLimitKey, 1) || $hasDbCooldown;
-        $emailChangeCooldownSeconds = 0;
-
-        if ($emailChangeCooldown) {
-            $emailChangeCooldownSeconds = RateLimiter::availableIn($rateLimitKey);
-            if ($emailChangeCooldownSeconds <= 0 && $hasDbCooldown) {
-                $emailChangeCooldownSeconds = max(0, (int) now()->diffInSeconds($user->last_email_change_requested_at->copy()->addDay(), false));
-            }
-        }
+        [$emailChangeCooldown, $emailChangeCooldownSeconds] = $this->accountService->getEmailChangeCooldown($user);
 
         return view('admin_seller.features.account.index', compact(
             'user', 'notifPrefs', 'sessions', 'loginHistory',
@@ -171,23 +151,6 @@ class AccountController extends Controller
 
     public function requestEmailChangeOtp(Request $request)
     {
-        $user = Auth::user();
-
-        // Cek cooldown 24 jam
-        $rateLimitKey = 'email_change|'.$user->id;
-        $hasDbCooldown = $user->last_email_change_requested_at
-            && $user->last_email_change_requested_at->copy()->addDay()->isFuture();
-
-        if (RateLimiter::tooManyAttempts($rateLimitKey, 1) || $hasDbCooldown) {
-            $availableIn = RateLimiter::availableIn($rateLimitKey);
-            $availableHours = max(1, ceil($availableIn / 3600));
-
-            return back()->withErrors([
-                'new_email' => "Anda sudah melakukan permintaan ganti email dalam 24 jam terakhir. Coba lagi dalam {$availableHours} jam.",
-            ])->withInput();
-        }
-
-        // Validasi email baru
         $request->validate([
             'new_email' => 'required|email|max:255|unique:users,email',
         ], [
@@ -196,51 +159,9 @@ class AccountController extends Controller
             'new_email.unique' => 'Alamat email ini sudah digunakan oleh akun lain.',
         ]);
 
-        // Rate limit request OTP (maks 3x per 15 menit) agar tidak spam
-        $otpRequestKey = 'otp_request|'.$user->id;
-        if (RateLimiter::tooManyAttempts($otpRequestKey, 3)) {
-            $seconds = RateLimiter::availableIn($otpRequestKey);
+        $user = Auth::user();
+        $this->accountService->requestEmailChangeOtp($user, $request->new_email);
 
-            return back()->withErrors([
-                'new_email' => "Terlalu banyak permintaan OTP. Coba lagi dalam {$seconds} detik.",
-            ])->withInput();
-        }
-        RateLimiter::hit($otpRequestKey, 900); // 15 menit
-
-        // Generate OTP 6 digit
-        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $otpHash = Hash::make($otp);
-
-        // Hapus OTP lama jika ada, simpan yang baru
-        EmailChangeOtp::where('user_id', $user->id)->delete();
-        EmailChangeOtp::create([
-            'user_id' => $user->id,
-            'new_email' => $request->new_email,
-            'otp_hash' => $otpHash,
-            'attempts' => 0,
-            'expires_at' => now()->addMinutes(10),
-        ]);
-
-        // Kirim OTP ke email AKTIF saat ini (bukan email baru)
-        try {
-            Mail::to($user->email)->send(new EmailChangeOtpMail($otp, $user->name, $request->new_email));
-        } catch (\Exception $e) {
-            Log::error('Gagal mengirim OTP ganti email: '.$e->getMessage(), ['user_id' => $user->id]);
-            EmailChangeOtp::where('user_id', $user->id)->delete();
-
-            return back()->withErrors([
-                'new_email' => 'Gagal mengirim kode OTP. Silakan coba beberapa saat lagi.',
-            ])->withInput();
-        }
-
-        ActivityLogger::log(
-            'email_change_otp_requested',
-            "User {$user->name} meminta OTP untuk ganti email ke {$request->new_email}.",
-            ['new_email' => $request->new_email],
-            $user->id
-        );
-
-        // Simpan new_email ke session untuk ditampilkan di step 2
         session(['otp_target_email' => $request->new_email]);
 
         return redirect()->route('admin.account')->with(
@@ -260,102 +181,9 @@ class AccountController extends Controller
         ]);
 
         $user = Auth::user();
-        $otpRecord = EmailChangeOtp::where('user_id', $user->id)->first();
+        $newEmail = $this->accountService->verifyEmailChangeOtp($user, $request->otp);
 
-        // Cek apakah OTP record ada
-        if (! $otpRecord) {
-            return back()->withErrors([
-                'otp' => 'Tidak ada permintaan OTP aktif. Silakan mulai dari awal.',
-            ]);
-        }
-
-        // Cek apakah OTP sudah kedaluwarsa
-        if ($otpRecord->isExpired()) {
-            $otpRecord->delete();
-
-            return back()->withErrors([
-                'otp' => 'Kode OTP sudah kedaluwarsa (lebih dari 10 menit). Silakan minta kode baru.',
-            ]);
-        }
-
-        // Cek apakah sudah melebihi batas percobaan
-        if ($otpRecord->isExceededAttempts()) {
-            $otpRecord->delete();
-
-            return back()->withErrors([
-                'otp' => 'Kode OTP tidak valid terlalu banyak kali. Silakan minta kode baru.',
-            ]);
-        }
-
-        // Verifikasi OTP
-        if (! Hash::check($request->otp, $otpRecord->otp_hash)) {
-            $otpRecord->increment('attempts');
-            $remaining = 3 - $otpRecord->fresh()->attempts;
-
-            ActivityLogger::log(
-                'email_change_otp_failed',
-                "User {$user->name} memasukkan OTP yang salah untuk ganti email.",
-                ['attempts_remaining' => $remaining],
-                $user->id
-            );
-
-            return back()->withErrors([
-                'otp' => "Kode OTP salah. Sisa percobaan: {$remaining} kali.",
-            ]);
-        }
-
-        // OTP valid — lanjutkan proses ganti email
-        $newEmail = $otpRecord->new_email;
-
-        // Cek sekali lagi apakah email baru masih unik
-        if (User::where('email', $newEmail)->where('id', '!=', $user->id)->exists()) {
-            $otpRecord->delete();
-
-            return back()->withErrors([
-                'otp' => 'Email tujuan sudah digunakan oleh akun lain. Silakan mulai dari awal dengan email baru.',
-            ]);
-        }
-
-        // Hapus OTP record
-        $otpRecord->delete();
-
-        // Hapus pending lama, buat yang baru
-        PendingEmailChange::where('user_id', $user->id)->delete();
-
-        $token = Str::random(64);
-        PendingEmailChange::create([
-            'user_id' => $user->id,
-            'new_email' => $newEmail,
-            'token' => $token,
-            'expires_at' => now()->addHours(24),
-        ]);
-
-        $verificationUrl = route('admin.account.email.verify', $token);
-
-        try {
-            Mail::to($newEmail)->send(new EmailChangeVerificationMail($verificationUrl, $user->name));
-        } catch (\Exception $e) {
-            Log::error('Gagal kirim email verifikasi setelah OTP valid: '.$e->getMessage());
-            PendingEmailChange::where('token', $token)->delete();
-
-            return back()->withErrors([
-                'otp' => 'OTP valid, namun gagal mengirim email konfirmasi ke alamat baru. Silakan coba lagi.',
-            ]);
-        }
-
-        // Update cooldown 24 jam
-        $user->last_email_change_requested_at = now();
-        $user->save();
-
-        RateLimiter::hit('email_change|'.$user->id, 86400);
         session()->forget('otp_target_email');
-
-        ActivityLogger::log(
-            'email_change_otp_verified',
-            "User {$user->name} berhasil verifikasi OTP dan email konfirmasi dikirim ke {$newEmail}.",
-            ['new_email' => $newEmail],
-            $user->id
-        );
 
         return redirect()->route('admin.account')->with(
             'success',
@@ -365,90 +193,18 @@ class AccountController extends Controller
 
     public function verifyEmailChange(string $token)
     {
-        $pending = PendingEmailChange::where('token', $token)->first();
-
-        if (! $pending) {
-            return redirect()->route('admin.account')->withErrors([
-                'email' => 'Tautan verifikasi email tidak valid atau sudah pernah digunakan.',
-            ]);
-        }
-
-        if ($pending->isExpired()) {
-            $pending->delete();
-
-            return redirect()->route('admin.account')->withErrors([
-                'email' => 'Tautan verifikasi email telah kadaluwarsa (lebih dari 24 jam). Silakan ajukan permintaan baru.',
-            ]);
-        }
-
-        if (User::where('email', $pending->new_email)->where('id', '!=', $pending->user_id)->exists()) {
-            $pending->delete();
-
-            return redirect()->route('admin.account')->withErrors([
-                'email' => 'Alamat email baru tersebut sudah digunakan oleh akun lain.',
-            ]);
-        }
-
-        $user = User::findOrFail($pending->user_id);
-        $oldEmail = $user->email;
-        $newEmail = $pending->new_email;
-        $wasGoogleConnected = ! empty($user->google_id);
-
-        $user->email = $newEmail;
-        $user->email_verified_at = now();
-        $user->google_id = null;
-        $user->save();
-
-        $pending->delete();
-
-        ActivityLogger::log(
-            'email_changed',
-            "User {$user->name} berhasil mengubah alamat email dari {$oldEmail} ke {$newEmail}.",
-            ['old_email' => $oldEmail, 'new_email' => $newEmail],
-            $user->id
-        );
-
-        if ($wasGoogleConnected) {
-            ActivityLogger::log(
-                'google_disconnected_on_email_change',
-                "Koneksi Google user {$user->name} diputuskan otomatis karena perubahan email akun.",
-                [
-                    'old_email' => $oldEmail,
-                    'new_email' => $newEmail,
-                ],
-                $user->id
-            );
-        }
-
-        $successMessage = $wasGoogleConnected
-            ? 'Alamat email akun Anda berhasil diperbarui menjadi '.$newEmail.'. Koneksi Google Anda telah diputuskan secara otomatis karena email akun berubah. Silakan hubungkan kembali di halaman Layanan Terhubung jika diperlukan.'
-            : 'Alamat email akun Anda berhasil diperbarui menjadi '.$newEmail.'.';
+        $result = $this->accountService->verifyEmailChange($token);
 
         return redirect()->route('admin.account')->with(
             'success',
-            $successMessage
+            $result['message']
         );
     }
 
     public function disconnectGoogle()
     {
         $user = Auth::user();
-
-        if (empty($user->password)) {
-            return redirect()->route('admin.account')->withErrors([
-                'google' => 'Anda harus mengatur password akun terlebih dahulu sebelum memutus koneksi Google.',
-            ]);
-        }
-
-        $user->google_id = null;
-        $user->save();
-
-        ActivityLogger::log(
-            'google_disconnected',
-            "User {$user->name} memutuskan koneksi login akun Google.",
-            [],
-            $user->id
-        );
+        $this->accountService->disconnectGoogle($user);
 
         return redirect()->route('admin.account')->with('success', 'Akun Google berhasil diputuskan dari akun Anda.');
     }

@@ -88,24 +88,36 @@
 
                         @if(isset($allElements) && $allElements->count() > 0)
                             @foreach($allElements as $element)
+                                @php
+                                    $elementId = match($element->type) {
+                                        'image' => 'imageBlock_' . $element->id,
+                                        'divider' => 'dividerBlock_' . $element->id,
+                                        'text' => 'textBlock_' . $element->id,
+                                        'video' => 'videoBlock_' . $element->id,
+                                        'social' => 'socialBlock_' . $element->id,
+                                        'digitalproduct' => 'digitalproduct_' . $element->id,
+                                        default => 'block_' . $element->id,
+                                    };
+                                    $isActive = $element->is_active ?? true;
+                                @endphp
                                 @switch($element->type)
                                     @case('image')
-                                        @include('admin_seller.features.microsites.blocks._image-block', ['imageEl' => $element])
+                                        <x-microsite.blocks.image :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                     @case('divider')
-                                        @include('admin_seller.features.microsites.blocks._divider-block', ['dividerEl' => $element])
+                                        <x-microsite.blocks.divider :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                     @case('text')
-                                        @include('admin_seller.features.microsites.blocks._text-block', ['textEl' => $element])
+                                        <x-microsite.blocks.text :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                     @case('video')
-                                        @include('admin_seller.features.microsites.blocks._video-block', ['videoEl' => $element])
+                                        <x-microsite.blocks.video :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                     @case('social')
-                                        @include('admin_seller.features.microsites.blocks._social-block', ['socialEl' => $element])
+                                        <x-microsite.blocks.social :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                     @case('digitalproduct')
-                                        @include('admin_seller.features.microsites.blocks._digital-product-block', ['digitalProduct' => $element])
+                                        <x-microsite.blocks.digital-product :element-id="$elementId" :data="$element" :is-active="$isActive" />
                                         @break
                                 @endswitch
                             @endforeach

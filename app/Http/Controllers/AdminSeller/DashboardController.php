@@ -179,7 +179,7 @@ class DashboardController extends Controller
         $target = $request->query('target');
 
         if ($target !== '#' && !filter_var($target, FILTER_VALIDATE_URL)) {
-            $target = '#';
+            abort(400, 'Invalid target URL');
         }
 
         $user = User::where('username', $linkId)->first();

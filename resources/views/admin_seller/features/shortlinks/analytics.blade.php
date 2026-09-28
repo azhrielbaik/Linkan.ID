@@ -82,7 +82,7 @@
     
     <div class="sa-chart-side">
         <div class="sa-card-header-clean">
-            <h3 class="sa-card-title-clean">Traffic by source</h3>
+            <h3 class="sa-card-title-clean">{{ __('admin.source_traffic_chart') }}</h3>
         </div>
         <div class="sa-chart-wrap" style="height: 250px; position: relative;">
             <div id="shortlinkSourceChart" style="height: 100%;"></div>
@@ -90,6 +90,13 @@
                 <i class="fas fa-chart-pie"></i> {{ __('admin.no_click_data') }}
             </div>
         </div>
+        @if(!empty($sources))
+        <div class="sa-sources-summary" style="padding: 10px 16px; font-size: 13px; color: #64748b;">
+            @foreach($sources as $sourceText)
+                <span class="badge" style="margin-right: 6px; display: inline-block;">{{ $sourceText }}</span>
+            @endforeach
+        </div>
+        @endif
     </div>
 </div>
 

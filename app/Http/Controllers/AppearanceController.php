@@ -78,4 +78,26 @@ class AppearanceController extends Controller
             ),
         ]);
     }
+
+    /**
+     * Update blocks ordering for the user's microsite appearance.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateOrder(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate([
+            'blocks_order' => 'required|string',
+            'appearance_id' => 'required|integer|exists:appearances,id'
+        ]);
+
+        $user = Auth::user();
+        $appearance = Appearance::where('user_id', $user->id)->findOrFail($request->appearance_id);
+
+        $appearance->blocks_order = $request->blocks_order;
+        $appearance->save();
+
+        return response()->json(['success' => true]);
+    }
 }

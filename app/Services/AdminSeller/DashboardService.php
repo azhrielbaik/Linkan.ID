@@ -179,41 +179,24 @@ class DashboardService
         foreach ($transactions as $t) {
             $timeAgo = \Carbon\Carbon::parse($t->updated_at)->diffForHumans();
             $buyerName = $t->buyer_name ?? 'Seseorang';
-            if ($t->status === 'success') {
-                $notifications[] = [
-                    'id'          => 'tx_succ_' . $t->id,
-                    'type'        => 'transaction',
-                    'title'       => 'Pembayaran Diterima!',
-                    'message'     => "<strong>{$buyerName}</strong> membeli <strong>{$t->product_title}</strong>",
-                    'avatar_url'  => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
-                    'state_class' => 'state-green',
-                    'badge'       => 'Sukses',
-                    'badge_class' => 'badge-tx-success',
-                    'icon'        => 'fas fa-check',
-                    'icon_bg'     => '#dcfce7',
-                    'icon_color'  => '#16a34a',
-                    'url'         => route('admin.orders'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($t->updated_at),
-                ];
-            } else {
-                $notifications[] = [
-                    'id'          => 'tx_oth_' . $t->id,
-                    'type'        => 'transaction_other',
-                    'title'       => 'Pembaruan Pesanan',
-                    'message'     => "Pesanan <strong>{$t->product_title}</strong> dari <strong>{$buyerName}</strong> berstatus: {$t->status}",
-                    'avatar_url'  => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
-                    'state_class' => 'state-blue',
-                    'badge'       => 'Info',
-                    'badge_class' => 'badge-tx-info',
-                    'icon'        => 'fas fa-info',
-                    'icon_bg'     => '#f3f4f6',
-                    'icon_color'  => '#6b7280',
-                    'url'         => route('admin.orders'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($t->updated_at),
-                ];
-            }
+            $isSuccess = $t->status === 'success';
+
+            $notifications[] = [
+                'id'            => 'tx_' . $t->id,
+                'type'          => 'transaction',
+                'status'        => $t->status,
+                'title'         => $isSuccess ? 'Pembayaran Diterima!' : 'Pembaruan Pesanan',
+                'message'       => $isSuccess
+                    ? "{$buyerName} membeli {$t->product_title}"
+                    : "Pesanan {$t->product_title} dari {$buyerName} berstatus: {$t->status}",
+                'buyer_name'    => $buyerName,
+                'product_title' => $t->product_title,
+                'amount'        => (float) ($t->total_price ?? 0),
+                'avatar_url'    => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
+                'url'           => route('admin.orders'),
+                'time_ago'      => $timeAgo,
+                'timestamp'     => strtotime($t->updated_at),
+            ];
         }
 
         // 2. Withdrawal / Payout Updates
@@ -225,41 +208,23 @@ class DashboardService
 
         foreach ($payouts as $p) {
             $timeAgo = \Carbon\Carbon::parse($p->updated_at)->diffForHumans();
-            if ($p->status === 'completed' || $p->status === 'success' || $p->status === 'approved') {
-                $notifications[] = [
-                    'id'          => 'pay_succ_' . $p->id,
-                    'type'        => 'payout',
-                    'title'       => 'Penarikan Dana Berhasil',
-                    'message'     => "Penarikan <strong>Rp " . number_format($p->amount, 0, ',', '.') . "</strong> ke {$p->method} berhasil",
-                    'avatar_url'  => null,
-                    'state_class' => 'state-green',
-                    'badge'       => 'Selesai',
-                    'badge_class' => 'badge-pay-success',
-                    'icon'        => 'fas fa-money-bill-wave',
-                    'icon_bg'     => '#dcfce7',
-                    'icon_color'  => '#16a34a',
-                    'url'         => route('admin.payout.history'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($p->updated_at),
-                ];
-            } elseif ($p->status === 'rejected') {
-                $notifications[] = [
-                    'id'          => 'pay_rej_' . $p->id,
-                    'type'        => 'payout',
-                    'title'       => 'Penarikan Dana Gagal',
-                    'message'     => "Penarikan <strong>Rp " . number_format($p->amount, 0, ',', '.') . "</strong> ditolak",
-                    'avatar_url'  => null,
-                    'state_class' => 'state-red',
-                    'badge'       => 'Ditolak',
-                    'badge_class' => 'badge-pay-rejected',
-                    'icon'        => 'fas fa-times',
-                    'icon_bg'     => '#fee2e2',
-                    'icon_color'  => '#dc2626',
-                    'url'         => route('admin.payout.history'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($p->updated_at),
-                ];
-            }
+            $isCompleted = in_array($p->status, ['completed', 'success', 'approved']);
+
+            $notifications[] = [
+                'id'          => 'pay_' . $p->id,
+                'type'        => 'payout',
+                'status'      => $isCompleted ? 'success' : 'rejected',
+                'title'       => $isCompleted ? 'Penarikan Dana Berhasil' : 'Penarikan Dana Gagal',
+                'message'     => $isCompleted
+                    ? "Penarikan Rp " . number_format($p->amount, 0, ',', '.') . " ke {$p->method} berhasil"
+                    : "Penarikan Rp " . number_format($p->amount, 0, ',', '.') . " ditolak",
+                'amount'      => (float) $p->amount,
+                'method'      => $p->method,
+                'avatar_url'  => null,
+                'url'         => route('admin.payout.history'),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($p->updated_at),
+            ];
         }
 
         // 3. User Suspension Alert (Current Status)
@@ -267,18 +232,13 @@ class DashboardService
             $notifications[] = [
                 'id'          => 'sys_suspension',
                 'type'        => 'system_alert',
+                'status'      => 'suspended',
                 'title'       => 'AKUN DITANGGUHKAN',
-                'message'     => '<strong>Sistem</strong> membekukan akun Anda. Segera ajukan banding.',
+                'message'     => 'Sistem membekukan akun Anda. Segera ajukan banding.',
                 'avatar_url'  => null,
-                'state_class' => 'state-red',
-                'badge'       => 'Penting',
-                'badge_class' => 'badge-sys-alert',
-                'icon'        => 'fas fa-exclamation-triangle',
-                'icon_bg'     => '#fef2f2',
-                'icon_color'  => '#ef4444',
                 'url'         => route('admin.dashboard'),
                 'time_ago'    => 'Saat Ini',
-                'timestamp'   => time(), // Selalu di atas
+                'timestamp'   => time(),
             ];
         }
 
@@ -291,41 +251,21 @@ class DashboardService
 
         foreach ($appealUpdates as $appeal) {
             $timeAgo = \Carbon\Carbon::parse($appeal->resolved_at ?? $appeal->updated_at)->diffForHumans();
-            if ($appeal->status === 'approved') {
-                $notifications[] = [
-                    'id'          => 'appeal_app_' . $appeal->id,
-                    'type'        => 'appeal',
-                    'title'       => 'Banding Akun Disetujui!',
-                    'message'     => '<strong>Banding Akun</strong> disetujui, akun dipulihkan',
-                    'avatar_url'  => null,
-                    'state_class' => 'state-green',
-                    'badge'       => 'Dipulihkan',
-                    'badge_class' => 'badge-appeal-approved',
-                    'icon'        => 'fas fa-shield-alt',
-                    'icon_bg'     => '#dcfce7',
-                    'icon_color'  => '#16a34a',
-                    'url'         => route('admin.dashboard'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($appeal->resolved_at ?? $appeal->updated_at),
-                ];
-            } else {
-                $notifications[] = [
-                    'id'          => 'appeal_rej_' . $appeal->id,
-                    'type'        => 'appeal',
-                    'title'       => 'Banding Akun Ditolak',
-                    'message'     => '<strong>Banding Akun</strong> ditolak oleh Admin Platform',
-                    'avatar_url'  => null,
-                    'state_class' => 'state-red',
-                    'badge'       => 'Ditolak',
-                    'badge_class' => 'badge-appeal-rejected',
-                    'icon'        => 'fas fa-shield-alt',
-                    'icon_bg'     => '#fee2e2',
-                    'icon_color'  => '#dc2626',
-                    'url'         => route('admin.dashboard'),
-                    'time_ago'    => $timeAgo,
-                    'timestamp'   => strtotime($appeal->resolved_at ?? $appeal->updated_at),
-                ];
-            }
+            $isApproved = $appeal->status === 'approved';
+
+            $notifications[] = [
+                'id'          => 'appeal_' . $appeal->id,
+                'type'        => 'appeal',
+                'status'      => $appeal->status,
+                'title'       => $isApproved ? 'Banding Akun Disetujui!' : 'Banding Akun Ditolak',
+                'message'     => $isApproved
+                    ? 'Banding Akun disetujui, akun dipulihkan'
+                    : 'Banding Akun ditolak oleh Admin Platform',
+                'avatar_url'  => null,
+                'url'         => route('admin.dashboard'),
+                'time_ago'    => $timeAgo,
+                'timestamp'   => strtotime($appeal->resolved_at ?? $appeal->updated_at),
+            ];
         }
 
         // 5. Broadcast Announcements Aktif
@@ -340,15 +280,10 @@ class DashboardService
             $notifications[] = [
                 'id'          => 'broadcast_' . $b->id,
                 'type'        => 'broadcast',
+                'status'      => 'active',
                 'title'       => $b->title,
-                'message'     => "<strong>Pengumuman:</strong> " . e($b->title),
+                'message'     => 'Pengumuman: ' . $b->title,
                 'avatar_url'  => null,
-                'state_class' => 'state-orange',
-                'badge'       => 'Pengumuman',
-                'badge_class' => 'badge-broadcast',
-                'icon'        => 'fas fa-bullhorn',
-                'icon_bg'     => '#EEF0FE',
-                'icon_color'  => '#5A5BF1',
                 'url'         => route('admin.dashboard'),
                 'time_ago'    => $timeAgo,
                 'timestamp'   => strtotime($b->created_at),
