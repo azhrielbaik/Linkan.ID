@@ -14,7 +14,10 @@ class StoreDigitalProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'photos' => 'nullable|array|max:5',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'existing_media' => 'nullable|string',
             'title' => 'required|string|max:200',
             'description' => ['nullable', 'string', function ($attribute, $value, $fail) {
                 if (str_word_count(strip_tags(html_entity_decode($value))) > 250) {

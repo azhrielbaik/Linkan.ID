@@ -59,6 +59,11 @@ class DigitalProduct extends Model
         return $this->hasMany(Transaction::class, 'product_id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class, 'product_id');
+    }
+
     protected static function boot()
     {
         parent::boot();

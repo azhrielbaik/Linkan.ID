@@ -24,6 +24,214 @@
         endTime: ''
     };
 
+    // ============================================================
+    // MODE SELECTOR: "Pilih dari Toko" vs "Buat Baru"
+    // ============================================================
+
+    let currentDpMode = null; // 'pick' | 'create'
+
+    function switchDpMode(mode) {
+        currentDpMode = mode;
+
+        const modePickBtn   = document.getElementById('dpModePickBtn');
+        const modeCreateBtn = document.getElementById('dpModeCreateBtn');
+        const pickPanel     = document.getElementById('dpPickFromTokoPanel');
+        const createPanel   = document.getElementById('dpCreatePanel');
+        const btnNext       = document.getElementById('btn-dp-next');
+        const btnPrev       = document.getElementById('btn-dp-prev');
+
+        if (mode === 'pick') {
+            if (modePickBtn) {
+                modePickBtn.style.borderColor = '#ED842C';
+                modePickBtn.style.background = '#fff7ed';
+            }
+            if (modeCreateBtn) {
+                modeCreateBtn.style.borderColor = '#e5e7eb';
+                modeCreateBtn.style.background = '#fff';
+            }
+            if (pickPanel) pickPanel.style.display    = 'block';
+            if (createPanel) createPanel.style.display  = 'none';
+            if (btnNext) btnNext.style.display      = 'none';
+            if (btnPrev) btnPrev.style.display      = 'none';
+
+            // Render list produk dari Toko
+            renderTokoProductList(window._tokoProducts || []);
+        } else {
+            if (modeCreateBtn) {
+                modeCreateBtn.style.borderColor = '#ED842C';
+                modeCreateBtn.style.background = '#fff7ed';
+            }
+            if (modePickBtn) {
+                modePickBtn.style.borderColor = '#e5e7eb';
+                modePickBtn.style.background = '#fff';
+            }
+            if (pickPanel) pickPanel.style.display    = 'none';
+            if (createPanel) createPanel.style.display  = 'block';
+            if (btnNext) btnNext.style.display      = 'inline-flex';
+        }
+    }
+
+    window.switchDpMode = switchDpMode;
+    window.MicrositeBuilder.switchDpMode = switchDpMode;
+
+    // Delegated click listener so clicking mode cards always responds immediately
+    document.addEventListener('click', function(e) {
+        const pickBtn = e.target.closest('#dpModePickBtn');
+        if (pickBtn) {
+            e.preventDefault();
+            switchDpMode('pick');
+            return;
+        }
+        const createBtn = e.target.closest('#dpModeCreateBtn');
+        if (createBtn) {
+            e.preventDefault();
+            switchDpMode('create');
+            return;
+        }
+    });
+
+    function renderTokoProductList(products) {
+        const list     = document.getElementById('dpPickProductList');
+        const emptyMsg = document.getElementById('dpPickEmptyMsg');
+        const search   = (document.getElementById('dpPickSearch')?.value || '').toLowerCase().trim();
+
+        if (!list || !emptyMsg) return;
+
+        const filtered = (products || []).filter(p =>
+            (p.title || '').toLowerCase().includes(search)
+        );
+
+        list.innerHTML = '';
+
+        if (filtered.length === 0) {
+            emptyMsg.style.display = 'block';
+            list.style.display     = 'none';
+            return;
+        }
+
+        emptyMsg.style.display = 'none';
+        list.style.display     = 'flex';
+
+        // Dapatkan produk yang sudah di-pin ke microsite ini
+        const urlsEl      = document.getElementById('micrositeEditorUrls');
+        const blocksOrder = (urlsEl?.dataset?.appearanceBlocksOrder || '').split(',');
+        const pinnedIds   = blocksOrder
+            .filter(b => b.startsWith('digitalproduct_'))
+            .map(b => parseInt(b.replace('digitalproduct_', '')));
+
+        filtered.forEach(product => {
+            const isPinned = pinnedIds.includes(product.id);
+
+            const card = document.createElement('div');
+            card.style.cssText = `
+                display: flex; align-items: center; gap: 12px;
+                padding: 10px 12px; border-radius: 8px;
+                border: 1px solid ${isPinned ? '#fed7aa' : '#e5e7eb'};
+                background: ${isPinned ? '#fff7ed' : '#fff'};
+                cursor: ${isPinned ? 'default' : 'pointer'};
+                transition: all 0.15s;
+            `;
+
+            if (!isPinned) {
+                card.onmouseover = () => { card.style.borderColor = '#ED842C'; card.style.background = '#fff7ed'; };
+                card.onmouseout  = () => { card.style.borderColor = '#e5e7eb'; card.style.background = '#fff'; };
+            }
+
+            // Gambar produk
+            const imgWrap = document.createElement('div');
+            imgWrap.style.cssText = 'width: 44px; height: 44px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center;';
+            if (product.image) {
+                const img = document.createElement('img');
+                img.src   = product.image;
+                img.alt   = product.title;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                imgWrap.appendChild(img);
+            } else {
+                imgWrap.innerHTML = '<i class="fas fa-box" style="color: #ED842C; font-size: 18px;"></i>';
+            }
+            card.appendChild(imgWrap);
+
+            // Info produk
+            const info = document.createElement('div');
+            info.style.flex = '1';
+            info.style.minWidth = '0';
+            info.innerHTML = `
+                <div style="font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${product.title}</div>
+                <div style="font-size: 12px; color: #64748b;">${product.price}</div>
+            `;
+            card.appendChild(info);
+
+            // Tombol / Status
+            const action = document.createElement('div');
+            action.style.flexShrink = '0';
+            if (isPinned) {
+                action.innerHTML = '<span style="font-size: 11px; color: #ED842C; font-weight: 700; background: #fed7aa; padding: 4px 8px; border-radius: 20px;">Sudah ada</span>';
+            } else {
+                const addBtn = document.createElement('button');
+                addBtn.type = 'button';
+                addBtn.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+                addBtn.style.cssText = 'padding: 6px 12px; background: #ED842C; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;';
+                addBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pinTokoProductToMicrosite(product, addBtn);
+                };
+                action.appendChild(addBtn);
+            }
+            card.appendChild(action);
+
+            list.appendChild(card);
+        });
+    }
+
+    window.filterTokoProducts = function(query) {
+        renderTokoProductList(window._tokoProducts || []);
+    };
+
+    function pinTokoProductToMicrosite(product, btn) {
+        const urlsEl       = document.getElementById('micrositeEditorUrls');
+        const appearanceId = urlsEl?.dataset?.appearanceId;
+        const pinUrl       = urlsEl?.dataset?.routeDpPin;
+
+        if (!appearanceId || !pinUrl) {
+            alert('Tidak dapat menemukan microsite aktif.');
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        fetch(pinUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                product_id:    product.id,
+                appearance_id: appearanceId,
+            }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Gagal menambahkan produk.');
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Gagal menghubungi server.');
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+        });
+    }
+
     // Initialize Quill Editor
     let dpQuill;
     
@@ -140,6 +348,29 @@
 
         updateDigitalProductWizardUI();
 
+        // Reset mode selector
+        currentDpMode = null;
+        const modeSelector = document.getElementById('dpModeSelector');
+        if (modeSelector) modeSelector.style.display = 'block';
+        const pickPanel = document.getElementById('dpPickFromTokoPanel');
+        if (pickPanel) pickPanel.style.display = 'none';
+        const createPanel = document.getElementById('dpCreatePanel');
+        if (createPanel) createPanel.style.display = 'none';
+        const pickSearch = document.getElementById('dpPickSearch');
+        if (pickSearch) pickSearch.value = '';
+        const btnNext = document.getElementById('btn-dp-next');
+        if (btnNext) btnNext.style.display = 'none';
+        const btnPrev = document.getElementById('btn-dp-prev');
+        if (btnPrev) btnPrev.style.display = 'none';
+
+        ['dpModePickBtn', 'dpModeCreateBtn'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.borderColor = '#e5e7eb';
+                el.style.background = '#fff';
+            }
+        });
+
         // Show wizard
         document.getElementById('digitalProductWizardPanel').style.display = 'block';
     }
@@ -227,6 +458,17 @@
         toggleDpSchedule(dpFormState.isScheduled);
 
         updateDigitalProductWizardUI();
+
+        // In edit mode, bypass mode selector directly to create/edit form
+        const modeSelector = document.getElementById('dpModeSelector');
+        if (modeSelector) modeSelector.style.display = 'none';
+        const pickPanel = document.getElementById('dpPickFromTokoPanel');
+        if (pickPanel) pickPanel.style.display = 'none';
+        const createPanel = document.getElementById('dpCreatePanel');
+        if (createPanel) createPanel.style.display = 'block';
+        const btnNext = document.getElementById('btn-dp-next');
+        if (btnNext) btnNext.style.display = 'inline-flex';
+
         document.getElementById('digitalProductWizardPanel').style.display = 'block';
     }
 
@@ -829,7 +1071,13 @@
     }
 
     // Expose functions to window
-        window.openEditDigitalProductWizard = openEditDigitalProductWizard;
+    window.switchDpMode = switchDpMode;
+    window.filterTokoProducts = filterTokoProducts;
+    window.pinTokoProductToMicrosite = pinTokoProductToMicrosite;
+    if (window.MicrositeBuilder) {
+        window.MicrositeBuilder.switchDpMode = switchDpMode;
+    }
+    window.openEditDigitalProductWizard = openEditDigitalProductWizard;
     window.cancelDigitalProductWizard = cancelDigitalProductWizard;
     window.updateDpTitle = updateDpTitle;
     window.handleDpFiles = handleDpFiles;

@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 // Root fallback
 Route::get('/', fn () => redirect('/id'));
 Route::get('/bantuan/sengketa', fn () => redirect('/id/bantuan/sengketa'));
+Route::get('/review/{token}', fn (string $token) => redirect('/id/review/' . $token));
 
 // Switch Language Route (Redirects to new locale)
 Route::get('/lang/{lang}', function ($lang) {
@@ -100,6 +101,29 @@ Route::get('/auth/google/connect', function () {
     return redirect()->to("/{$locale}/auth/google/connect");
 })->middleware('auth');
 
+// Fallbacks for public product & checkout pages without locale prefix
+Route::get('/checkout/{id}', function (\Illuminate\Http\Request $request, $id) {
+    $locale = session('locale', config('app.locale', 'id'));
+    $query = $request->getQueryString();
+    return redirect()->to("/{$locale}/checkout/{$id}" . ($query ? '?' . $query : ''));
+});
+Route::post('/checkout/{id}', [DigitalProductController::class, 'checkout']);
+
+Route::get('/checkout/{id}/success', function (\Illuminate\Http\Request $request, $id) {
+    $locale = session('locale', config('app.locale', 'id'));
+    $query = $request->getQueryString();
+    return redirect()->to("/{$locale}/checkout/{$id}/success" . ($query ? '?' . $query : ''));
+});
+
+Route::get('/product/{id}', function (\Illuminate\Http\Request $request, $id) {
+    $locale = session('locale', config('app.locale', 'id'));
+    $query = $request->getQueryString();
+    return redirect()->to("/{$locale}/product/{$id}" . ($query ? '?' . $query : ''));
+});
+
+Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty']);
+Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction']);
+
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
     Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
 
@@ -152,6 +176,14 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
     Route::get('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'create'])->name('public.dispute.create');
     Route::post('/bantuan/sengketa/check-order', [\App\Http\Controllers\PublicDisputeController::class, 'checkOrder'])->middleware('throttle:30,1')->name('public.dispute.check_order');
     Route::post('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'store'])->middleware('throttle:10,1')->name('public.dispute.store');
+
+    // Review Produk Digital (Publik, Tanpa Login, Token-based)
+    Route::get('/review/{token}', [\App\Http\Controllers\PublicReviewController::class, 'show'])
+        ->middleware('throttle:10,1')
+        ->name('public.review.show');
+    Route::post('/review/{token}', [\App\Http\Controllers\PublicReviewController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('public.review.store');
 
     // Password-protected shortlink
     Route::get('/p/{slug}', [ShortlinkController::class, 'passwordForm'])->name('shortlink.password.form');
@@ -208,6 +240,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::delete('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'destroy'])->name('elements.social.destroy');
 
         // Digital Product Element Routes
+        Route::post('/elements/digital-product/pin', [\App\Http\Controllers\DigitalProductElementController::class, 'pinExisting'])->name('elements.digital-product.pin');
         Route::post('/elements/digital-product', [\App\Http\Controllers\DigitalProductElementController::class, 'store'])->name('elements.digital-product.store');
         Route::delete('/elements/digital-product/{id}', [\App\Http\Controllers\DigitalProductElementController::class, 'destroy'])->name('elements.digital-product.destroy');
 

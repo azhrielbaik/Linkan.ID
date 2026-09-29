@@ -34,6 +34,7 @@ return [
     'buy' => 'Beli',
     // Digital Product
     'add_digital_product' => 'Tambah Produk Digital',
+    'edit_digital_product' => 'Edit Produk Digital',
     'product_rejected' => 'Produk ini sebelumnya ditolak. Silakan perbaiki dan kirim ulang untuk verifikasi.',
     'details' => 'Detail',
     'image' => 'Gambar',

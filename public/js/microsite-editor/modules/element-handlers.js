@@ -1361,92 +1361,96 @@
         "❌": "silang cross", "⚠️": "warning awas", "💡": "lampu ide idea"
     };
 
-    // Emoji search listener
-    document.addEventListener('input', function (e) {
-        if (e.target.matches('.js-emoji-search')) {
-            const query = e.target.value.toLowerCase().trim();
-            const id = e.target.dataset.targetId;
-            const container = document.getElementById('emojiScroll_' + id);
+    // Event listeners registration (Idempotent: only bound once on document)
+    if (!window.__micrositeElementHandlersClicksBound) {
+        window.__micrositeElementHandlersClicksBound = true;
 
-            if (container) {
-                const sections = container.querySelectorAll('.emoji-section-title');
-                const grids = container.querySelectorAll('.emoji-grid');
+        // Emoji search listener
+        document.addEventListener('input', function (e) {
+            if (e.target.matches('.js-emoji-search')) {
+                const query = e.target.value.toLowerCase().trim();
+                const id = e.target.dataset.targetId;
+                const container = document.getElementById('emojiScroll_' + id);
 
-                if (query === '') {
-                    sections.forEach(s => s.style.display = 'block');
-                    grids.forEach(g => {
-                        g.style.display = 'grid';
-                        g.querySelectorAll('.emoji-item').forEach(item => item.style.display = 'flex');
+                if (container) {
+                    const sections = container.querySelectorAll('.emoji-section-title');
+                    const grids = container.querySelectorAll('.emoji-grid');
+
+                    if (query === '') {
+                        sections.forEach(s => s.style.display = 'block');
+                        grids.forEach(g => {
+                            g.style.display = 'grid';
+                            g.querySelectorAll('.emoji-item').forEach(item => item.style.display = 'flex');
+                        });
+                        return;
+                    }
+
+                    sections.forEach(s => s.style.display = 'none');
+                    grids.forEach(grid => {
+                        let hasVisible = false;
+                        grid.querySelectorAll('.emoji-item').forEach(item => {
+                            const emoji = item.getAttribute('data-emoji');
+                            const keywords = emojiKeywords[emoji] || "";
+                            if (keywords.includes(query) || emoji === query) {
+                                item.style.display = 'flex';
+                                hasVisible = true;
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                        grid.style.display = hasVisible ? 'grid' : 'none';
                     });
-                    return;
-                }
-
-                sections.forEach(s => s.style.display = 'none');
-                grids.forEach(grid => {
-                    let hasVisible = false;
-                    grid.querySelectorAll('.emoji-item').forEach(item => {
-                        const emoji = item.getAttribute('data-emoji');
-                        const keywords = emojiKeywords[emoji] || "";
-                        if (keywords.includes(query) || emoji === query) {
-                            item.style.display = 'flex';
-                            hasVisible = true;
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                    grid.style.display = hasVisible ? 'grid' : 'none';
-                });
-            }
-        }
-    });
-
-    // Event delegation for element clicks
-    document.addEventListener('click', function (e) {
-        let target;
-
-        if ((target = e.target.closest('.js-toggle-edit-form'))) {
-            const type = target.dataset.type;
-            const id = target.dataset.targetId;
-            const forceOpen = target.dataset.forceOpen === 'true';
-
-            if (type === 'Profile') toggleProfileEditForm(forceOpen);
-            else if (type === 'Image') toggleImageEditForm(id, forceOpen);
-            else if (type === 'Divider') toggleDividerEditForm(id, forceOpen);
-            else if (type === 'Text') toggleTextEditForm(id, forceOpen);
-            else if (type === 'Video') toggleVideoEditForm(id, forceOpen);
-            else if (type === 'Social') toggleSocialEditForm(id, forceOpen);
-            else if (type === 'DigitalProduct') toggleDigitalProductEditForm(id, forceOpen);
-
-            if (window.innerWidth > 1024) {
-                let liveElementId = type === 'Profile' ? 'liveProfileSection' : 'live_' + id;
-                const liveElement = document.getElementById(liveElementId);
-                if (liveElement) {
-                    liveElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
-        }
+        });
 
-        if ((target = e.target.closest('.js-remove-element'))) {
-            e.stopPropagation();
-            const type = target.dataset.type;
-            const id = target.dataset.targetId;
-            if (type === 'Element') removeDynamicElement(id);
-            else if (type === 'Divider') removeDynamicDivider(id);
-            else if (type === 'Text') removeDynamicText(id);
-            else if (type === 'Video') removeDynamicVideo(id);
-            else if (type === 'SocialMedia') removeDynamicSocialMedia(id);
-        }
+        // Event delegation for element clicks
+        document.addEventListener('click', function (e) {
+            let target;
 
-        if ((target = e.target.closest('.js-save-element'))) {
-            const type = target.dataset.type;
-            const id = target.dataset.targetId;
+            if ((target = e.target.closest('.js-toggle-edit-form'))) {
+                const type = target.dataset.type;
+                const id = target.dataset.targetId;
+                const forceOpen = target.dataset.forceOpen === 'true';
 
-            if (type === 'Element') saveDynamicElement(id);
-            else if (type === 'Divider') saveDynamicDivider(id);
-            else if (type === 'Text') saveDynamicText(id);
-            else if (type === 'Video') saveDynamicVideo(id);
-            else if (type === 'SocialMedia') saveDynamicSocialMedia(id);
-        }
+                if (type === 'Profile') toggleProfileEditForm(forceOpen);
+                else if (type === 'Image') toggleImageEditForm(id, forceOpen);
+                else if (type === 'Divider') toggleDividerEditForm(id, forceOpen);
+                else if (type === 'Text') toggleTextEditForm(id, forceOpen);
+                else if (type === 'Video' || type === 'video' || type === 'Embed Video') toggleVideoEditForm(id, forceOpen);
+                else if (type === 'Social' || type === 'social' || type === 'SocialMedia') toggleSocialEditForm(id, forceOpen);
+                else if (type === 'DigitalProduct' || type === 'digitalproduct' || type === 'digital_product') toggleDigitalProductEditForm(id, forceOpen);
+
+                if (window.innerWidth > 1024) {
+                    let liveElementId = type === 'Profile' ? 'liveProfileSection' : 'live_' + id;
+                    const liveElement = document.getElementById(liveElementId);
+                    if (liveElement) {
+                        liveElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+
+            if ((target = e.target.closest('.js-remove-element'))) {
+                e.stopPropagation();
+                const type = target.dataset.type;
+                const id = target.dataset.targetId;
+                if (type === 'Element') removeDynamicElement(id);
+                else if (type === 'Divider') removeDynamicDivider(id);
+                else if (type === 'Text') removeDynamicText(id);
+                else if (type === 'Video' || type === 'video' || type === 'Embed Video') removeDynamicVideo(id);
+                else if (type === 'SocialMedia' || type === 'Social') removeDynamicSocialMedia(id);
+            }
+
+            if ((target = e.target.closest('.js-save-element'))) {
+                const type = target.dataset.type;
+                const id = target.dataset.targetId;
+
+                if (type === 'Element') saveDynamicElement(id);
+                else if (type === 'Divider') saveDynamicDivider(id);
+                else if (type === 'Text') saveDynamicText(id);
+                else if (type === 'Video' || type === 'video' || type === 'Embed Video') saveDynamicVideo(id);
+                else if (type === 'SocialMedia' || type === 'Social') saveDynamicSocialMedia(id);
+            }
 
         if ((target = e.target.closest('.js-remove-social-platform'))) {
             removeSocialPlatformFromForm(target.dataset.targetId, target.dataset.platform);
@@ -1581,6 +1585,7 @@
             }
         }
     });
+    }
 
     // Register module namespace
     window.MicrositeBuilder.ElementHandlers = {

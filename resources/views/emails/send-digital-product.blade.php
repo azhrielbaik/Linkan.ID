@@ -87,6 +87,38 @@
             @endif
         </div>
 
+        {{-- ===================================================
+             SECTION: Review & Komplain
+             =================================================== --}}
+        <div style="margin-top: 30px; padding: 24px; background: #fff7ed; border-radius: 10px; border: 1px solid #fed7aa; text-align: center;">
+            <p style="font-size: 15px; font-weight: 700; color: #92400e; margin: 0 0 6px 0;">
+                🌟 Bagaimana pengalamanmu?
+            </p>
+            <p style="font-size: 13px; color: #78350f; margin: 0 0 18px 0;">
+                Ulasan kamu sangat berarti bagi penjual dan pembeli lainnya.
+            </p>
+            @if(isset($reviewUrl) && $reviewUrl)
+                <a href="{{ $reviewUrl }}"
+                   target="_blank"
+                   style="display: inline-block; padding: 11px 28px; background: #ED842C; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 50px; text-decoration: none;">
+                    ⭐ Beri Ulasan Sekarang
+                </a>
+            @endif
+        </div>
+
+        <div style="margin-top: 16px; text-align: center;">
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 10px 0;">
+                Ada masalah dengan pesananmu?
+            </p>
+            @if(isset($disputeUrl) && $disputeUrl)
+                <a href="{{ $disputeUrl }}"
+                   target="_blank"
+                   style="display: inline-block; padding: 9px 22px; background: #ffffff; color: #ef4444; font-weight: 600; font-size: 13px; border-radius: 50px; text-decoration: none; border: 1px solid #fca5a5;">
+                    ⚠️ Ajukan Komplain
+                </a>
+            @endif
+        </div>
+
         <hr style="border-color: #ff7a00; margin: 20px 0;">
 
         <p>Kalau ada pertanyaan, balas saja email ini ya.</p>

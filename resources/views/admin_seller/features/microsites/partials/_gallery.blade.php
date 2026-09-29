@@ -68,7 +68,7 @@
                             <a href="{{ url('/' . $appearance->alias) }}" target="_blank" class="btn-action-secondary">
                                 <i class="fa-solid fa-arrow-up-from-ground-water"></i> Kunjungi
                             </a>
-                            <a href="{{ route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary">
+                            <a href="{{ route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary" data-turbo="false">
                                 <i class="fas fa-pen"></i> {{ __('admin.edit_block') }}
                             </a>
 

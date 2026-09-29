@@ -1,7 +1,70 @@
 <div id="digitalProductWizardPanel" style="display: none;">
                     <div class="dp-wizard-container">
-                        <!-- Stepper UI -->
-                        <div class="dp-stepper-wrapper">
+                        {{-- MODE SELECTOR: Pilih dari Toko vs Buat Baru --}}
+                        <script>
+                            window.switchDpMode = window.switchDpMode || function(mode) {
+                                if (window.MicrositeBuilder && typeof window.MicrositeBuilder.switchDpMode === 'function') {
+                                    return window.MicrositeBuilder.switchDpMode(mode);
+                                }
+                            };
+                        </script>
+                        <div id="dpModeSelector" style="margin-bottom: 20px;">
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px; font-weight: 500;">
+                                Bagaimana cara Anda menambahkan produk?
+                            </p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                {{-- Opsi A: Pilih dari Toko --}}
+                                <div id="dpModePickBtn" onclick="if(window.switchDpMode) window.switchDpMode('pick');"
+                                     style="padding: 14px 12px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                                    <i class="fas fa-store" style="font-size: 20px; color: #ED842C; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Pilih dari Toko</div>
+                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">Gunakan produk yang sudah ada</div>
+                                </div>
+                                {{-- Opsi B: Buat Baru --}}
+                                <div id="dpModeCreateBtn" onclick="if(window.switchDpMode) window.switchDpMode('create');"
+                                     style="padding: 14px 12px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                                    <i class="fas fa-plus-circle" style="font-size: 20px; color: #6366f1; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Buat Produk Baru</div>
+                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">Isi detail produk dari awal</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- PANEL: Picker "Pilih dari Toko" --}}
+                        <div id="dpPickFromTokoPanel" style="display: none;">
+                            <div style="font-size: 12px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+                                Produk di Toko Anda
+                            </div>
+
+                            {{-- Search box --}}
+                            <div style="position: relative; margin-bottom: 14px;">
+                                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 13px;"></i>
+                                <input type="text" id="dpPickSearch" placeholder="Cari produk..."
+                                       oninput="filterTokoProducts(this.value)"
+                                       style="width: 100%; padding: 9px 12px 9px 34px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc;">
+                            </div>
+
+                            {{-- List produk --}}
+                            <div id="dpPickProductList"
+                                 style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                                {{-- Diisi oleh JavaScript --}}
+                            </div>
+
+                            {{-- Pesan jika kosong --}}
+                            <div id="dpPickEmptyMsg" style="display: none; text-align: center; padding: 30px 0; color: #94a3b8;">
+                                <i class="fas fa-box-open" style="font-size: 28px; display: block; margin-bottom: 8px;"></i>
+                                <p style="font-size: 13px;">Belum ada produk di Toko Anda.</p>
+                                <a href="{{ route('admin.digital-products.create') }}" target="_blank"
+                                   style="font-size: 12px; color: #ED842C; font-weight: 600; text-decoration: none;">
+                                    + Tambah produk ke Toko
+                                </a>
+                            </div>
+                        </div>
+
+                        {{-- Konten wizard buat produk baru --}}
+                        <div id="dpCreatePanel" style="display: none;">
+                            <!-- Stepper UI -->
+                            <div class="dp-stepper-wrapper">
                             <div class="dp-stepper-item active" id="dp-step-indicator-1">
                                 <div class="dp-stepper-circle">
                                     <i class="fas fa-check" id="dp-step-icon-1" style="display:none;"></i>
@@ -255,6 +318,7 @@
                                 </div>
                             </div>
                         </div>
+                        </div> {{-- Closes #dpCreatePanel --}}
 
                         <!-- Wizard Footer (Navigation) -->
                         <div class="dp-wizard-footer">

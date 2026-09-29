@@ -83,6 +83,33 @@ class MicrositeController extends Controller
             return $pos !== false ? $pos : 9999;
         })->values();
 
+        // Ambil semua produk digital milik user untuk fitur "Pilih dari Toko"
+        $existingProducts = DigitalProduct::where('user_id', $user->id)
+            ->select('id', 'title', 'price', 'pricing_type', 'price_min', 'image', 'media_files')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($p) {
+                // Resolve URL gambar untuk preview di picker
+                $image = null;
+                $mediaFiles = is_string($p->media_files) ? json_decode($p->media_files, true) : $p->media_files;
+                if (is_array($mediaFiles) && count($mediaFiles) > 0) {
+                    $url = $mediaFiles[0]['url'] ?? $mediaFiles[0]['path'] ?? null;
+                    if ($url) {
+                        $image = str_starts_with($url, 'http') ? $url : asset('storage/' . $url);
+                    }
+                } elseif ($p->image) {
+                    $image = str_starts_with($p->image, 'http') ? $p->image : asset('storage/' . $p->image);
+                }
+                return [
+                    'id'    => $p->id,
+                    'title' => $p->title,
+                    'price' => $p->pricing_type === 'fixed'
+                        ? 'Rp ' . number_format($p->price, 0, ',', '.')
+                        : 'Mulai Rp ' . number_format($p->price_min, 0, ',', '.'),
+                    'image' => $image,
+                ];
+            });
+
         return view('admin_seller.features.microsites.index', compact(
             'digitalProducts',
             'appearance',
@@ -93,7 +120,8 @@ class MicrositeController extends Controller
             'socialMediaElements',
             'allElements',
             'totalProducts',
-            'viewMode'
+            'viewMode',
+            'existingProducts'
         ));
     }
 

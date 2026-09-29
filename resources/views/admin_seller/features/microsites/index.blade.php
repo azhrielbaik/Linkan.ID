@@ -10,6 +10,11 @@
 @section("content")
 <div class="dashboard-mylinkan-page">
 
+{{-- Data produk Toko untuk fitur "Pilih dari Toko" di wizard --}}
+<script>
+    window._tokoProducts = @json($existingProducts ?? []);
+</script>
+
 <div class="microsite-container">
     
     @if($viewMode == 'gallery')
@@ -33,11 +38,6 @@
 @endsection
 
 @push("scripts")
-<!-- Include SortableJS for robust drag and drop -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-<!-- Include Cropper.js for image cropping -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
 <script>
     window.MicrositeConfig = {
         authUserName: '{{ Auth::user()->name }}',
@@ -47,12 +47,17 @@
     };
 </script>
 <script src="{{ asset('js/microsite-editor/modules/modal-manager.js') }}?v={{ time() }}"></script>
+
+@if($viewMode !== 'gallery')
+<!-- Include SortableJS for robust drag and drop -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- Include Cropper.js for image cropping -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <script src="{{ asset('js/microsite-editor/modules/drag-order.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor/modules/preview-sync.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor/modules/element-handlers.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor.js') }}?v={{ time() }}"></script>
-
-
 
 <div id="micrositeEditorUrls" style="display: none;"
     data-route-image-delete="{{ url('/admin/elements/image') }}"
@@ -66,6 +71,7 @@
     data-route-social-delete="{{ url('/admin/elements/social') }}"
     data-route-social-store="{{ route('admin.elements.social.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-dp-store="{{ route('admin.elements.digital-product.store', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
+    data-route-dp-pin="{{ route('admin.elements.digital-product.pin') }}"
     data-route-dp-delete="{{ url('/admin/elements/digital-product') }}"
     data-route-order-update="{{ route('admin.elements.order.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
     data-route-appearance-update="{{ route('admin.appearance.update', ['appearance_id' => isset($appearance) ? $appearance->id : '']) }}"
@@ -73,6 +79,10 @@
     data-appearance-blocks-order="{{ $appearance->blocks_order ?? '' }}"
     data-appearance-id="{{ isset($appearance) ? $appearance->id : '' }}">
 </div>
+
+<script>
+    window._tokoProducts = @json($existingProducts ?? []);
+</script>
 
 <script>
 // ================================================================
@@ -324,5 +334,6 @@ function _saveDesignSetting(settingPayload) {
     }
 })();
 </script>
+@endif
 
 @endpush

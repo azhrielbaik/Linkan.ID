@@ -1,16 +1,25 @@
 @extends("admin_seller.layouts.app")
 
-@section("page_title", __('admin.digital_product'))
+@section("page_title", isset($product) ? __('admin.edit_digital_product') : __('admin.add_digital_product'))
 
 @push("styles")
 <link rel="stylesheet" href="{{ asset('css/pages/digital-product.css') }}?v={{ time() }}" data-turbo-track="reload">
+<link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
 @endpush
 
 @section("content")
 <div class="dashboard-digital-product-page">
 
     <div class="page-header">
-        <h1 class="page-title">{{ isset($product) ? __('admin.edit_digital_product') : __('admin.add_digital_product') }}</h1>
+        <div class="header-title-group">
+            <a href="{{ route('admin.digital-products.index') }}" class="btn-back-circle" title="Kembali ke Toko">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="page-title">{{ isset($product) ? __('admin.edit_digital_product') : __('admin.add_digital_product') }}</h1>
+        </div>
+        <a href="{{ route('admin.digital-products.index') }}" class="btn-back-link">
+            <i class="fas fa-arrow-left"></i> Kembali ke Toko
+        </a>
     </div>
 
     <!-- Alerts -->
@@ -20,7 +29,7 @@
         </div>
     @endif
 
-    @if ($errors->any())
+    @if (isset($errors) && $errors->any())
         <div class="alert alert-danger" style="background: #ffe3e3; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
             <ul style="margin: 0; padding-left: 20px; color: #b30000;">
                 @foreach ($errors->all() as $error)
@@ -74,12 +83,81 @@
                     <input type="text" name="title" class="row-input" placeholder="Masukkan nama produk..." value="{{ isset($product) ? $product->title : old('title') }}">
                 </div>
 
-                <div class="form-row-box textarea-box">
-                    <span class="row-label">{{ __('admin.description') }}:</span>
-                    <textarea name="description" class="row-textarea" placeholder="Deskripsi produk...">{{ isset($product) ? $product->description : old('description') }}</textarea>
+                <div class="form-row-box textarea-box" style="display: block;">
+                    <span class="row-label" style="display: block; margin-bottom: 8px;">{{ __('admin.description') }}:</span>
+                    @php
+                        // Bersihkan tag kotor: hapus style inline, span berlebih, font, dsb.
+                        $rawDescription = isset($product) ? ($product->description ?? '') : old('description', '');
+                        $cleanDescription = $rawDescription;
+                        if (!empty($cleanDescription)) {
+                            // Hapus atribut style inline
+                            $cleanDescription = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $cleanDescription);
+                            // Hapus tag span namun pertahankan teks di dalamnya
+                            $cleanDescription = preg_replace('/<\/?span[^>]*>/i', '', $cleanDescription);
+                            // Hapus tag font jika ada
+                            $cleanDescription = preg_replace('/<\/?font[^>]*>/i', '', $cleanDescription);
+                        }
+                    @endphp
+                    <div style="width: 100%;">
+                        <div id="descriptionEditor"></div>
+                    </div>
+                    <input type="hidden" name="description" id="descriptionInput" value="{{ $cleanDescription }}">
                 </div>
 
-                <div class="section-label" style="margin-top: 24px;">Pilih Platform</div>
+                {{-- Foto / Gambar Produk --}}
+                @php
+                    $existingPhotos = [];
+                    if (isset($product)) {
+                        $mf = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
+                        if (is_array($mf) && count($mf) > 0) {
+                            foreach ($mf as $item) {
+                                $path = $item['path'] ?? $item['url'] ?? null;
+                                if ($path) {
+                                    $url = Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/']) ? $path : asset('storage/' . $path);
+                                    $existingPhotos[] = [
+                                        'path' => $path,
+                                        'url'  => $url,
+                                    ];
+                                }
+                            }
+                        }
+                        if (empty($existingPhotos) && !empty($product->image)) {
+                            $url = Str::startsWith($product->image, ['http://', 'https://', 'data:image/', '/storage/']) ? $product->image : asset('storage/' . $product->image);
+                            $existingPhotos[] = [
+                                'path' => $product->image,
+                                'url'  => $url,
+                            ];
+                        }
+                    }
+                @endphp
+
+                <div class="product-photos-container" style="margin-top: 28px;">
+                    <div class="section-label">Foto / Gambar Produk</div>
+                    <p class="photo-helper-text">
+                        Unggah foto produk Anda (maksimal 5 foto). Format JPG, PNG, WEBP hingga 5MB per foto. Foto urutan pertama akan otomatis dijadikan foto sampul utama.
+                    </p>
+
+                    {{-- Empty Dropzone (tampil ketika belum ada foto) --}}
+                    <div id="photoEmptyDropzone" class="upload-box photo-empty-dropzone" onclick="document.getElementById('productPhotosInput').click()" style="display: {{ count($existingPhotos) === 0 ? 'block' : 'none' }}; cursor: pointer;">
+                        <i class="fas fa-images"></i>
+                        <h4>Pilih atau seret foto produk ke sini</h4>
+                        <p>Format JPG, PNG, WEBP. Maksimal 5 foto (maks 5MB/foto).</p>
+                    </div>
+
+                    {{-- Grid Foto Produk --}}
+                    <div id="productPhotosGrid" class="product-photos-grid" style="display: {{ count($existingPhotos) > 0 ? 'grid' : 'none' }};">
+                        <!-- Diisi otomatis oleh JavaScript -->
+                    </div>
+
+                    <div id="photoErrorMessage" class="photo-error-message"></div>
+
+                    {{-- Input file tersembunyi untuk upload foto baru --}}
+                    <input type="file" id="productPhotosInput" name="photos[]" accept="image/png,image/jpeg,image/jpg,image/webp" multiple style="display: none;">
+                    {{-- Input hidden untuk tracking foto lama yang dipertahankan --}}
+                    <input type="hidden" name="existing_media" id="existingMediaInput" value="{{ json_encode($existingPhotos) }}">
+                </div>
+
+                <div class="section-label" style="margin-top: 28px;">Pilih Platform</div>
                 <div class="platform-cards-grid">
                     
                     <label class="platform-card-wrapper {{ (isset($product) && $product->platform_type == 'upload') || !isset($product) ? 'active' : '' }}">
@@ -144,17 +222,6 @@
                     <input type="text" class="row-input" placeholder="{{ __('admin.enter_url') }}" name="platform_url" value="{{ isset($product) ? $product->platform_url : old('platform_url') }}">
                 </div>
                 
-                <div class="section-label" style="margin-top: 24px;">Sertifikat / File Tambahan (Opsional)</div>
-                <div class="upload-box" onclick="document.getElementById('productImage').click()">
-                    <div id="image-upload-placeholder" style="display: {{ (isset($product) && $product->image) ? 'none' : 'block' }}">
-                        <i class="fas fa-file-image"></i>
-                        <h4>Click to upload or drag and drop</h4>
-                        <p>Format JPG, PNG. {{ __('admin.optimize_image_size') }}</p>
-                    </div>
-                    <img id="image-upload-preview" class="image-upload-preview" src="{{ isset($product) && $product->image ? asset('storage/' . $product->image) : '' }}" style="display: {{ (isset($product) && $product->image) ? 'block' : 'none' }}">
-                </div>
-                <input type="file" id="productImage" name="image" class="image-cropper" data-crop-ratio="1.7777" accept=".png,.jpg,.jpeg" style="display: none">
-                
                 <div id="file-input-container" style="display: {{ (isset($product) && $product->platform_type == 'upload') || !isset($product) ? 'block' : 'none' }};">
                     <div class="form-row-box" onclick="document.getElementById('platform_file').click()" style="cursor: pointer; justify-content: space-between;">
                         <span class="row-label" style="min-width: auto; margin-right: 0;">Pilih File Produk</span>
@@ -172,7 +239,10 @@
                 </div>
                 <input type="file" id="platform_file" name="platform_file" style="display: none;">
 
-                <div class="action-buttons">
+                <div class="action-buttons space-between">
+                    <a href="{{ route('admin.digital-products.index') }}" class="btn-prev" style="text-decoration: none; display: inline-flex; align-items: center;">
+                        <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Kembali ke Toko
+                    </a>
                     <button type="button" class="btn-next" onclick="nextStep()">Lanjut <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
                 </div>
             </div>
@@ -280,19 +350,208 @@ if (priceInput) {
     });
 }
 
-// Image preview
-document.getElementById('productImage').addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('image-upload-placeholder').style.display = 'none';
-            const imgPreview = document.getElementById('image-upload-preview');
-            imgPreview.src = e.target.result;
-            imgPreview.style.display = 'block';
-        }
-        reader.readAsDataURL(e.target.files[0]);
+// ============================================================
+// Product Photos Management (Multi-photo upload & existing photos)
+// ============================================================
+(function() {
+    var existingPhotos = @json($existingPhotos) || [];
+    var stagedFiles = [];
+    var maxPhotos = 5;
+
+    var fileInput = document.getElementById('productPhotosInput');
+    var existingInput = document.getElementById('existingMediaInput');
+    var gridEl = document.getElementById('productPhotosGrid');
+    var dropzoneEl = document.getElementById('photoEmptyDropzone');
+    var errorEl = document.getElementById('photoErrorMessage');
+
+    function showError(msg) {
+        if (!errorEl) return;
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+        setTimeout(function() {
+            errorEl.style.display = 'none';
+        }, 5000);
     }
-});
+
+    function syncFileInput() {
+        if (!fileInput) return;
+        try {
+            var dt = new DataTransfer();
+            stagedFiles.forEach(function(file) {
+                dt.items.add(file);
+            });
+            fileInput.files = dt.files;
+        } catch (e) {
+            console.error('DataTransfer error:', e);
+        }
+    }
+
+    function syncExistingInput() {
+        if (!existingInput) return;
+        existingInput.value = JSON.stringify(existingPhotos);
+    }
+
+    window.removeExistingPhoto = function(index) {
+        if (index >= 0 && index < existingPhotos.length) {
+            existingPhotos.splice(index, 1);
+            syncExistingInput();
+            renderGallery();
+        }
+    };
+
+    window.removeStagedPhoto = function(index) {
+        if (index >= 0 && index < stagedFiles.length) {
+            stagedFiles.splice(index, 1);
+            syncFileInput();
+            renderGallery();
+        }
+    };
+
+    function renderGallery() {
+        if (!gridEl || !dropzoneEl) return;
+
+        var totalPhotos = existingPhotos.length + stagedFiles.length;
+
+        if (totalPhotos === 0) {
+            gridEl.innerHTML = '';
+            gridEl.style.display = 'none';
+            dropzoneEl.style.display = 'block';
+            return;
+        }
+
+        dropzoneEl.style.display = 'none';
+        gridEl.style.display = 'grid';
+        gridEl.innerHTML = '';
+
+        var globalIndex = 0;
+
+        // Render existing photos
+        existingPhotos.forEach(function(item, idx) {
+            var isCover = (globalIndex === 0);
+            var card = document.createElement('div');
+            card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
+
+            var img = document.createElement('img');
+            img.src = item.url;
+            img.alt = 'Foto Produk';
+            card.appendChild(img);
+
+            if (isCover) {
+                var badge = document.createElement('span');
+                badge.className = 'photo-cover-badge';
+                badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
+                card.appendChild(badge);
+            }
+
+            var delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'photo-btn-delete';
+            delBtn.title = 'Hapus foto ini';
+            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            delBtn.onclick = function(e) {
+                e.stopPropagation();
+                window.removeExistingPhoto(idx);
+            };
+            card.appendChild(delBtn);
+
+            gridEl.appendChild(card);
+            globalIndex++;
+        });
+
+        // Render staged (newly selected) photos
+        stagedFiles.forEach(function(file, idx) {
+            var isCover = (globalIndex === 0);
+            var card = document.createElement('div');
+            card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
+
+            var img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.alt = file.name;
+            img.onload = function() {
+                URL.revokeObjectURL(this.src);
+            };
+            card.appendChild(img);
+
+            if (isCover) {
+                var badge = document.createElement('span');
+                badge.className = 'photo-cover-badge';
+                badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
+                card.appendChild(badge);
+            } else {
+                var newBadge = document.createElement('span');
+                newBadge.className = 'photo-new-badge';
+                newBadge.textContent = 'Baru';
+                card.appendChild(newBadge);
+            }
+
+            var delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'photo-btn-delete';
+            delBtn.title = 'Hapus foto ini';
+            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            delBtn.onclick = function(e) {
+                e.stopPropagation();
+                window.removeStagedPhoto(idx);
+            };
+            card.appendChild(delBtn);
+
+            gridEl.appendChild(card);
+            globalIndex++;
+        });
+
+        // If fewer than maxPhotos, show "+ Tambah Foto" card
+        if (totalPhotos < maxPhotos) {
+            var addCard = document.createElement('div');
+            addCard.className = 'photo-add-card';
+            addCard.innerHTML = '<i class="fas fa-plus"></i><span>Tambah Foto<br><small style="color:#94a3b8;">(' + totalPhotos + '/' + maxPhotos + ')</small></span>';
+            addCard.onclick = function() {
+                if (fileInput) fileInput.click();
+            };
+            gridEl.appendChild(addCard);
+        }
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            var selectedFiles = Array.from(e.target.files || []);
+            if (selectedFiles.length === 0) return;
+
+            var currentTotal = existingPhotos.length + stagedFiles.length;
+            var availableSlots = maxPhotos - currentTotal;
+
+            if (availableSlots <= 0) {
+                showError('Maksimal ' + maxPhotos + ' foto produk sudah tercapai.');
+                fileInput.value = '';
+                return;
+            }
+
+            if (selectedFiles.length > availableSlots) {
+                showError('Hanya dapat menambahkan ' + availableSlots + ' foto lagi. ' + (selectedFiles.length - availableSlots) + ' foto dilewati.');
+                selectedFiles = selectedFiles.slice(0, availableSlots);
+            }
+
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+
+            selectedFiles.forEach(function(file) {
+                if (!allowedTypes.includes(file.type.toLowerCase())) {
+                    showError('Format file ' + file.name + ' tidak didukung. Gunakan JPG, PNG, atau WEBP.');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Ukuran file ' + file.name + ' melebihi batas 5MB.');
+                    return;
+                }
+                stagedFiles.push(file);
+            });
+
+            syncFileInput();
+            renderGallery();
+        });
+    }
+
+    // Initial render
+    renderGallery();
+})();
 
 // Platform file selection
 document.getElementById('platform_file').addEventListener('change', function(e) {
@@ -364,5 +623,69 @@ function prevStep() {
     const step2Indicator = document.getElementById('step2-indicator');
     step2Indicator.classList.remove('active');
 }
+</script>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script>
+// ============================================================
+// Quill Rich Text Editor — Description Field (Matching Microsite)
+// ============================================================
+(function() {
+    var editorElement = document.getElementById('descriptionEditor');
+    if (!editorElement) return;
+
+    // Cegah duplikasi toolbar jika terjadi reload Turbo/PJAX
+    if (editorElement.previousSibling && editorElement.previousSibling.classList && editorElement.previousSibling.classList.contains('ql-toolbar')) {
+        return;
+    }
+
+    var toolbarOptions = [
+        [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'background': [] }],
+        [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+        [{ 'align': [] }],
+        ['link']
+    ];
+
+    var quill = new Quill('#descriptionEditor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        },
+        placeholder: 'Tuliskan deskripsi lengkap produk digital Anda...'
+    });
+
+    // Inisialisasi konten awal bersih
+    var initialContent = @json($cleanDescription);
+    if (initialContent && initialContent.trim() !== '') {
+        if (/<[a-z][\s\S]*>/i.test(initialContent)) {
+            quill.clipboard.dangerouslyPasteHTML(initialContent);
+        } else {
+            quill.setText(initialContent);
+        }
+    }
+
+    var descInput = document.getElementById('descriptionInput');
+
+    function syncQuillContent() {
+        if (!descInput) return;
+        var text = quill.getText().trim();
+        if (text.length === 0) {
+            descInput.value = '';
+        } else {
+            descInput.value = quill.root.innerHTML;
+        }
+    }
+
+    quill.on('text-change', syncQuillContent);
+
+    var form = document.getElementById('digitalProductForm');
+    if (form) {
+        form.addEventListener('submit', function() {
+            syncQuillContent();
+        });
+    }
+})();
 </script>
 @endpush

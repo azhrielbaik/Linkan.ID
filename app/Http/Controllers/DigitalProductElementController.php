@@ -180,4 +180,49 @@ class DigitalProductElementController extends Controller
         }
         return response()->json(['success' => false], 404);
     }
+
+    /**
+     * Tambahkan produk yang SUDAH ADA ke blocks_order microsite (tanpa membuat produk baru).
+     * Dipanggil dari fitur "Pilih dari Toko" di microsite editor.
+     */
+    public function pinExisting(Request $request)
+    {
+        $request->validate([
+            'product_id'    => 'required|integer',
+            'appearance_id' => 'required|integer',
+        ]);
+
+        $user = $request->user();
+
+        // Pastikan produk milik user ini
+        $product = DigitalProduct::where('id', $request->product_id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        // Pastikan appearance milik user ini
+        $appearance = Appearance::where('id', $request->appearance_id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $key   = 'digitalproduct_' . $product->id;
+        $order = $appearance->blocks_order ? array_filter(explode(',', $appearance->blocks_order)) : [];
+
+        // Jangan tambahkan duplikat
+        if (in_array($key, $order)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Produk ini sudah ada di microsite Anda.',
+            ], 409);
+        }
+
+        $order[] = $key;
+        $appearance->blocks_order = implode(',', $order);
+        $appearance->save();
+
+        return response()->json([
+            'success' => true,
+            'id'      => $product->id,
+            'title'   => $product->title,
+        ]);
+    }
 }

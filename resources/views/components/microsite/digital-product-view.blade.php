@@ -247,7 +247,8 @@ if (typeof window.processDpCheckout === 'undefined') {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                window.location.href = '/checkout/' + productId;
+                const checkoutUrl = '{{ route("checkout", ["id" => ":id"]) }}'.replace(':id', productId);
+                window.location.href = checkoutUrl;
             } else {
                 alert('Gagal memproses pesanan.');
             }

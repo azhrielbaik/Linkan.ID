@@ -223,7 +223,10 @@
     /**
      * Handle Cropper Modal Actions (Apply Crop & Close)
      */
-    document.addEventListener('click', function (e) {
+    if (!window.__micrositePreviewSyncEventsBound) {
+        window.__micrositePreviewSyncEventsBound = true;
+
+        document.addEventListener('click', function (e) {
         if (e.target.closest('.js-apply-crop')) {
             if (profileCropper) {
                 const canvas = profileCropper.getCroppedCanvas({
@@ -293,6 +296,7 @@
             }
         }
     });
+    }
 
     /**
      * Live Preview & Adjustments for Divider Element
@@ -605,110 +609,115 @@
         // In preview mode, image links are not followed so users can click to edit
     }
 
-    // Mousedown listener to preserve rich-text selection range on toolbar interaction
-    document.addEventListener('mousedown', function (e) {
-        if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default') || e.target.closest('.toolbar-color-picker') || e.target.closest('.toolbar-select') || e.target.closest('.toolbar-dropdown')) {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                window.savedSelectionRange = selection.getRangeAt(0);
+    // Listeners for live sync and controls (Idempotent: bound only once)
+    if (!window.__micrositePreviewSyncInputsBound) {
+        window.__micrositePreviewSyncInputsBound = true;
+
+        // Mousedown listener to preserve rich-text selection range on toolbar interaction
+        document.addEventListener('mousedown', function (e) {
+            if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default') || e.target.closest('.toolbar-color-picker') || e.target.closest('.toolbar-select') || e.target.closest('.toolbar-dropdown')) {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    window.savedSelectionRange = selection.getRangeAt(0);
+                }
             }
-        }
 
-        if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default')) {
-            e.preventDefault();
-        }
-    });
+            if (e.target.closest('.toolbar-btn') || e.target.closest('.js-prevent-default')) {
+                e.preventDefault();
+            }
+        });
 
-    // Delegation listener for live sync on inputs
-    document.addEventListener('input', function (e) {
-        if (e.target.matches('.js-format-profile-text-val') && e.target.type === 'color') {
-            formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
-        }
+        // Delegation listener for live sync on inputs
+        document.addEventListener('input', function (e) {
+            if (e.target.matches('.js-format-profile-text-val') && e.target.type === 'color') {
+                formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
+            }
 
-        if (e.target.matches('.js-exec-cmd-value') && e.target.type === 'color') {
-            execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
-        }
+            if (e.target.matches('.js-exec-cmd-value') && e.target.type === 'color') {
+                execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
+            }
 
-        if (e.target.matches('.js-update-image-link')) {
-            updateDynamicImageLink(e.target.dataset.targetId, e.target.value);
-        }
+            if (e.target.matches('.js-update-image-link')) {
+                updateDynamicImageLink(e.target.dataset.targetId, e.target.value);
+            }
 
-        if (e.target.matches('.js-update-divider-preview')) {
-            updateDividerPreview(e.target.dataset.targetId);
-        }
+            if (e.target.matches('.js-update-divider-preview')) {
+                updateDividerPreview(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-update-text-preview')) {
-            updateTextPreview(e.target.dataset.targetId);
-        }
+            if (e.target.matches('.js-update-text-preview')) {
+                updateTextPreview(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-update-video-preview')) {
-            updateVideoPreview(e.target.dataset.targetId);
-        }
-    });
+            if (e.target.matches('.js-update-video-preview')) {
+                updateVideoPreview(e.target.dataset.targetId);
+            }
+        });
 
-    // Keyup listeners for live sync
-    document.addEventListener('keyup', function (e) {
-        if (e.target.matches('.js-update-social-preview')) {
-            updateSocialPreview(e.target.dataset.targetId);
-        }
+        // Keyup listeners for live sync
+        document.addEventListener('keyup', function (e) {
+            if (e.target.matches('.js-update-social-preview')) {
+                updateSocialPreview(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-sync-profile-name')) {
-            syncProfileName();
-            updateLiveProfileName(e.target.innerHTML);
-        }
+            if (e.target.matches('.js-sync-profile-name')) {
+                syncProfileName();
+                updateLiveProfileName(e.target.innerHTML);
+            }
 
-        if (e.target.matches('.js-sync-profile-bio')) {
-            syncProfileBio();
-            updateLiveProfileBio(e.target.innerHTML);
-        }
-    });
+            if (e.target.matches('.js-sync-profile-bio')) {
+                syncProfileBio();
+                updateLiveProfileBio(e.target.innerHTML);
+            }
+        });
 
-    // Change listeners for controls
-    document.addEventListener('change', function (e) {
-        if (e.target.matches('.js-change-divider-type')) {
-            const id = e.target.dataset.targetId;
-            const input = document.getElementById('dividerType_' + id);
-            if (input) input.value = e.target.value;
-            updateDividerPreview(id);
-            updateSegmentedControl(e.target);
-        }
+        // Change listeners for controls
+        document.addEventListener('change', function (e) {
+            if (e.target.matches('.js-change-divider-type')) {
+                const id = e.target.dataset.targetId;
+                const input = document.getElementById('dividerType_' + id);
+                if (input) input.value = e.target.value;
+                updateDividerPreview(id);
+                updateSegmentedControl(e.target);
+            }
 
-        if (e.target.matches('.js-exec-cmd-value')) {
-            execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
-        }
+            if (e.target.matches('.js-exec-cmd-value')) {
+                execCmd(e.target.dataset.targetId, e.target.dataset.cmd, e.target.value);
+            }
 
-        if (e.target.matches('.js-change-text-size')) {
-            changeTextSize(e.target.dataset.targetId, e.target.value);
-        }
+            if (e.target.matches('.js-change-text-size')) {
+                changeTextSize(e.target.dataset.targetId, e.target.value);
+            }
 
-        if (e.target.matches('.js-apply-custom-size-input')) {
-            applyCustomSize(e.target.dataset.targetId);
-        }
+            if (e.target.matches('.js-apply-custom-size-input')) {
+                applyCustomSize(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-update-video-preview')) {
-            updateVideoPreview(e.target.dataset.targetId);
-        }
+            if (e.target.matches('.js-update-video-preview')) {
+                updateVideoPreview(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-update-social-preview')) {
-            updateSocialPreview(e.target.dataset.targetId);
-        }
+            if (e.target.matches('.js-update-social-preview')) {
+                updateSocialPreview(e.target.dataset.targetId);
+            }
 
-        if (e.target.matches('.js-preview-profile-avatar')) {
-            previewProfileAvatar(e.target);
-        }
+            if (e.target.matches('.js-preview-profile-avatar')) {
+                previewProfileAvatar(e.target);
+            }
 
-        if (e.target.matches('.js-update-profile-shape')) {
-            updateProfileShape(e.target.dataset.shape);
-        }
+            if (e.target.matches('.js-update-profile-shape')) {
+                updateProfileShape(e.target.dataset.shape);
+            }
 
-        if (e.target.matches('.js-preview-profile-banner')) {
-            previewProfileBanner(e.target);
-        }
+            if (e.target.matches('.js-preview-profile-banner')) {
+                previewProfileBanner(e.target);
+            }
 
-        if (e.target.matches('.js-format-profile-text-val')) {
-            formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
-        }
-    });
+            if (e.target.matches('.js-format-profile-text-val')) {
+                formatText(e.target.dataset.cmd, e.target.value, e.target.dataset.target);
+            }
+        });
+    }
 
     // Register module namespace
     window.MicrositeBuilder.PreviewSync = {

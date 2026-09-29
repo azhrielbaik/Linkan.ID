@@ -382,7 +382,7 @@
         <div class="store-header-actions">
             <div class="store-search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search Product">
+                <input type="text" id="storeSearchInput" placeholder="Cari Produk..." oninput="filterStoreProducts(this.value)">
             </div>
             <a href="{{ route('admin.digital-products.create') }}" class="btn-create" data-turbo="false">
                 <i class="fas fa-plus"></i> Tambah
@@ -469,3 +469,21 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function filterStoreProducts(query) {
+    const q = (query || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.store-product-grid .store-product-card');
+    cards.forEach(card => {
+        const titleEl = card.querySelector('.store-card-title');
+        const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+        if (!q || title.includes(q)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
+@endpush
