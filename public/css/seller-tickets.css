@@ -581,3 +581,574 @@
     transform: scale(1.005);
 }
 
+/* Alerts */
+.ticket-alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ticket-alert-success {
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+.ticket-alert-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+/* Modal Footer & Buttons */
+.ticket-modal-footer {
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 16px 16px;
+}
+.ticket-btn-cancel {
+    padding: 9px 18px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.ticket-btn-cancel:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+/* Ticket Thread View Components */
+.ticket-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.ticket-back-btn:hover {
+    background: #f8fafc;
+    color: #1e293b;
+    border-color: #cbd5e1;
+}
+
+.ticket-thread-header {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+}
+.ticket-thread-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+}
+.ticket-thread-meta {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ticket-reply-box {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+.ticket-reply-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.ticket-reply-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s;
+    background: #ffffff;
+    color: #1e293b;
+    resize: vertical;
+}
+.ticket-reply-textarea:focus {
+    border-color: #ED842C;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.15);
+}
+.ticket-attachment-label {
+    font-size: 12px;
+    color: #64748b;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+.ticket-attachment-label:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+.btn-create-ticket {
+    background: #ED842C;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-create-ticket:hover {
+    background: #d07323;
+}
+.ticket-closed-notice {
+    margin-top: 20px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.ticket-sidebar-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
+}
+.ticket-sidebar-info {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.8;
+}
+.ticket-info-label {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.ticket-info-value {
+    font-weight: 600;
+    color: #0f172a;
+}
+.ticket-sidebar-footer {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES (SUPPORT CENTER / TICKETS)
+   ========================================================= */
+html.dark .tickets-container {
+    color: #cbd5e1;
+}
+
+html.dark .tickets-title {
+    color: #ffffff;
+}
+
+html.dark .issue-list-box {
+    background: #1c212e;
+    border-color: #2a3241;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+html.dark .issue-list-toolbar {
+    border-color: #2a3241;
+}
+
+html.dark .issue-search i {
+    color: #64748b;
+}
+
+html.dark .issue-search input {
+    background: #0f131c;
+    border-color: #2a3241;
+    color: #f1f5f9;
+}
+
+html.dark .issue-search input:focus {
+    background: #0f131c;
+    border-color: #ED842C;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.2);
+}
+
+html.dark .btn-add-issue {
+    background: #ED842C;
+    color: #ffffff;
+}
+html.dark .btn-add-issue:hover {
+    background: #d07323;
+}
+
+html.dark .issue-row {
+    border-color: #2a3241;
+}
+
+html.dark .issue-row:hover {
+    background: #222938;
+}
+
+html.dark .issue-id {
+    color: #ED842C;
+}
+
+html.dark .issue-title {
+    color: #ffffff;
+}
+
+html.dark .issue-user .issue-username {
+    color: #cbd5e1;
+}
+
+html.dark .issue-user .issue-avatar {
+    background: #2a3241;
+    color: #cbd5e1;
+    border: 1px solid #3b465c;
+}
+
+html.dark .issue-dates {
+    color: #94a3b8;
+}
+
+html.dark .issue-dates strong {
+    color: #cbd5e1;
+}
+
+html.dark .issue-meta {
+    color: #94a3b8;
+}
+
+html.dark .btn-action {
+    background: #2a3241;
+    color: #cbd5e1;
+}
+
+html.dark .btn-action:hover {
+    background: #3b465c;
+    color: #ffffff;
+}
+
+html.dark .issue-pagination {
+    border-color: #2a3241;
+}
+
+html.dark .tickets-empty-state {
+    color: #94a3b8;
+}
+
+html.dark .tickets-empty-state i {
+    color: #475569;
+}
+
+/* Modal Dark Mode */
+html.dark .ticket-modal {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+html.dark .ticket-modal-card {
+    background: #1c212e;
+    border: 1px solid #2a3241;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .ticket-modal-header {
+    border-color: #2a3241;
+}
+
+html.dark .ticket-modal-header h3 {
+    color: #ffffff;
+}
+
+html.dark .ticket-modal-close {
+    color: #94a3b8;
+}
+
+html.dark .ticket-modal-close:hover {
+    color: #ffffff;
+}
+
+html.dark .ticket-form-group label {
+    color: #cbd5e1;
+}
+
+html.dark .ticket-form-control {
+    background: #0f131c;
+    border-color: #2a3241;
+    color: #f1f5f9;
+}
+
+html.dark .ticket-form-control:focus {
+    border-color: #ED842C;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.2);
+}
+
+html.dark .ticket-form-control option {
+    background-color: #1c212e;
+    color: #f1f5f9;
+}
+
+html.dark .ticket-modal-footer {
+    background: #141824;
+    border-color: #2a3241;
+}
+
+html.dark .ticket-btn-cancel {
+    background: #1c212e;
+    border-color: #2a3241;
+    color: #cbd5e1;
+}
+
+html.dark .ticket-btn-cancel:hover {
+    background: #2a3241;
+    color: #ffffff;
+}
+
+/* Ticket Thread & Chat Dark Mode */
+html.dark .ticket-back-btn {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark .ticket-back-btn:hover {
+    background: #2a3241 !important;
+    color: #ffffff !important;
+    border-color: #3b465c !important;
+}
+
+html.dark .ticket-code-badge {
+    background: #0f131c;
+    border-color: #2a3241;
+    color: #ED842C;
+}
+
+html.dark .ticket-chat-card,
+html.dark .ticket-sidebar-card {
+    background: #1c212e;
+    border-color: #2a3241;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+html.dark .ticket-thread-header {
+    border-color: #2a3241;
+}
+
+html.dark .ticket-thread-title {
+    color: #ffffff;
+}
+
+html.dark .ticket-thread-meta {
+    color: #94a3b8;
+}
+
+html.dark .bubble-user {
+    background: #0f131c;
+    border-color: #2a3241;
+}
+
+html.dark .bubble-user .bubble-header {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+html.dark .bubble-user .bubble-author {
+    color: #ffffff;
+}
+
+html.dark .bubble-user .bubble-body {
+    color: #cbd5e1;
+}
+
+html.dark .bubble-admin {
+    background: rgba(237, 132, 44, 0.08);
+    border-color: rgba(237, 132, 44, 0.3);
+}
+
+html.dark .bubble-admin .bubble-header {
+    border-color: rgba(237, 132, 44, 0.15);
+}
+
+html.dark .bubble-admin .bubble-author {
+    color: #ED842C;
+}
+
+html.dark .bubble-admin .bubble-body {
+    color: #f1f5f9;
+}
+
+html.dark .bubble-time {
+    color: #94a3b8;
+}
+
+html.dark .bubble-attachment {
+    border-color: #3b465c;
+}
+
+html.dark .bubble-attachment img {
+    background: #0f131c;
+    border-color: #2a3241;
+}
+
+html.dark .ticket-reply-box {
+    border-color: #2a3241;
+}
+
+html.dark .ticket-reply-header {
+    color: #f1f5f9;
+}
+
+html.dark .ticket-reply-textarea {
+    background: #0f131c;
+    border-color: #2a3241;
+    color: #f1f5f9;
+}
+
+html.dark .ticket-reply-textarea:focus {
+    border-color: #ED842C;
+    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.2);
+}
+
+html.dark .ticket-attachment-label {
+    background: #0f131c;
+    border-color: #2a3241;
+    color: #cbd5e1;
+}
+
+html.dark .ticket-attachment-label:hover {
+    background: #2a3241;
+    color: #ffffff;
+}
+
+html.dark .ticket-closed-notice {
+    background: #0f131c;
+    border: 1px solid #2a3241;
+    color: #94a3b8;
+}
+
+html.dark .ticket-sidebar-title {
+    color: #ffffff;
+    border-color: #2a3241;
+}
+
+html.dark .ticket-sidebar-info {
+    color: #cbd5e1;
+}
+
+html.dark .ticket-info-label {
+    color: #64748b;
+}
+
+html.dark .ticket-info-value {
+    color: #f1f5f9;
+}
+
+html.dark .ticket-sidebar-footer {
+    border-color: #2a3241;
+    color: #94a3b8;
+}
+
+/* Status Badges Dark Mode */
+html.dark .badge-status-open {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+html.dark .badge-status-progress {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+html.dark .badge-status-resolved {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+html.dark .badge-status-closed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Priority Badges Dark Mode */
+html.dark .badge-priority-urgent {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+html.dark .badge-priority-high {
+    background: rgba(237, 132, 44, 0.15);
+    color: #fb923c;
+    border-color: rgba(237, 132, 44, 0.3);
+}
+
+html.dark .badge-priority-medium {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+html.dark .badge-priority-low {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Alerts Dark Mode */
+html.dark .ticket-alert-success {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: #34d399 !important;
+}
+
+html.dark .ticket-alert-error {
+    background-color: rgba(239, 68, 68, 0.12) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #f87171 !important;
+}
+

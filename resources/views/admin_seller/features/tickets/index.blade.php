@@ -12,19 +12,19 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <div class="ticket-alert ticket-alert-success">
             <i class="fas fa-check-circle" style="font-size: 16px;"></i> {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <div class="ticket-alert ticket-alert-error">
             <i class="fas fa-exclamation-circle" style="font-size: 16px;"></i> {{ session('error') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
+        <div class="ticket-alert ticket-alert-error">
             <ul style="margin: 0; padding-left: 18px;">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -175,11 +175,11 @@
                     <small style="color: #94a3b8; font-size: 11px; margin-top: 4px; display: block;">Supported formats: JPG, PNG, WEBP (Max 2MB)</small>
                 </div>
             </div>
-            <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 10px; border-radius: 0 0 16px 16px;">
-                <button type="button" onclick="closeCreateTicketModal()" style="padding: 9px 18px; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; font-weight: 600; font-size: 13px; border-radius: 8px; cursor: pointer;">
+            <div class="ticket-modal-footer">
+                <button type="button" onclick="closeCreateTicketModal()" class="ticket-btn-cancel">
                     Cancel
                 </button>
-                <button type="submit" class="btn-add-issue" style="padding: 9px 20px;">
+                <button type="submit" class="btn-add-issue">
                     Submit Issue
                 </button>
             </div>

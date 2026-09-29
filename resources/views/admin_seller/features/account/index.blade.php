@@ -20,9 +20,7 @@
     <div class="p-4 sm:p-6 lg:p-8 pb-0">
         <div class="bg-slate-50/80 border border-slate-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0">
-                <div class="w-10 h-10 rounded-xl bg-orange-100 text-[#ED842C] flex items-center justify-center text-lg shrink-0">
-                    <i class="fas fa-shield-halved"></i>
-                </div>
+                    <i class="fa-solid fa-user"></i>
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2 flex-wrap">
                         <p class="text-sm font-bold text-slate-900">Akun Seller Linkan.ID</p>
@@ -164,7 +162,7 @@
                 <!-- Current Email Display Box -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/60 mb-4">
                     <div class="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                        <div class="w-10 h-10 rounded-lg bg-orange-50 text-[#ED842C] flex items-center justify-center text-base shrink-0">
+                        <div class="w-10 h-10 flex items-center justify-center text-base shrink-0">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -647,7 +645,7 @@
             <div class="lg:col-span-8 max-w-2xl">
                 <div class="border border-red-200 bg-red-50/40 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-start gap-3 min-w-0">
-                        <div class="w-9 h-9 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-sm shrink-0 mt-0.5">
+                        <div class="w-9 h-9 text-red-600 flex items-center justify-center text-sm shrink-0 mt-0.5">
                             <i class="fas fa-user-slash"></i>
                         </div>
                         <div class="min-w-0 flex-1">
