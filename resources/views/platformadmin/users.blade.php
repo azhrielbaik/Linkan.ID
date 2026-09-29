@@ -98,6 +98,7 @@
                 {{-- Users Table --}}
                 <div class="table-card">
                     @if ($users->count() > 0)
+                    <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
@@ -201,6 +202,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    </div>
 
                     @if ($users->hasPages())
                         <div class="pagination-container">

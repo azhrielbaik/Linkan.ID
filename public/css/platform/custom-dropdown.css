@@ -326,3 +326,20 @@ html[data-theme="dark"] .custom-dropdown-menu::-webkit-scrollbar-thumb,
 body.dark-mode .custom-dropdown-menu::-webkit-scrollbar-thumb {
     background: #475569;
 }
+
+/* Mobile Responsive Overrides for Custom Dropdowns */
+@media (max-width: 768px) {
+    .filter-card .custom-dropdown-wrapper,
+    .filter-actions .custom-dropdown-wrapper,
+    .toolbar .custom-dropdown-wrapper,
+    .p-filter-inputs .custom-dropdown-wrapper,
+    .filter-row-bottom .custom-dropdown-wrapper {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .custom-dropdown-menu {
+        max-width: calc(100vw - 28px);
+    }
+}

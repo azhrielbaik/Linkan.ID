@@ -532,3 +532,32 @@ body.dark-mode .linkan-dp-cancel-btn:hover {
     background: #475569;
     color: #ffffff;
 }
+
+/* Mobile Responsive Overrides for Datepicker */
+@media (max-width: 768px) {
+    .filter-card .date-picker-box,
+    .filter-card .date-range-box,
+    .toolbar .date-picker-box,
+    .toolbar .date-range-box,
+    .p-filter-inputs .date-picker-box,
+    .filter-row-bottom .date-picker-box,
+    .filter-row-bottom .date-range-box {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .linkan-datepicker-dropdown {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) scale(0.97) !important;
+        width: calc(100vw - 32px) !important;
+        max-width: 340px !important;
+        z-index: 99999 !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .linkan-datepicker-dropdown.is-open {
+        transform: translate(-50%, -50%) scale(1) !important;
+    }
+}

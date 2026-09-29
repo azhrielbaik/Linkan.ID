@@ -880,6 +880,23 @@ tbody tr:hover td {
     .content-wrapper {
         padding: 12px 10px;
     }
+    .settings-card,
+    .emergency-card {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+    }
+    .emergency-switches-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .emergency-footer-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+    .btn-save-emergency-pro {
+        width: 100% !important;
+        justify-content: center !important;
+    }
 }
 
 /* =========================================================

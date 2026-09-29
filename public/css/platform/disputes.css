@@ -245,3 +245,35 @@
     from { transform: scale(0.95); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+/* Mobile Responsive Overrides for Disputes */
+@media (max-width: 900px) {
+    .dsp-detail-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dsp-detail-card {
+        padding: 16px !important;
+        border-radius: 14px !important;
+        margin-bottom: 14px;
+    }
+
+    .dsp-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .dsp-info-val {
+        text-align: left !important;
+    }
+
+    .dsp-modal-box {
+        padding: 18px 16px !important;
+        max-width: calc(100vw - 28px) !important;
+    }
+}

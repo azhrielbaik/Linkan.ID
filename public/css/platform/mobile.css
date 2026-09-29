@@ -1,55 +1,648 @@
-/* Mobile overrides for admin platform */
-@media only screen and (max-width: 768px) {
-  /* Sidebar */
-  .platform-sidebar {
-    transform: translateX(-100%);
-    position: fixed;
-    height: 100vh;
-    width: 250px;
-    z-index: 1000;
-    transition: transform 0.3s ease-in-out;
-  }
-  .platform-sidebar.open {
-    transform: translateX(0);
-  }
-  .hamburger-btn { display: inline-flex; }
+/* ==========================================================================
+   LINKAN.ID — PLATFORM ADMIN MOBILE RESPONSIVE MASTER STYLESHEET
+   Carefully crafted for seamless mobile UX (320px - 900px viewports)
+   Guaranteed ZERO impact on Desktop View (>900px)
+   ========================================================================== */
 
-  /* Main content takes full width */
-  .platform-main { margin-left: 0; }
+/* --------------------------------------------------------------------------
+   TABLET & MOBILE BASE OVERRIDES (<= 900px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 900px) {
 
-  /* Grid layout to single column */
-  .two-col-grid {
-    display: block;
-  }
-  .section-card, .chart-card {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
+    /* Layout & Main Canvas */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
 
-  /* Chart canvas full width */
-  .chart-canvas-wrapper canvas {
-    width: 100% !important;
-    height: auto !important;
-  }
+    .platform-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+    }
 
-  /* Table responsiveness */
-  .table-responsive { overflow-x: auto; }
+    /* Top Sticky Header Bar */
+    .platform-header {
+        padding: 10px 14px !important;
+        min-height: 56px !important;
+        gap: 8px !important;
+        background: #f6f6f6 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
 
-  /* Adjust toolbar spacing */
-  .dashboard-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .export-actions { margin-top: 0.5rem; }
+    .platform-header-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
 
-  /* Adjust seller list */
-  .seller-list {
-    display: block;
-  }
-  .seller-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
-  }
+    .platform-header h1 {
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        letter-spacing: -0.3px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        line-height: 1.2 !important;
+        margin: 0 !important;
+    }
+
+    .hamburger-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 9px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #475569 !important;
+        font-size: 14px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Header Profile & Right Controls */
+    .header-right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .top-profile,
+    .header-user-btn {
+        border-left: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        gap: 0 !important;
+    }
+
+    .top-profile .top-user-name,
+    .top-profile .top-profile-arrow,
+    .header-user-btn span.user-name,
+    .header-user-btn i.dropdown-chevron {
+        display: none !important;
+    }
+
+    .top-avatar,
+    .header-avatar {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        font-size: 12px !important;
+    }
+
+    .action-icon.notif-bell-btn {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+
+    .lang-dropdown-btn {
+        height: 34px !important;
+        padding: 0 8px !important;
+        font-size: 11px !important;
+        border-radius: 8px !important;
+    }
+
+    /* Dropdown Menus on Mobile: Clamped to viewport */
+    .platform-theme-dropdown,
+    .lang-dropdown-menu {
+        max-width: calc(100vw - 20px) !important;
+        right: 0 !important;
+    }
+
+    /* Content Wrapper */
+    .content-wrapper {
+        padding: 14px 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+    }
+
+    /* Stats Grid & Rows */
+    .stats-grid,
+    .stats-row,
+    .platform-tickets-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .stat-card,
+    .p-ticket-stat {
+        padding: 10px 12px !important;
+        border-radius: 12px !important;
+    }
+
+    .stat-icon-wrap,
+    .stat-icon-wrapper,
+    .p-ticket-stat-icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+    }
+
+    .stat-info .value,
+    .stat-info .stat-val,
+    .p-ticket-stat-num {
+        font-size: 17px !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+    }
+
+    .stat-info .label,
+    .stat-info .stat-lbl,
+    .p-ticket-stat-lbl {
+        font-size: 11px !important;
+    }
+
+    /* Capsule Navigation Tabs */
+    .tabs-container,
+    .p-ticket-tabs,
+    .filter-tabs,
+    .view-switcher {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: inline-flex !important;
+        flex-wrap: nowrap !important;
+        gap: 4px !important;
+        padding: 4px !important;
+        margin-bottom: 14px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .tabs-container .tab-link,
+    .p-ticket-tabs .p-ticket-tab,
+    .filter-tabs .filter-tab,
+    .view-switcher .view-tab-link {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Toolbars & Filter Containers */
+    .toolbar,
+    .filter-card,
+    .p-tickets-filters,
+    .dashboard-toolbar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 12px 14px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+        margin-bottom: 14px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .toolbar-title {
+        font-size: 15px !important;
+        font-weight: 800 !important;
+    }
+
+    .search-form,
+    .filter-row-top,
+    .filter-row-bottom,
+    .p-filter-inputs,
+    .filter-controls,
+    .filter-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+
+    .search-wrap,
+    .search-box,
+    .p-ticket-search-box,
+    .custom-dropdown-wrapper,
+    .date-picker-box,
+    .date-range-box,
+    .date-range-container,
+    .p-filter-select,
+    select.filter-select {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .custom-dropdown-trigger {
+        width: 100% !important;
+    }
+
+    .btn-filter,
+    .btn-reset,
+    .btn-export {
+        width: 100% !important;
+        height: 38px !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+    }
+
+    .export-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+
+    /* Tables & Responsive Wrapper: Never push screen width */
+    .table-card,
+    .p-tickets-table-card {
+        border-radius: 14px !important;
+        padding: 6px 8px !important;
+        margin-bottom: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .table-responsive {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    table,
+    .table-card table,
+    .p-tickets-table {
+        min-width: 600px !important;
+        border-spacing: 0 6px !important;
+        width: 100% !important;
+    }
+
+    th, td,
+    .table-card tbody td,
+    .p-tickets-table td {
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+    }
+
+    .user-cell,
+    .product-cell {
+        gap: 8px !important;
+    }
+
+    .user-avatar,
+    .content-thumb,
+    .seller-avatar-small {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        font-size: 11px !important;
+    }
+
+    .action-btns,
+    .action-group {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .btn-act,
+    .btn-action,
+    .btn-open-ticket,
+    .btn-dsp-action,
+    .btn-detail,
+    .btn-view,
+    .btn-view-platform {
+        padding: 4px 8px !important;
+        font-size: 11.5px !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Two Column Layouts: Single Column on Mobile */
+    .two-col-grid,
+    .dsp-detail-grid,
+    .p-thread-grid,
+    .settings-grid,
+    .product-detail-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+        width: 100% !important;
+    }
+
+    /* Dashboard Chart & Top Seller */
+    .chart-card {
+        padding: 14px 16px !important;
+        border-radius: 14px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .chart-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .chart-header h3 {
+        font-size: 16px !important;
+    }
+
+    .chart-period-tabs {
+        display: flex !important;
+        width: 100% !important;
+    }
+
+    .chart-tab-btn {
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 6px 10px !important;
+        font-size: 11.5px !important;
+    }
+
+    .chart-canvas-wrapper {
+        height: 200px !important;
+        width: 100% !important;
+    }
+
+    .seller-list-item {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .seller-stats-right {
+        text-align: right !important;
+        margin-left: auto !important;
+    }
+
+    .seller-commission-earned {
+        font-size: 12.5px !important;
+    }
+
+    /* Product Verification Bulk Bar */
+    .bulk-toolbar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+        border-radius: 12px !important;
+    }
+
+    .bulk-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .bulk-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        font-size: 12px !important;
+        height: 36px !important;
+    }
+
+    /* Support Tickets Detail / Chat Stream */
+    .ticket-nav-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .ticket-nav-badges {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+
+    .ticket-header-card {
+        padding: 14px 16px !important;
+        border-radius: 14px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .ticket-subject-title {
+        font-size: 16px !important;
+    }
+
+    .ticket-meta-pills {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+
+    .p-thread-main {
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .p-chat-item {
+        gap: 8px !important;
+    }
+
+    .p-chat-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        font-size: 11px !important;
+    }
+
+    .p-chat-bubble {
+        padding: 12px 14px !important;
+        border-radius: 14px !important;
+    }
+
+    .p-chat-header {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+
+    .p-reply-box {
+        padding: 14px !important;
+        border-radius: 14px !important;
+    }
+
+    .p-reply-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+
+    .p-btn-reply {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .p-thread-sidebar {
+        width: 100% !important;
+    }
+
+    /* Disputes Detail */
+    .dsp-detail-card {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .dsp-info-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 3px !important;
+        padding: 8px 0 !important;
+    }
+
+    .dsp-info-val {
+        text-align: left !important;
+    }
+
+    /* Emergency Switches & Partial Maintenance */
+    .emergency-card,
+    .settings-card {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .emergency-switches-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .emergency-item {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 14px !important;
+    }
+
+    .emergency-footer-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+
+    .btn-save-emergency-pro {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    /* Modals & Dialogs on Mobile */
+    .modal-card,
+    .modal-container,
+    .modal-container-large,
+    .modal-card-detail,
+    .admin-pwd-modal-content,
+    .admin-profile-modal-content,
+    .admin-sessions-modal-content,
+    .broadcast-modal-box,
+    .dsp-modal-box,
+    .linkan-swal-popup {
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        margin: 10px auto !important;
+        padding: 16px 14px !important;
+        border-radius: 16px !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    .modal-stats-grid,
+    .duration-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .modal-footer,
+    .modal-card-footer,
+    .admin-pwd-footer {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 12px 0 0 0 !important;
+    }
+
+    .modal-footer button,
+    .modal-card-footer button,
+    .admin-pwd-footer button {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   SMALL MOBILE PHONES (<= 480px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 480px) {
+
+    .platform-header {
+        padding: 8px 10px !important;
+    }
+
+    .platform-header h1 {
+        font-size: 15px !important;
+    }
+
+    .content-wrapper {
+        padding: 10px 8px !important;
+    }
+
+    .stats-grid,
+    .stats-row,
+    .platform-tickets-stats {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .stat-card {
+        padding: 10px !important;
+    }
+
+    .seller-list-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+
+    .seller-stats-right {
+        text-align: left !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-top: 4px;
+        border-top: 1px dashed #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .action-group,
+    .action-btns {
+        flex-wrap: wrap !important;
+    }
 }

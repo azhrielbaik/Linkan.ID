@@ -147,6 +147,7 @@
 
             <!-- Tickets Table -->
             <div class="p-tickets-table-card">
+                <div class="table-responsive">
                 <table class="p-tickets-table">
                     <thead>
                         <tr>
@@ -213,6 +214,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
 
                 @if($tickets->hasPages())
                     <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9;">

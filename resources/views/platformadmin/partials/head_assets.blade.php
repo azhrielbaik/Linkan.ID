@@ -10,3 +10,4 @@
 <link rel="stylesheet" href="{{ asset('css/platform/gooey-search.css') }}">
 <link rel="stylesheet" href="{{ asset('css/platform/custom-datepicker.css') }}">
 <link rel="stylesheet" href="{{ asset('css/platform/notifications.css') }}">
+<link rel="stylesheet" href="{{ asset('css/platform/mobile.css') }}">
