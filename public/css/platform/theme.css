@@ -1577,3 +1577,159 @@ body.dark-mode .linkan-swal-popup .swal2-icon.swal2-question .swal2-icon-content
 body.dark-mode .linkan-swal-popup .swal2-icon.swal2-info .swal2-icon-content {
     color: #FB923C !important;
 }
+
+/* ==========================================================================
+   LINKAN.ID — CLEAN & MODERN FLAT SURFACES (EXCESSIVE SHADOW PURGE)
+   Removes heavy, dirty, and glowing box-shadows. Emphasizes clean 1px borders,
+   crisp typography, and flat contemporary SaaS aesthetic.
+   ========================================================================== */
+
+/* 1. Flat Clean Cards & Main Containers */
+.stat-card,
+.p-ticket-stat,
+.chart-card,
+.section-card,
+.table-card,
+.p-tickets-table-card,
+.filter-card,
+.toolbar,
+.bulk-toolbar,
+.setting-card,
+.user-card,
+.payout-card,
+.product-card,
+.detail-card,
+.summary-card,
+.settings-card,
+.two-col-grid > div,
+.dsp-summary-card,
+.dsp-panel-card {
+    box-shadow: none !important;
+}
+
+.stat-card:hover,
+.p-ticket-stat:hover,
+.setting-card:hover {
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* 2. Flat Clean Buttons (Remove All Blurry & Colored Glow Shadows) */
+.btn-filter,
+.btn-reset,
+.btn-primary,
+.btn-save,
+.btn-add,
+.btn-submit,
+.bulk-btn-primary,
+.btn-export,
+.btn-search,
+.btn-act,
+.btn-action,
+.btn-open-ticket,
+.btn-detail,
+.btn-view,
+.btn-view-platform,
+.btn-pag-arrow,
+.chart-tab-btn,
+.chart-tab-btn.active,
+.btn-dsp-action,
+.btn-export.btn-primary {
+    box-shadow: none !important;
+}
+
+.btn-filter:hover,
+.btn-reset:hover,
+.btn-primary:hover,
+.btn-save:hover,
+.btn-add:hover,
+.btn-submit:hover,
+.bulk-btn-primary:hover,
+.btn-export:hover,
+.btn-search:hover,
+.btn-act:hover,
+.btn-action:hover,
+.btn-pag-arrow:hover,
+.btn-dsp-action:hover,
+.btn-export.btn-primary:hover {
+    box-shadow: none !important;
+}
+
+/* 3. Clean Table Rows (No Excessive Floating Shadows on Hover) */
+tbody td,
+.table-card tbody td,
+table tbody td {
+    box-shadow: none !important;
+}
+
+tbody tr:hover td,
+.table-card tbody tr:hover td,
+table tbody tr:hover td {
+    box-shadow: none !important;
+}
+
+/* 4. Sidebar & Header Flat Architecture */
+.sidebar {
+    box-shadow: none !important;
+    border-right: 1px solid #eaeaea !important;
+}
+
+.hamburger-btn,
+.lang-dropdown-btn,
+.search-box,
+.search-wrap,
+.gooey-search-container,
+.date-input,
+.p-filter-select,
+.p-filter-search,
+.pagination-arrows-wrapper,
+.lang-item-check,
+.ptd-lang-option.active {
+    box-shadow: none !important;
+}
+
+.hamburger-btn:hover,
+.lang-dropdown-btn:hover,
+.search-box:hover,
+.search-wrap:hover,
+.gooey-search-container:hover {
+    box-shadow: none !important;
+}
+
+/* 5. Refined Modals & Popovers (Subtle Micro-Elevation, No Dark Muddy Shadows) */
+.modal-card,
+.modal-container,
+.modal-container-large {
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.lang-dropdown-menu,
+.custom-dropdown-menu,
+.header-dropdown-menu,
+.notif-dropdown-menu {
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .modal-card,
+html[data-theme="dark"] .modal-container,
+html[data-theme="dark"] .modal-container-large,
+body.dark-mode .modal-card,
+body.dark-mode .modal-container,
+body.dark-mode .modal-container-large {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .lang-dropdown-menu,
+html[data-theme="dark"] .custom-dropdown-menu,
+html[data-theme="dark"] .header-dropdown-menu,
+html[data-theme="dark"] .notif-dropdown-menu,
+body.dark-mode .lang-dropdown-menu,
+body.dark-mode .custom-dropdown-menu,
+body.dark-mode .header-dropdown-menu,
+body.dark-mode .notif-dropdown-menu {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+

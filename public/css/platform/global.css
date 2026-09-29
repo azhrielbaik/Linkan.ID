@@ -10,8 +10,8 @@
 :root {
     --platform-radius: 14px;
     --platform-border: 1px solid #e2e8f0;
-    --platform-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
-    --platform-card-shadow-hover: 0 6px 16px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --platform-card-shadow: none;
+    --platform-card-shadow-hover: 0 2px 8px rgba(15, 23, 42, 0.04);
     --platform-card-padding: 14px 18px;
     --platform-control-height: 40px;
     --platform-summary-label-size: 11px;
@@ -95,7 +95,7 @@ select.custom-dropdown-native-hidden {
 
 /* Modern Capsule Filter Button */
 .btn-filter {
-    background: linear-gradient(135deg, var(--p-primary, #ed842c) 0%, #f97316 100%);
+    background: var(--p-primary, #ed842c);
     color: #ffffff !important;
     border: none;
     border-radius: 9999px; /* Capsule */
@@ -108,8 +108,8 @@ select.custom-dropdown-native-hidden {
     align-items: center;
     gap: 7px;
     font-family: inherit;
-    box-shadow: 0 2px 8px rgba(237, 132, 44, 0.25), 0 1px 2px rgba(15, 23, 42, 0.06);
-    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     text-decoration: none;
     user-select: none;
@@ -121,9 +121,9 @@ select.custom-dropdown-native-hidden {
 }
 
 .btn-filter:hover {
-    background: linear-gradient(135deg, var(--p-primary-hover, #d9701a) 0%, #ea580c 100%);
-    box-shadow: 0 4px 14px rgba(237, 132, 44, 0.35);
-    transform: translateY(-1.5px);
+    background: var(--p-primary-hover, #d9701a);
+    box-shadow: none;
+    transform: translateY(-1px);
     color: #ffffff !important;
 }
 
@@ -133,7 +133,7 @@ select.custom-dropdown-native-hidden {
 
 .btn-filter:active {
     transform: translateY(0) scale(0.97);
-    box-shadow: 0 1px 4px rgba(237, 132, 44, 0.2);
+    box-shadow: none;
 }
 
 /* Modern Capsule Reset Button */
@@ -151,8 +151,8 @@ select.custom-dropdown-native-hidden {
     align-items: center;
     gap: 6px;
     font-family: inherit;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     user-select: none;
 }
@@ -167,7 +167,7 @@ select.custom-dropdown-native-hidden {
     border-color: #cbd5e1;
     color: #0f172a !important;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+    box-shadow: none;
 }
 
 .btn-reset:hover i {
@@ -181,7 +181,7 @@ select.custom-dropdown-native-hidden {
 /* Dark Mode for Filter & Reset buttons */
 html[data-theme="dark"] .btn-filter,
 body.dark-mode .btn-filter {
-    box-shadow: 0 3px 12px rgba(237, 132, 44, 0.35);
+    box-shadow: none;
 }
 
 html[data-theme="dark"] .btn-reset,
@@ -189,7 +189,7 @@ body.dark-mode .btn-reset {
     background: #1e293b;
     border-color: rgba(255, 255, 255, 0.12);
     color: #cbd5e1 !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
 }
 
 html[data-theme="dark"] .btn-reset:hover,
@@ -306,8 +306,8 @@ body {
     color: #475569;
     font-size: 15px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
     padding: 0;
     margin: 0;
@@ -320,18 +320,18 @@ body {
     background: #fff8f2;
     border-color: rgba(237, 132, 44, 0.35);
     color: #ed842c;
-    box-shadow: 0 3px 10px rgba(237, 132, 44, 0.12);
+    box-shadow: none;
     transform: translateY(-1px);
 }
 
 .hamburger-btn:active {
     transform: scale(0.95);
     background: #fff3e8;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
 }
 
 .hamburger-btn:focus-visible {
-    box-shadow: 0 0 0 3px rgba(237, 132, 44, 0.25);
+    box-shadow: 0 0 0 2px rgba(237, 132, 44, 0.2);
     border-color: #ed842c;
 }
 
@@ -368,7 +368,7 @@ body {
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
     user-select: none;
@@ -380,7 +380,7 @@ body {
     background: #fff8f2;
     border-color: rgba(237, 132, 44, 0.4);
     color: #ed842c;
-    box-shadow: 0 3px 10px rgba(237, 132, 44, 0.12);
+    box-shadow: none;
 }
 
 .lang-dropdown-btn.active .lang-chevron-icon {
@@ -425,7 +425,7 @@ body {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 14px;
-    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.1), 0 2px 8px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
     padding: 8px;
     z-index: 1060;
     animation: langDropdownFade 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -805,7 +805,7 @@ body.dark-mode .p-ticket-stat-num {
 .p-tickets-table-card {
     background: #f1f5fa !important;
     border-radius: 18px !important;
-    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04) !important;
+    box-shadow: none !important;
     border: 1px solid #e2e8f0 !important;
     width: 100% !important;
     padding: 8px 10px !important;
@@ -914,8 +914,8 @@ tbody td,
     border-bottom: 1px solid #edf2f7 !important;
     border-left: none !important;
     border-right: none !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02) !important;
-    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+    box-shadow: none !important;
+    transition: background 0.15s ease, border-color 0.15s ease !important;
 }
 
 tbody td:first-child,
@@ -936,7 +936,7 @@ tbody tr:hover td,
 .table-card tbody tr:hover td {
     background: #ffffff !important;
     border-color: #cbd5e1 !important;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+    box-shadow: none !important;
 }
 
 /* Modern Index Badge (#) */
@@ -1222,7 +1222,7 @@ td.row-number,
     padding: 4px 6px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+    box-shadow: none;
 }
 
 .btn-pag-arrow {
@@ -1247,7 +1247,7 @@ td.row-number,
     border-color: #ed842c;
     color: #ffffff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(237, 132, 44, 0.28);
+    box-shadow: none;
 }
 
 .btn-pag-arrow.disabled {
@@ -1285,7 +1285,8 @@ td.row-number,
     width: 520px;
     max-width: 92%;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
     overflow: hidden;
     animation: modalScale 0.2s ease-out;
 }
@@ -1295,7 +1296,8 @@ td.row-number,
     width: 720px;
     max-width: 94%;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
     overflow: hidden;
     animation: modalScale 0.2s ease-out;
 }
