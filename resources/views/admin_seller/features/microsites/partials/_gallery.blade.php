@@ -60,7 +60,7 @@
 
                         <div class="card-stats-tags mt-3">
                             <span class="stat-tag"><i class="fas fa-eye"></i> {{ number_format($viewsData[$appearance->alias] ?? 0) }} views</span>
-                            <span class="stat-tag"><i class="fas fa-cube"></i> {{ $digitalProducts ? $digitalProducts->count() : 0 }} {{ __('admin.product') }}</span>
+                            <span class="stat-tag"><i class="fas fa-cube"></i> {{ $appearance->digital_products_count }} {{ __('admin.product') }}</span>
                         </div>
 
                         <!-- ACTION BUTTONS -->

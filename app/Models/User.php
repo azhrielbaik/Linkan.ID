@@ -116,4 +116,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SuspensionAppeal::class);
     }
+
+    public function appearances(): HasMany
+    {
+        return $this->hasMany(Appearance::class);
+    }
 }

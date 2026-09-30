@@ -3,7 +3,7 @@
 @section("page_title", isset($product) ? __('admin.edit_digital_product') : __('admin.add_digital_product'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/digital-product.css') }}?v={{ time() }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/digital-product.css') }}?v={{ file_exists(public_path('css/pages/digital-product.css')) ? filemtime(public_path('css/pages/digital-product.css')) : '1.0' }}">
 <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
 @endpush
 
@@ -24,14 +24,16 @@
 
     <!-- Alerts -->
     @if (session('success'))
-        <div class="alert alert-success" style="background: #e0ffe0; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #007500;">
-            {{ session('success') }}
+        <div class="product-form-alert alert-success">
+            <i class="fas fa-check-circle alert-icon"></i>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if (isset($errors) && $errors->any())
-        <div class="alert alert-danger" style="background: #ffe3e3; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-            <ul style="margin: 0; padding-left: 20px; color: #b30000;">
+        <div class="product-form-alert alert-danger">
+            <i class="fas fa-exclamation-circle alert-icon"></i>
+            <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -40,8 +42,9 @@
     @endif
 
     @if(isset($product) && $product->verification_status === 'rejected')
-        <div class="alert alert-warning" style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #856404;">
-            <i class="fas fa-exclamation-triangle"></i> {{ __('admin.product_rejected') }}
+        <div class="product-form-alert alert-warning">
+            <i class="fas fa-exclamation-triangle alert-icon"></i>
+            <span>{{ __('admin.product_rejected') }}</span>
         </div>
     @endif
     
@@ -223,10 +226,10 @@
                 </div>
                 
                 <div id="file-input-container" style="display: {{ (isset($product) && $product->platform_type == 'upload') || !isset($product) ? 'block' : 'none' }};">
-                    <div class="form-row-box" onclick="document.getElementById('platform_file').click()" style="cursor: pointer; justify-content: space-between;">
-                        <span class="row-label" style="min-width: auto; margin-right: 0;">Pilih File Produk</span>
-                        <div style="flex: 1; text-align: right; color: #9ca3af; font-size: 14px;">
-                            <i class="fas fa-paperclip" style="margin-right: 5px;"></i>
+                    <div class="form-row-box file-picker-row" onclick="document.getElementById('platform_file').click()">
+                        <span class="row-label file-picker-label">Pilih File Produk:</span>
+                        <div class="file-picker-selected">
+                            <i class="fas fa-paperclip"></i>
                             <span id="selected-file-name">
                                 @if(isset($product) && $product->platform_file)
                                     {{ basename($product->platform_file) }}
@@ -243,7 +246,7 @@
                     <a href="{{ route('admin.digital-products.index') }}" class="btn-prev" style="text-decoration: none; display: inline-flex; align-items: center;">
                         <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Kembali ke Toko
                     </a>
-                    <button type="button" class="btn-next" onclick="nextStep()">Lanjut <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+                    <button type="button" class="btn-next" id="btnNextStep1" onclick="nextStep()" disabled>Lanjut <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
                 </div>
             </div>
 
@@ -252,11 +255,11 @@
                 
                 <div class="section-label">Pengaturan Harga</div>
 
-                <div class="form-row-box">
-                    <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div>
-                            <span class="row-label" style="display: inline-block; min-width: auto;">{{ __('admin.allow_pay_what_want') }}</span>
-                            <span style="font-size: 13px; color: #6b7280; margin-left: 10px;">Izinkan pembeli menentukan harga sendiri</span>
+                <div class="form-row-box pay-what-want-row">
+                    <div class="pww-container">
+                        <div class="pww-info">
+                            <span class="row-label pww-label">{{ __('admin.allow_pay_what_want') }}</span>
+                            <span class="pww-desc">Izinkan pembeli menentukan harga sendiri</span>
                         </div>
                         <input type="hidden" name="pay_what_want" value="0">
                         <label class="toggle-switch">
@@ -289,7 +292,7 @@
 
                 <div class="action-buttons space-between">
                     <button type="button" class="btn-prev" onclick="prevStep()"><i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Kembali</button>
-                    <button type="submit" class="add-product-button">{{ isset($product) ? __('admin.save_changes') : __('admin.add_product') }} <i class="fas fa-check" style="margin-left: 8px;"></i></button>
+                    <button type="submit" class="add-product-button" id="btnAddProduct" disabled>{{ isset($product) ? __('admin.save_changes') : __('admin.add_product') }} <i class="fas fa-check" style="margin-left: 8px;"></i></button>
                 </div>
             </div>
 
@@ -300,10 +303,11 @@
 @endsection
 
 @push("scripts")
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
 // Format currency Rupiah
 function formatRupiah(angka) {
-    var number_string = angka.replace(/[^,\d]/g, '').toString(),
+    var number_string = (angka || '').toString().replace(/[^,\d]/g, ''),
         split = number_string.split(','),
         sisa = split[0].length % 3,
         rupiah = split[0].substr(0, sisa),
@@ -319,7 +323,7 @@ function formatRupiah(angka) {
 }
 
 function unformatRupiah(rupiah) {
-    return rupiah.replace(/[^\d]/g, '');
+    return (rupiah || '').toString().replace(/[^\d]/g, '');
 }
 
 // Price input formatting
@@ -334,10 +338,13 @@ if (priceInput) {
         if (unformatted !== '') {
             let formatted = formatRupiah(unformatted);
             e.target.value = formatted;
-            priceRaw.value = unformatted;
+            if (priceRaw) priceRaw.value = unformatted;
         } else {
             e.target.value = '';
-            priceRaw.value = '';
+            if (priceRaw) priceRaw.value = '';
+        }
+        if (typeof window.validateStep2 === 'function') {
+            window.validateStep2();
         }
     });
 
@@ -345,7 +352,10 @@ if (priceInput) {
         let value = e.target.value;
         if (value === '' || value === 'Rp ') {
             e.target.value = '';
-            priceRaw.value = '';
+            if (priceRaw) priceRaw.value = '';
+        }
+        if (typeof window.validateStep2 === 'function') {
+            window.validateStep2();
         }
     });
 }
@@ -363,6 +373,10 @@ if (priceInput) {
     var gridEl = document.getElementById('productPhotosGrid');
     var dropzoneEl = document.getElementById('photoEmptyDropzone');
     var errorEl = document.getElementById('photoErrorMessage');
+
+    window._getProductPhotosCount = function() {
+        return existingPhotos.length + stagedFiles.length;
+    };
 
     function showError(msg) {
         if (!errorEl) return;
@@ -416,98 +430,101 @@ if (priceInput) {
             gridEl.innerHTML = '';
             gridEl.style.display = 'none';
             dropzoneEl.style.display = 'block';
-            return;
+        } else {
+            dropzoneEl.style.display = 'none';
+            gridEl.style.display = 'grid';
+            gridEl.innerHTML = '';
+
+            var globalIndex = 0;
+
+            // Render existing photos
+            existingPhotos.forEach(function(item, idx) {
+                var isCover = (globalIndex === 0);
+                var card = document.createElement('div');
+                card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
+
+                var img = document.createElement('img');
+                img.src = item.url;
+                img.alt = 'Foto Produk';
+                card.appendChild(img);
+
+                if (isCover) {
+                    var badge = document.createElement('span');
+                    badge.className = 'photo-cover-badge';
+                    badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
+                    card.appendChild(badge);
+                }
+
+                var delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'photo-btn-delete';
+                delBtn.title = 'Hapus foto ini';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                delBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    window.removeExistingPhoto(idx);
+                };
+                card.appendChild(delBtn);
+
+                gridEl.appendChild(card);
+                globalIndex++;
+            });
+
+            // Render staged (newly selected) photos
+            stagedFiles.forEach(function(file, idx) {
+                var isCover = (globalIndex === 0);
+                var card = document.createElement('div');
+                card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
+
+                var img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.alt = file.name;
+                img.onload = function() {
+                    URL.revokeObjectURL(this.src);
+                };
+                card.appendChild(img);
+
+                if (isCover) {
+                    var badge = document.createElement('span');
+                    badge.className = 'photo-cover-badge';
+                    badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
+                    card.appendChild(badge);
+                } else {
+                    var newBadge = document.createElement('span');
+                    newBadge.className = 'photo-new-badge';
+                    newBadge.textContent = 'Baru';
+                    card.appendChild(newBadge);
+                }
+
+                var delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'photo-btn-delete';
+                delBtn.title = 'Hapus foto ini';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                delBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    window.removeStagedPhoto(idx);
+                };
+                card.appendChild(delBtn);
+
+                gridEl.appendChild(card);
+                globalIndex++;
+            });
+
+            // If fewer than maxPhotos, show "+ Tambah Foto" card
+            if (totalPhotos < maxPhotos) {
+                var addCard = document.createElement('div');
+                addCard.className = 'photo-add-card';
+                addCard.innerHTML = '<i class="fas fa-plus"></i><span>Tambah Foto<br><small style="color:#94a3b8;">(' + totalPhotos + '/' + maxPhotos + ')</small></span>';
+                addCard.onclick = function() {
+                    if (fileInput) fileInput.click();
+                };
+                gridEl.appendChild(addCard);
+            }
         }
 
-        dropzoneEl.style.display = 'none';
-        gridEl.style.display = 'grid';
-        gridEl.innerHTML = '';
-
-        var globalIndex = 0;
-
-        // Render existing photos
-        existingPhotos.forEach(function(item, idx) {
-            var isCover = (globalIndex === 0);
-            var card = document.createElement('div');
-            card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
-
-            var img = document.createElement('img');
-            img.src = item.url;
-            img.alt = 'Foto Produk';
-            card.appendChild(img);
-
-            if (isCover) {
-                var badge = document.createElement('span');
-                badge.className = 'photo-cover-badge';
-                badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
-                card.appendChild(badge);
-            }
-
-            var delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.className = 'photo-btn-delete';
-            delBtn.title = 'Hapus foto ini';
-            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            delBtn.onclick = function(e) {
-                e.stopPropagation();
-                window.removeExistingPhoto(idx);
-            };
-            card.appendChild(delBtn);
-
-            gridEl.appendChild(card);
-            globalIndex++;
-        });
-
-        // Render staged (newly selected) photos
-        stagedFiles.forEach(function(file, idx) {
-            var isCover = (globalIndex === 0);
-            var card = document.createElement('div');
-            card.className = 'photo-item-card' + (isCover ? ' is-cover' : '');
-
-            var img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.alt = file.name;
-            img.onload = function() {
-                URL.revokeObjectURL(this.src);
-            };
-            card.appendChild(img);
-
-            if (isCover) {
-                var badge = document.createElement('span');
-                badge.className = 'photo-cover-badge';
-                badge.innerHTML = '<i class="fas fa-star"></i> Sampul';
-                card.appendChild(badge);
-            } else {
-                var newBadge = document.createElement('span');
-                newBadge.className = 'photo-new-badge';
-                newBadge.textContent = 'Baru';
-                card.appendChild(newBadge);
-            }
-
-            var delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.className = 'photo-btn-delete';
-            delBtn.title = 'Hapus foto ini';
-            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            delBtn.onclick = function(e) {
-                e.stopPropagation();
-                window.removeStagedPhoto(idx);
-            };
-            card.appendChild(delBtn);
-
-            gridEl.appendChild(card);
-            globalIndex++;
-        });
-
-        // If fewer than maxPhotos, show "+ Tambah Foto" card
-        if (totalPhotos < maxPhotos) {
-            var addCard = document.createElement('div');
-            addCard.className = 'photo-add-card';
-            addCard.innerHTML = '<i class="fas fa-plus"></i><span>Tambah Foto<br><small style="color:#94a3b8;">(' + totalPhotos + '/' + maxPhotos + ')</small></span>';
-            addCard.onclick = function() {
-                if (fileInput) fileInput.click();
-            };
-            gridEl.appendChild(addCard);
+        if (typeof window.validateStep1 === 'function') {
+            window.validateStep1();
         }
     }
 
@@ -553,88 +570,13 @@ if (priceInput) {
     renderGallery();
 })();
 
-// Platform file selection
-document.getElementById('platform_file').addEventListener('change', function(e) {
-    const fileName = e.target.files[0] ? e.target.files[0].name : 'Select File';
-    document.getElementById('selected-file-name').textContent = fileName;
-});
-
-// Platform button selection (Radio Cards)
-document.querySelectorAll('input[name="platform_type"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        // Remove active class from all wrappers
-        document.querySelectorAll('.platform-card-wrapper').forEach(wrapper => {
-            wrapper.classList.remove('active');
-        });
-        
-        // Add active class to checked radio wrapper
-        if (this.checked) {
-            this.closest('.platform-card-wrapper').classList.add('active');
-        }
-
-        const platform = this.value;
-        const urlInput = document.getElementById('url-input-container');
-        const fileButton = document.getElementById('file-input-container');
-
-        if (platform === 'upload') {
-            urlInput.style.display = 'none';
-            fileButton.style.display = 'block';
-        } else {
-            urlInput.style.display = 'flex';
-            fileButton.style.display = 'none';
-        }
-    });
-});
-
-// Stepper Logic
-function nextStep() {
-    // Basic validation for step 1
-    const titleInput = document.querySelector('input[name="title"]').value;
-    if(!titleInput) {
-        alert("Judul produk tidak boleh kosong.");
-        return;
-    }
-    
-    document.getElementById('step1-content').style.display = 'none';
-    document.getElementById('step2-content').style.display = 'block';
-    
-    // Update Stepper UI
-    const step1Indicator = document.getElementById('step1-indicator');
-    step1Indicator.classList.remove('active');
-    step1Indicator.classList.add('completed');
-    document.getElementById('step1-num').style.display = "none";
-    document.getElementById('step1-icon').style.display = "inline-block";
-
-    const step2Indicator = document.getElementById('step2-indicator');
-    step2Indicator.classList.add('active');
-}
-
-function prevStep() {
-    document.getElementById('step2-content').style.display = 'none';
-    document.getElementById('step1-content').style.display = 'block';
-    
-    // Update Stepper UI
-    const step1Indicator = document.getElementById('step1-indicator');
-    step1Indicator.classList.remove('completed');
-    step1Indicator.classList.add('active');
-    document.getElementById('step1-icon').style.display = "none";
-    document.getElementById('step1-num').style.display = "inline-block";
-
-    const step2Indicator = document.getElementById('step2-indicator');
-    step2Indicator.classList.remove('active');
-}
-</script>
-
-<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<script>
 // ============================================================
-// Quill Rich Text Editor — Description Field (Matching Microsite)
+// Quill Rich Text Editor — Description Field
 // ============================================================
 (function() {
     var editorElement = document.getElementById('descriptionEditor');
     if (!editorElement) return;
 
-    // Cegah duplikasi toolbar jika terjadi reload Turbo/PJAX
     if (editorElement.previousSibling && editorElement.previousSibling.classList && editorElement.previousSibling.classList.contains('ql-toolbar')) {
         return;
     }
@@ -656,7 +598,6 @@ function prevStep() {
         placeholder: 'Tuliskan deskripsi lengkap produk digital Anda...'
     });
 
-    // Inisialisasi konten awal bersih
     var initialContent = @json($cleanDescription);
     if (initialContent && initialContent.trim() !== '') {
         if (/<[a-z][\s\S]*>/i.test(initialContent)) {
@@ -668,6 +609,13 @@ function prevStep() {
 
     var descInput = document.getElementById('descriptionInput');
 
+    window._isQuillDescFilled = function() {
+        if (!quill) {
+            return !!(descInput && descInput.value.trim().length > 0);
+        }
+        return quill.getText().trim().length > 0;
+    };
+
     function syncQuillContent() {
         if (!descInput) return;
         var text = quill.getText().trim();
@@ -676,9 +624,15 @@ function prevStep() {
         } else {
             descInput.value = quill.root.innerHTML;
         }
+        if (typeof window.validateStep1 === 'function') {
+            window.validateStep1();
+        }
     }
 
     quill.on('text-change', syncQuillContent);
+
+    // Sync content on initialization
+    syncQuillContent();
 
     var form = document.getElementById('digitalProductForm');
     if (form) {
@@ -687,5 +641,213 @@ function prevStep() {
         });
     }
 })();
+
+// Platform file selection
+const platformFileInput = document.getElementById('platform_file');
+if (platformFileInput) {
+    platformFileInput.addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'Select File';
+        const displaySpan = document.getElementById('selected-file-name');
+        if (displaySpan) {
+            displaySpan.textContent = fileName;
+        }
+        if (typeof window.validateStep1 === 'function') {
+            window.validateStep1();
+        }
+    });
+}
+
+// Platform button selection (Radio Cards)
+document.querySelectorAll('input[name="platform_type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.platform-card-wrapper').forEach(wrapper => {
+            wrapper.classList.remove('active');
+        });
+        
+        if (this.checked) {
+            this.closest('.platform-card-wrapper').classList.add('active');
+        }
+
+        const platform = this.value;
+        const urlInput = document.getElementById('url-input-container');
+        const fileButton = document.getElementById('file-input-container');
+
+        if (platform === 'upload') {
+            if (urlInput) urlInput.style.display = 'none';
+            if (fileButton) fileButton.style.display = 'block';
+        } else {
+            if (urlInput) urlInput.style.display = 'flex';
+            if (fileButton) fileButton.style.display = 'none';
+        }
+
+        if (typeof window.validateStep1 === 'function') {
+            window.validateStep1();
+        }
+    });
+});
+
+// ============================================================
+// Step Validation Logic
+// ============================================================
+function validateStep1() {
+    const btnNext = document.getElementById('btnNextStep1');
+    if (!btnNext) return false;
+
+    // 1. Judul Produk: tidak boleh kosong
+    const titleInput = document.querySelector('input[name="title"]');
+    const isTitleValid = !!(titleInput && titleInput.value.trim().length > 0);
+
+    // 2. Deskripsi Produk: tidak boleh kosong
+    let isDescValid = false;
+    if (typeof window._isQuillDescFilled === 'function') {
+        isDescValid = window._isQuillDescFilled();
+    } else {
+        const descInput = document.getElementById('descriptionInput');
+        isDescValid = !!(descInput && descInput.value.trim().length > 0);
+    }
+
+    // 3. Foto Produk: minimal 1 foto produk
+    let isPhotosValid = false;
+    if (typeof window._getProductPhotosCount === 'function') {
+        isPhotosValid = window._getProductPhotosCount() > 0;
+    }
+
+    // 4. File / URL Platform:
+    const checkedRadio = document.querySelector('input[name="platform_type"]:checked');
+    const platform = checkedRadio ? checkedRadio.value : 'upload';
+    let isPlatformValid = false;
+
+    if (platform === 'upload') {
+        const fileInput = document.getElementById('platform_file');
+        const hasNewFile = !!(fileInput && fileInput.files && fileInput.files.length > 0);
+        const hasExistingFile = @json(isset($product) && !empty($product->platform_file));
+        isPlatformValid = hasNewFile || hasExistingFile;
+    } else {
+        const urlInput = document.querySelector('input[name="platform_url"]');
+        isPlatformValid = !!(urlInput && urlInput.value.trim().length > 0);
+    }
+
+    const isValid = isTitleValid && isDescValid && isPhotosValid && isPlatformValid;
+    btnNext.disabled = !isValid;
+
+    if (isValid) {
+        btnNext.classList.remove('disabled');
+        btnNext.removeAttribute('title');
+    } else {
+        btnNext.classList.add('disabled');
+        btnNext.setAttribute('title', 'Lengkapi semua kolom input (Judul, Deskripsi, Foto, & File/URL) terlebih dahulu');
+    }
+
+    return isValid;
+}
+
+function validateStep2() {
+    const btnAdd = document.getElementById('btnAddProduct');
+    if (!btnAdd) return false;
+
+    const priceRaw = document.getElementById('priceRaw');
+    const priceInput = document.getElementById('priceInput');
+    let rawVal = priceRaw ? priceRaw.value.trim() : '';
+    if (rawVal === '' && priceInput) {
+        rawVal = unformatRupiah(priceInput.value).trim();
+    }
+
+    const isPriceValid = (rawVal !== '' && !isNaN(rawVal));
+
+    btnAdd.disabled = !isPriceValid;
+
+    if (isPriceValid) {
+        btnAdd.classList.remove('disabled');
+        btnAdd.removeAttribute('title');
+    } else {
+        btnAdd.classList.add('disabled');
+        btnAdd.setAttribute('title', 'Masukkan harga produk terlebih dahulu');
+    }
+
+    return isPriceValid;
+}
+
+window.validateStep1 = validateStep1;
+window.validateStep2 = validateStep2;
+
+// Event Listeners for Title and Platform URL inputs
+const titleInput = document.querySelector('input[name="title"]');
+if (titleInput) {
+    titleInput.addEventListener('input', validateStep1);
+    titleInput.addEventListener('change', validateStep1);
+}
+
+const urlInput = document.querySelector('input[name="platform_url"]');
+if (urlInput) {
+    urlInput.addEventListener('input', validateStep1);
+    urlInput.addEventListener('change', validateStep1);
+}
+
+// Stepper Logic
+function nextStep() {
+    if (!validateStep1()) {
+        return;
+    }
+    
+    document.getElementById('step1-content').style.display = 'none';
+    document.getElementById('step2-content').style.display = 'block';
+    
+    // Update Stepper UI
+    const step1Indicator = document.getElementById('step1-indicator');
+    step1Indicator.classList.remove('active');
+    step1Indicator.classList.add('completed');
+    document.getElementById('step1-num').style.display = "none";
+    document.getElementById('step1-icon').style.display = "inline-block";
+
+    const step2Indicator = document.getElementById('step2-indicator');
+    step2Indicator.classList.add('active');
+
+    validateStep2();
+}
+
+function prevStep() {
+    document.getElementById('step2-content').style.display = 'none';
+    document.getElementById('step1-content').style.display = 'block';
+    
+    // Update Stepper UI
+    const step1Indicator = document.getElementById('step1-indicator');
+    step1Indicator.classList.remove('completed');
+    step1Indicator.classList.add('active');
+    document.getElementById('step1-icon').style.display = "none";
+    document.getElementById('step1-num').style.display = "inline-block";
+
+    const step2Indicator = document.getElementById('step2-indicator');
+    step2Indicator.classList.remove('active');
+
+    validateStep1();
+}
+
+// Form submit guard
+const formEl = document.getElementById('digitalProductForm');
+if (formEl) {
+    formEl.addEventListener('submit', function(e) {
+        if (!validateStep1()) {
+            e.preventDefault();
+            prevStep();
+            return false;
+        }
+        if (!validateStep2()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
+
+// Trigger initial validations
+document.addEventListener('DOMContentLoaded', function() {
+    validateStep1();
+    validateStep2();
+});
+document.addEventListener('turbo:load', function() {
+    validateStep1();
+    validateStep2();
+});
+validateStep1();
+validateStep2();
 </script>
 @endpush

@@ -81,10 +81,6 @@
 </div>
 
 <script>
-    window._tokoProducts = @json($existingProducts ?? []);
-</script>
-
-<script>
 // ================================================================
 // EDITOR PANEL TAB SWITCHER
 // Mengontrol visibilitas panel "Elemen" vs "Pengaturan"
@@ -308,7 +304,7 @@ function _saveDesignSetting(settingPayload) {
 // INISIALISASI: terapkan block_shape yang tersimpan ke phone preview
 // ================================================================
 (function initDesignSettings() {
-    const savedBlockShape = '{{ $appearance->block_shape ?? "rounded" }}';
+    const savedBlockShape = @json($appearance->block_shape ?? 'rounded');
     if (savedBlockShape !== 'rounded') {
         // Terapkan tanpa trigger auto-save ulang saat init
         const radiusMap = { sharp: '0px', rounded: '14px', pill: '9999px' };
@@ -319,7 +315,7 @@ function _saveDesignSetting(settingPayload) {
     }
 
     // Inisialisasi sub-tab background berdasarkan data tersimpan
-    const savedBgType = '{{ $appearance->background_type ?? "color" }}';
+    const savedBgType = @json($appearance->background_type ?? 'color');
     if (savedBgType === 'image') {
         switchBackgroundTab('gambar');
     } else {
@@ -327,7 +323,7 @@ function _saveDesignSetting(settingPayload) {
     }
 
     // Inisialisasi profile layout di phone preview saat halaman load
-    const savedProfileLayout = '{{ $appearance->profile_layout ?? "classic" }}';
+    const savedProfileLayout = @json($appearance->profile_layout ?? 'classic');
     const liveProfile = document.getElementById('liveProfileSection');
     if (liveProfile && savedProfileLayout && savedProfileLayout !== 'classic') {
         liveProfile.setAttribute('data-profile-layout', savedProfileLayout);

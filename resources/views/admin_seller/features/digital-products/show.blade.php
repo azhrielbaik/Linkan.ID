@@ -2,18 +2,6 @@
 @section('title', 'Detail Produk Digital')
 @section('page_title', 'Detail Produk Digital')
 
-@php
-    if (!function_exists('resolveProductImageUrl')) {
-        function resolveProductImageUrl($path) {
-            if (empty($path)) return 'https://via.placeholder.com/600x600?text=No+Image';
-            if (Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/'])) {
-                return $path;
-            }
-            return Storage::url($path);
-        }
-    }
-@endphp
-
 @section('content')
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>

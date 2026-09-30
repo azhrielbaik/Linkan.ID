@@ -3,7 +3,7 @@
 @section("page_title", 'Toko Saya')
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}">
 <style>
     /* Header Layout */
     .store-header-row {
@@ -361,18 +361,6 @@
 </style>
 @endpush
 
-@php
-    if (!function_exists('resolveProductImageUrl')) {
-        function resolveProductImageUrl($path) {
-            if (empty($path)) return 'https://via.placeholder.com/600x600?text=No+Image';
-            if (Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/'])) {
-                return $path;
-            }
-            return Storage::url($path);
-        }
-    }
-@endphp
-
 @section("content")
 <div class="dashboard-beranda-page" style="padding-top: 10px;">
 
@@ -407,18 +395,8 @@
                 <!-- Image Section -->
                 <div style="position: relative;">
                     <div class="store-card-img-wrap">
-                        @php
-                            $imageUrl = null;
-                            if (is_array($product->media_files) && count($product->media_files) > 0) {
-                                $imageUrl = $product->media_files[0]['url'] ?? $product->media_files[0]['path'] ?? null;
-                            }
-                            if (!$imageUrl && $product->image) {
-                                $imageUrl = $product->image;
-                            }
-                        @endphp
-
-                        @if($imageUrl)
-                            <img src="{{ resolveProductImageUrl($imageUrl) }}" alt="{{ $product->title }}">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->title }}">
                         @else
                             <div class="no-img"><i class="fas fa-image"></i></div>
                         @endif

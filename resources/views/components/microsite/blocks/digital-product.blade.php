@@ -27,7 +27,7 @@
                     <span class="toggle-slider"></span>
                 </label>
             </div>
-            <button type="button" class="btn-element-action btn-delete-icon" onclick="deleteDynamicDigitalProduct({{ $digitalProduct->id }})" title="Hapus Produk">
+            <button type="button" class="btn-element-action btn-delete-icon" onclick="deleteDynamicDigitalProduct({{ $digitalProduct->id }})" title="Hapus dari Microsite">
                 <i class="fas fa-trash-alt"></i>
             </button>
             <button type="button" data-type="DigitalProduct" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">

@@ -1,7 +1,27 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ (request()->cookie('theme') === 'dark') ? 'dark' : '' }}">
 <head>
     <meta charset="UTF-8">
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    if (!document.cookie.includes('theme=dark')) {
+                        document.cookie = "theme=dark; path=/; max-age=31536000; SameSite=Lax";
+                    }
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    if (!document.cookie.includes('theme=light')) {
+                        document.cookie = "theme=light; path=/; max-age=31536000; SameSite=Lax";
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="@yield('meta_description', 'Linkan.ID Dashboard')">
@@ -14,14 +34,22 @@
     <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-    @stack('styles')
-    @stack('page-styles')
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+        }
+
+        html {
+            color-scheme: light;
+            background-color: #ffffff;
+        }
+
+        html.dark {
+            color-scheme: dark;
+            background-color: #141824 !important;
         }
 
         html, body {
@@ -32,6 +60,11 @@
         body {
             background-color: #ffffff;
             color: #333;
+        }
+
+        html.dark body {
+            background-color: #141824 !important;
+            color: #ffffff !important;
         }
 
         .container {
@@ -506,6 +539,7 @@
             display: none !important;
         }
         /* --- GLOBAL DARK MODE OVERRIDES (FLEETY THEME) --- */
+        html.dark,
         html.dark body, 
         html.dark .container, 
         html.dark .main-content, 
@@ -664,25 +698,115 @@
             background-color: #1c212e !important;
             color: #f1f5f9 !important;
         }
+
+        /* Theme Switch Toggle */
+        .theme-switch-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+        }
+        .theme-switch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #f1f5f9;
+            border-radius: 50px;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.08), inset -3px -3px 6px rgba(255,255,255,0.9);
+            width: 80px;
+            height: 40px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .theme-switch-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background-color: #f1f5f9;
+            box-shadow: -4px 0 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1;
+            transform: translateX(100%);
+        }
+        .theme-switch-icon {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+            height: 100%;
+            font-size: 16px;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+        }
+        html.dark .theme-switch {
+            background-color: #1e293b;
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.4), inset -2px -2px 5px rgba(255,255,255,0.05);
+        }
+        html.dark .theme-switch-slider {
+            background-color: #1e293b;
+            transform: translateX(0);
+            box-shadow: 4px 0 8px rgba(0,0,0,0.4);
+        }
+        html:not(.dark) .icon-sun {
+            color: #FF9040;
+        }
+        html.dark .icon-moon {
+            color: #fef08a;
+        }
+        html:not(.dark) .icon-moon {
+            color: #cbd5e1;
+        }
+        html.dark .icon-sun {
+            color: #4a5568;
+        }
     </style>
     @stack('styles')
     @stack('page-styles')
     <meta name="view-transition" content="same-origin" />
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js"></script>
     <script>
+        function syncThemeState() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        }
+
         document.addEventListener("turbo:before-render", function(event) {
+            syncThemeState();
+
             if (document.body.classList.contains('mini-sidebar')) {
                 event.detail.newBody.classList.add('mini-sidebar');
             } else {
                 event.detail.newBody.classList.remove('mini-sidebar');
             }
         });
+
+        document.addEventListener("turbo:before-cache", function() {
+            syncThemeState();
+        });
+
+        document.addEventListener("turbo:render", function() {
+            syncThemeState();
+        });
     </script>
     <style>
-        /* Optional fade transition during turbo drive navigations */
+        /* Smooth fade transition during turbo drive navigations */
         ::view-transition-old(root),
         ::view-transition-new(root) {
-            animation-duration: 0.3s;
+            animation-duration: 0.15s;
         }
     </style>
 </head>
@@ -706,84 +830,6 @@
                     <div class="header-actions">
                         <a href="{{ route('admin.settings') }}" class="action-icon" title="Pengaturan"><i class="fas fa-cog"></i></a>
 
-                        {{-- Dark Mode Toggle Switch --}}
-                        <style>
-                            .theme-switch-wrapper {
-                                display: inline-flex;
-                                align-items: center;
-                                justify-content: center;
-                                margin: 0 15px;
-                            }
-                            
-                            .theme-switch {
-                                position: relative;
-                                display: flex;
-                                align-items: center;
-                                background-color: #f1f5f9;
-                                border-radius: 50px;
-                                padding: 0;
-                                cursor: pointer;
-                                box-shadow: inset 3px 3px 6px rgba(0,0,0,0.08), inset -3px -3px 6px rgba(255,255,255,0.9);
-                                width: 80px;
-                                height: 40px;
-                                transition: background-color 0.3s ease, box-shadow 0.3s ease;
-                                overflow: hidden;
-                            }
-                            
-                            .theme-switch-slider {
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                width: 50%;
-                                height: 100%;
-                                background-color: #f1f5f9;
-                                box-shadow: -4px 0 8px rgba(0,0,0,0.1);
-                                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
-                                z-index: 1;
-                                transform: translateX(100%); /* default (light mode): slider on the right (sun) */
-                            }
-                            
-                            .theme-switch-icon {
-                                position: relative;
-                                z-index: 2;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                width: 50%;
-                                height: 100%;
-                                font-size: 16px;
-                                color: #94a3b8;
-                                transition: color 0.3s ease;
-                            }
-                            
-                            /* Dark mode states */
-                            html.dark .theme-switch {
-                                background-color: #1e293b;
-                                box-shadow: inset 3px 3px 6px rgba(0,0,0,0.4), inset -2px -2px 5px rgba(255,255,255,0.05);
-                            }
-                            
-                            html.dark .theme-switch-slider {
-                                background-color: #1e293b;
-                                transform: translateX(0); /* dark mode: slider on the left (moon) */
-                                box-shadow: 4px 0 8px rgba(0,0,0,0.4);
-                            }
-                            
-                            /* Active icon colors */
-                            html:not(.dark) .icon-sun {
-                                color: #FF9040; /* Yellow/Green tone for light mode active */
-                            }
-                            html.dark .icon-moon {
-                                color: #fef08a; /* Bright yellow for dark mode active */
-                            }
-                            html:not(.dark) .icon-moon {
-                                color: #cbd5e1;
-                            }
-                            html.dark .icon-sun {
-                                color: #4a5568;
-                            }
-                            
-                        </style>
-
                         <div class="theme-switch-wrapper">
                             <div class="theme-switch" onclick="toggleDarkMode()">
                                 <div class="theme-switch-slider"></div>
@@ -797,30 +843,21 @@
                         </div>
 
                         {{-- Seller Notification Bell & Dropdown --}}
-                        @inject('dashboardService', 'App\Services\AdminSeller\DashboardService')
-                        @php
-                            $notifData = $dashboardService->fetchSellerNotificationsData(Auth::user());
-                            $notifications = collect($notifData['notifications'] ?? [])->take(5);
-                            $unreadCount = $notifData['unread_count'] ?? 0;
-                            $hasUnread = $unreadCount > 0;
-                            $displayCount = $unreadCount > 99 ? '99+' : $unreadCount;
-                            $headerCount = str_pad($unreadCount, 2, '0', STR_PAD_LEFT);
-                        @endphp
                         <div class="seller-notif-wrapper">
                             <button type="button" class="action-icon seller-notif-btn" id="sellerNotifBtn" onclick="toggleSellerNotif(event)" title="Notifikasi" aria-label="Notifikasi">
                                 <i class="far fa-bell"></i>
-                                <span class="seller-notif-badge" id="sellerNotifBadge" style="display: {{ $hasUnread ? 'flex' : 'none' }};">{{ $displayCount }}</span>
+                                <span class="seller-notif-badge" id="sellerNotifBadge" style="display: {{ ($sellerHasUnread ?? false) ? 'flex' : 'none' }};">{{ $sellerDisplayCount ?? '0' }}</span>
                             </button>
 
                             <!-- Notification Dropdown Panel -->
                             <div class="seller-notif-dropdown" id="sellerNotifDropdown">
                                 <div class="seller-notif-header">
                                     <div class="seller-notif-title">Notifications</div>
-                                    <div class="seller-notif-badge-header">{{ $headerCount }} Notifications</div>
+                                    <div class="seller-notif-badge-header">{{ $sellerHeaderCount ?? '00' }} Notifications</div>
                                 </div>
 
                                 <div class="seller-notif-list" id="sellerNotifList">
-                                    @forelse ($notifications as $item)
+                                    @forelse ($sellerNotifications ?? [] as $item)
                                     @php
                                         $type = $item['type'] ?? 'default';
                                         $status = $item['status'] ?? 'default';
@@ -881,24 +918,15 @@
                     </div>
 
                     <div class="top-profile" onclick="toggleProfileDropdown()">
-                        @php
-                            $name = Auth::check() ? (Auth::user()->username ?? Auth::user()->name) : 'User';
-                            $initials = strtoupper(substr($name, 0, 2));
-                            $balance = Auth::check() ? \Illuminate\Support\Facades\DB::table('transactions')
-                                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
-                                ->where('digital_products.user_id', Auth::id())
-                                ->where('transactions.status', 'success')
-                                ->sum('transactions.total_price') : 0;
-                        @endphp
                         <div class="top-avatar">
-                            @if(Auth::check() && Auth::user()->avatar)
-                                <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            @if(!empty($sellerAvatar))
+                                <img src="{{ Storage::url($sellerAvatar) }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                             @else
-                                {{ $initials }}
+                                {{ $sellerInitials ?? 'US' }}
                             @endif
                         </div>
                         <div class="top-user-info">
-                            <span class="top-user-name">{{ $name }}</span>
+                            <span class="top-user-name">{{ $sellerName ?? 'User' }}</span>
                             <i class="fas fa-caret-down top-profile-arrow"></i>
                         </div>
 
@@ -917,7 +945,7 @@
                             </a>
                             
                             <a href="#" class="pd-item">
-                                <i class="far fa-credit-card"></i> Balance: Rp {{ number_format($balance, 0, ',', '.') }}
+                                <i class="far fa-credit-card"></i> Balance: Rp {{ number_format($sellerBalance ?? 0, 0, ',', '.') }}
                             </a>
                             
                             <a href="{{ route('admin.settings') }}" class="pd-item">
@@ -1096,21 +1124,19 @@
     <script>
         function toggleDarkMode() {
             const html = document.documentElement;
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
+            const isDark = !html.classList.contains('dark');
             
             if (isDark) {
+                html.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
+                document.cookie = "theme=dark; path=/; max-age=31536000; SameSite=Lax";
             } else {
+                html.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
+                document.cookie = "theme=light; path=/; max-age=31536000; SameSite=Lax";
             }
 
             window.dispatchEvent(new CustomEvent('theme-changed', { detail: { isDark: isDark } }));
-        }
-
-        // Initialize dark mode on load
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
         }
     </script>
 

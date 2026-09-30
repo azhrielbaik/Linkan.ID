@@ -22,71 +22,82 @@
     </div>
 
     <div class="sidebar-nav">
-        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="fas fa-home"></i><span class="nav-text">{{ __('sidebar.dashboard') }}</span>
-        </a>
-        
         @php
             $isSuspended = Auth::check() && Auth::user()->isSuspended();
             $lockStyle = $isSuspended ? 'opacity: 0.45; cursor: not-allowed;' : '';
+
+            $navItems = [
+                [
+                    'route' => 'admin.dashboard',
+                    'is_active' => request()->routeIs('admin.dashboard'),
+                    'icon' => 'fas fa-home',
+                    'label' => __('sidebar.dashboard'),
+                    'can_lock' => false,
+                ],
+                [
+                    'route' => 'admin.microsites.index',
+                    'is_active' => request()->routeIs('admin.microsites.index'),
+                    'icon' => 'fa-solid fa-pager',
+                    'label' => __('sidebar.microsite'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.shortlinks.index',
+                    'is_active' => request()->routeIs('admin.shortlinks.*'),
+                    'icon' => 'fas fa-link',
+                    'label' => __('sidebar.shortlink'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.statistics',
+                    'is_active' => request()->routeIs('admin.statistics*'),
+                    'icon' => 'fas fa-chart-bar',
+                    'label' => __('sidebar.analytics'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.digital-products.index',
+                    'is_active' => request()->routeIs('admin.digital-products.*'),
+                    'icon' => 'fas fa-store',
+                    'label' => __('sidebar.shop'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.orders',
+                    'is_active' => request()->routeIs('admin.orders*'),
+                    'icon' => 'fas fa-clipboard-list',
+                    'label' => __('sidebar.orders'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.purchases',
+                    'is_active' => request()->routeIs('admin.purchases'),
+                    'icon' => 'fas fa-box-open',
+                    'label' => __('sidebar.mypurchases'),
+                    'can_lock' => true,
+                ],
+                [
+                    'route' => 'admin.settings',
+                    'is_active' => request()->routeIs('admin.settings') || request()->routeIs('admin.account*') || request()->routeIs('admin.payout.*'),
+                    'icon' => 'fas fa-cog',
+                    'label' => __('sidebar.settings'),
+                    'can_lock' => true,
+                ],
+            ];
         @endphp
 
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.microsites.index') }}" 
-           class="{{ request()->routeIs('admin.microsites.index') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fa-solid {{ $isSuspended ? 'fa-lock' : 'fa-pager' }}"></i><span class="nav-text">{{ __('sidebar.microsite') }}</span>
-        </a>
-
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.shortlinks.index') }}" 
-           class="{{ request()->routeIs('admin.shortlinks.*') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-link' }}"></i><span class="nav-text">{{ __('sidebar.shortlink') }}</span>
-        </a>
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.statistics') }}" 
-           class="{{ request()->routeIs('admin.statistics*') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-chart-bar' }}"></i><span class="nav-text">{{ __('sidebar.analytics') }}</span>
-        </a>
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.digital-products.index') }}" 
-           class="{{ request()->routeIs('admin.digital-products.*') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-store' }}"></i><span class="nav-text">{{ __('sidebar.shop') }}</span>
-        </a>
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.orders') }}" 
-           class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           onclick="if(window.location.href.split('?')[0] === this.href.split('?')[0]) return false;"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-clipboard-list' }}"></i><span class="nav-text">{{ __('sidebar.orders') }}</span>
-        </a>
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.purchases') }}" 
-           class="{{ request()->routeIs('admin.purchases') ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-box-open' }}"></i><span class="nav-text">{{ __('sidebar.mypurchases') }}</span>
-        </a>
-
-        @php
-            $isSettingsActive = request()->routeIs('admin.settings')
-                || request()->routeIs('admin.account*')
-                || request()->routeIs('admin.payout.*');
-        @endphp
-
-        <a href="{{ $isSuspended ? route('admin.dashboard') : route('admin.settings') }}" 
-           class="{{ $isSettingsActive ? 'active' : '' }}"
-           style="{{ $lockStyle }}"
-           @if($isSuspended) title="Terkunci selama masa penangguhan" @endif>
-            <i class="fas {{ $isSuspended ? 'fa-lock' : 'fa-cog' }}"></i><span class="nav-text">{{ __('sidebar.settings') }}</span>
-        </a>
+        @foreach($navItems as $item)
+            @php
+                $isItemLocked = $item['can_lock'] && $isSuspended;
+                $itemHref = $isItemLocked ? route('admin.dashboard') : route($item['route']);
+                $itemIcon = $isItemLocked ? 'fas fa-lock' : $item['icon'];
+            @endphp
+            <a href="{{ $itemHref }}" 
+               class="{{ $item['is_active'] ? 'active' : '' }}"
+               @if($isItemLocked) style="{{ $lockStyle }}" title="Terkunci selama masa penangguhan" @endif>
+                <i class="{{ $itemIcon }}"></i><span class="nav-text">{{ $item['label'] }}</span>
+            </a>
+        @endforeach
     </div>
 
     <div class="marketing-tools">

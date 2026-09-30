@@ -1,12 +1,4 @@
 @php
-    if (!function_exists('resolveProductImageUrl')) {
-        function resolveProductImageUrl($path) {
-            if (!$path) return 'https://via.placeholder.com/600x600?text=No+Image';
-            if (filter_var($path, FILTER_VALIDATE_URL)) return $path;
-            return asset('storage/' . $path);
-        }
-    }
-
     $product = $transaction->product;
     $images = [];
     if ($product) {

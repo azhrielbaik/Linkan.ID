@@ -3,7 +3,7 @@
 @section("page_title", __('admin.my_purchases_title'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/mypurchase.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/mypurchase.css') }}">
 @endpush
 
 @section("content")
@@ -22,7 +22,7 @@
             </button>
         </div>
         <!-- Card Filter, Sort, Search, and Content -->
-        <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <div class="purchases-card-container" style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
             <div class="filter-sort-bar">
                 <button class="filter-sort-btn"><i class="fas fa-filter"></i> {{ __('admin.filter') }}</button>
                 <button class="filter-sort-btn"><i class="fas fa-sort"></i> {{ __('admin.sorting') }}</button>
@@ -31,26 +31,26 @@
                     <button><i class="fas fa-search"></i></button>
                 </div>
             </div>
-            <div style="margin-bottom: 10px; font-weight: 500; color: #888;">{{ __('admin.content_purchase_search_result') }}</div>
-            <div class="row">
+            <div style="margin-bottom: 14px; font-weight: 500; color: #888;">{{ __('admin.content_purchase_search_result') }}</div>
+            <div class="purchases-grid">
                 @forelse($purchasedProducts as $product)
                     @if($product)
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div style="display: flex; align-items: center; background: #f7f8fa; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 12px 15px;">
-                            <img src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/default-product.png') }}" alt="Product Image" style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; margin-right: 15px;" onerror="this.onerror=null;this.src='{{ asset('images/default-product.png') }}';">
-                            <div>
-                                <div style="font-weight: 600; color: #222;">{{ $product->title }}</div>
-                                <div style="font-size: 12px; color: #888;">
-                                    {{ optional($purchases->firstWhere('product_id', $product->id))->created_at ? optional($purchases->firstWhere('product_id', $product->id))->created_at->format('d M Y') : '-' }}
-                                </div>
-                                <span class="badge bg-secondary" style="font-size: 11px;">{{ __('admin.purchased') }}</span>
+                    <div class="purchase-card">
+                        <img src="{{ resolveProductImageUrl($product->image) }}" alt="Product Image" style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;">{{ $product->title }}</div>
+                            <div style="font-size: 12px; color: #888; margin-top: 2px;">
+                                {{ optional($purchases->firstWhere('product_id', $product->id))->created_at ? optional($purchases->firstWhere('product_id', $product->id))->created_at->format('d M Y') : '-' }}
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <span class="purchase-badge">{{ __('admin.purchased') }}</span>
                             </div>
                         </div>
                     </div>
                     @endif
                 @empty
-                <div class="col-12">
-                    <div style="padding: 30px; text-align: center; color: #aaa;">{{ __('admin.no_purchased_content') }}</div>
+                <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: #aaa;">
+                    {{ __('admin.no_purchased_content') }}
                 </div>
                 @endforelse
             </div>

@@ -1,14 +1,3 @@
-<?php
-    if (!function_exists("resolveProductImageUrl")) {
-        function resolveProductImageUrl($path) {
-            if (empty($path)) return "https://via.placeholder.com/600x600?text=No+Image";
-            if (Str::startsWith($path, ["http://", "https://", "data:image/", "/storage/"])) {
-                return $path;
-            }
-            return Storage::url($path);
-        }
-    }
-?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>

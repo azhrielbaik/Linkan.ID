@@ -276,8 +276,6 @@
 @stack('settings_styles')
 @endpush
 
-@section("page_title", "Settings")
-
 @section("content")
 <div class="dashboard-settings-wrapper font-sans" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 

@@ -58,11 +58,17 @@ class PayoutService
         }
 
         $payoutDetail = UserPayoutDetail::where('user_id', $user->id)->first();
+        $feePercent = (float) PlatformSetting::get('platform_commission_percent', 5);
+        $feeAmount = $currentBalance * ($feePercent / 100);
+        $netPayout = max(0, $currentBalance - $feeAmount);
 
         return [
             'totalEarnings' => $totalEarnings,
             'totalWithdrawn' => $totalWithdrawn,
             'currentBalance' => $currentBalance,
+            'platformFeePercent' => $feePercent,
+            'platformFeeAmount' => $feeAmount,
+            'netPayoutAmount' => $netPayout,
             'frozenDisputeAmount' => $frozenDisputeAmount,
             'payoutDetail' => $payoutDetail,
             'history' => $this->getPayoutHistory($user->id)->take(10)

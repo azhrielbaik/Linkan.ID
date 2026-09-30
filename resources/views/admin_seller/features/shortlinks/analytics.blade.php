@@ -3,7 +3,7 @@
 @section("page_title", __('admin.analytics_shortlink'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}?v={{ filemtime(public_path('css/pages/shortlink-analytics.css')) }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}?v={{ file_exists(public_path('css/pages/shortlink-analytics.css')) ? filemtime(public_path('css/pages/shortlink-analytics.css')) : '1.0' }}">
 @endpush
 
 @section("content")

@@ -41,10 +41,15 @@ public function boot(): void
         return \App\Support\Pagination\EncryptedCursorPaginator::decryptCursor($raw);
     });
 
-    $this->app->bind(
-        \Illuminate\Pagination\CursorPaginator::class,
-        \App\Support\Pagination\EncryptedCursorPaginator::class
-    );
-}
+        $this->app->bind(
+            \Illuminate\Pagination\CursorPaginator::class,
+            \App\Support\Pagination\EncryptedCursorPaginator::class
+        );
+
+        \Illuminate\Support\Facades\View::composer(
+            'admin_seller.layouts.app',
+            \App\View\Composers\SellerLayoutComposer::class
+        );
+    }
 
 }

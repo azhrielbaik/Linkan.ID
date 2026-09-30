@@ -2,11 +2,11 @@
 
 @section("page_title", __('admin.orders_title'))
 
-@section("content")
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/order-history.css') }}?v={{ filemtime(public_path('css/admin/order-history.css')) }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/admin/order-history.css') }}?v={{ file_exists(public_path('css/admin/order-history.css')) ? filemtime(public_path('css/admin/order-history.css')) : '1.0' }}">
 @endpush
 
+@section("content")
 <div class="order-history-card">
     <div class="order-history-title">Pesanan Masuk</div>
     
@@ -74,21 +74,7 @@
                         $statusClass = $transaction->status_class;
                         $statusText = $transaction->status_label;
                         
-                        $paymentMethod = $transaction->payment_method ?: '-';
-                        if ($paymentMethod !== '-') {
-                            $parts = explode('-', $paymentMethod);
-                            $mainType = ucwords(str_replace('_', ' ', $parts[0]));
-                            if (strtolower($mainType) === 'qris') $mainType = 'QRIS';
-                            if (strtolower($mainType) === 'gopay') $mainType = 'GoPay';
-                            if (strtolower($mainType) === 'shopeepay') $mainType = 'ShopeePay';
-                            
-                            if (count($parts) > 1) {
-                                $subType = strtoupper($parts[1]);
-                                $paymentMethod = "{$mainType} ({$subType})";
-                            } else {
-                                $paymentMethod = $mainType;
-                            }
-                        }
+                        $paymentMethod = $transaction->formatted_payment_method;
                     @endphp
                     <tr class="mobile-row-click" onclick="if(window.innerWidth <= 768) openDetailModal({{ $transaction->id }})">
                         <td data-label="Id">#{{ $transaction->id }}</td>

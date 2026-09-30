@@ -3,7 +3,7 @@
 @section("page_title", __('admin.form'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/payout-method-form.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/payout-method-form.css') }}">
 @endpush
 
 @section("content")

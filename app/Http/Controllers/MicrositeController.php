@@ -27,6 +27,20 @@ class MicrositeController extends Controller
         if ($viewMode == 'gallery') {
             $digitalProducts = $allDigitalProducts;
             $appearances = Appearance::where('user_id', $user->id)->latest()->get();
+
+            // Precalculate accurate product count for each microsite without extra DB queries
+            $existingProductIds = $allDigitalProducts->pluck('id')->flip()->all();
+            foreach ($appearances as $app) {
+                $appProductIds = $app->getDigitalProductIds();
+                $validCount = 0;
+                foreach ($appProductIds as $pId) {
+                    if (isset($existingProductIds[$pId])) {
+                        $validCount++;
+                    }
+                }
+                $app->digital_products_count = $validCount;
+            }
+
             // Total page views per alias
             $viewsData = DB::table('link_views')
                 ->select('link_id', DB::raw('count(*) as total'))

@@ -1215,12 +1215,19 @@
     function deleteDynamicDigitalProduct(id) {
         const showModal = typeof window.showDeleteConfirmModal === 'function' ? window.showDeleteConfirmModal : ((t, cb) => { if (confirm(t)) cb(); });
 
-        showModal('Yakin ingin menghapus Produk Digital ini?', function () {
-            fetch('/admin/elements/digital-product/' + id, {
+        showModal('Yakin ingin menghapus Produk Digital ini dari microsite ini?', function () {
+            const urls = getUrlsDataset();
+            const appearanceId = urls.appearanceId;
+
+            fetch('/admin/elements/digital-product/' + id + (appearanceId ? '?appearance_id=' + appearanceId : ''), {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': getCsrfToken()
-                }
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    appearance_id: appearanceId
+                })
             }).then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -1232,8 +1239,11 @@
 
                         if (typeof window.syncPhonePreviewOrder === 'function') window.syncPhonePreviewOrder();
                         if (typeof window.saveElementsOrder === 'function') window.saveElementsOrder();
+                        if (typeof window.showSuccessToast === 'function') {
+                            window.showSuccessToast(data.message || 'Produk berhasil dihapus dari microsite ini!');
+                        }
                     } else {
-                        alert('Gagal menghapus produk dari database.');
+                        alert(data.message || 'Gagal menghapus produk dari microsite.');
                     }
                 }).catch(err => {
                     console.error(err);
