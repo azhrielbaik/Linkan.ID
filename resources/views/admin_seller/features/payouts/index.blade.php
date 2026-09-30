@@ -206,14 +206,14 @@
                             <span class="font-semibold text-slate-900">Rp {{ number_format($currentBalance, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-500">Platform fee (5%)</span>
-                            <span class="font-semibold text-red-500">-Rp {{ number_format($currentBalance * 0.05, 0, ',', '.') }}</span>
+                            <span class="text-slate-500">Platform fee ({{ $platformFeePercent ?? 5 }}%)</span>
+                            <span class="font-semibold text-red-500">-Rp {{ number_format($platformFeeAmount ?? ($currentBalance * 0.05), 0, ',', '.') }}</span>
                         </div>
                     </div>
 
                     <div class="pt-5 mb-6 flex justify-between items-center" style="border-top: 1px solid #cbd5e1;">
                         <span class="text-[15px] font-bold text-slate-900">Net payout</span>
-                        <span class="text-[15px] font-bold text-slate-900">Rp {{ number_format($currentBalance * 0.95, 0, ',', '.') }}</span>
+                        <span class="text-[15px] font-bold text-slate-900">Rp {{ number_format($netPayoutAmount ?? ($currentBalance * 0.95), 0, ',', '.') }}</span>
                     </div>
 
                     @if(!empty($isPayoutFrozen))

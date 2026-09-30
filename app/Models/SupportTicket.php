@@ -77,4 +77,36 @@ class SupportTicket extends Model
             default  => 'badge-priority-medium',
         };
     }
+
+    public function getFormattedTicketCodeAttribute(): string
+    {
+        $code = $this->ticket_code ?? '';
+        $parts = explode('-', $code);
+        if (count($parts) >= 3) {
+            return 'ISSUE-' . $parts[2];
+        }
+        return str_replace('TKT-', 'ISSUE-', $code);
+    }
+
+    public function getUiStatusClassAttribute(): string
+    {
+        return match ($this->status) {
+            'open'        => 'status-open',
+            'in_progress' => 'status-in-progress',
+            'resolved'    => 'status-resolved',
+            'closed'      => 'status-closed',
+            default       => 'status-pending',
+        };
+    }
+
+    public function getUiStatusTextAttribute(): string
+    {
+        return match ($this->status) {
+            'open'        => 'Open',
+            'in_progress' => 'In Progress',
+            'resolved'    => 'Resolved',
+            'closed'      => 'Closed',
+            default       => 'Pending',
+        };
+    }
 }

@@ -189,14 +189,19 @@
         }
     }
 
-    // Attach lifecycle events
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPageEvents);
+    // Attach lifecycle events (Idempotent)
+    if (!window.__micrositeEditorLifecycleBound) {
+        window.__micrositeEditorLifecycleBound = true;
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPageEvents);
+        } else {
+            initPageEvents();
+        }
+        document.addEventListener('turbo:load', initPageEvents);
+        document.addEventListener('turbolinks:load', initPageEvents);
     } else {
         initPageEvents();
     }
-    document.addEventListener('turbo:load', initPageEvents);
-    document.addEventListener('turbolinks:load', initPageEvents);
 
     // Expose orchestrator functions
     window.initPageEvents = initPageEvents;

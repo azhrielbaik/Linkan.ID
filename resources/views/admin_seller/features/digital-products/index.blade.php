@@ -3,7 +3,7 @@
 @section("page_title", 'Toko Saya')
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}">
 <style>
     /* Header Layout */
     .store-header-row {
@@ -361,18 +361,6 @@
 </style>
 @endpush
 
-@php
-    if (!function_exists('resolveProductImageUrl')) {
-        function resolveProductImageUrl($path) {
-            if (empty($path)) return 'https://via.placeholder.com/600x600?text=No+Image';
-            if (Str::startsWith($path, ['http://', 'https://', 'data:image/', '/storage/'])) {
-                return $path;
-            }
-            return Storage::url($path);
-        }
-    }
-@endphp
-
 @section("content")
 <div class="dashboard-beranda-page" style="padding-top: 10px;">
 
@@ -382,7 +370,7 @@
         <div class="store-header-actions">
             <div class="store-search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search Product">
+                <input type="text" id="storeSearchInput" placeholder="Cari Produk..." oninput="filterStoreProducts(this.value)">
             </div>
             <a href="{{ route('admin.digital-products.create') }}" class="btn-create" data-turbo="false">
                 <i class="fas fa-plus"></i> Tambah
@@ -407,18 +395,8 @@
                 <!-- Image Section -->
                 <div style="position: relative;">
                     <div class="store-card-img-wrap">
-                        @php
-                            $imageUrl = null;
-                            if (is_array($product->media_files) && count($product->media_files) > 0) {
-                                $imageUrl = $product->media_files[0]['url'] ?? $product->media_files[0]['path'] ?? null;
-                            }
-                            if (!$imageUrl && $product->image) {
-                                $imageUrl = $product->image;
-                            }
-                        @endphp
-
-                        @if($imageUrl)
-                            <img src="{{ resolveProductImageUrl($imageUrl) }}" alt="{{ $product->title }}">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->title }}">
                         @else
                             <div class="no-img"><i class="fas fa-image"></i></div>
                         @endif
@@ -469,3 +447,21 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function filterStoreProducts(query) {
+    const q = (query || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.store-product-grid .store-product-card');
+    cards.forEach(card => {
+        const titleEl = card.querySelector('.store-card-title');
+        const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+        if (!q || title.includes(q)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
+@endpush

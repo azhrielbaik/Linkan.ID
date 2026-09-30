@@ -24,12 +24,34 @@ class DigitalProductService
     /**
      * Store a new digital product.
      */
-    public function storeProduct(array $data, int $userId, $imageFile = null, $platformFile = null): DigitalProduct
+    public function storeProduct(array $data, int $userId, $imageFiles = null, $platformFile = null, $existingMedia = null): DigitalProduct
     {
         $data['user_id'] = $userId;
 
-        if ($imageFile) {
-            $data['image'] = $this->handleImageUpload($imageFile);
+        $mediaFiles = [];
+
+        // Normalize imageFiles to array
+        $uploadedImages = [];
+        if ($imageFiles instanceof \Illuminate\Http\UploadedFile) {
+            $uploadedImages = [$imageFiles];
+        } elseif (is_array($imageFiles)) {
+            $uploadedImages = $imageFiles;
+        }
+
+        foreach ($uploadedImages as $file) {
+            if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
+                $path = $this->handleImageUpload($file);
+                $mediaFiles[] = [
+                    'url'  => $path,
+                    'path' => $path,
+                    'type' => $file->getMimeType() ?: 'image/jpeg',
+                ];
+            }
+        }
+
+        if (count($mediaFiles) > 0) {
+            $data['media_files'] = $mediaFiles;
+            $data['image'] = $mediaFiles[0]['path'];
         }
 
         if ($data['platform_type'] === 'upload' && $platformFile) {
@@ -54,7 +76,7 @@ class DigitalProductService
     /**
      * Update an existing digital product.
      */
-    public function updateProduct(DigitalProduct $product, array $data, $imageFile = null, $platformFile = null): DigitalProduct
+    public function updateProduct(DigitalProduct $product, array $data, $imageFiles = null, $platformFile = null, $existingMedia = null): DigitalProduct
     {
         if ($data['platform_type'] === 'upload' && $platformFile) {
             if ($product->platform_file) {
@@ -68,12 +90,71 @@ class DigitalProductService
             }
         }
 
-        if ($imageFile) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $data['image'] = $this->handleImageUpload($imageFile);
+        // Handle media_files & existing photos
+        $oldMediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : ($product->media_files ?? []);
+        if (!is_array($oldMediaFiles)) {
+            $oldMediaFiles = [];
         }
+        // If old media_files was empty but product has image, treat that image as an old media item
+        if (empty($oldMediaFiles) && !empty($product->image)) {
+            $oldMediaFiles[] = [
+                'url'  => $product->image,
+                'path' => $product->image,
+                'type' => 'image/jpeg',
+            ];
+        }
+
+        $mediaFiles = [];
+
+        // Check which existing media were kept
+        if ($existingMedia !== null) {
+            $keptExisting = is_string($existingMedia) ? json_decode($existingMedia, true) : $existingMedia;
+            if (is_array($keptExisting)) {
+                $keptPaths = array_map(function($item) {
+                    return is_array($item) ? ($item['path'] ?? $item['url'] ?? '') : (string)$item;
+                }, $keptExisting);
+
+                foreach ($oldMediaFiles as $old) {
+                    $oldPath = $old['path'] ?? $old['url'] ?? '';
+                    if (in_array($oldPath, $keptPaths)) {
+                        $mediaFiles[] = $old;
+                    } else if (!empty($old['path'])) {
+                        Storage::disk('public')->delete($old['path']);
+                    }
+                }
+            } else {
+                // If existingMedia was explicitly sent as empty, delete all old files
+                foreach ($oldMediaFiles as $old) {
+                    if (!empty($old['path'])) {
+                        Storage::disk('public')->delete($old['path']);
+                    }
+                }
+            }
+        } else {
+            $mediaFiles = $oldMediaFiles;
+        }
+
+        // Upload any new images
+        $uploadedImages = [];
+        if ($imageFiles instanceof \Illuminate\Http\UploadedFile) {
+            $uploadedImages = [$imageFiles];
+        } elseif (is_array($imageFiles)) {
+            $uploadedImages = $imageFiles;
+        }
+
+        foreach ($uploadedImages as $file) {
+            if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
+                $path = $this->handleImageUpload($file);
+                $mediaFiles[] = [
+                    'url'  => $path,
+                    'path' => $path,
+                    'type' => $file->getMimeType() ?: 'image/jpeg',
+                ];
+            }
+        }
+
+        $data['media_files'] = $mediaFiles;
+        $data['image'] = count($mediaFiles) > 0 ? $mediaFiles[0]['path'] : null;
 
         if ($product->verification_status === 'rejected') {
             $data['verification_status'] = 'pending';

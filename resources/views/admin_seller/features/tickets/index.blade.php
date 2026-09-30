@@ -50,34 +50,15 @@
 
         <div class="issue-list-content">
             @forelse($tickets as $t)
-                @php
-                    // Map statuses to UI colors
-                    $statusClass = 'status-pending';
-                    $statusText = 'Pending';
-                    if ($t->status === 'open') {
-                        $statusClass = 'status-open';
-                        $statusText = 'Open';
-                    } elseif ($t->status === 'in_progress') {
-                        $statusClass = 'status-in-progress';
-                        $statusText = 'In Progress';
-                    } elseif ($t->status === 'resolved') {
-                        $statusClass = 'status-resolved';
-                        $statusText = 'Resolved';
-                    } elseif ($t->status === 'closed') {
-                        $statusClass = 'status-closed';
-                        $statusText = 'Closed';
-                    }
-                @endphp
-
                 <div class="issue-row">
                     <!-- Column 1: Status -->
                     <div>
-                        <span class="issue-status {{ $statusClass }}">{{ $statusText }}</span>
+                        <span class="issue-status {{ $t->ui_status_class }}">{{ $t->ui_status_text }}</span>
                     </div>
 
                     <!-- Column 2: ID & Title -->
                     <div class="issue-info">
-                        <span class="issue-id">{{ str_replace('TKT-', 'ISSUE-', explode('-', $t->ticket_code)[0] . '-' . (isset(explode('-', $t->ticket_code)[2]) ? explode('-', $t->ticket_code)[2] : $t->ticket_code)) }}</span>
+                        <span class="issue-id">{{ $t->formatted_ticket_code }}</span>
                         <span class="issue-title">{{ Str::limit($t->subject, 50) }}</span>
                     </div>
 
@@ -187,6 +168,8 @@
     </div>
 </div>
 
+@endsection
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -232,4 +215,3 @@
     });
 </script>
 @endpush
-@endsection

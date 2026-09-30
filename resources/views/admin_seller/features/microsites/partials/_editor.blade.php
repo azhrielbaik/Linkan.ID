@@ -142,8 +142,8 @@
                      PANEL DIGITAL PRODUCT WIZARD (Hidden by default)
                      ============================================================ --}}
                 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin/digital-product-wizard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin/microsite-editor-blocks.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/digital-product-wizard.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/microsite-editor-blocks.css') }}?v={{ time() }}">
 @endpush
 
                 @include('admin_seller.features.microsites.partials._dp-wizard')
@@ -157,9 +157,9 @@
 
 @push('scripts')
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-    <script src="{{ asset('js/admin/digital-product-wizard.js') }}"></script>
+    <script src="{{ asset('js/admin/digital-product-wizard.js') }}?v={{ time() }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initEditorBladeEvents() {
             // Perbaiki SEO Lighthouse: tambahkan href pada link aksi Quill editor agar crawlable
             const fixQuillLinks = () => {
                 document.querySelectorAll('a.ql-action:not([href]), a.ql-remove:not([href])').forEach(el => {
@@ -169,62 +169,79 @@
             
             setTimeout(fixQuillLinks, 1000);
             
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach(m => {
-                    if (m.addedNodes.length > 0) fixQuillLinks();
+            if (!window.__micrositeQuillObserverInit) {
+                window.__micrositeQuillObserverInit = true;
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach(m => {
+                        if (m.addedNodes.length > 0) fixQuillLinks();
+                    });
                 });
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
 
             // Bind events for element panel
             const btnToggleAddElement = document.getElementById('btnToggleAddElement');
-            if (btnToggleAddElement) {
+            if (btnToggleAddElement && !btnToggleAddElement.dataset.bound) {
+                btnToggleAddElement.dataset.bound = 'true';
                 btnToggleAddElement.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.toggleAddElementPanel();
                 });
             }
 
             const btnOptionGambar = document.getElementById('btnOptionGambar');
-            if (btnOptionGambar) {
+            if (btnOptionGambar && !btnOptionGambar.dataset.bound) {
+                btnOptionGambar.dataset.bound = 'true';
                 btnOptionGambar.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.addGambarElement();
                 });
             }
 
             const btnOptionDivider = document.getElementById('btnOptionDivider');
-            if (btnOptionDivider) {
+            if (btnOptionDivider && !btnOptionDivider.dataset.bound) {
+                btnOptionDivider.dataset.bound = 'true';
                 btnOptionDivider.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.addDividerElement();
                 });
             }
 
             const btnOptionText = document.getElementById('btnOptionText');
-            if (btnOptionText) {
+            if (btnOptionText && !btnOptionText.dataset.bound) {
+                btnOptionText.dataset.bound = 'true';
                 btnOptionText.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.addTextElement();
                 });
             }
 
             const btnOptionVideo = document.getElementById('btnOptionVideo');
-            if (btnOptionVideo) {
+            if (btnOptionVideo && !btnOptionVideo.dataset.bound) {
+                btnOptionVideo.dataset.bound = 'true';
                 btnOptionVideo.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.addVideoElement();
                 });
             }
 
             const btnOptionSocialMedia = document.getElementById('btnOptionSocialMedia');
-            if (btnOptionSocialMedia) {
+            if (btnOptionSocialMedia && !btnOptionSocialMedia.dataset.bound) {
+                btnOptionSocialMedia.dataset.bound = 'true';
                 btnOptionSocialMedia.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.addSocialMediaElement();
                 });
             }
 
             const btnOptionDigitalProduct = document.getElementById('btnOptionDigitalProduct');
-            if (btnOptionDigitalProduct) {
+            if (btnOptionDigitalProduct && !btnOptionDigitalProduct.dataset.bound) {
+                btnOptionDigitalProduct.dataset.bound = 'true';
                 btnOptionDigitalProduct.addEventListener('click', function() {
                     if (window.MicrositeBuilder) window.MicrositeBuilder.openDigitalProductWizard();
                 });
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initEditorBladeEvents);
+        } else {
+            initEditorBladeEvents();
+        }
+        document.addEventListener('turbo:load', initEditorBladeEvents);
     </script>
 @endpush

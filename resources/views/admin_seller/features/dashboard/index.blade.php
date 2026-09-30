@@ -3,7 +3,7 @@
 @section("page_title", __('admin.dashboard_title'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/beranda.css') }}">
 @endpush
 
 @section("content")
@@ -245,20 +245,8 @@
                     @forelse($recentProducts ?? [] as $product)
                         <div class="product-course-card">
                             <div class="product-img-box">
-                                @php
-                                    $dashImg = null;
-                                    // Karena dari DB::table(), media_files mungkin berupa string JSON
-                                    $mediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
-                                    if (is_array($mediaFiles) && count($mediaFiles) > 0) {
-                                        $dashImg = $mediaFiles[0]['url'] ?? $mediaFiles[0]['path'] ?? null;
-                                    }
-                                    if (!$dashImg && $product->image) {
-                                        $dashImg = $product->image;
-                                    }
-                                @endphp
-
-                                @if($dashImg)
-                                    <img src="{{ Storage::url($dashImg) }}" alt="{{ $product->title }}">
+                                @if($product->image_url)
+                                    <img src="{{ $product->image_url }}" alt="{{ $product->title }}">
                                 @else
                                     <i class="fas fa-image"></i>
                                 @endif
@@ -379,42 +367,32 @@
                 </h3>
                 
                 <div class="activities-list">
+                    @php
+                        $baseStyleMap = [
+                            'transaction'  => ['icon' => 'fas fa-shopping-cart', 'bg' => '#EEF0FE', 'color' => '#5A5BF1'],
+                            'system_alert' => ['icon' => 'fas fa-exclamation-triangle', 'bg' => '#FEF2F2', 'color' => '#EF4444'],
+                            'appeal'       => ['icon' => 'fas fa-balance-scale', 'bg' => '#EFF6FF', 'color' => '#3B82F6'],
+                            'broadcast'    => ['icon' => 'fas fa-bullhorn', 'bg' => '#FFFBEB', 'color' => '#F59E0B'],
+                        ];
+                    @endphp
                     @forelse($recentActivities ?? [] as $activity)
                         @php
                             $type = $activity['type'] ?? 'default';
                             $status = $activity['status'] ?? 'default';
-                            $styleMap = [
-                                'transaction' => [
-                                    'icon'  => 'fas fa-shopping-cart',
-                                    'bg'    => '#EEF0FE',
-                                    'color' => '#5A5BF1',
-                                ],
-                                'payout' => [
+                            if ($type === 'payout') {
+                                $isFailed = in_array($status, ['rejected', 'failed']);
+                                $actStyle = [
                                     'icon'  => 'fas fa-wallet',
-                                    'bg'    => in_array($status, ['rejected', 'failed']) ? '#FEF2F2' : '#ECFDF5',
-                                    'color' => in_array($status, ['rejected', 'failed']) ? '#EF4444' : '#10B981',
-                                ],
-                                'system_alert' => [
-                                    'icon'  => 'fas fa-exclamation-triangle',
-                                    'bg'    => '#FEF2F2',
-                                    'color' => '#EF4444',
-                                ],
-                                'appeal' => [
-                                    'icon'  => 'fas fa-balance-scale',
-                                    'bg'    => '#EFF6FF',
-                                    'color' => '#3B82F6',
-                                ],
-                                'broadcast' => [
-                                    'icon'  => 'fas fa-bullhorn',
-                                    'bg'    => '#FFFBEB',
-                                    'color' => '#F59E0B',
-                                ],
-                            ];
-                            $actStyle = $styleMap[$type] ?? [
-                                'icon'  => 'fas fa-bell',
-                                'bg'    => '#F1F5F9',
-                                'color' => '#64748B',
-                            ];
+                                    'bg'    => $isFailed ? '#FEF2F2' : '#ECFDF5',
+                                    'color' => $isFailed ? '#EF4444' : '#10B981',
+                                ];
+                            } else {
+                                $actStyle = $baseStyleMap[$type] ?? [
+                                    'icon'  => 'fas fa-bell',
+                                    'bg'    => '#F1F5F9',
+                                    'color' => '#64748B',
+                                ];
+                            }
                         @endphp
                         <div class="activity-item">
                             <div class="activity-left">

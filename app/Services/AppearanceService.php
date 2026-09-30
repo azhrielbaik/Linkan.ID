@@ -12,7 +12,7 @@ use App\Models\SocialMediaElement;
 use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
 use Illuminate\Http\UploadedFile;
 
 class AppearanceService
@@ -298,8 +298,8 @@ class AppearanceService
     {
         $path = $directory . '/' . time() . '_' . Str::random(10) . '.webp';
         
-        $image = Image::decode($file)->scaleDown(width: $scaleWidth);
-        $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+        $image = ImageManager::gd()->read($file)->scaleDown(width: $scaleWidth);
+        $encoded = $image->toWebp(80);
             
         Storage::disk('public')->put($path, (string) $encoded);
 
@@ -313,12 +313,12 @@ class AppearanceService
     {
         // Ekstrak data base64 murni tanpa awalan 'data:image/...;base64,'
         $imageParts = explode(";base64,", $base64String);
-        $imageBase64 = base64_decode($imageParts[1]);
+        $imageBase64 = base64_decode(end($imageParts));
 
         $path = $directory . '/' . time() . '_' . Str::random(10) . '.webp';
         
-        $image = Image::decode($imageBase64)->scaleDown(width: $scaleWidth);
-        $encoded = $image->encodeUsingFileExtension('webp', quality: 80);
+        $image = ImageManager::gd()->read($imageBase64)->scaleDown(width: $scaleWidth);
+        $encoded = $image->toWebp(80);
             
         Storage::disk('public')->put($path, (string) $encoded);
 

@@ -1138,7 +1138,7 @@ input[type="file"]::file-selector-button {
     margin-top: 0;
 }
 
-.profile-edit-form-body.open  { overflow: visible; }
+.profile-edit-form-body.open, .edit-form-body.open  { overflow: visible; }
 
 /* =========================================
    PHONE PREVIEW EXACT MATCH STYLES 

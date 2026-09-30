@@ -34,6 +34,7 @@ return [
     'buy' => 'Buy',
     // Digital Product
     'add_digital_product' => 'Add Digital Product',
+    'edit_digital_product' => 'Edit Digital Product',
     'product_rejected' => 'This product was previously rejected. Please fix and resubmit for verification.',
     'details' => 'Details',
     'image' => 'Image',

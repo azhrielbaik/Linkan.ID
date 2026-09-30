@@ -48,6 +48,27 @@ class Transaction extends Model
         };
     }
 
+    public function getFormattedPaymentMethodAttribute(): string
+    {
+        $paymentMethod = $this->payment_method ?: '-';
+        if ($paymentMethod === '-') {
+            return '-';
+        }
+
+        $parts = explode('-', $paymentMethod);
+        $mainType = ucwords(str_replace('_', ' ', $parts[0]));
+        if (strtolower($mainType) === 'qris') $mainType = 'QRIS';
+        if (strtolower($mainType) === 'gopay') $mainType = 'GoPay';
+        if (strtolower($mainType) === 'shopeepay') $mainType = 'ShopeePay';
+
+        if (count($parts) > 1) {
+            $subType = strtoupper($parts[1]);
+            return "{$mainType} ({$subType})";
+        }
+
+        return $mainType;
+    }
+
     public function product()
     {
         return $this->belongsTo(DigitalProduct::class, 'product_id');

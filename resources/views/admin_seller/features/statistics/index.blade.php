@@ -3,7 +3,7 @@
 @section("page_title", __('admin.statistic_title'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}?v={{ filemtime(public_path('css/pages/shortlink-analytics.css')) }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/shortlink-analytics.css') }}?v={{ file_exists(public_path('css/pages/shortlink-analytics.css')) ? filemtime(public_path('css/pages/shortlink-analytics.css')) : '1.0' }}">
 @endpush
 
 @section("content")
@@ -98,9 +98,6 @@
 
 @push("scripts")
 <script src="{{ asset('js/apexcharts.min.js') }}"></script>
-@endpush
-
-@push("scripts")
 <script>
 let chart1, chart2;
 let startDateVal = null, endDateVal = null;
@@ -307,5 +304,19 @@ const observer = new MutationObserver((mutations) => {
     });
 });
 observer.observe(document.documentElement, { attributes: true });
+
+document.addEventListener('turbo:before-cache', function() {
+    if (observer) {
+        observer.disconnect();
+    }
+    if (chart1) {
+        chart1.destroy();
+        chart1 = null;
+    }
+    if (chart2) {
+        chart2.destroy();
+        chart2 = null;
+    }
+}, { once: true });
 </script>
 @endpush

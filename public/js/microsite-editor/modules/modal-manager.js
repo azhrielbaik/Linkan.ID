@@ -218,48 +218,51 @@
         closeSocialPlatformSelector();
     }
 
-    // Modal background overlay click listener
-    window.addEventListener('click', function (event) {
-        if (event.target && event.target.id === 'newMicrositeModalOverlay') {
-            closeNewMicrositeModal();
-        }
-    });
+    // Modal background overlay & delegation click listeners (Idempotent: bound only once)
+    if (!window.__micrositeModalManagerEventsBound) {
+        window.__micrositeModalManagerEventsBound = true;
 
-    // Delegation click listener for modal actions
-    document.addEventListener('click', function (e) {
-        let target;
-
-        if ((target = e.target.closest('.js-close-delete-modal'))) {
-            closeDeleteConfirmModal();
-        }
-
-        if ((target = e.target.closest('.js-confirm-delete-modal'))) {
-            if (typeof window.confirmDeleteCallback === 'function' && window.confirmDeleteCallback) {
-                window.confirmDeleteCallback();
+        window.addEventListener('click', function (event) {
+            if (event.target && event.target.id === 'newMicrositeModalOverlay') {
+                closeNewMicrositeModal();
             }
-            closeDeleteConfirmModal();
-        }
+        });
 
-        if ((target = e.target.closest('.js-open-social-selector'))) {
-            openSocialPlatformSelector(target.dataset.targetId);
-        }
+        document.addEventListener('click', function (e) {
+            let target;
 
-        if ((target = e.target.closest('.js-close-social-selector'))) {
-            closeSocialPlatformSelector();
-        }
+            if ((target = e.target.closest('.js-close-delete-modal'))) {
+                closeDeleteConfirmModal();
+            }
 
-        if ((target = e.target.closest('.js-toggle-social-selection'))) {
-            toggleSocialPlatformSelection(target);
-        }
+            if ((target = e.target.closest('.js-confirm-delete-modal'))) {
+                if (typeof window.confirmDeleteCallback === 'function' && window.confirmDeleteCallback) {
+                    window.confirmDeleteCallback();
+                }
+                closeDeleteConfirmModal();
+            }
 
-        if ((target = e.target.closest('.js-finish-social-selection'))) {
-            finishSocialPlatformSelection();
-        }
+            if ((target = e.target.closest('.js-open-social-selector'))) {
+                openSocialPlatformSelector(target.dataset.targetId);
+            }
 
-        if ((target = e.target.closest('.js-copy-url'))) {
-            copyToClipboard(target.dataset.url);
-        }
-    });
+            if ((target = e.target.closest('.js-close-social-selector'))) {
+                closeSocialPlatformSelector();
+            }
+
+            if ((target = e.target.closest('.js-toggle-social-selection'))) {
+                toggleSocialPlatformSelection(target);
+            }
+
+            if ((target = e.target.closest('.js-finish-social-selection'))) {
+                finishSocialPlatformSelection();
+            }
+
+            if ((target = e.target.closest('.js-copy-url'))) {
+                copyToClipboard(target.dataset.url);
+            }
+        });
+    }
 
     // Register module namespace
     window.MicrositeBuilder.ModalManager = {

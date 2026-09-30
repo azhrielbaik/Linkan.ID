@@ -38,7 +38,9 @@ class DigitalProductController extends Controller
             ->where('transactions.status', 'success')
             ->count();
 
-        return view('admin_seller.features.digital-products.index', compact('products', 'totalSales', 'totalOrders'));
+        return view('admin_seller.features.digital-products.index', compact(
+            'products', 'totalSales', 'totalOrders'
+        ));
     }
 
     public function create()
@@ -58,14 +60,17 @@ class DigitalProductController extends Controller
         $data['has_quantity_limit'] = $request->has('has_quantity_limit');
         $data['quantity'] = $request->has('has_quantity_limit') ? $request->quantity : null;
 
+        $photos = $request->file('photos') ?? $request->file('image');
+
         $this->digitalProductService->storeProduct(
             $data,
             Auth::id(),
-            $request->file('image'),
-            $request->file('platform_file')
+            $photos,
+            $request->file('platform_file'),
+            $request->input('existing_media')
         );
 
-        return redirect()->route('admin.microsites.index')->with('success', 'Digital product added successfully!');
+        return redirect()->route('admin.digital-products.index')->with('success', 'Produk digital berhasil ditambahkan!');
     }
 
     public function edit($id)
@@ -78,9 +83,21 @@ class DigitalProductController extends Controller
     
     public function show($id)
     {
-        $user = Auth::user();
+        $user    = Auth::user();
         $product = \App\Models\DigitalProduct::where('id', $id)->where('user_id', $user->id)->firstOrFail();
-        return view('admin_seller.features.digital-products.show', compact('product', 'user'));
+
+        // Ambil review terbaru, hanya yang is_visible = true
+        $reviews = \App\Models\ProductReview::where('product_id', $id)
+            ->where('is_visible', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Hitung rata-rata rating
+        $avgRating   = $reviews->avg('rating') ?? 0;
+        $reviewCount = $reviews->count();
+
+        return view('admin_seller.features.digital-products.show',
+            compact('product', 'user', 'reviews', 'avgRating', 'reviewCount'));
     }
     public function update(UpdateDigitalProductRequest $request, $id)
     {
@@ -96,19 +113,38 @@ class DigitalProductController extends Controller
         $data['has_quantity_limit'] = $request->has('has_quantity_limit');
         $data['quantity'] = $request->has('has_quantity_limit') ? $request->quantity : null;
 
+        $photos = $request->file('photos') ?? $request->file('image');
+
         $this->digitalProductService->updateProduct(
             $product,
             $data,
-            $request->file('image'),
-            $request->file('platform_file')
+            $photos,
+            $request->file('platform_file'),
+            $request->input('existing_media')
         );
 
-        return redirect()->route('admin.microsites.index')->with('success', 'Produk berhasil diperbarui!');
+        return redirect()->route('admin.digital-products.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
-        $product = $this->digitalProductService->getProduct($id, Auth::id());
+        $user = Auth::user();
+        $product = $this->digitalProductService->getProduct($id, $user->id);
+
+        // Hapus dari blocks_order semua appearances milik user ini
+        $appearances = \App\Models\Appearance::where('user_id', $user->id)->get();
+        $key = 'digitalproduct_' . $product->id;
+        foreach ($appearances as $appearance) {
+            if ($appearance->blocks_order && str_contains($appearance->blocks_order, $key)) {
+                $order = array_filter(
+                    explode(',', $appearance->blocks_order),
+                    fn($b) => $b !== $key
+                );
+                $appearance->blocks_order = implode(',', array_values($order));
+                $appearance->save();
+            }
+        }
+
         $msg = $this->digitalProductService->deleteProduct($product);
 
         return redirect()->back()->with('success', $msg);

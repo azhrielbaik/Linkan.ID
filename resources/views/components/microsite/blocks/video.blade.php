@@ -3,7 +3,7 @@
     $isAutoplay = $data ? ($data?->is_autoplay ?? false) : false;
 @endphp
 <div id="{{ $elementId }}" class="draggable-element-block {{ $isActive ? '' : 'block-inactive' }}" data-element-type="video" data-db-id="{{ $data?->id }}">
-                                    <div class="block-item-card js-toggle-edit-form" data-type="{{ __('microsite.video_title') }}" data-target-id="{{ $elementId }}">
+                                    <div class="block-item-card js-toggle-edit-form" data-type="Video" data-target-id="{{ $elementId }}">
                                         <i class="fas fa-grip-vertical drag-handle drag-handle-icon js-stop-propagation" title="{{ __('microsite.drag_drop') }}"></i>
                                         <div class="block-item-icon-wrapper">
                                             <i class="fab fa-youtube"></i>
@@ -21,10 +21,10 @@
                                                     <span class="toggle-slider"></span>
                                                 </label>
                                             </div>
-                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="{{ __('microsite.video_title') }}" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
+                                            <button type="button" class="btn-element-action btn-delete-icon js-remove-element" data-type="Video" data-target-id="{{ $elementId }}" title="Hapus Elemen" aria-label="Hapus Elemen">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
-                                            <button type="button" data-type="{{ __('microsite.video_title') }}" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
+                                            <button type="button" data-type="Video" data-target-id="{{ $elementId }}" class="btn-edit-block js-toggle-edit-form">
                                                 <i class="fas fa-pen" class="btn-edit-icon"></i> <span id="btnText_{{ $elementId }}">{{ __('microsite.btn_edit') }}</span>
                                             </button>
                                         </div>

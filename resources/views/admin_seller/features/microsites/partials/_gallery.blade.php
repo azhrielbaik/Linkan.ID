@@ -60,7 +60,7 @@
 
                         <div class="card-stats-tags mt-3">
                             <span class="stat-tag"><i class="fas fa-eye"></i> {{ number_format($viewsData[$appearance->alias] ?? 0) }} views</span>
-                            <span class="stat-tag"><i class="fas fa-cube"></i> {{ $digitalProducts ? $digitalProducts->count() : 0 }} {{ __('admin.product') }}</span>
+                            <span class="stat-tag"><i class="fas fa-cube"></i> {{ $appearance->digital_products_count }} {{ __('admin.product') }}</span>
                         </div>
 
                         <!-- ACTION BUTTONS -->
@@ -68,7 +68,7 @@
                             <a href="{{ url('/' . $appearance->alias) }}" target="_blank" class="btn-action-secondary">
                                 <i class="fa-solid fa-arrow-up-from-ground-water"></i> Kunjungi
                             </a>
-                            <a href="{{ route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary">
+                            <a href="{{ route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id]) }}" class="btn-action-primary" data-turbo="false">
                                 <i class="fas fa-pen"></i> {{ __('admin.edit_block') }}
                             </a>
 

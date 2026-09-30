@@ -3,7 +3,7 @@
 @section("page_title", __('admin.form'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/withdraw-form.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/withdraw-form.css') }}">
 @endpush
 
 @section("content")

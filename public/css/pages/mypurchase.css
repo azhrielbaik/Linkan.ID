@@ -106,6 +106,51 @@
     background: #4849E8;
 }
 
+.purchases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.purchase-card {
+    display: flex;
+    align-items: center;
+    background: #f7f8fa;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.purchase-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.purchase-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+html.dark .dashboard-mypurchase-page .my-linkan-header,
+html.dark .dashboard-mypurchase-page .purchases-card-container,
+html.dark .dashboard-mypurchase-page .purchase-card {
+    background: #1c212e !important;
+    border-color: #2a3241 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark .purchase-badge {
+    background: #2a3241 !important;
+    color: #94a3b8 !important;
+}
+
 @media (max-width: 900px) {
     .main-content {
         margin-left: 0;

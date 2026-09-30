@@ -3,7 +3,7 @@
 @section("page_title", __('admin.payout_history'))
 
 @push("styles")
-<link rel="stylesheet" href="{{ asset('css/pages/payout-history.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/pages/payout-history.css') }}">
 @endpush
 
 @section("content")
