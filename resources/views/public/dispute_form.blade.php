@@ -634,10 +634,22 @@
             </div>
         </div>
 
-        @if(session('error'))
-            <div class="alert-box err">
-                <i class="fas fa-exclamation-circle" style="font-size: 15px;"></i>
-                <span>{{ session('error') }}</span>
+        @if(session('error') || $errors->any())
+            <div class="alert-box err" id="globalAlertBox" style="margin-bottom: 24px; border-left: 4px solid var(--danger);">
+                <i class="fas fa-exclamation-circle" style="font-size: 18px; flex-shrink: 0; align-self: flex-start; margin-top: 2px;"></i>
+                <div style="flex: 1;">
+                    @if(session('error'))
+                        <div style="font-weight: 700;">{{ session('error') }}</div>
+                    @endif
+                    @if($errors->any())
+                        <div style="font-weight: 700; margin-bottom: 4px;">Terdapat kendala pada formulir pengajuan:</div>
+                        <ul style="margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.6;">
+                            @foreach($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
             </div>
         @endif
 
@@ -744,9 +756,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Jelaskan Kendala Secara Detail <span class="req">*</span></label>
-                    <textarea name="description" rows="3" class="form-control no-icon" required 
-                              placeholder="Ceritakan kendala apa yang Anda temukan saat membuka file/link produk digital tersebut...">{{ old('description') }}</textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px;">
+                        <label class="form-label" style="margin-bottom: 0;">Jelaskan Kendala Secara Detail <span class="req">*</span></label>
+                        <span id="descCharCount" style="font-size: 11px; font-weight: 700; color: var(--slate-400);">Minimal 20 karakter</span>
+                    </div>
+                    <textarea name="description" id="inp_description" rows="3" class="form-control no-icon @error('description') is-invalid @enderror" required minlength="20"
+                              placeholder="Ceritakan kendala apa yang Anda temukan secara detail (minimal 20 karakter)..." oninput="updateCharCount(this)">{{ old('description') }}</textarea>
+                    @error('description')
+                        <div style="color: var(--danger); font-size: 11.5px; font-weight: 600; margin-top: 4px;">
+                            <i class="fas fa-circle-exclamation"></i> {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
@@ -850,6 +870,18 @@
         }
     }
 
+    function updateCharCount(el) {
+        const count = el.value.trim().length;
+        const countEl = document.getElementById('descCharCount');
+        if (!countEl) return;
+        if (count >= 20) {
+            countEl.innerHTML = `<span style="color: var(--success);"><i class="fas fa-circle-check"></i> ${count} karakter (Memenuhi syarat)</span>`;
+            el.classList.remove('is-invalid');
+        } else {
+            countEl.innerHTML = `<span style="color: ${count > 0 ? '#ea580c' : 'var(--slate-400)'};">${count}/20 karakter minimal</span>`;
+        }
+    }
+
     async function verifyOrderAjax() {
         const orderId = document.getElementById('inp_order_id').value.trim();
         const email = document.getElementById('inp_buyer_email').value.trim();
@@ -928,12 +960,48 @@
         }
     }
 
-    // Auto verify if prefilled order id is provided
+    // Auto verify if prefilled order id is provided & form submit handler
     document.addEventListener('DOMContentLoaded', function() {
         const orderId = document.getElementById('inp_order_id');
         const email = document.getElementById('inp_buyer_email');
         if (orderId && orderId.value && email && email.value) {
             verifyOrderAjax();
+        }
+
+        // Initialize character count if value already exists
+        const descInput = document.getElementById('inp_description');
+        if (descInput && descInput.value) {
+            updateCharCount(descInput);
+        }
+
+        // Auto-scroll ke pesan error jika ada error validasi atau session error
+        @if($errors->any() || session('error'))
+            const globalAlert = document.getElementById('globalAlertBox');
+            if (globalAlert) {
+                globalAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        @endif
+
+        // Client-side validation sebelum submit agar user langsung tahu kendalanya
+        const form = document.getElementById('disputeForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const desc = document.getElementById('inp_description');
+                if (desc && desc.value.trim().length < 20) {
+                    e.preventDefault();
+                    desc.classList.add('is-invalid');
+                    desc.focus();
+                    desc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    alert('Mohon jelaskan kendala produk secara detail (minimal 20 karakter). Saat ini Anda baru mengetik ' + desc.value.trim().length + ' karakter.');
+                    return false;
+                }
+
+                const submitBtn = document.getElementById('btnSubmitDispute');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengirim Laporan...</span>';
+                }
+            });
         }
     });
 </script>
