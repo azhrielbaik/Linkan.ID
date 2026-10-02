@@ -22,9 +22,67 @@
                 <h2 class="title">{{ __('auth.create_account') }}</h2>
                 <p class="subtitle">{{ __('auth.register_agreement') }} <strong>{{ __('auth.terms_conditions') }}</strong> {{ __('auth.our') }}</p>
 
+                @if(session('warning'))
+                    <div class="auth-alert auth-alert-warning" role="alert">
+                        <div class="auth-alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="auth-alert-body">
+                            <div class="auth-alert-title">{{ __('Perhatian') }}</div>
+                            <p class="auth-alert-text">{{ session('warning') }}</p>
+                            @if(isset($googleData))
+                                <div style="margin-top: 10px;">
+                                    <a href="{{ route('google.register') }}" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1e293b; background: #ffffff; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; text-decoration: none; box-shadow: 0 1px 2px rgba(0,0,0,0.06); transition: all 0.2s;">
+                                        <img src="{{ asset('images/google.png') }}" alt="Google" style="width: 15px; height: 15px;">
+                                        Daftar langsung dengan Google
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                        <button type="button" class="auth-alert-close" onclick="this.closest('.auth-alert').remove()" aria-label="Tutup">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div class="auth-alert auth-alert-info" role="alert">
+                        <div class="auth-alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <div class="auth-alert-body">
+                            <div class="auth-alert-title">{{ __('Informasi') }}</div>
+                            <p class="auth-alert-text">{{ session('info') }}</p>
+                        </div>
+                        <button type="button" class="auth-alert-close" onclick="this.closest('.auth-alert').remove()" aria-label="Tutup">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                @endif
+
                 @if(session('error'))
-                    <div class="error-message" style="margin-bottom: 20px;">
-                        {{ session('error') }}
+                    <div class="auth-alert auth-alert-error" role="alert">
+                        <div class="auth-alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="auth-alert-body">
+                            <div class="auth-alert-title">{{ __('Gagal') }}</div>
+                            <p class="auth-alert-text">{{ session('error') }}</p>
+                        </div>
+                        <button type="button" class="auth-alert-close" onclick="this.closest('.auth-alert').remove()" aria-label="Tutup">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
                     </div>
                 @endif
 
@@ -89,7 +147,7 @@
 
                 <div class="auth-divider">{{ __('auth.or') }}</div>
 
-                <a href="{{ url('/login/google') }}" class="btn-google">
+                <a href="{{ route('google.register') }}" class="btn-google">
                     <img src="{{ asset('images/google.png') }}" alt="Google Logo">
                     Daftar dengan Google
                 </a>

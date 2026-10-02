@@ -1,0 +1,77 @@
+/* ============================================================
+   Linkan.ID Microsite Builder — Design Tokens & Variables
+   ============================================================ */
+
+:root {
+  /* Brand Colors */
+  --color-brand:        #FF9040;
+  --color-brand-dark:   #ED842C;
+  --color-brand-hover:  #e07b30;
+  --color-brand-light:  #FFF3E6;
+  --color-brand-pale:   #fff8f3;
+  --color-brand-shadow: rgba(255, 144, 64, 0.2);
+
+  /* Neutral - Text */
+  --color-text-primary:     #111827;
+  --color-text-secondary:   #374151;
+  --color-text-muted:       #6b7280;
+  --color-text-placeholder: #9ca3af;
+
+  /* Neutral - Surfaces */
+  --color-bg-page:      #ffffff;
+  --color-bg-surface:   #f9fafb;
+  --color-bg-subtle:    #f3f4f6;
+  --color-border:       #e5e7eb;
+  --color-border-light: #f0f0f0;
+  --color-card-border:  #eaeaea;
+  --color-input-border: #d1d5db;
+
+  /* Border Radius */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --transition-fast:   0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-spring: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.dark {
+  /* Brand Colors */
+  --color-brand:        #ed842c;
+  --color-brand-dark:   #ed842c;
+  --color-brand-hover:  #d97320;
+  --color-brand-light:  #2d241c;
+  --color-brand-pale:   #2d241c;
+  --color-brand-shadow: rgba(237, 132, 44, 0.3);
+
+  /* Neutral - Text */
+  --color-text-primary:     #f8fafc;
+  --color-text-secondary:   #e2e8f0;
+  --color-text-muted:       #94a3b8;
+  --color-text-placeholder: #64748b;
+
+  /* Neutral - Surfaces */
+  --color-bg-page:      #0f131c;
+  --color-bg-surface:   #1c212e;
+  --color-bg-subtle:    #151a24;
+  --color-border:       #2a3241;
+  --color-border-light: #2a3241;
+  --color-card-border:  #2a3241;
+  --color-input-border: #2a3241;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.45);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+}

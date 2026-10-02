@@ -1,0 +1,268 @@
+/* ============================================================
+   Linkan.ID Microsite Builder — Responsive Mobile Overrides
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Desktop / Tablet Breakpoint (max-width: 1024px)
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .editor-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .editor-sticky-preview,
+    .dashboard-mylinkan-page .editor-sticky-preview {
+        position: relative;
+        top: 0;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 24px 16px;
+    }
+
+    .phone-preview-flex-container {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .preview-url-browser-bar {
+        flex-direction: row;
+        height: auto;
+        width: 100%;
+        max-width: 320px;
+        padding: 10px 16px;
+    }
+
+    .preview-url-browser-bar > div:nth-child(2) {
+        writing-mode: horizontal-tb;
+        transform: none;
+        font-size: 13px;
+    }
+
+    .preview-url-browser-bar > div:nth-child(3) {
+        flex-direction: row;
+    }
+}
+
+/* ------------------------------------------------------------
+   Tablet / Mobile Breakpoint (max-width: 768px)
+   ------------------------------------------------------------ */
+@media (max-width: 768px) {
+    .dashboard-mylinkan-page {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .microsite-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .microsite-actions-bar {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-box,
+    .search-box input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .microsite-actions-bar .btn-action-secondary,
+    .microsite-actions-bar .btn-action-primary {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        min-width: 120px;
+        box-sizing: border-box;
+    }
+
+    .section-header h2.gallery-title,
+    .dashboard-mylinkan-page .section-header h2.gallery-title {
+        display: none;
+    }
+
+    /* Hide toggle buttons on mobile */
+    .device-toggle-btns,
+    .dashboard-mylinkan-page .device-toggle-btns {
+        display: none;
+    }
+
+    .microsite-gallery-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Modal Creation Wizard: Full Screen Mobile Page View */
+    .new-microsite-modal-overlay {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .new-microsite-modal-wrapper {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .floating-close-btn {
+        display: none;
+    }
+
+    .new-microsite-modal-card {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        padding: 24px 20px;
+        box-shadow: none;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .new-microsite-modal-header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+    }
+
+    .new-microsite-modal-title {
+        font-size: 19px;
+    }
+
+    .new-microsite-modal-subtitle {
+        font-size: 13px;
+    }
+
+    .purpose-vertical-list {
+        gap: 12px;
+    }
+
+    .image-style-option-card {
+        padding: 14px 16px;
+        gap: 14px;
+        border-radius: 16px;
+    }
+
+    .thumb-ui-mockup {
+        display: none;
+    }
+
+    .option-thumb-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: transparent;
+        flex-shrink: 0;
+    }
+
+    .option-mobile-icon-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+    }
+
+    .option-main-title {
+        font-size: 15px;
+        margin-bottom: 2px;
+    }
+
+    .option-sub-desc {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .option-chevron-arrow {
+        margin-bottom: 0;
+        font-size: 12px;
+    }
+
+    .wizard-modal-footer {
+        margin-top: 28px;
+        padding-top: 20px;
+    }
+
+    /* Block Items on Mobile: Hide Active/Inactive Text to Save Space */
+    .element-visibility-container .visibility-status-text {
+        display: none;
+    }
+
+    .element-visibility-container {
+        padding-right: 8px;
+        margin-right: 4px;
+        gap: 0;
+    }
+
+    /* Hide "Edit" text inside buttons on mobile, leaving only the icon */
+    .block-item-actions .btn-edit-block span,
+    .block-item-actions .btn-profile-edit span {
+        display: none;
+    }
+
+    .block-item-actions .btn-edit-block,
+    .block-item-actions .btn-profile-edit {
+        padding: 4px 8px;
+    }
+}
+
+/* ------------------------------------------------------------
+   Narrow Viewport Breakpoint (max-width: 580px)
+   ------------------------------------------------------------ */
+@media (max-width: 580px) {
+    .editor-mode-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .editor-panel-tab-switcher {
+        width: 100%;
+    }
+
+    .editor-panel-tab-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .profile-layout-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .background-image-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ------------------------------------------------------------
+   Small Mobile Viewport Breakpoint (max-width: 480px)
+   ------------------------------------------------------------ */
+@media (max-width: 480px) {
+    .social-platform-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}

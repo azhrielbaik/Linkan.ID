@@ -301,6 +301,66 @@ body {
     background: rgba(22, 163, 74, 0.1);
 }
 
+/* Error / Danger Variant */
+.auth-alert-error,
+.auth-alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.auth-alert-error .auth-alert-icon,
+.auth-alert-danger .auth-alert-icon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.auth-alert-error .auth-alert-title,
+.auth-alert-danger .auth-alert-title {
+    color: #991b1b;
+}
+
+.auth-alert-error .auth-alert-text,
+.auth-alert-danger .auth-alert-text {
+    color: #b91c1c;
+}
+
+.auth-alert-error .auth-alert-close,
+.auth-alert-danger .auth-alert-close {
+    color: #991b1b;
+}
+
+.auth-alert-error .auth-alert-close:hover,
+.auth-alert-danger .auth-alert-close:hover {
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Info Variant */
+.auth-alert-info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.auth-alert-info .auth-alert-icon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.auth-alert-info .auth-alert-title {
+    color: #1e40af;
+}
+
+.auth-alert-info .auth-alert-text {
+    color: #1e3a8a;
+}
+
+.auth-alert-info .auth-alert-close {
+    color: #1e40af;
+}
+
+.auth-alert-info .auth-alert-close:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
 .success-message {
     background: #e6f4ea;
     color: #137333;

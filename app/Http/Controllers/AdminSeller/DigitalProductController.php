@@ -45,7 +45,20 @@ class DigitalProductController extends Controller
 
     public function create()
     {
-        return view('admin_seller.features.digital-products.form');
+        $cleanDescription = old('description', '');
+        if (!empty($cleanDescription)) {
+            $cleanDescription = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $cleanDescription);
+            $cleanDescription = preg_replace('/<\/?span[^>]*>/i', '', $cleanDescription);
+            $cleanDescription = preg_replace('/<\/?font[^>]*>/i', '', $cleanDescription);
+        }
+        $existingPhotos = [];
+        $hasInitialPlatformFile = false;
+
+        return view('admin_seller.features.digital-products.form', compact(
+            'cleanDescription',
+            'existingPhotos',
+            'hasInitialPlatformFile'
+        ));
     }
 
     public function store(StoreDigitalProductRequest $request)
@@ -77,7 +90,32 @@ class DigitalProductController extends Controller
     {
         $product = $this->digitalProductService->getProduct($id, Auth::id());
         
-        return view('admin_seller.features.digital-products.form', compact('product'));
+        $cleanDescription = old('description');
+        if ($cleanDescription !== null) {
+            $cleanDescription = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $cleanDescription);
+            $cleanDescription = preg_replace('/<\/?span[^>]*>/i', '', $cleanDescription);
+            $cleanDescription = preg_replace('/<\/?font[^>]*>/i', '', $cleanDescription);
+        } else {
+            $cleanDescription = $product->clean_description ?? '';
+        }
+
+        $existingPhotos = $product->existing_photos_list ?? [];
+        $oldExistingMedia = old('existing_media');
+        if ($oldExistingMedia) {
+            $decoded = json_decode($oldExistingMedia, true);
+            if (is_array($decoded)) {
+                $existingPhotos = $decoded;
+            }
+        }
+
+        $hasInitialPlatformFile = $product->has_platform_file ?? false;
+
+        return view('admin_seller.features.digital-products.form', compact(
+            'product',
+            'cleanDescription',
+            'existingPhotos',
+            'hasInitialPlatformFile'
+        ));
     }
     
     
@@ -96,8 +134,52 @@ class DigitalProductController extends Controller
         $avgRating   = $reviews->avg('rating') ?? 0;
         $reviewCount = $reviews->count();
 
-        return view('admin_seller.features.digital-products.show',
-            compact('product', 'user', 'reviews', 'avgRating', 'reviewCount'));
+        // Siapkan data gambar
+        $images = [];
+        $mediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
+        if (is_array($mediaFiles) && count($mediaFiles) > 0) {
+            foreach ($mediaFiles as $media) {
+                if (is_array($media)) {
+                    if (isset($media['url']) || isset($media['path'])) {
+                        $images[] = $media['url'] ?? $media['path'];
+                    }
+                } elseif (is_string($media)) {
+                    $images[] = $media;
+                }
+            }
+        }
+        if (empty($images) && $product->image) {
+            $images[] = $product->image;
+        }
+
+        $mainImage = count($images) > 0 ? resolveProductImageUrl($images[0]) : 'https://via.placeholder.com/600x600?text=No+Image';
+
+        // Siapkan data harga
+        $currentPrice = $product->sale_price ?: $product->price;
+        $originalPrice = $product->sale_price ? $product->price : ($product->price * 1.2);
+
+        // Siapkan statistik rating per bintang (5 ke 1)
+        $ratingDistribution = [];
+        for ($star = 5; $star >= 1; $star--) {
+            $count = $reviews->where('rating', $star)->count();
+            $ratingDistribution[$star] = [
+                'count' => $count,
+                'percent' => $reviewCount > 0 ? round(($count / $reviewCount) * 100) : 0,
+            ];
+        }
+
+        return view('admin_seller.features.digital-products.show', compact(
+            'product',
+            'user',
+            'reviews',
+            'avgRating',
+            'reviewCount',
+            'images',
+            'mainImage',
+            'currentPrice',
+            'originalPrice',
+            'ratingDistribution'
+        ));
     }
     public function update(UpdateDigitalProductRequest $request, $id)
     {

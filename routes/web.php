@@ -95,6 +95,18 @@ Route::get('/register', function () {
 });
 Route::post('/register', [RegisterController::class, 'register']);
 
+Route::get('/login/google', function () {
+    $locale = session('locale', config('app.locale', 'id'));
+
+    return redirect()->to("/{$locale}/login/google");
+});
+
+Route::get('/register/google', function () {
+    $locale = session('locale', config('app.locale', 'id'));
+
+    return redirect()->to("/{$locale}/register/google");
+});
+
 Route::get('/auth/google/connect', function () {
     $locale = session('locale', config('app.locale', 'id'));
 
@@ -124,6 +136,12 @@ Route::get('/product/{id}', function (\Illuminate\Http\Request $request, $id) {
 Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty']);
 Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction']);
 
+// Unprefixed admin notification routes for Ajax fallback
+Route::middleware(['auth'])->group(function () {
+    Route::post('/admin/notifications/read', [\App\Http\Controllers\AdminSeller\DashboardController::class, 'markNotificationRead']);
+    Route::post('/admin/notifications/read-all', [\App\Http\Controllers\AdminSeller\DashboardController::class, 'markAllNotificationsRead']);
+});
+
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
     Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
 
@@ -141,6 +159,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
 
     // Google OAuth
     Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('register/google', [LoginController::class, 'redirectToGoogleRegister'])->name('google.register');
     Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('google.callback');
     Route::get('/auth/google/connect', [LoginController::class, 'redirectToGoogleConnect'])->middleware('auth')->name('google.connect');
 

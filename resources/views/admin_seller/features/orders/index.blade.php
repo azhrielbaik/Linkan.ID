@@ -194,7 +194,7 @@
         
         if (contentContainer) {
             contentContainer.innerHTML = `
-                <div style="text-align:center; padding: 50px 20px; color: #94a3b8;">
+                <div class="od-loading-state">
                     <i class="fas fa-circle-notch fa-spin" style="font-size: 28px; color: #ED842C; margin-bottom: 12px; display: inline-block;"></i>
                     <p style="font-size: 14px; margin: 0; font-weight: 500;">Memuat detail pesanan...</p>
                 </div>
@@ -236,10 +236,10 @@
             console.error('Error fetching order detail:', error);
             if (contentContainer) {
                 contentContainer.innerHTML = `
-                    <div style="text-align: center; padding: 45px 20px; color: #ef4444;">
+                    <div class="od-error-state">
                         <i class="fas fa-exclamation-triangle" style="font-size: 32px; color: #f59e0b; margin-bottom: 12px; display: inline-block;"></i>
-                        <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Gagal Memuat Detail</h4>
-                        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Terjadi kendala saat mengambil data pesanan. Silakan coba kembali.</p>
+                        <h4 class="od-error-title">Gagal Memuat Detail</h4>
+                        <p class="od-error-desc">Terjadi kendala saat mengambil data pesanan. Silakan coba kembali.</p>
                         <button type="button" onclick="openDetailModal(${id})" style="padding: 9px 20px; border-radius: 8px; background: #ED842C; color: #ffffff; border: none; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(237, 132, 44, 0.25);">
                             <i class="fas fa-redo"></i> Coba Lagi
                         </button>

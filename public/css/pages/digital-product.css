@@ -1333,3 +1333,51 @@ html.dark .dashboard-digital-product-page .product-form-alert.alert-warning {
     border-color: rgba(245, 158, 11, 0.3);
     color: #fbbf24;
 }
+
+/* --- Form Layout Utility Helpers --- */
+.dashboard-digital-product-page .form-row-block {
+    display: block;
+}
+
+.dashboard-digital-product-page .textarea-label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.dashboard-digital-product-page .editor-container {
+    width: 100%;
+}
+
+.dashboard-digital-product-page .mt-section {
+    margin-top: 28px;
+}
+
+.dashboard-digital-product-page .mt-sub {
+    margin-top: 24px;
+}
+
+.dashboard-digital-product-page .btn-prev-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.dashboard-digital-product-page .btn-icon-left {
+    margin-right: 8px;
+}
+
+.dashboard-digital-product-page .btn-icon-right {
+    margin-left: 8px;
+}
+
+.dashboard-digital-product-page .currency-input-readonly {
+    color: #6b7280;
+}
+
+.dashboard-digital-product-page .cursor-pointer {
+    cursor: pointer;
+}
+
+html.dark .dashboard-digital-product-page .currency-input-readonly {
+    color: #94a3b8;
+}

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
@@ -60,6 +61,14 @@ class RegisterController extends Controller
 
         // Auto login setelah registrasi
         Auth::login($newUser);
+
+        Log::channel('auth')->info('User registered and logged in', [
+            'user_id' => $newUser->id,
+            'email' => $newUser->email,
+            'role' => $newUser->role,
+            'ip' => $request->ip(),
+            'has_google' => ! empty($newUser->google_id),
+        ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Registrasi berhasil! Selamat datang di dashboard Anda.');
     }

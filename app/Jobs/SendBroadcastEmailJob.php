@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendBroadcastEmailJob implements ShouldQueue
@@ -49,12 +50,30 @@ class SendBroadcastEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->recipient->email)
-            ->send(new BroadcastAnnouncementMail($this->announcement, $this->recipient));
+        try {
+            Mail::to($this->recipient->email)
+                ->send(new BroadcastAnnouncementMail($this->announcement, $this->recipient));
 
-        // Increment counter email terkirim secara atomik
-        BroadcastAnnouncement::where('id', $this->announcement->id)
-            ->increment('emails_sent_count');
+            // Increment counter email terkirim secara atomik
+            BroadcastAnnouncement::where('id', $this->announcement->id)
+                ->increment('emails_sent_count');
+
+            Log::channel('jobs')->info('Broadcast email sent successfully', [
+                'job' => 'SendBroadcastEmailJob',
+                'announcement_id' => $this->announcement->id,
+                'recipient_email' => $this->recipient->email,
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('jobs')->error('Failed to send broadcast email', [
+                'job' => 'SendBroadcastEmailJob',
+                'announcement_id' => $this->announcement->id,
+                'recipient_email' => $this->recipient->email,
+                'error_message' => $e->getMessage(),
+                'attempt_number' => $this->attempts(),
+            ]);
+
+            throw $e;
+        }
     }
 
     /**
@@ -62,10 +81,12 @@ class SendBroadcastEmailJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        \Log::error("Broadcast email gagal dikirim ke {$this->recipient->email}: " . $exception->getMessage(), [
+        Log::channel('jobs')->error('Broadcast email job failed permanently', [
+            'job' => 'SendBroadcastEmailJob',
             'announcement_id' => $this->announcement->id,
-            'recipient_id'    => $this->recipient->id,
             'recipient_email' => $this->recipient->email,
+            'error_message' => $exception->getMessage(),
+            'attempt_number' => $this->attempts(),
         ]);
     }
 }

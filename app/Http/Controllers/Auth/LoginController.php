@@ -65,6 +65,12 @@ class LoginController extends Controller
         if (RateLimiter::tooManyAttempts($lockoutKey, 1)) {
             $seconds = max(1, RateLimiter::availableIn($lockoutKey));
 
+            Log::channel('auth')->warning('Login lockout active', [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+                'lockout_seconds' => $seconds,
+            ]);
+
             return back()->withErrors([
                 'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik sebelum mencoba kembali.",
             ])->with('lockout_seconds', $seconds)->onlyInput('email');
@@ -77,6 +83,21 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
+            if ($user->isSuspended()) {
+                Log::channel('auth')->warning('Suspended user attempted login', [
+                    'user_id' => $user->id,
+                    'ip' => $request->ip(),
+                ]);
+            }
+
+            Log::channel('auth')->info('User login successful', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'role' => $user->role,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
             // Login berhasil — bersihkan seluruh rate limiter
             RateLimiter::clear($lockoutKey);
@@ -100,6 +121,13 @@ class LoginController extends Controller
             }
         }
 
+        // Login gagal (kredensial salah)
+        Log::channel('auth')->warning('Login failed: invalid credentials', [
+            'email' => $request->input('email'),
+            'ip' => $request->ip(),
+            'reason' => 'invalid_credentials',
+        ]);
+
         // Login gagal — akumulasikan percobaan (disimpan selama 5 menit / 300 detik agar tidak reset di tengah proses mencoba)
         RateLimiter::hit($attemptsKey, 300);
 
@@ -112,6 +140,12 @@ class LoginController extends Controller
             RateLimiter::clear($attemptsKey);
 
             $seconds = max(1, RateLimiter::availableIn($lockoutKey));
+
+            Log::channel('auth')->warning('Login lockout triggered', [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+                'lockout_seconds' => $seconds,
+            ]);
 
             return back()->withErrors([
                 'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik sebelum mencoba kembali.",
@@ -132,6 +166,11 @@ class LoginController extends Controller
             : session('locale', config('app.locale', 'id'));
 
         if ($user = Auth::user()) {
+            Log::channel('auth')->info('User logged out', [
+                'user_id' => $user->id,
+                'ip' => $request->ip(),
+            ]);
+
             ActivityLogger::log(
                 'user_logout',
                 "User {$user->name} ({$user->email}) telah logout dari sesi aktif.",
@@ -152,6 +191,18 @@ class LoginController extends Controller
 
     public function redirectToGoogle()
     {
+        session(['google_intent' => 'login']);
+
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Redirect ke halaman autentikasi Google dari halaman registrasi.
+     */
+    public function redirectToGoogleRegister()
+    {
+        session(['google_intent' => 'register']);
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -166,7 +217,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Tangani callback dari Google OAuth (baik intent 'connect' maupun 'login').
+     * Tangani callback dari Google OAuth (baik intent 'connect', 'register', maupun 'login').
      */
     public function handleGoogleCallback()
     {
@@ -174,6 +225,10 @@ class LoginController extends Controller
 
         if ($intent === 'connect') {
             return $this->handleGoogleConnectCallback();
+        }
+
+        if ($intent === 'register') {
+            return $this->handleGoogleRegisterCallback();
         }
 
         return $this->handleGoogleLoginCallback();
@@ -196,7 +251,10 @@ class LoginController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            Log::error('Google Connect OAuth Callback Error: '.$e->getMessage());
+            Log::channel('auth')->error('Google Connect OAuth Callback Error: '.$e->getMessage(), [
+                'ip' => request()->ip(),
+                'error_message' => $e->getMessage(),
+            ]);
 
             ActivityLogger::log(
                 'google_connect_failed',
@@ -277,32 +335,30 @@ class LoginController extends Controller
     }
 
     /**
-     * Menangani callback Google OAuth saat user melakukan proses login/registrasi standar.
+     * Menangani callback Google OAuth saat user melakukan proses login dari halaman login.
      */
     protected function handleGoogleLoginCallback()
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            Log::info('Google User Data: ', [
-                'id' => $googleUser->id,
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-            ]);
-            $user = DB::transaction(function () use ($googleUser) {
+            $googleId = (string) ($googleUser->getId() ?? $googleUser->id);
+            $googleEmail = strtolower(trim((string) ($googleUser->getEmail() ?? $googleUser->email)));
+
+            $user = DB::transaction(function () use ($googleId, $googleEmail, $googleUser) {
                 // Coba cari user berdasarkan google_id
-                $user = User::where('google_id', $googleUser->id)->first();
+                $user = User::where('google_id', $googleId)->first();
 
                 // Kalau tidak ditemukan, cek berdasarkan email
                 if (! $user) {
-                    $user = User::where('email', $googleUser->email)->first();
+                    $user = User::where('email', $googleEmail)->first();
 
                     // Kalau user sudah ada, update google_id-nya
                     if ($user) {
                         $user->update([
-                            'google_id' => $googleUser->id,
+                            'google_id' => $googleId,
                         ]);
                     } else {
-                        // User akan direturn null dan dihandle di luar transaksi untuk redirect
+                        // User belum terdaftar
                         return null;
                     }
                 }
@@ -318,42 +374,39 @@ class LoginController extends Controller
                 return $user;
             });
 
+            // Jika akun belum terdaftar, jangan lakukan auto-register
+            // Arahkan user ke halaman pendaftaran agar mendaftar terlebih dahulu
             if (! $user) {
-                // Auto-register user
-                $baseUsername = Str::slug($googleUser->name, '');
-                if (empty($baseUsername)) {
-                    $baseUsername = explode('@', $googleUser->email)[0];
-                }
-                $username = $baseUsername;
-                $counter = 1;
-                while (User::where('username', $username)->exists()) {
-                    $username = $baseUsername.$counter;
-                    $counter++;
-                }
+                Log::channel('auth')->warning('Google OAuth login failed: account not registered', [
+                    'email' => $googleEmail,
+                    'ip' => request()->ip(),
+                    'reason' => 'account_not_found',
+                ]);
 
-                $user = DB::transaction(function () use ($googleUser, $username) {
-                    $newUser = User::create([
-                        'name' => $googleUser->name,
-                        'email' => $googleUser->email,
-                        'username' => strtolower($username),
-                        'password' => Hash::make(Str::random(24)),
-                        'google_id' => $googleUser->id,
-                        'is_link_active' => true,
-                        'role' => 'admin_seller',
-                    ]);
+                // Simpan data dari Google ke flash session agar otomatis terisi di form pendaftaran
+                session()->flash('google_data', [
+                    'name' => $googleUser->getName() ?? $googleUser->name,
+                    'email' => $googleEmail,
+                    'google_id' => $googleId,
+                ]);
 
-                    ActivityLogger::log(
-                        'user_register',
-                        "Pengguna baru {$newUser->name} ({$newUser->email}) mendaftar via Google.",
-                        ['username' => $newUser->username, 'role' => $newUser->role, 'login_type' => 'google_oauth'],
-                        $newUser->id
-                    );
-
-                    return $newUser;
-                });
+                return redirect()->route('register')->with('warning', 'Akun Google Anda belum terdaftar. Silakan lakukan pendaftaran akun terlebih dahulu.');
             }
 
             Auth::login($user);
+
+            if ($user->isSuspended()) {
+                Log::channel('auth')->warning('Suspended user attempted login', [
+                    'user_id' => $user->id,
+                    'ip' => request()->ip(),
+                ]);
+            }
+
+            Log::channel('auth')->info('Google OAuth login successful', [
+                'user_id' => $user->id,
+                'ip' => request()->ip(),
+                'is_new_user' => false,
+            ]);
 
             // Redirect berdasarkan role
             if ($user->role === 'admin_seller') {
@@ -366,7 +419,135 @@ class LoginController extends Controller
             return redirect()->route('login')->with('error', 'Role tidak valid.');
 
         } catch (\Exception $e) {
+            Log::channel('auth')->error('Google OAuth login failed', [
+                'ip' => request()->ip(),
+                'error_message' => $e->getMessage(),
+            ]);
+
             return redirect()->route('login')->with('error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
+        }
+    }
+
+    /**
+     * Menangani callback Google OAuth saat user menginisiasi pendaftaran dari halaman registrasi.
+     */
+    protected function handleGoogleRegisterCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            $googleId = (string) ($googleUser->getId() ?? $googleUser->id);
+            $googleEmail = strtolower(trim((string) ($googleUser->getEmail() ?? $googleUser->email)));
+            $googleName = trim((string) ($googleUser->getName() ?? $googleUser->name ?? ''));
+            if (empty($googleName)) {
+                $googleName = explode('@', $googleEmail)[0];
+            }
+
+            // Cek apakah akun sudah terdaftar
+            $existingUser = User::where('google_id', $googleId)
+                ->orWhere('email', $googleEmail)
+                ->first();
+
+            if ($existingUser) {
+                if (! $existingUser->google_id) {
+                    $existingUser->update(['google_id' => $googleId]);
+                }
+
+                Auth::login($existingUser);
+                request()->session()->regenerate();
+
+                if ($existingUser->isSuspended()) {
+                    Log::channel('auth')->warning('Suspended user attempted login via google register', [
+                        'user_id' => $existingUser->id,
+                        'ip' => request()->ip(),
+                    ]);
+                }
+
+                Log::channel('auth')->info('Google OAuth login existing user via register', [
+                    'user_id' => $existingUser->id,
+                    'ip' => request()->ip(),
+                    'is_new_user' => false,
+                ]);
+
+                ActivityLogger::log(
+                    'user_login',
+                    "User {$existingUser->name} ({$existingUser->email}) berhasil login melalui Google OAuth.",
+                    ['role' => $existingUser->role, 'login_type' => 'google_oauth'],
+                    $existingUser->id
+                );
+
+                if ($existingUser->role === 'admin_seller') {
+                    return redirect()->route('admin.dashboard')->with('info', 'Akun Google Anda sudah terdaftar. Anda berhasil masuk ke dashboard.');
+                } elseif ($existingUser->role === 'admin_platform') {
+                    return redirect()->route('platform-admin.dashboard');
+                }
+
+                return redirect()->route('login');
+            }
+
+            // User belum terdaftar: buat akun baru dengan nama profile default dari nama akun Google
+            $baseUsername = Str::slug($googleName, '');
+            if (empty($baseUsername)) {
+                $baseUsername = Str::slug(explode('@', $googleEmail)[0], '');
+            }
+            if (empty($baseUsername) || strlen($baseUsername) < 3) {
+                $baseUsername = 'user'.Str::lower(Str::random(4));
+            }
+            $baseUsername = substr($baseUsername, 0, 20);
+
+            $username = $baseUsername;
+            $counter = 1;
+            while (User::where('username', $username)->exists()) {
+                $username = $baseUsername.$counter;
+                $counter++;
+            }
+
+            $newUser = DB::transaction(function () use ($googleName, $googleEmail, $googleId, $username) {
+                $user = User::create([
+                    'name' => $googleName,
+                    'email' => $googleEmail,
+                    'username' => $username,
+                    'password' => Hash::make(Str::random(32)),
+                    'google_id' => $googleId,
+                    'is_link_active' => true,
+                    'role' => 'admin_seller',
+                ]);
+
+                ActivityLogger::log(
+                    'user_register',
+                    "Pengguna baru {$user->name} ({$user->email}) berhasil mendaftar akun seller via Google OAuth.",
+                    ['username' => $user->username, 'role' => $user->role, 'register_type' => 'google_oauth'],
+                    $user->id
+                );
+
+                ActivityLogger::log(
+                    'user_login',
+                    "User {$user->name} ({$user->email}) berhasil login melalui Google OAuth setelah pendaftaran.",
+                    ['role' => $user->role, 'login_type' => 'google_oauth'],
+                    $user->id
+                );
+
+                return $user;
+            });
+
+            Auth::login($newUser);
+            request()->session()->regenerate();
+
+            Log::channel('auth')->info('User registered and logged in via Google OAuth', [
+                'user_id' => $newUser->id,
+                'email' => $newUser->email,
+                'role' => $newUser->role,
+                'ip' => request()->ip(),
+            ]);
+
+            return redirect()->route('admin.dashboard')->with('success', 'Pendaftaran dengan Google berhasil! Selamat datang di dashboard Anda.');
+
+        } catch (\Exception $e) {
+            Log::channel('auth')->error('Google OAuth register failed', [
+                'ip' => request()->ip(),
+                'error_message' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('register')->with('error', 'Terjadi kesalahan saat menghubungkan akun Google. Silakan coba lagi.');
         }
     }
 }

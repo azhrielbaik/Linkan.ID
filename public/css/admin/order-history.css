@@ -491,6 +491,174 @@
     padding: 28px;
 }
 
+/* ================================================================
+   Order Detail Panel Content Styles
+   ================================================================ */
+.od-summary-card {
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.od-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.od-summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.od-label {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.od-value {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 13.5px;
+}
+
+.od-status-badge {
+    font-weight: 800;
+    text-transform: capitalize;
+    font-size: 12.5px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.od-status-completed {
+    color: #16a34a;
+    background: rgba(22, 163, 74, 0.1);
+}
+
+.od-status-cancelled {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.od-status-pending {
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.1);
+}
+
+.od-total-price {
+    font-weight: 800;
+    color: #ED842C;
+    font-size: 16px;
+}
+
+.od-section-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+}
+
+.od-info-card {
+    border: 1px solid #f1f5f9;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 22px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.od-product-title {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.od-buyer-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.od-buyer-row + .od-buyer-row {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f8fafc;
+}
+
+.od-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #ED842C;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.od-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.od-buyer-info-title {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 13.5px;
+    margin-bottom: 2px;
+    word-break: break-all;
+}
+
+.od-buyer-info-subtitle {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.od-loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #94a3b8;
+}
+
+.od-error-state {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.od-error-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.od-error-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 20px;
+}
+
 /* Empty State */
 .oh-empty {
     text-align: center;
@@ -765,7 +933,26 @@ html.dark .dropdown-item:hover {
     color: #FF9040;
 }
 
-html.dark .oh-side-panel,
+html.dark .status-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+html.dark .status-failed {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+html.dark .status-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+}
+
+html.dark .oh-side-panel {
+    background: #1c212e;
+    color: #f8fafc;
+}
+
 html.dark .oh-panel-header {
     background: #1c212e;
     border-color: #2a3241;
@@ -783,6 +970,102 @@ html.dark .btn-close-panel {
 html.dark .btn-close-panel:hover {
     background: #333d52;
     color: #ffffff;
+}
+
+/* Order Detail Content Dark Mode */
+html.dark .od-summary-card {
+    background: #141824;
+    border-color: #2a3241;
+}
+
+html.dark .od-label {
+    color: #94a3b8;
+}
+
+html.dark .od-value {
+    color: #f8fafc;
+}
+
+html.dark .od-status-completed {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+}
+
+html.dark .od-status-cancelled {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.15);
+}
+
+html.dark .od-status-pending {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.15);
+}
+
+html.dark .od-total-price {
+    color: #FF9040;
+}
+
+html.dark .od-section-title {
+    color: #f8fafc;
+}
+
+html.dark .od-info-card {
+    background: #141824;
+    border-color: #2a3241;
+}
+
+html.dark .od-product-title {
+    color: #f8fafc;
+}
+
+html.dark .od-buyer-row + .od-buyer-row {
+    border-top-color: #2a3241;
+}
+
+html.dark .od-icon-box {
+    background: #242b3b;
+    color: #94a3b8;
+}
+
+html.dark .od-buyer-info-title {
+    color: #f8fafc;
+}
+
+html.dark .od-buyer-info-subtitle {
+    color: #94a3b8;
+}
+
+html.dark .od-error-title {
+    color: #f8fafc;
+}
+
+html.dark .od-error-desc {
+    color: #94a3b8;
+}
+
+/* Fallback for hardcoded inline colors in order detail panel */
+html.dark #orderDetailPanel h4,
+html.dark #orderDetailPanel [style*="color: #1e293b"],
+html.dark #orderDetailPanel [style*="color:#1e293b"] {
+    color: #f8fafc !important;
+}
+
+html.dark #orderDetailPanel [style*="color: #64748b"],
+html.dark #orderDetailPanel [style*="color:#64748b"] {
+    color: #94a3b8 !important;
+}
+
+html.dark #orderDetailPanel [style*="background: #f8fafc"],
+html.dark #orderDetailPanel [style*="background:#f8fafc"],
+html.dark #orderDetailPanel [style*="background: #ffffff"],
+html.dark #orderDetailPanel [style*="background:#ffffff"] {
+    background-color: #141824 !important;
+    border-color: #2a3241 !important;
+}
+
+html.dark #orderDetailPanel [style*="border: 1px solid #f1f5f9"],
+html.dark #orderDetailPanel [style*="border:1px solid #f1f5f9"] {
+    border-color: #2a3241 !important;
 }
 
 html.dark .sl-pagination-container {

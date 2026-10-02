@@ -310,7 +310,8 @@ class DashboardService
         return [
             'status'        => 'success',
             'unread_count'  => $unreadCount,
-            'notifications' => array_slice($notifications, 0, 20)
+            'notifications' => array_slice($notifications, 0, 20),
+            'all_keys'      => array_column($notifications, 'id')
         ];
     }
 
@@ -325,8 +326,9 @@ class DashboardService
     public function markAllNotificationsRead(User $user): void
     {
         $data = $this->fetchSellerNotificationsData($user);
-        foreach ($data['notifications'] as $notification) {
-            $this->markNotificationRead($user, $notification['id']);
+        $keys = $data['all_keys'] ?? array_column($data['notifications'] ?? [], 'id');
+        foreach ($keys as $key) {
+            $this->markNotificationRead($user, (string) $key);
         }
     }
 }
