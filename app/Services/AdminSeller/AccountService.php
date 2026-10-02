@@ -380,12 +380,33 @@ class AccountService
 
     /**
      * Soft delete user account.
+     *
+     * Sebelum soft-delete, email/username/google_id di-anonymize agar
+     * unique constraint tidak menghalangi user mendaftar ulang dengan
+     * email yang sama di kemudian hari.
      */
     public function deleteAccount(User $user): void
     {
-        Appearance::where('user_id', $user->id)->delete();
-        DigitalProduct::where('user_id', $user->id)->delete();
-        
-        $user->delete();
+        DB::transaction(function () use ($user) {
+            Appearance::where('user_id', $user->id)->delete();
+            DigitalProduct::where('user_id', $user->id)->delete();
+
+            // Anonymize kolom unik agar tidak memblokir pendaftaran ulang
+            // dengan email / username yang sama setelah akun ini dihapus.
+            $anonymousSuffix = '_deleted_' . $user->id . '_' . now()->timestamp;
+            $user->email     = $user->email . $anonymousSuffix;
+            $user->username  = $user->username . $anonymousSuffix;
+            $user->google_id = null;
+            $user->save();
+
+            ActivityLogger::log(
+                'account_deleted',
+                "Akun user ID {$user->id} telah dihapus (soft-delete) dan data uniknya dianonimkan.",
+                ['user_id' => $user->id],
+                $user->id
+            );
+
+            $user->delete();
+        });
     }
 }

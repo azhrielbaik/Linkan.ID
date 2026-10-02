@@ -56,6 +56,11 @@ class CheckoutService
             try {
                 $snapToken = Snap::getSnapToken($params);
             } catch (\Exception $e) {
+                Log::channel('payment')->error('Failed to generate Midtrans Snap Token', [
+                    'product_id' => $product->id,
+                    'buyer_email' => $buyerEmail,
+                    'error_message' => $e->getMessage(),
+                ]);
                 throw $e;
             }
         }
@@ -74,7 +79,10 @@ class CheckoutService
     public function storeTransaction(array $data): Transaction
     {
         return DB::transaction(function () use ($data) {
-            Log::info('Store Transaction - Initial Status: ' . $data['transaction_status']);
+            Log::channel('payment')->info('Store transaction initiated', [
+                'order_id' => $data['order_id'],
+                'initial_status' => $data['transaction_status'],
+            ]);
 
             // Ubah status dari Midtrans ke status yang kita gunakan
             // PERBAIKAN: Untuk mencegah race condition dengan webhook, storeTransaction 
@@ -85,7 +93,10 @@ class CheckoutService
                 $status = TransactionStatus::PENDING;
             }
 
-            Log::info('Store Transaction - Converted Status: ' . $status->value);
+            Log::channel('payment')->info('Store transaction status converted', [
+                'order_id' => $data['order_id'],
+                'converted_status' => $status->value,
+            ]);
 
             $transaction = Transaction::updateOrCreate(
                 ['order_id' => $data['order_id']],
@@ -99,7 +110,10 @@ class CheckoutService
                 ]
             );
 
-            Log::info('Store Transaction - Upserted Transaction ID: ' . $transaction->id);
+            Log::channel('payment')->info('Store transaction upserted successfully', [
+                'order_id' => $data['order_id'],
+                'transaction_id' => $transaction->id,
+            ]);
 
             // Hanya kirim email dari frontend jika transaksi otomatis sukses (misal: produk gratis)
             if ($status === TransactionStatus::SUCCESS) {
@@ -135,7 +149,9 @@ class CheckoutService
             $transactionStatusRaw = $status_response->transaction_status;
             
         } catch (\Exception $e) {
-            Log::error('Midtrans Callback Error: ' . $e->getMessage());
+            Log::channel('payment')->error('Midtrans Callback Error: ' . $e->getMessage(), [
+                'error_message' => $e->getMessage(),
+            ]);
             return ['status' => 400, 'message' => 'Invalid notification payload'];
         }
 
@@ -151,23 +167,29 @@ class CheckoutService
             $paymentType .= '-' . $status_response->store;
         }
 
-        Log::info('Midtrans Callback - Transaction Status: ' . ($transactionStatus?->value ?? $transactionStatusRaw));
-        Log::info('Midtrans Callback - Order ID: ' . $orderId);
-        Log::info('Midtrans Callback - Payment Type: ' . $paymentType);
+        Log::channel('payment')->info('Midtrans webhook callback received', [
+            'order_id' => $orderId,
+            'transaction_status' => $transactionStatus?->value ?? $transactionStatusRaw,
+            'payment_type' => $paymentType,
+        ]);
 
         return DB::transaction(function () use ($orderId, $transactionStatus, $paymentType) {
             // Kunci baris transaksi ini untuk mencegah eksekusi webhook ganda secara paralel
             $trx = Transaction::where('order_id', $orderId)->lockForUpdate()->first();
 
             if (!$trx) {
-                Log::error('Midtrans Callback - Transaction not found for order ID: ' . $orderId);
+                Log::channel('payment')->error('Midtrans Callback - Transaction not found', [
+                    'order_id' => $orderId,
+                ]);
                 return ['status' => 404, 'message' => 'Transaction not found'];
             }
 
             // Mekanisme Pengamanan: Jika transaksi sudah tercatat success di DB,
             // hentikan eksekusi agar tidak terjadi double penambahan saldo
             if ($trx->status === TransactionStatus::SUCCESS) {
-                Log::info('Midtrans Callback - Transaction already success for order ID: ' . $orderId . '. Skipping to prevent double balance.');
+                Log::channel('payment')->info('Midtrans Callback - Transaction already success, skipping double processing', [
+                    'order_id' => $orderId,
+                ]);
                 return ['status' => 200, 'message' => 'Transaction already processed'];
             }
 
@@ -179,18 +201,22 @@ class CheckoutService
                 }
                 $trx->save();
 
-                Log::info('Midtrans Callback - Updating transaction status to success');
-                Log::info('Midtrans Callback - Transaction ID: ' . $trx->id);
-                Log::info('Midtrans Callback - Amount: ' . $trx->total_price);
+                Log::channel('payment')->info('Midtrans Callback - Updating transaction status to success', [
+                    'order_id' => $orderId,
+                    'transaction_id' => $trx->id,
+                    'amount' => $trx->total_price,
+                ]);
 
                 // Update balance seller
                 $product = $trx->product;
                 if ($product && $product->user_id) {
                     $sellerId = $product->user_id;
                     
-                    Log::info('Midtrans Callback - Updating seller balance');
-                    Log::info('Midtrans Callback - Seller ID: ' . $sellerId);
-                    Log::info('Midtrans Callback - Amount to add: ' . $trx->total_price);
+                    Log::channel('payment')->info('Midtrans Callback - Updating seller balance', [
+                        'order_id' => $orderId,
+                        'seller_id' => $sellerId,
+                        'amount' => $trx->total_price,
+                    ]);
                     
                     // Kunci baris user sebelum mengubah balance untuk mencegah race condition dengan payout
                     DB::table('users')

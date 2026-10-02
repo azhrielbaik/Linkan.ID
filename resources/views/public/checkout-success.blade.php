@@ -103,11 +103,27 @@
             </div>
         </div>
 
+        <!-- Email Notification Notice -->
+        <div class="w-full bg-[#FFFBEB] border border-[#FDE68A] rounded-[20px] p-4 mb-6 flex items-start gap-3.5">
+            <div class="w-9 h-9 rounded-full bg-[#FEF3C7] text-[#D97706] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-solid fa-envelope-open-text text-[15px]"></i>
+            </div>
+            <div class="text-left flex-1">
+                <h4 class="text-[13.5px] font-bold text-gray-900 mb-0.5">Cek Email Anda</h4>
+                <p class="text-[12px] text-gray-600 leading-relaxed">
+                    Detail pesanan dan tautan akses produk telah dikirimkan ke 
+                    @if(!empty($transaction?->buyer_email))
+                        <span class="font-semibold text-gray-900 break-all">{{ $transaction->buyer_email }}</span>.
+                    @else
+                        alamat email Anda.
+                    @endif
+                    Silakan periksa kotak masuk (inbox) atau folder <em>spam</em> Anda.
+                </p>
+            </div>
+        </div>
+
         <!-- Buttons -->
         <div class="flex flex-col gap-3.5 mt-auto">
-            <a href="{{ route('product.show', ['id' => $product->id]) }}" class="w-full bg-[#FFDCA8] hover:bg-[#FFC980] text-[#D97706] text-[16px] font-bold py-4 rounded-[20px] transition-colors text-center shadow-sm">
-                Track Your Order
-            </a>
             <a href="{{ $micrositeUrl }}" class="w-full bg-[#E58C17] hover:bg-[#C97914] text-white text-[16px] font-bold py-4 rounded-[20px] transition-colors text-center shadow-[0_8px_15px_rgba(229,140,23,0.3)]">
                 Back to Home
             </a>

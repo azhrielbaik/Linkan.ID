@@ -1,42 +1,68 @@
 <div id="panelOrderTitleHidden" style="display:none;">Order #{{ $order->id }}</div>
-<div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span style="color: #64748b; font-weight: 600; font-size: 13px;">Status</span>
-        <span style="font-weight: 800; color: {{ $order->status_label === 'Completed' ? '#16a34a' : ($order->status_label === 'Cancelled' ? '#ef4444' : '#f59e0b') }}; text-transform: capitalize; font-size: 13px;">{{ $order->status_label }}</span>
+
+<div class="od-summary-card">
+    <div class="od-summary-row">
+        <span class="od-label">Status</span>
+        @php
+            $statusLower = strtolower($order->status_label);
+            $statusClass = match($statusLower) {
+                'completed' => 'od-status-completed',
+                'cancelled' => 'od-status-cancelled',
+                default     => 'od-status-pending',
+            };
+        @endphp
+        <span class="od-status-badge {{ $statusClass }}">
+            {{ $order->status_label }}
+        </span>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span style="color: #64748b; font-weight: 600; font-size: 13px;">Date</span>
-        <span style="font-weight: 700; color: #1e293b; font-size: 13px;">{{ $order->created_at->format('d/m/Y, H:i:s') }}</span>
+    <div class="od-summary-row">
+        <span class="od-label">Date</span>
+        <span class="od-value">{{ $order->created_at->format('d/m/Y, H:i:s') }}</span>
     </div>
-    <div style="display: flex; justify-content: space-between;">
-        <span style="color: #64748b; font-weight: 600; font-size: 13px;">Total</span>
-        <span style="font-weight: 800; color: #ED842C; font-size: 16px;">Rp{{ number_format($order->total_price, 0, ',', '.') }}</span>
+    @if(!empty($order->order_id))
+    <div class="od-summary-row">
+        <span class="od-label">Transaction ID</span>
+        <span class="od-value" style="font-size: 12.5px; font-family: monospace;">{{ $order->order_id }}</span>
+    </div>
+    @endif
+    @if(!empty($order->formatted_payment_method) && $order->formatted_payment_method !== '-')
+    <div class="od-summary-row">
+        <span class="od-label">Payment Method</span>
+        <span class="od-value">{{ $order->formatted_payment_method }}</span>
+    </div>
+    @endif
+    <div class="od-summary-row">
+        <span class="od-label">Total</span>
+        <span class="od-total-price">Rp{{ number_format($order->total_price, 0, ',', '.') }}</span>
     </div>
 </div>
 
-<h4 style="font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 15px;">Product Information</h4>
-<div style="border: 1px solid #f1f5f9; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-    <div style="font-weight: 700; color: #1e293b;">{{ $order->product ? $order->product->title : 'Digital Product' }}</div>
+<h4 class="od-section-title">Product Information</h4>
+<div class="od-info-card">
+    <div class="od-product-title">{{ $order->product ? $order->product->title : 'Digital Product' }}</div>
+    @if(!empty($order->qty) && $order->qty > 1)
+        <div class="od-buyer-info-subtitle" style="margin-top: 4px;">Jumlah: {{ $order->qty }} item</div>
+    @endif
 </div>
 
-<h4 style="font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 15px;">Buyer Information</h4>
-<div style="border: 1px solid #f1f5f9; border-radius: 12px; padding: 15px;">
-    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ED842C; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">
+<h4 class="od-section-title">Buyer Information</h4>
+<div class="od-info-card">
+    <div class="od-buyer-row">
+        <div class="od-avatar">
             {{ $order->buyer_name ? strtoupper(substr($order->buyer_name, 0, 1)) : '?' }}
         </div>
         <div>
-            <div style="font-weight: 700; color: #1e293b; margin-bottom: 2px;">{{ $order->buyer_name ?? '-' }}</div>
-            <div style="color: #64748b; font-size: 13px;">Buyer Name</div>
+            <div class="od-buyer-info-title">{{ $order->buyer_name ?? '-' }}</div>
+            <div class="od-buyer-info-subtitle">Buyer Name</div>
         </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+    <div class="od-buyer-row">
+        <div class="od-icon-box">
             <i class="far fa-envelope"></i>
         </div>
         <div>
-            <div style="font-weight: 700; color: #1e293b; margin-bottom: 2px;">{{ $order->buyer_email ?? '-' }}</div>
-            <div style="color: #64748b; font-size: 13px;">Email Address</div>
+            <div class="od-buyer-info-title">{{ $order->buyer_email ?? '-' }}</div>
+            <div class="od-buyer-info-subtitle">Email Address</div>
         </div>
     </div>
 </div>

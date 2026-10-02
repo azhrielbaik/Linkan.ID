@@ -178,12 +178,28 @@
                                         </div>
                                         <input type="file" id="dpDeliverableFile" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display: none;" onchange="handleDpDeliverableFile(this)">
                                     </div>
-                                    <div id="dpDeliverableFilePreview" style="margin-top: 10px; display: none; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; align-items: center; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-                                            <i class="fas fa-file-alt" style="font-size: 20px; color: #F97316;"></i>
-                                            <span id="dpDeliverableFileName" style="font-size: 14px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">filename.pdf</span>
+                                    <div id="dpDeliverableFilePreview" class="file-upload-progress-card" style="display: none;">
+                                        <div class="file-progress-header">
+                                            <div class="file-info-group">
+                                                <div class="file-icon-wrapper" id="dpFileIconWrapper">
+                                                    <i class="fas fa-file-alt" id="dpFileIcon"></i>
+                                                </div>
+                                                <div class="file-text-details">
+                                                    <div class="file-name" id="dpDeliverableFileName">filename.pdf</div>
+                                                    <div class="file-meta" id="dpDeliverableFileSize">0 KB</div>
+                                                </div>
+                                            </div>
+                                            <div class="file-status-badge" id="dpFileStatusBadge">
+                                                <span class="badge-dot" id="dpFileBadgeDot"></span>
+                                                <span id="dpFileStatusText">Mengunggah...</span>
+                                            </div>
+                                            <button type="button" class="btn-remove-file" onclick="removeDpDeliverableFile()" aria-label="Hapus Berkas" title="Hapus Berkas">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
-                                        <button type="button" onclick="removeDpDeliverableFile()" aria-label="Hapus File" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;"><i class="fas fa-trash-alt"></i></button>
+                                        <div class="file-progress-track">
+                                            <div class="file-progress-fill" id="dpFileProgressFill" style="width: 0%;"></div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -326,6 +342,24 @@
                             <div style="display: flex; gap: 10px;">
                                 <button type="button" class="dp-btn-prev" id="btn-dp-prev" onclick="prevDigitalProductStep()" style="display: none;">Kembali</button>
                                 <button type="button" class="dp-btn-next" id="btn-dp-next" onclick="nextDigitalProductStep()">Lanjut <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Upload Progress Modal Overlay for Microsite Wizard -->
+                    <div id="dpSubmitUploadModal" class="submit-upload-modal-overlay" style="display: none;">
+                        <div class="submit-upload-modal-card">
+                            <div class="modal-spinner-icon">
+                                <i class="fas fa-cloud-upload-alt fa-bounce"></i>
+                            </div>
+                            <h3 class="modal-title">Mengunggah Produk Digital...</h3>
+                            <p class="modal-desc" id="dpSubmitModalDesc">Sedang mengirim berkas produk dan data ke server. Mohon jangan menutup halaman ini.</p>
+                            <div class="submit-progress-track">
+                                <div class="submit-progress-fill" id="dpSubmitModalProgressFill" style="width: 0%;"></div>
+                            </div>
+                            <div class="submit-progress-meta">
+                                <span id="dpSubmitModalBytesText">0 MB / 0 MB</span>
+                                <span id="dpSubmitModalPercentText">0%</span>
                             </div>
                         </div>
                     </div>

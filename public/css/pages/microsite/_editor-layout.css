@@ -1,0 +1,231 @@
+/* ============================================================
+   Linkan.ID Microsite Builder — Editor Layout & Add Element Panel
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Editor Main Grid & Containers
+   ------------------------------------------------------------ */
+.editor-layout {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: 40px;
+}
+
+.editor-mode-container {
+    width: 100%;
+}
+
+.editor-main-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   Editor Header Bar & Tab Switcher
+   ------------------------------------------------------------ */
+.editor-mode-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.editor-mode-title {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.editor-mode-title i.fa-sliders-h {
+    margin-right: 10px;
+    color: var(--color-brand);
+}
+
+.back-link {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    margin-right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.back-link:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+}
+
+/* Tab Switcher Pills */
+.editor-panel-tab-switcher {
+    display: flex;
+    align-items: center;
+    background: var(--color-brand);
+    border-radius: 50px;
+    padding: 0;
+    gap: 0;
+    flex-shrink: 0;
+    border: none;
+}
+
+.editor-panel-tab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-fast);
+    white-space: nowrap;
+}
+
+.editor-panel-tab-btn:hover {
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+.editor-panel-tab-btn.is-active {
+    background: var(--color-bg-surface);
+    color: var(--color-brand);
+    position: relative;
+    z-index: 1;
+}
+
+.editor-panel-tab-btn.is-active::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--color-bg-surface);
+    border-radius: 50px;
+    z-index: -1;
+}
+
+.editor-panel-tab-btn.is-active i {
+    color: var(--color-brand);
+}
+
+/* Panel Containers Visibility via [hidden] */
+#editorPanelElemen,
+#editorPanelPengaturan {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+#editorPanelElemen[hidden],
+#editorPanelPengaturan[hidden] {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------
+   Add Element Button & Panel
+   ------------------------------------------------------------ */
+.add-element-wrapper {
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.btn-add-element {
+    width: 100%;
+    color: #ffffff;
+    background: var(--color-brand-dark);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-add-element:hover {
+    background: var(--color-brand-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-brand-shadow);
+}
+
+.add-element-panel {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
+}
+
+.add-element-panel.open {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 12px;
+}
+
+.add-element-panel-inner {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-lg);
+}
+
+.add-element-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.element-option-card {
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.element-option-card:hover {
+    background: var(--color-bg-subtle);
+    border-color: var(--color-brand);
+}
+
+.option-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+}
+
+.option-card-desc {
+    font-size: 13px;
+    color: var(--color-text-muted);
+}

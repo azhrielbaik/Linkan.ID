@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendDigitalProductMail;
 use App\Models\DigitalProduct;
@@ -31,14 +32,18 @@ class SendDigitalProductEmailJob implements ShouldQueue
             Mail::to($this->transaction->buyer_email)
                 ->send(new SendDigitalProductMail($this->product, $this->transaction->buyer_name, $this->transaction));
             
-            \Log::info('Email sent successfully', [
-                'to' => $this->transaction->buyer_email,
-                'product' => $this->product->title
+            Log::channel('jobs')->info('Digital product email sent successfully', [
+                'job' => 'SendDigitalProductEmailJob',
+                'product_id' => $this->product->id,
+                'recipient_email' => $this->transaction->buyer_email,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send email', [
-                'error' => $e->getMessage(),
-                'transaction_id' => $this->transaction->id
+            Log::channel('jobs')->error('Failed to send digital product email', [
+                'job' => 'SendDigitalProductEmailJob',
+                'product_id' => $this->product->id,
+                'recipient_email' => $this->transaction->buyer_email,
+                'error_message' => $e->getMessage(),
+                'attempt_number' => $this->attempts(),
             ]);
             
             // Retry job jika gagal
@@ -48,9 +53,12 @@ class SendDigitalProductEmailJob implements ShouldQueue
 
     public function failed(\Throwable $exception)
     {
-        \Log::error('Job failed', [
-            'error' => $exception->getMessage(),
-            'transaction_id' => $this->transaction->id
+        Log::channel('jobs')->error('Send digital product email job failed permanently', [
+            'job' => 'SendDigitalProductEmailJob',
+            'product_id' => $this->product->id,
+            'recipient_email' => $this->transaction->buyer_email,
+            'error_message' => $exception->getMessage(),
+            'attempt_number' => $this->attempts(),
         ]);
     }
 } 

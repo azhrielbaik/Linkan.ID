@@ -404,11 +404,30 @@
         
         if (dpFormState.deliverableType === 'upload' && dpFormState.existingPlatformFile && dpFormState.existingPlatformFile !== '') {
             const preview = document.getElementById('dpDeliverableFilePreview');
-            const nameSpan = document.getElementById('dpDeliverableFileName');
-            if (preview && nameSpan) {
-                preview.style.display = 'flex';
-                nameSpan.innerText = dpFormState.existingPlatformFile.split('/').pop();
+            const nameEl = document.getElementById('dpDeliverableFileName');
+            const sizeEl = document.getElementById('dpDeliverableFileSize');
+            const iconWrapper = document.getElementById('dpFileIconWrapper');
+            const iconEl = document.getElementById('dpFileIcon');
+            const statusBadge = document.getElementById('dpFileStatusBadge');
+            const badgeDot = document.getElementById('dpFileBadgeDot');
+            const statusText = document.getElementById('dpFileStatusText');
+            const progressFill = document.getElementById('dpFileProgressFill');
+
+            const fileName = dpFormState.existingPlatformFile.split('/').pop();
+            if (nameEl) nameEl.textContent = fileName;
+            if (sizeEl) sizeEl.textContent = 'File Tersimpan di Server';
+            if (iconEl) iconEl.className = 'fas ' + getDpFileIconClass(fileName);
+
+            if (iconWrapper) iconWrapper.classList.add('success');
+            if (statusBadge) statusBadge.classList.add('success');
+            if (badgeDot) badgeDot.classList.add('success');
+            if (progressFill) {
+                progressFill.style.width = '100%';
+                progressFill.classList.add('success');
             }
+            if (statusText) statusText.textContent = 'Terupload (100%)';
+
+            if (preview) preview.style.display = 'block';
         } else {
             const preview = document.getElementById('dpDeliverableFilePreview');
             if (preview) preview.style.display = 'none';
@@ -442,15 +461,6 @@
         document.getElementById('dpMaxQty').value = dpFormState.qtyMax;
         changeDpPriceType(dpFormState.priceType);
         changeDpQtyLimitType(product.has_quantity_limit ? 'limited' : 'unlimited');
-
-        if (dpFormState.existingPlatformFile && dpFormState.deliverableType === 'upload') {
-            const preview = document.getElementById('dpDeliverableFilePreview');
-            const nameEl = document.getElementById('dpDeliverableFileName');
-            nameEl.innerText = dpFormState.existingPlatformFile.split('/').pop() + " (Sudah diupload)";
-            preview.style.display = 'flex';
-        } else {
-            document.getElementById('dpDeliverableFilePreview').style.display = 'none';
-        }
 
         document.getElementById('dpEnableSchedule').checked = dpFormState.isScheduled;
         document.getElementById('dpStartTime').value = dpFormState.startTime;
@@ -698,19 +708,109 @@
         }
     }
 
+    function formatDpBytes(bytes, decimals = 1) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function getDpFileIconClass(filename) {
+        if (!filename) return 'fa-file-alt';
+        const ext = filename.split('.').pop().toLowerCase();
+        switch (ext) {
+            case 'pdf': return 'fa-file-pdf';
+            case 'zip':
+            case 'rar':
+            case '7z':
+            case 'tar':
+            case 'gz': return 'fa-file-archive';
+            case 'doc':
+            case 'docx': return 'fa-file-word';
+            case 'xls':
+            case 'xlsx':
+            case 'csv': return 'fa-file-excel';
+            case 'ppt':
+            case 'pptx': return 'fa-file-powerpoint';
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'webp': return 'fa-file-image';
+            case 'mp3':
+            case 'wav':
+            case 'm4a': return 'fa-file-audio';
+            case 'mp4':
+            case 'avi':
+            case 'mov': return 'fa-file-video';
+            default: return 'fa-file-alt';
+        }
+    }
+
+    let dpFileSimTimer = null;
     function handleDpDeliverableFile(input) {
         if (input.files && input.files[0]) {
-            dpFormState.deliverableFile = input.files[0];
-            document.getElementById('dpDeliverableFileName').textContent = dpFormState.deliverableFile.name;
-            document.getElementById('dpDeliverableFilePreview').style.display = 'flex';
+            const file = input.files[0];
+            dpFormState.deliverableFile = file;
+
+            const preview = document.getElementById('dpDeliverableFilePreview');
+            const nameSpan = document.getElementById('dpDeliverableFileName');
+            const sizeSpan = document.getElementById('dpDeliverableFileSize');
+            const iconWrapper = document.getElementById('dpFileIconWrapper');
+            const iconEl = document.getElementById('dpFileIcon');
+            const statusBadge = document.getElementById('dpFileStatusBadge');
+            const badgeDot = document.getElementById('dpFileBadgeDot');
+            const statusText = document.getElementById('dpFileStatusText');
+            const progressFill = document.getElementById('dpFileProgressFill');
+
+            if (nameSpan) nameSpan.textContent = file.name;
+            if (sizeSpan) sizeSpan.textContent = formatDpBytes(file.size);
+            if (iconEl) iconEl.className = 'fas ' + getDpFileIconClass(file.name);
+
+            if (preview) preview.style.display = 'block';
+
+            // Animasi visual progress bar saat user memilih berkas
+            if (iconWrapper) iconWrapper.classList.remove('success');
+            if (statusBadge) statusBadge.classList.remove('success');
+            if (badgeDot) badgeDot.classList.remove('success');
+            if (progressFill) {
+                progressFill.classList.remove('success');
+                progressFill.style.width = '0%';
+            }
+            if (statusText) statusText.textContent = 'Memuat (0%)...';
+
+            if (dpFileSimTimer) clearInterval(dpFileSimTimer);
+            let progress = 0;
+            dpFileSimTimer = setInterval(() => {
+                progress += Math.floor(Math.random() * 25) + 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(dpFileSimTimer);
+                    if (progressFill) {
+                        progressFill.style.width = '100%';
+                        progressFill.classList.add('success');
+                    }
+                    if (iconWrapper) iconWrapper.classList.add('success');
+                    if (statusBadge) statusBadge.classList.add('success');
+                    if (badgeDot) badgeDot.classList.add('success');
+                    if (statusText) statusText.textContent = 'Terupload (100%)';
+                } else {
+                    if (progressFill) progressFill.style.width = progress + '%';
+                    if (statusText) statusText.textContent = 'Memuat (' + progress + '%)...';
+                }
+            }, 40);
         }
     }
 
     function removeDpDeliverableFile() {
         dpFormState.deliverableFile = null;
         dpFormState.existingPlatformFile = null;
-        document.getElementById('dpDeliverableFile').value = '';
-        document.getElementById('dpDeliverableFilePreview').style.display = 'none';
+        const fileInput = document.getElementById('dpDeliverableFile');
+        if (fileInput) fileInput.value = '';
+        const preview = document.getElementById('dpDeliverableFilePreview');
+        if (preview) preview.style.display = 'none';
     }
 
     function updateDpDeliverableUrl(val) {
@@ -965,45 +1065,85 @@
             storeUrl = urlsEl.dataset.routeDpStore;
         }
         
-        // Send via fetch
-        fetch(storeUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: formData
-        })
-        .then(async res => {
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                if (res.status === 422 && errorData.errors) {
-                    const errorMessages = Object.values(errorData.errors).flat().join('\\n');
-                    throw new Error(errorMessages);
+        // Tampilkan modal progress upload
+        const modal = document.getElementById('dpSubmitUploadModal');
+        const modalFill = document.getElementById('dpSubmitModalProgressFill');
+        const modalPercent = document.getElementById('dpSubmitModalPercentText');
+        const modalBytes = document.getElementById('dpSubmitModalBytesText');
+        const modalDesc = document.getElementById('dpSubmitModalDesc');
+
+        if (modal) modal.style.display = 'flex';
+        if (modalFill) modalFill.style.width = '0%';
+        if (modalPercent) modalPercent.textContent = '0%';
+        if (modalBytes) modalBytes.textContent = '0 B / 0 B';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', storeUrl, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta) {
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfMeta.getAttribute('content'));
+        }
+
+        xhr.upload.addEventListener('progress', function(event) {
+            if (event.lengthComputable) {
+                const percent = Math.min(100, Math.round((event.loaded / event.total) * 100));
+                if (modalFill) modalFill.style.width = percent + '%';
+                if (modalPercent) modalPercent.textContent = percent + '%';
+                if (modalBytes) {
+                    modalBytes.textContent = formatDpBytes(event.loaded) + ' / ' + formatDpBytes(event.total);
                 }
-                throw new Error(errorData.message || 'Gagal menghubungi server. Status: ' + res.status);
+                if (percent === 100 && modalDesc) {
+                    modalDesc.textContent = 'Sedang memproses dan menyimpan produk di server...';
+                }
             }
-            return res.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Produk digital berhasil disimpan!');
-                window.location.reload();
+        });
+
+        xhr.addEventListener('load', function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                let data = {};
+                try {
+                    data = JSON.parse(xhr.responseText);
+                } catch(e) {}
+
+                if (modalFill) modalFill.style.width = '100%';
+                if (modalPercent) modalPercent.textContent = '100%';
+
+                setTimeout(() => {
+                    if (modal) modal.style.display = 'none';
+                    alert('Produk digital berhasil disimpan!');
+                    cancelDigitalProductWizard();
+                    window.location.reload();
+                }, 300);
             } else {
-                throw new Error('Terjadi kesalahan saat menyimpan produk.');
+                if (modal) modal.style.display = 'none';
+                if (btnSave) {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = 'Selesai';
+                }
+                let errorMsg = 'Gagal menghubungi server. Status: ' + xhr.status;
+                try {
+                    const errorData = JSON.parse(xhr.responseText);
+                    if (xhr.status === 422 && errorData.errors) {
+                        errorMsg = Object.values(errorData.errors).flat().join('\n');
+                    } else if (errorData.message) {
+                        errorMsg = errorData.message;
+                    }
+                } catch(e) {}
+                alert(errorMsg);
             }
-        })
-        .catch(err => {
-            console.error(err);
-            alert(err.message || 'Gagal menghubungi server.');
+        });
+
+        xhr.addEventListener('error', function() {
+            if (modal) modal.style.display = 'none';
             if (btnSave) {
                 btnSave.disabled = false;
                 btnSave.innerHTML = 'Selesai';
             }
+            alert('Gagal menghubungi server. Periksa koneksi internet Anda.');
         });
 
-        // 4. Reset & Kembalikan UI
-        // cancelDigitalProductWizard already handles resetting the state and closing the wizard
-        cancelDigitalProductWizard();
+        xhr.send(formData);
     }
 
     function prevDigitalProductStep() {

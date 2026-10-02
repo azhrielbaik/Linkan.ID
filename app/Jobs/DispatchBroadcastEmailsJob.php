@@ -34,19 +34,35 @@ class DispatchBroadcastEmailsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $totalDispatched = 0;
+        Log::channel('jobs')->info('Dispatch broadcast emails job started', [
+            'announcement_id' => $this->announcement->id,
+        ]);
 
-        User::where('role', '!=', 'admin_platform')
-            ->whereNotNull('email')
-            ->select(['id', 'name', 'email'])
-            ->chunkById(250, function ($sellers) use (&$totalDispatched) {
-                foreach ($sellers as $seller) {
-                    SendBroadcastEmailJob::dispatch($this->announcement, $seller);
-                    $totalDispatched++;
-                }
-            });
+        try {
+            $totalDispatched = 0;
 
-        Log::info("DispatchBroadcastEmailsJob: Selesai mendispatch {$totalDispatched} email untuk pengumuman ID {$this->announcement->id}.");
+            User::where('role', '!=', 'admin_platform')
+                ->whereNotNull('email')
+                ->select(['id', 'name', 'email'])
+                ->chunkById(250, function ($sellers) use (&$totalDispatched) {
+                    foreach ($sellers as $seller) {
+                        SendBroadcastEmailJob::dispatch($this->announcement, $seller);
+                        $totalDispatched++;
+                    }
+                });
+
+            Log::channel('jobs')->info('Dispatch broadcast emails job completed', [
+                'announcement_id' => $this->announcement->id,
+                'total_dispatched' => $totalDispatched,
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('jobs')->error('Dispatch broadcast emails job failed', [
+                'announcement_id' => $this->announcement->id,
+                'error_message' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
     }
 
     /**
@@ -54,8 +70,9 @@ class DispatchBroadcastEmailsJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error("DispatchBroadcastEmailsJob gagal untuk pengumuman ID {$this->announcement->id}: " . $exception->getMessage(), [
-            'exception' => $exception,
+        Log::channel('jobs')->error('Dispatch broadcast emails job failed permanently', [
+            'announcement_id' => $this->announcement->id,
+            'error_message' => $exception->getMessage(),
         ]);
     }
 }

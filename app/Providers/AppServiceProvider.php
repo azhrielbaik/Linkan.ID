@@ -50,6 +50,20 @@ public function boot(): void
             'admin_seller.layouts.app',
             \App\View\Composers\SellerLayoutComposer::class
         );
+
+        // Slow query listener for local and staging environments (>500ms)
+        if ($this->app->environment('local', 'staging')) {
+            \Illuminate\Support\Facades\DB::listen(function ($query) {
+                if ($query->time > 500) {
+                    \Illuminate\Support\Facades\Log::channel('daily')->warning('Slow query detected', [
+                        'query' => $query->sql,
+                        'bindings' => $query->bindings,
+                        'duration_ms' => $query->time,
+                        'url' => $this->app->runningInConsole() ? 'console' : request()->fullUrl(),
+                    ]);
+                }
+            });
+        }
     }
 
 }

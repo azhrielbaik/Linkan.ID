@@ -90,6 +90,47 @@ class DigitalProduct extends Model
         return static::resolveImageUrl($path);
     }
 
+    public function getCleanDescriptionAttribute(): string
+    {
+        $desc = $this->description ?? '';
+        if (!empty($desc)) {
+            $desc = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $desc);
+            $desc = preg_replace('/<\/?span[^>]*>/i', '', $desc);
+            $desc = preg_replace('/<\/?font[^>]*>/i', '', $desc);
+        }
+        return $desc;
+    }
+
+    public function getExistingPhotosListAttribute(): array
+    {
+        $photos = [];
+        $mf = is_string($this->media_files) ? json_decode($this->media_files, true) : $this->media_files;
+        if (is_array($mf) && count($mf) > 0) {
+            foreach ($mf as $item) {
+                $path = $item['path'] ?? $item['url'] ?? null;
+                if ($path) {
+                    $url = static::resolveImageUrl($path);
+                    $photos[] = [
+                        'path' => $path,
+                        'url'  => $url,
+                    ];
+                }
+            }
+        }
+        if (empty($photos) && !empty($this->image)) {
+            $photos[] = [
+                'path' => $this->image,
+                'url'  => static::resolveImageUrl($this->image),
+            ];
+        }
+        return $photos;
+    }
+
+    public function getHasPlatformFileAttribute(): bool
+    {
+        return !empty($this->platform_file) || (!empty($this->deliverable_url) && ($this->deliverable_type ?? 'upload') === 'upload');
+    }
+
     protected static function boot()
     {
         parent::boot();

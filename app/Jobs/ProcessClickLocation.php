@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use App\Models\ShortlinkClick;
 
 class ProcessClickLocation implements ShouldQueue
@@ -38,7 +39,11 @@ class ProcessClickLocation implements ShouldQueue
                 ]);
             }
         } catch (\Exception $e) {
-            // Ignore
+            Log::channel('jobs')->warning('Failed to process click location', [
+                'click_id' => $this->clickId,
+                'ip' => $this->ip,
+                'error_message' => $e->getMessage(),
+            ]);
         }
     }
 }

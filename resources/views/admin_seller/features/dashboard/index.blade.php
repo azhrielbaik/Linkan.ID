@@ -344,7 +344,7 @@
                     </div>
                 </div>
                 
-                <h3>{{ __('dashboard.welcome') }}{{ Auth::user()->username ?? Auth::user()->name }}!</h3>
+                <h3>{{ __('dashboard.welcome') }}{{ Auth::user()->name ?? Auth::user()->username }}!</h3>
                 <p>{{ __('dashboard.profile_desc') }}</p>
                 
                 <!-- Chart (integrated inside profile widget for compact UI like reference) -->

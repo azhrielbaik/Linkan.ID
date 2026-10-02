@@ -56,7 +56,7 @@ class SellerLayoutComposer
         $displayCount = $unreadCount > 99 ? '99+' : (string) $unreadCount;
         $headerCount = str_pad((string) $unreadCount, 2, '0', STR_PAD_LEFT);
 
-        $name = $user->username ?? $user->name ?? 'User';
+        $name = $user->name ?? $user->username ?? 'User';
         $initials = strtoupper(substr($name, 0, 2));
 
         $view->with([

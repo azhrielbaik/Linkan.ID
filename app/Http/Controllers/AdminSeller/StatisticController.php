@@ -16,22 +16,27 @@ class StatisticController extends Controller
         $this->statisticService = $statisticService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $data = $this->statisticService->getStatisticOverview($user);
+        $preset = $request->input('preset', '30days');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        return view('admin_seller.features.statistics.index', $data);
+        $analytics = $this->statisticService->getAnalyticsData($user, $preset, $startDate, $endDate);
+
+        return view('admin_seller.features.statistics.index', compact('analytics'));
     }
 
     public function getChartData(Request $request)
     {
         $user = Auth::user();
         
+        $preset = $request->input('preset', '30days');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         
-        $data = $this->statisticService->getChartData($user, $startDate, $endDate);
+        $data = $this->statisticService->getAnalyticsData($user, $preset, $startDate, $endDate);
 
         return response()->json($data);
     }

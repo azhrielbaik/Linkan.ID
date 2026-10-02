@@ -69,19 +69,19 @@
         color: #fff;
     }
 
-    /* Grid Layout */
+    /* Grid Layout - 20% smaller cards (minmax 200px vs 250px) */
     .store-product-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 24px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 18px;
+        margin-bottom: 36px;
     }
 
-    /* Card Design */
+    /* Card Design - ~20% more compact */
     .store-product-card {
         background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        border-radius: 13px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.02);
         display: flex;
         flex-direction: column;
         overflow: visible; /* To allow floating icon to pop out */
@@ -90,15 +90,15 @@
         position: relative;
     }
     .store-product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.05);
     }
     
     .store-card-img-wrap {
         position: relative;
         width: 100%;
         padding-top: 100%; /* 1:1 Aspect ratio */
-        border-radius: 16px 16px 0 0;
+        border-radius: 13px 13px 0 0;
         background: #f8fafc;
         overflow: hidden; /* Contains the image */
     }
@@ -119,17 +119,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 40px;
+        font-size: 32px;
         color: #cbd5e1;
     }
     
-    /* Delete Button on top right */
+    /* Delete Button on top right (~20% smaller) */
     .btn-delete-float {
         position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 32px;
-        height: 32px;
+        top: 9px;
+        right: 9px;
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
         background: rgba(255,255,255,0.9);
         color: #ef4444;
         border-radius: 50%;
@@ -151,41 +152,44 @@
         color: #fff;
     }
 
-    /* Floating Edit Icon */
+    /* Floating Edit Icon (~20% smaller) */
     .store-floating-icon {
         position: absolute;
-        bottom: -16px;
-        right: 20px;
-        width: 32px;
-        height: 32px;
+        bottom: -13px;
+        right: 14px;
+        width: 26px;
+        height: 26px;
         background: #ED842C;
         color: #fff;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(90,91,241,0.3);
+        box-shadow: 0 3px 8px rgba(90,91,241,0.25);
         border: 2px solid #fff;
         z-index: 10;
         text-decoration: none;
         transition: transform 0.2s;
+    }
+    .store-floating-icon i {
+        font-size: 10px !important;
     }
     .store-floating-icon:hover {
         transform: scale(1.1);
         color: #fff;
     }
 
-    /* Card Content */
+    /* Card Content (~20% more compact) */
     .store-card-content {
-        padding: 24px 20px 20px 20px;
+        padding: 18px 15px 15px 15px;
         display: flex;
         flex-direction: column;
     }
     .store-card-title {
-        font-size: 15px;
+        font-size: 13px;
         font-weight: 700;
         color: #1e293b;
-        margin: 0 0 12px 0;
+        margin: 0 0 8px 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -199,15 +203,15 @@
     .store-card-price-col {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
     }
     .store-price-main {
-        font-size: 14px;
+        font-size: 12.5px;
         font-weight: 800;
         color: #1e293b;
     }
     .store-price-strike {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 600;
         color: #94a3b8;
         text-decoration: line-through;
@@ -216,7 +220,7 @@
     .store-card-rating {
         display: flex;
         gap: 2px;
-        font-size: 11px;
+        font-size: 10px;
     }
     .star-filled {
         color: #fbbf24;
@@ -249,56 +253,56 @@
             padding: 9px 14px;
         }
 
-        /* 2-Column Mobile Grid for Store Product Cards */
+        /* 2-Column Mobile Grid for Store Product Cards (~20% more compact) */
         .store-product-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px !important;
-            margin-bottom: 30px;
+            gap: 10px !important;
+            margin-bottom: 24px;
         }
 
         .store-product-card {
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
         }
 
         .store-card-img-wrap {
-            border-radius: 12px 12px 0 0 !important;
+            border-radius: 10px 10px 0 0 !important;
         }
 
         .store-card-img-wrap .no-img {
-            font-size: 26px !important;
+            font-size: 22px !important;
         }
 
         /* Floating Delete button on mobile */
         .btn-delete-float {
-            top: 6px !important;
-            right: 6px !important;
-            width: 26px !important;
-            height: 26px !important;
-            font-size: 11px !important;
+            top: 5px !important;
+            right: 5px !important;
+            width: 22px !important;
+            height: 22px !important;
+            font-size: 9.5px !important;
             opacity: 0.9 !important;
         }
 
         /* Floating Edit Icon on mobile */
         .store-floating-icon {
-            bottom: -12px !important;
-            right: 10px !important;
-            width: 26px !important;
-            height: 26px !important;
+            bottom: -10px !important;
+            right: 8px !important;
+            width: 22px !important;
+            height: 22px !important;
         }
         .store-floating-icon i {
-            font-size: 10px !important;
+            font-size: 9px !important;
         }
 
         /* Card Content on mobile */
         .store-card-content {
-            padding: 12px 8px 10px 8px !important;
+            padding: 10px 7px 8px 7px !important;
         }
 
         .store-card-title {
-            font-size: 12.5px !important;
+            font-size: 11.5px !important;
             line-height: 1.35 !important;
-            margin: 0 0 6px 0 !important;
+            margin: 0 0 5px 0 !important;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             line-clamp: 2;
@@ -312,7 +316,7 @@
         .store-card-footer {
             flex-direction: column !important;
             align-items: flex-start !important;
-            gap: 4px !important;
+            gap: 3px !important;
         }
 
         .store-card-price-col {
@@ -323,16 +327,16 @@
         }
 
         .store-price-main {
-            font-size: 12.5px !important;
+            font-size: 11.5px !important;
             font-weight: 800;
         }
 
         .store-price-strike {
-            font-size: 10px !important;
+            font-size: 9.5px !important;
         }
 
         .store-card-rating {
-            font-size: 9px !important;
+            font-size: 8.5px !important;
             gap: 1.5px !important;
         }
     }
