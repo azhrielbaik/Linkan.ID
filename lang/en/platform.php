@@ -257,6 +257,7 @@ return [
     // Common Buttons & Labels
     'filter' => 'Filter',
     'reset' => 'Reset',
+    'filter_by_date' => 'Select Date Range',
     'close' => 'Close',
     'cancel' => 'Cancel',
     'search' => 'Search',

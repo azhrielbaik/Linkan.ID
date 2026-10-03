@@ -95,7 +95,7 @@
                 </a>
                 <a href="{{ route('platform-admin.disputes.index', array_merge(request()->except('status', 'page'), ['status' => 'pending'])) }}"
                    class="tab-link {{ ($status ?? '') === 'pending' ? 'active' : '' }}">
-                    <i class="fas fa-clock"></i> <span class="tab-label">Menunggu Tindakan</span>
+                    <i class="fas fa-clock"></i> <span class="tab-label">Menunggu Tindakan ({{ $metrics['pending'] }})</span>
                     @if($metrics['pending'] > 0)
                         <span class="tab-counter">{{ $metrics['pending'] }}</span>
                     @endif
@@ -126,12 +126,22 @@
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Kode Sengketa, Order ID, Pembeli, Seller...">
                     </div>
 
-                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ request('start_date') ?? '' }}" data-end-value="{{ request('end_date') ?? '' }}" data-placeholder="{{ __('platform.filter_by_date') }}">
+                    @php
+                        $startDate = request('start_date');
+                        $endDate = request('end_date');
+                        $dateDisplay = __('platform.filter_by_date');
+                        if ($startDate && $endDate) {
+                            $dateDisplay = \Carbon\Carbon::parse($startDate)->format('d M Y') . ' - ' . \Carbon\Carbon::parse($endDate)->format('d M Y');
+                        } elseif ($startDate) {
+                            $dateDisplay = \Carbon\Carbon::parse($startDate)->format('d M Y');
+                        }
+                    @endphp
+                    <div class="date-picker-box" data-start-name="start_date" data-end-name="end_date" data-start-value="{{ $startDate ?? '' }}" data-end-value="{{ $endDate ?? '' }}" data-placeholder="{{ __('platform.filter_by_date') }}">
                         <i class="fas fa-calendar-alt date-picker-icon"></i>
-                        <span class="date-range-display">{{ __('platform.filter_by_date') }}</span>
-                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="display: none;"><i class="fas fa-times"></i></button>
-                        <input type="hidden" name="start_date" value="{{ request('start_date') ?? '' }}" class="date-range-hidden-input">
-                        <input type="hidden" name="end_date" value="{{ request('end_date') ?? '' }}" class="date-range-hidden-input">
+                        <span class="date-range-display">{{ $dateDisplay }}</span>
+                        <button type="button" class="date-range-clear-btn" title="Reset Tanggal" style="{{ ($startDate || $endDate) ? '' : 'display: none;' }}"><i class="fas fa-times"></i></button>
+                        <input type="hidden" name="start_date" value="{{ $startDate ?? '' }}" class="date-range-hidden-input">
+                        <input type="hidden" name="end_date" value="{{ $endDate ?? '' }}" class="date-range-hidden-input">
                     </div>
 
                     <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> {{ __('platform.filter') }}</button>
@@ -144,66 +154,66 @@
             {{-- 4. Table Card (Clean Platform Admin Table Format) --}}
             <div class="table-card">
                 <div class="table-responsive">
-                    <table>
+                    <table class="disputes-table">
                         <thead>
                             <tr>
-                                <th style="width: 44px; text-align: center;">#</th>
-                                <th style="width: 17%;"><i class="fas fa-hashtag"></i> Kode & Waktu</th>
-                                <th style="width: 18%;"><i class="fas fa-receipt"></i> Order ID & Produk</th>
-                                <th style="width: 15%;"><i class="fas fa-user"></i> Pembeli</th>
-                                <th style="width: 13%;"><i class="fas fa-store"></i> Seller</th>
-                                <th style="width: 12%;"><i class="fas fa-money-bill-wave"></i> Nominal</th>
-                                <th style="width: 12%;"><i class="fas fa-building-columns"></i> Tujuan Refund</th>
-                                <th style="width: 13%;"><i class="fas fa-chart-line"></i> Status</th>
-                                <th style="width: 80px; text-align: center;"><i class="fas fa-cog"></i> Aksi</th>
+                                <th class="col-dsp-num">#</th>
+                                <th class="col-dsp-code"><i class="fas fa-shield-halved"></i> Kode & Waktu</th>
+                                <th class="col-dsp-order"><i class="fas fa-receipt"></i> Order & Produk</th>
+                                <th class="col-dsp-buyer"><i class="fas fa-user"></i> Pembeli</th>
+                                <th class="col-dsp-seller"><i class="fas fa-store"></i> Seller</th>
+                                <th class="col-dsp-amount"><i class="fas fa-money-bill-wave"></i> Nominal</th>
+                                <th class="col-dsp-refund"><i class="fas fa-building-columns"></i> Tujuan Refund</th>
+                                <th class="col-dsp-status"><i class="fas fa-chart-line"></i> Status</th>
+                                <th class="col-dsp-action"><i class="fas fa-cog"></i> Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($disputes as $index => $dsp)
                                 <tr>
-                                    <td style="text-align: center;">
+                                    <td class="col-dsp-num">
                                         <span class="table-index-badge">{{ $disputes->firstItem() + $index }}</span>
                                     </td>
-                                    <td>
-                                        <div style="font-weight: 800; color: #0f172a;">{{ $dsp->dispute_code }}</div>
-                                        <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">{{ $dsp->created_at->format('d M Y, H:i') }}</div>
-                                        <div style="margin-top: 4px;">
-                                            <span class="dsp-reason-tag">{{ $dsp->reason_label }}</span>
+                                    <td class="col-dsp-code">
+                                        <div class="dsp-code-val">{{ $dsp->dispute_code }}</div>
+                                        <div class="dsp-time-val">{{ $dsp->created_at->format('d M Y, H:i') }}</div>
+                                        <div style="margin-top: 3px;">
+                                            <span class="dsp-reason-tag" title="{{ $dsp->reason_label }}">{{ $dsp->reason_label }}</span>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="col-dsp-order">
                                         <div class="order-code">{{ $dsp->order_id }}</div>
-                                        <div class="product-title" style="margin-top: 3px;">{{ Str::limit($dsp->product->title ?? 'Produk Digital', 28) }}</div>
+                                        <div class="product-title" title="{{ $dsp->product->title ?? 'Produk Digital' }}">{{ Str::limit($dsp->product->title ?? 'Produk Digital', 24) }}</div>
                                     </td>
-                                    <td>
-                                        <div class="buyer-name">{{ $dsp->buyer_name }}</div>
-                                        <div class="buyer-email">{{ $dsp->buyer_email }}</div>
+                                    <td class="col-dsp-buyer">
+                                        <div class="dsp-buyer-name" title="{{ $dsp->buyer_name }}">{{ Str::limit($dsp->buyer_name, 18) }}</div>
+                                        <div class="dsp-buyer-email" title="{{ $dsp->buyer_email }}">{{ Str::limit($dsp->buyer_email, 22) }}</div>
                                         @if($dsp->buyer_phone)
-                                            <div style="font-size: 11px; color: #16a34a; margin-top: 2px;">
+                                            <div class="dsp-buyer-phone">
                                                 <i class="fab fa-whatsapp"></i> {{ $dsp->buyer_phone }}
                                             </div>
                                         @endif
                                     </td>
-                                    <td>
-                                        <div style="font-weight: 700; color: #0f172a;">{{ $dsp->seller->name ?? 'Seller Linkan' }}</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">{{ $dsp->seller->email ?? '-' }}</div>
+                                    <td class="col-dsp-seller">
+                                        <div class="dsp-seller-name" title="{{ $dsp->seller->name ?? 'Seller Linkan' }}">{{ Str::limit($dsp->seller->name ?? 'Seller Linkan', 18) }}</div>
+                                        <div class="dsp-seller-email" title="{{ $dsp->seller->email ?? '-' }}">{{ Str::limit($dsp->seller->email ?? '-', 22) }}</div>
                                     </td>
-                                    <td>
+                                    <td class="col-dsp-amount">
                                         <div class="amount-text">Rp {{ number_format($dsp->amount, 0, ',', '.') }}</div>
                                         @if(in_array($dsp->status, ['pending', 'under_review']))
                                             <div style="margin-top: 3px;">
-                                                <span style="font-size: 10px; font-weight: 700; color: #dc2626; background: #fee2e2; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">
+                                                <span class="dsp-hold-badge">
                                                     <i class="fas fa-lock"></i> Saldo Tertahan
                                                 </span>
                                             </div>
                                         @endif
                                     </td>
-                                    <td>
-                                        <div style="font-weight: 700; color: #0f172a; font-size: 12px;">{{ $dsp->refund_bank_name }}</div>
-                                        <div style="font-family: monospace; font-size: 11.5px; color: #334155;">{{ $dsp->refund_account_number }}</div>
-                                        <div style="font-size: 11px; color: #64748b;">a.n {{ Str::limit($dsp->refund_account_name, 16) }}</div>
+                                    <td class="col-dsp-refund">
+                                        <div class="dsp-refund-bank">{{ $dsp->refund_bank_name }}</div>
+                                        <div class="dsp-refund-acc">{{ $dsp->refund_account_number }}</div>
+                                        <div class="dsp-refund-name" title="a.n {{ $dsp->refund_account_name }}">a.n {{ Str::limit($dsp->refund_account_name, 16) }}</div>
                                     </td>
-                                    <td>
+                                    <td class="col-dsp-status">
                                         @if($dsp->status === 'pending')
                                             <span class="badge-dsp-pending">
                                                 <i class="fas fa-clock"></i> Menunggu Tindakan
@@ -222,7 +232,7 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td style="text-align: center;">
+                                    <td class="col-dsp-action">
                                         <a href="{{ route('platform-admin.disputes.show', $dsp->id) }}" class="btn-dsp-action" title="Lihat Detail Investigasi">
                                             <i class="fas fa-eye"></i> Detail
                                         </a>

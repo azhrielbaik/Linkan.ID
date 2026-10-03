@@ -257,6 +257,7 @@ return [
     // Common Buttons & Labels
     'filter' => 'Filter',
     'reset' => 'Reset',
+    'filter_by_date' => 'Pilih Rentang Tanggal',
     'close' => 'Tutup',
     'cancel' => 'Batal',
     'search' => 'Cari',

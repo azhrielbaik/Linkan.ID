@@ -62,25 +62,30 @@
 
 /* Reason Tag */
 .dsp-reason-tag {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
     color: #475569;
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 5px;
     display: inline-block;
+    max-width: 135px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
 }
 
 /* Action Button */
 .btn-dsp-action {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 12px;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 7px;
+    font-size: 11.5px;
     font-weight: 700;
     text-decoration: none;
     border: 1px solid #cbd5e1;
@@ -89,6 +94,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
 }
 
 .btn-dsp-action:hover {
@@ -96,6 +102,199 @@
     color: #ffffff;
     border-color: #0f172a;
     transform: translateY(-1px);
+}
+
+/* =====================================================================
+   DISPUTES TABLE REFINED STYLING (FITS ZERO-SCROLLBAR ON DESKTOP)
+   ===================================================================== */
+.disputes-table {
+    width: 100% !important;
+    table-layout: auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+    margin-top: -4px;
+}
+
+.disputes-table th {
+    padding: 9px 8px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.01em !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.disputes-table td {
+    padding: 8px 8px !important;
+    vertical-align: middle !important;
+    font-size: 12px !important;
+}
+
+/* Column Widths & Alignments */
+.disputes-table .col-dsp-num {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 40px !important;
+    text-align: center !important;
+}
+
+.disputes-table .col-dsp-code {
+    min-width: 125px;
+}
+
+.disputes-table .col-dsp-order {
+    min-width: 130px;
+}
+
+.disputes-table .col-dsp-buyer {
+    min-width: 125px;
+}
+
+.disputes-table .col-dsp-seller {
+    min-width: 110px;
+}
+
+.disputes-table .col-dsp-amount {
+    min-width: 95px;
+}
+
+.disputes-table .col-dsp-refund {
+    min-width: 115px;
+}
+
+.disputes-table .col-dsp-status {
+    min-width: 115px;
+}
+
+.disputes-table .col-dsp-action {
+    width: 72px !important;
+    min-width: 72px !important;
+    text-align: center !important;
+}
+
+/* Dispute Code & Time */
+.dsp-code-val {
+    font-weight: 800;
+    color: #0f172a;
+    font-size: 12px;
+    letter-spacing: -0.2px;
+}
+
+.dsp-time-val {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+/* Buyer & Seller Info */
+.dsp-buyer-name,
+.disputes-table .buyer-name {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+}
+
+.dsp-buyer-email,
+.disputes-table .buyer-email {
+    font-size: 11px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+}
+
+.dsp-buyer-phone {
+    font-size: 10.5px;
+    color: #16a34a;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dsp-seller-name {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 115px;
+}
+
+.dsp-seller-email {
+    font-size: 11px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 115px;
+}
+
+/* Order & Product */
+.disputes-table .order-code {
+    font-family: monospace;
+    background: #fff7ed;
+    color: #ea580c;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 11px;
+    display: inline-block;
+    border: 1px solid #fed7aa;
+}
+
+.disputes-table .product-title {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 12px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+}
+
+/* Amount & Hold */
+.dsp-hold-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #dc2626;
+    background: #fee2e2;
+    padding: 1px 5px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+/* Refund Destination */
+.dsp-refund-bank {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 11.5px;
+}
+
+.dsp-refund-acc {
+    font-family: monospace;
+    font-size: 11px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.dsp-refund-name {
+    font-size: 10.5px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
 }
 
 /* Detail Split View (show.blade.php) */
