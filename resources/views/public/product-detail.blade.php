@@ -106,44 +106,53 @@
         /* Top Section: Left and Right Columns */
         .product-top {
             display: flex;
-            gap: 50px;
-            margin-bottom: 60px;
+            align-items: flex-start;
+            gap: 40px;
+            margin-bottom: 48px;
         }
 
         /* Left Column */
         .product-left {
-            flex: 1;
-            max-width: 550px;
+            flex: 0 0 380px;
+            max-width: 380px;
+            width: 100%;
         }
         .main-img-wrap {
             width: 100%;
-            height: 550px;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            max-height: 380px;
             background: #f8fafc;
             border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #f1f5f9;
         }
         .main-img-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
         .thumbnail-gallery {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             overflow-x: auto;
+            padding-bottom: 4px;
         }
         .thumbnail-gallery img {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
             object-fit: cover;
             border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
         .thumbnail-gallery img:hover, .thumbnail-gallery img.active {
             border-color: #ED842C;
+            transform: translateY(-2px);
         }
 
         /* Right Column */
@@ -263,19 +272,22 @@
         
         .action-buttons {
             display: flex;
+            align-items: center;
             gap: 16px;
             margin-bottom: 30px;
             padding-bottom: 30px;
             border-bottom: 1px solid #e2e8f0;
         }
         .btn-buy {
-            flex: 1;
+            flex: 0 0 auto;
+            width: auto;
+            min-width: 160px;
             background: #6366f1;
             color: #fff;
             border: none;
-            padding: 14px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
@@ -286,13 +298,15 @@
             background: #4f46e5;
         }
         .btn-cart {
-            flex: 1;
+            flex: 0 0 auto;
+            width: auto;
+            min-width: 160px;
             background: #f87171;
             color: #fff;
             border: none;
-            padding: 14px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
@@ -415,6 +429,21 @@
             font-style: italic;
         }
         
+        @media (max-width: 992px) {
+            .product-top {
+                flex-direction: column;
+                gap: 28px;
+            }
+            .product-left {
+                flex: 1 1 100%;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            .product-right {
+                max-width: 100%;
+            }
+        }
+        
         @media (max-width: 768px) {
             .product-top {
                 flex-direction: column;
@@ -424,6 +453,9 @@
             }
             .action-buttons {
                 flex-direction: column;
+            }
+            .btn-buy, .btn-cart {
+                width: 100%;
             }
             /* Mobile List & Tab Description: Ensure bullet & numbers are never cut off */
             #tab-description ul,

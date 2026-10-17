@@ -3,13 +3,13 @@
     
     <!-- Charts Row: Top by Revenue & Top by Qty -->
     <div class="analytics-two-cols">
-        <x-analytics.chart-card title="Top 5 Produk Berdasarkan Omset (Revenue)">
+        <x-analytics.chart-card title="Top 5 Produk Berdasarkan Omset (Revenue)" reset-key="productsRevenue">
             <div class="sa-chart-wrap">
                 <div id="chartProductsRevenue" class="chart-inner-fill"></div>
             </div>
         </x-analytics.chart-card>
 
-        <x-analytics.chart-card title="Top 5 Produk Berdasarkan Kuantitas Terjual">
+        <x-analytics.chart-card title="Top 5 Produk Berdasarkan Kuantitas Terjual" reset-key="productsQty">
             <div class="sa-chart-wrap">
                 <div id="chartProductsQty" class="chart-inner-fill"></div>
             </div>

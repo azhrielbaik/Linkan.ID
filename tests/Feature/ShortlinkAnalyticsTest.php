@@ -127,9 +127,12 @@ class ShortlinkAnalyticsTest extends TestCase
         $page->assertSee('instagram');
         $page->assertSee('google.com');
         $page->assertDontSee('hidden-analytics-link');
+        $page->assertSee('js/pages/shortlink-analytics.js');
+        $page->assertSee('id="shortlink-initial-data"', false);
+        $page->assertSee('data-chart-url="'.route('admin.shortlinks.analytics.chart', $ownerShortlink).'"', false);
+        $page->assertDontSee('applyDateFilter()');
 
         $chart = $this->actingAs($owner)->getJson(route('admin.shortlinks.analytics.chart', $ownerShortlink));
-
         $chart->assertOk();
         $chart->assertJsonPath('total_clicks', 2);
         $chart->assertJsonCount(7, 'labels');

@@ -27,80 +27,119 @@
     </div>
     
 @push("scripts")
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    function initPerformanceChart() {
-        const isDark = document.documentElement.classList.contains('dark');
-        const dataVals = @json($chartData ?? []);
-        const dataLabels = @json($chartLabels ?? []);
-        
-        const options = {
-            series: [{
-                name: 'Clicks',
-                data: dataVals
-            }],
-            chart: {
-                type: 'bar',
-                height: 180,
-                width: '100%',
-                toolbar: { show: false },
-                parentHeightOffset: 0,
-                background: 'transparent'
-            },
-            theme: {
-                mode: isDark ? 'dark' : 'light'
-            },
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    columnWidth: '80%'
-                }
-            },
-            colors: ['#FF9040'],
-            xaxis: {
-                categories: dataLabels,
-                labels: { style: { colors: isDark ? '#94a3b8' : '#64748b', fontSize: '11px' } },
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                tooltip: { enabled: false }
-            },
-            yaxis: { show: false },
-            grid: { show: false, padding: { top: 0, bottom: 0, left: 0, right: 0 } },
-            dataLabels: { enabled: false },
-            tooltip: {
-                theme: isDark ? 'dark' : 'light',
-                y: { formatter: function(val) { return val } }
+    (function() {
+        let performanceChartInstance = null;
+
+        function ensureApexCharts(callback, maxWaitMs = 5000) {
+            if (typeof window.ApexCharts !== 'undefined') {
+                callback();
+                return;
             }
-        };
-
-        const chartContainer = document.querySelector("#performanceStatChart");
-        if (chartContainer) {
-            chartContainer.innerHTML = ''; // Clear previous chart instance if turbo reloads
-            const chart = new ApexCharts(chartContainer, options);
-            chart.render();
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPerformanceChart);
-    } else {
-        initPerformanceChart();
-    }
-    
-    document.addEventListener('turbo:load', initPerformanceChart);
-    window.addEventListener('theme-changed', initPerformanceChart);
-
-    if (window.MutationObserver && !window._statChartThemeObserverBound) {
-        window._statChartThemeObserverBound = true;
-        const themeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'class') {
-                    initPerformanceChart();
+            const startTime = Date.now();
+            const poll = setInterval(function() {
+                if (typeof window.ApexCharts !== 'undefined') {
+                    clearInterval(poll);
+                    callback();
+                } else if (Date.now() - startTime > maxWaitMs) {
+                    clearInterval(poll);
+                    console.error('ShortlinkStatChart: ApexCharts failed to load within timeout');
                 }
+            }, 40);
+        }
+
+        function initPerformanceChart() {
+            const chartContainer = document.querySelector("#performanceStatChart");
+            if (!chartContainer) return;
+
+            ensureApexCharts(function() {
+                const isDark = document.documentElement.classList.contains('dark');
+                const dataVals = @json($chartData ?? []);
+                const dataLabels = @json($chartLabels ?? []);
+                
+                const options = {
+                    series: [{
+                        name: 'Clicks',
+                        data: dataVals
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: 180,
+                        width: '100%',
+                        toolbar: { show: false },
+                        parentHeightOffset: 0,
+                        background: 'transparent'
+                    },
+                    theme: {
+                        mode: isDark ? 'dark' : 'light'
+                    },
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 4,
+                            columnWidth: '80%'
+                        }
+                    },
+                    colors: ['#FF9040'],
+                    xaxis: {
+                        categories: dataLabels,
+                        labels: { style: { colors: isDark ? '#94a3b8' : '#64748b', fontSize: '11px' } },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        tooltip: { enabled: false }
+                    },
+                    yaxis: { show: false },
+                    grid: { show: false, padding: { top: 0, bottom: 0, left: 0, right: 0 } },
+                    dataLabels: { enabled: false },
+                    tooltip: {
+                        theme: isDark ? 'dark' : 'light',
+                        y: { formatter: function(val) { return val } }
+                    }
+                };
+
+                if (performanceChartInstance) {
+                    try { performanceChartInstance.destroy(); } catch (e) {}
+                    performanceChartInstance = null;
+                }
+
+                chartContainer.innerHTML = '';
+                performanceChartInstance = new window.ApexCharts(chartContainer, options);
+                performanceChartInstance.render();
             });
-        });
-        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    }
+        }
+
+        if (!window._statChartListenersBound) {
+            window._statChartListenersBound = true;
+            document.addEventListener('turbo:load', initPerformanceChart);
+            document.addEventListener('DOMContentLoaded', initPerformanceChart);
+            window.addEventListener('theme-changed', initPerformanceChart);
+
+            document.addEventListener('turbo:before-cache', function() {
+                if (performanceChartInstance) {
+                    try { performanceChartInstance.destroy(); } catch (e) {}
+                    performanceChartInstance = null;
+                }
+                const container = document.querySelector("#performanceStatChart");
+                if (container) container.innerHTML = '';
+            });
+
+            if (window.MutationObserver) {
+                const themeObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class' && document.querySelector("#performanceStatChart")) {
+                            initPerformanceChart();
+                        }
+                    });
+                });
+                themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPerformanceChart);
+        } else {
+            initPerformanceChart();
+        }
+    })();
 </script>
 @endpush
 </div>

@@ -1,5 +1,7 @@
-// Force the page to always load at the very top (bypassing browser scroll restoration)
+// Force the page to load at top unless deep-linked by hash
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
 }
-window.scrollTo(0, 0);
+if (!window.location.hash) {
+    window.scrollTo(0, 0);
+}

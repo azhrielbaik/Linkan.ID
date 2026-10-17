@@ -27,7 +27,7 @@ class Appearance extends Model
         'instagram',
         'tiktok',
         'whatsapp',
-        'blocks_order'
+        'blocks_order',
     ];
 
     public function user()
@@ -46,8 +46,8 @@ class Appearance extends Model
             return [];
         }
 
-        $blocks = is_array($this->blocks_order) 
-            ? $this->blocks_order 
+        $blocks = is_array($this->blocks_order)
+            ? $this->blocks_order
             : explode(',', (string) $this->blocks_order);
 
         $productIds = [];

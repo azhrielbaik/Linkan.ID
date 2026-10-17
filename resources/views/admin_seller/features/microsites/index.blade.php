@@ -16,7 +16,6 @@
 </script>
 
 <div class="microsite-container">
-    
     @if($viewMode == 'gallery')
         @include('admin_seller.features.microsites.partials._gallery')
     @else
@@ -58,6 +57,7 @@
 <script src="{{ asset('js/microsite-editor/modules/preview-sync.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor/modules/element-handlers.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/microsite-editor.js') }}?v={{ time() }}"></script>
+
 
 <div id="micrositeEditorUrls" style="display: none;"
     data-route-image-delete="{{ url('/admin/elements/image') }}"

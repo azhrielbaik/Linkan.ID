@@ -32,9 +32,9 @@ class Transaction extends Model
     {
         $status = strtolower($this->status_value);
         return match ($status) {
-            'success', 'completed', 'complete' => 'Completed',
-            'failed', 'cancelled', 'cancel' => 'Cancelled',
-            default => 'Pending',
+            'success', 'completed', 'complete' => __('admin.status_completed'),
+            'failed', 'cancelled', 'cancel' => __('admin.status_cancelled'),
+            default => __('admin.status_pending'),
         };
     }
 

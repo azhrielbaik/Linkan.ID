@@ -5,7 +5,6 @@ use App\Http\Controllers\AdminSeller\DashboardController;
 use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
 use App\Http\Controllers\AdminSeller\OrderController;
 use App\Http\Controllers\AdminSeller\PayoutController;
-use App\Http\Controllers\AdminSeller\PurchaseController;
 use App\Http\Controllers\AdminSeller\SettingController;
 use App\Http\Controllers\AdminSeller\StatisticController;
 use App\Http\Controllers\AppearanceController;
@@ -59,6 +58,8 @@ Route::get('/lang/{lang}', function ($lang) {
 // External callbacks (No locale needed)
 Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
 Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
+
+
 
 // Fallbacks for admin elements AJAX routes without locale prefix
 Route::prefix('admin')->middleware(['auth'])->group(function () {
@@ -232,6 +233,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
         Route::post('/microsites', [\App\Http\Controllers\MicrositeController::class, 'store'])->name('microsites.store');
         Route::delete('/microsites/{id}', [\App\Http\Controllers\MicrositeController::class, 'destroy'])->name('microsites.destroy');
 
+
         // Appearance (Profile Block settings)
         Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
         Route::post('/appearance/design-settings', [AppearanceController::class, 'updateDesignSettings'])->name('appearance.design-settings.update');
@@ -312,9 +314,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], functio
             Route::get('/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
             Route::post('/transaction', [DigitalProductController::class, 'storeTransaction'])->name('transaction');
         });
-
-        // My Purchases
-        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
 
         // Shortlinks
         Route::prefix('shortlinks')->name('shortlinks.')->group(function () {

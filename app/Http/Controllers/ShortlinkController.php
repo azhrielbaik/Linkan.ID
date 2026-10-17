@@ -346,17 +346,17 @@ class ShortlinkController extends Controller
 
         [$startDate, $endDate] = $this->resolveDateRange($request);
 
-        $totalClicks = $shortlink->clicks()->whereBetween('created_at', [$startDate, $endDate])->count();
-        $uniqueClicks = $shortlink->clicks()->whereBetween('created_at', [$startDate, $endDate])->distinct('visitor_id')->count('visitor_id');
+        $initialChartData = $this->buildAnalyticsPayload($shortlink, $startDate, $endDate);
         $sources = $this->sourceSummary($shortlink);
 
         return view('admin_seller.features.shortlinks.analytics', [
             'shortlink' => $shortlink,
-            'totalClicks' => $totalClicks,
-            'uniqueClicks' => $uniqueClicks,
+            'totalClicks' => $initialChartData['total_clicks'],
+            'uniqueClicks' => $initialChartData['unique_total'],
             'sources' => $sources,
             'startDate' => $startDate->toDateString(),
             'endDate' => $endDate->toDateString(),
+            'initialChartData' => $initialChartData,
         ]);
     }
 
@@ -367,9 +367,16 @@ class ShortlinkController extends Controller
         [$startDate, $endDate] = $this->resolveDateRange($request);
         $sourceFilter = $request->query('source');
 
+        $payload = $this->buildAnalyticsPayload($shortlink, $startDate, $endDate, $sourceFilter);
+
+        return response()->json($payload);
+    }
+
+    private function buildAnalyticsPayload(Shortlink $shortlink, Carbon $startDate, Carbon $endDate, ?string $sourceFilter = null): array
+    {
         $clicksQuery = $shortlink->clicks()
             ->whereBetween('created_at', [$startDate, $endDate]);
-            
+
         if ($sourceFilter) {
             $clicksQuery->where('source', $sourceFilter);
         }
@@ -393,7 +400,7 @@ class ShortlinkController extends Controller
             $uniqueClicksDaily[] = (int) ($stat->unique_clicks ?? 0);
             $cursor->addDay();
         }
-        
+
         $dayNameExpr = DB::getDriverName() === 'sqlite'
             ? "case strftime('%w', created_at) when '0' then 'Sunday' when '1' then 'Monday' when '2' then 'Tuesday' when '3' then 'Wednesday' when '4' then 'Thursday' when '5' then 'Friday' when '6' then 'Saturday' end"
             : 'DAYNAME(created_at)';
@@ -403,7 +410,7 @@ class ShortlinkController extends Controller
             ->groupBy('day_name')
             ->orderByDesc('total')
             ->get()
-            ->map(fn($row) => ['label' => $row->day_name, 'total' => (int) $row->total])
+            ->map(fn ($row) => ['label' => $row->day_name, 'total' => (int) $row->total])
             ->values()
             ->all();
 
@@ -413,7 +420,7 @@ class ShortlinkController extends Controller
             ->groupBy('country')
             ->orderByDesc('total')
             ->get()
-            ->map(fn($row) => ['label' => $row->country, 'total' => (int) $row->total])
+            ->map(fn ($row) => ['label' => $row->country, 'total' => (int) $row->total])
             ->values()
             ->all();
 
@@ -423,7 +430,7 @@ class ShortlinkController extends Controller
             ->groupBy('device_type')
             ->orderByDesc('total')
             ->get()
-            ->map(fn($row) => ['label' => $row->device_type, 'total' => (int) $row->total])
+            ->map(fn ($row) => ['label' => $row->device_type, 'total' => (int) $row->total])
             ->values()
             ->all();
 
@@ -431,11 +438,10 @@ class ShortlinkController extends Controller
             $deviceBreakdown = $this->deviceBreakdown($shortlink, $startDate, $endDate, $sourceFilter);
         }
 
-        // Sources list shouldn't be filtered by itself to allow switching sources
         $sourcesQuery = $shortlink->clicks()
             ->whereBetween('created_at', [$startDate, $endDate]);
 
-        return response()->json([
+        return [
             'labels' => $labels,
             'clicks' => $totalClicksDaily,
             'unique_clicks' => $uniqueClicksDaily,
@@ -455,6 +461,6 @@ class ShortlinkController extends Controller
             'unique_total' => (clone $clicksQuery)->distinct('visitor_id')->count('visitor_id'),
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
-        ]);
+        ];
     }
 }

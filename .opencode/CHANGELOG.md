@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-03
+
+- Fixed SQLite test runner compatibility issue in unique constraint migration on `users` table.
+
 ## 2026-04-24
 
 - Added `user_id` ownership to `shortlinks` via new migration.

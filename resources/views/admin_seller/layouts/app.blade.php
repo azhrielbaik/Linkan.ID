@@ -44,6 +44,9 @@
     <link rel="stylesheet" href="{{ asset('css/seller-notifications.css') }}">
     @stack('styles')
     @stack('page-styles')
+
+    {{-- Global Charting Library (loaded once in head, persists across Turbo SPA navigations) --}}
+    <script src="{{ asset('js/apexcharts.min.js') }}" defer data-turbo-track="reload"></script>
 </head>
 <body>
     <div class="container">

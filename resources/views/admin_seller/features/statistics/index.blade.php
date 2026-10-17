@@ -45,15 +45,7 @@
             <button type="button" class="analytics-nav-pill-btn" onclick="AnalyticsPage.ui.switchTab('audience', this)">
                 <i class="fas fa-globe"></i> Audiens
             </button>
-        </div>
-
-        <!-- Period info label -->
-        <div class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-            <i class="far fa-calendar-check text-orange-500"></i>
-            <span id="labelPeriodSummary">
-                {{ \Carbon\Carbon::parse($analytics['start_date'])->format('d M Y') }} - {{ \Carbon\Carbon::parse($analytics['end_date'])->format('d M Y') }}
-            </span>
-        </div>
+        </div>            
     </div>
 
     <!-- 3. TAB CONTENTS (MODULAR PARTIALS) -->
@@ -66,6 +58,5 @@
 @endsection
 
 @push("scripts")
-<script src="{{ asset('js/apexcharts.min.js') }}"></script>
 <script src="{{ asset('js/pages/analytics.js') }}?v={{ file_exists(public_path('js/pages/analytics.js')) ? filemtime(public_path('js/pages/analytics.js')) : '1.0' }}"></script>
 @endpush

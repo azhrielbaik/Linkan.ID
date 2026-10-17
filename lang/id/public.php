@@ -10,10 +10,20 @@ return [
     'hero_subtitle' => 'Buat Halaman Web Seluler Instan untuk menjual pengetahuan Anda. Chat, Panggilan Video, Acara, Produk Digital. Bagikan di media sosial.',
     'claim_placeholder' => 'NamaAnda',
     'btn_create' => 'Buat',
+    'trust_microcopy' => 'Gratis selamanya • Tanpa kartu kredit',
+    'cta_sticky_button' => 'Buat Linkan Gratis',
+    'aria_menu_open' => 'Buka menu navigasi',
+    'aria_menu_close' => 'Tutup menu navigasi',
     
     // Features
     'features_title' => 'Bukan sekadar link-in-bio biasa',
     'features_subtitle' => 'Linkan.id mengurus seluruh alur kerja Anda, dari awal hingga akhir.',
+    'features_rotating' => [
+        'Bukan sekadar link-in-bio biasa',
+        'Pusat kendali kreator terbaik Anda',
+        'Monetisasi audiens Anda dengan mudah',
+        'Semua tautan Anda di satu tempat',
+    ],
     'feat_digital_product' => 'Produk Digital',
     'feat_donations' => 'Donasi',
     'feat_online_course' => 'Kursus Online',
@@ -24,6 +34,8 @@ return [
     'btn_service' => 'Dapatkan Layanan',
     
     // Pricing
+    'pricing_free' => 'Gratis',
+    'pricing_swipe_hint' => 'Geser untuk melihat paket lainnya',
     'pricing_basic_title' => 'Dasar',
     'pricing_standard_title' => 'Standar',
     'pricing_unlimited_title' => 'Tanpa Batas',
@@ -46,6 +58,7 @@ return [
     
     // Testimonials
     'testi_title' => 'Lihat Apa Kata Mereka',
+    'testi_subtitle' => 'Dipercaya oleh ribuan kreator, pebisnis online, dan profesional di seluruh Indonesia',
     
     // Creator Showcase
     'creator_tag_1' => 'Membantu Kreator',

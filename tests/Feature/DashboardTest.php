@@ -26,5 +26,25 @@ class DashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('admin_seller.features.dashboard.index');
         $response->assertSee(__('admin.dashboard_title'));
+        $response->assertSee('chart-wrapper');
+        $response->assertSee('statsChart');
+    }
+
+    public function test_chart_data_endpoint_returns_json_series(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson(route('admin.chart-data', ['days' => 60]));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'labels',
+            'views',
+            'clicks',
+            'start_date',
+            'end_date',
+            'days'
+        ]);
+        $this->assertEquals(60, $response->json('days'));
     }
 }

@@ -1,328 +1,641 @@
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ * Linkan.ID — Welcome Landing Page Script
+ * Mobile-First Performance & Interaction Controller
+ */
+
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchOnly = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
     // ============================================================
-    // FIREFOX PERFORMANCE: Pause animasi CSS saat off-screen
-    // Mengurangi beban GPU/CPU secara signifikan di Firefox
+    // 1. REVEAL ANIMATIONS (Progressive Enhancement)
     // ============================================================
-    (function() {
-        'use strict';
-        // Pause/resume animasi berdasarkan visibility
-        function setupAnimationPause() {
-            const animatedSelectors = [
-                '.bg-playground',
-                '.orb-1', '.orb-2', '.orb-3', '.orb-4',
-                '.float-rocket', '.float-lightning', '.float-star',
-                '.shape-1', '.shape-2', '.shape-3',
-                '.shape-4', '.shape-5', '.shape-6',
-                '.phone-mock',
-                '.hero-badge',
-                '.marquee-section',
-                '.cta-playground'
-            ];
-            const elements = [];
-            animatedSelectors.forEach(sel => {
-                document.querySelectorAll(sel).forEach(el => elements.push(el));
-            });
-            if (elements.length === 0) return;
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const state = entry.isIntersecting ? 'running' : 'paused';
-                    entry.target.style.animationPlayState = state;
-                    // Pause anak-anak yang juga beranimasi
-                    entry.target.querySelectorAll('*').forEach(child => {
-                        child.style.animationPlayState = state;
+    const reveals = document.querySelectorAll('.reveal, .reveal-scale');
+    if (reveals.length > 0) {
+        const revealOptions = {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
+        };
+
+        function handleShowcaseReveal(reveal) {
+            if (reveal.classList.contains('creator-showcase-section') && !reveal.dataset.revealed) {
+                reveal.dataset.revealed = 'true';
+                const container = reveal.querySelector('.showcase-container');
+                const tags = reveal.querySelectorAll('.anime-tag');
+                if (container && tags.length > 0) {
+                    const cRect = container.getBoundingClientRect();
+                    const cx = cRect.width / 2;
+                    const cy = cRect.height / 2;
+
+                    tags.forEach((tag) => {
+                        const ex = tag.offsetLeft + tag.offsetWidth / 2;
+                        const ey = tag.offsetTop + tag.offsetHeight / 2;
+                        tag.dataset.dx = cx - ex;
+                        tag.dataset.dy = cy - ey;
                     });
-                });
-            }, {
-                threshold: 0.01,
-                rootMargin: '100px 0px 100px 0px'
-            });
-            elements.forEach(el => observer.observe(el));
-        }
-        // Jalankan setelah DOM siap
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupAnimationPause);
-        } else {
-            setupAnimationPause();
-        }
-    })();
-
-    const reveals = document.querySelectorAll(".reveal, .reveal-scale");
-
-    const revealOptions = {
-        threshold: 0.15,
-        rootMargin: "0px 0px -50px 0px",
-    };
-
-    function handleShowcaseReveal(reveal) {
-        if (
-            reveal.classList.contains("creator-showcase-section") &&
-            !reveal.dataset.revealed
-        ) {
-            reveal.dataset.revealed = "true";
-            const container = reveal.querySelector(".showcase-container");
-            const tags = reveal.querySelectorAll(".anime-tag");
-            if (container && tags.length > 0) {
-                const cRect = container.getBoundingClientRect();
-                const cx = cRect.width / 2;
-                const cy = cRect.height / 2;
-
-                tags.forEach((tag) => {
-                    const ex = tag.offsetLeft + tag.offsetWidth / 2;
-                    const ey = tag.offsetTop + tag.offsetHeight / 2;
-                    tag.dataset.dx = cx - ex;
-                    tag.dataset.dy = cy - ey;
-                });
+                }
+                window.dispatchEvent(new CustomEvent('showcase-revealed'));
             }
-            window.dispatchEvent(new CustomEvent("showcase-revealed"));
         }
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    handleShowcaseReveal(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        reveals.forEach((reveal) => revealObserver.observe(reveal));
+
+        // Quick fallback for above-the-fold or already visible elements
+        setTimeout(() => {
+            reveals.forEach((reveal) => {
+                const rect = reveal.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    reveal.classList.add('active');
+                    handleShowcaseReveal(reveal);
+                }
+            });
+        }, 100);
     }
 
-    const revealOnScroll = new IntersectionObserver(function (
-        entries,
-        observer,
-    ) {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
+    // ============================================================
+    // 2. NAVBAR SCROLL CONTROLLER (rAF Throttled, No Jank)
+    // ============================================================
+    const navbarWrapper = document.getElementById('navbarWrapper');
+    if (navbarWrapper) {
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+
+        function updateNavbar() {
+            const currentScrollY = window.scrollY;
+            const menuOpen = document.getElementById('mobileNavOverlay')?.classList.contains('active');
+
+            // Scrolled glass effect
+            if (currentScrollY > 20) {
+                navbarWrapper.classList.add('scrolled');
             } else {
-                entry.target.classList.add("active");
-                handleShowcaseReveal(entry.target);
-                observer.unobserve(entry.target);
+                navbarWrapper.classList.remove('scrolled');
+            }
+
+            // Hide/Show logic with delta threshold
+            if (!menuOpen) {
+                const delta = currentScrollY - lastScrollY;
+                if (delta > 8 && currentScrollY > 150) {
+                    navbarWrapper.classList.add('nav-hidden');
+                } else if (delta < -8 || currentScrollY <= 150) {
+                    navbarWrapper.classList.remove('nav-hidden');
+                }
+            }
+
+            lastScrollY = currentScrollY;
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(updateNavbar);
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    // ============================================================
+    // 3. ACCESSIBLE MOBILE MENU (iOS Scroll-Lock, Focus Trap, Escape)
+    // ============================================================
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    const mainEl = document.querySelector('main');
+    const footerEl = document.querySelector('footer');
+
+    if (mobileNavToggle && mobileNavOverlay) {
+        let savedScrollY = 0;
+        let isMenuOpen = false;
+
+        function lockScroll() {
+            savedScrollY = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + savedScrollY + 'px';
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function unlockScroll() {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+            window.scrollTo(0, savedScrollY);
+        }
+
+        function openMenu() {
+            if (isMenuOpen) return;
+            isMenuOpen = true;
+            lockScroll();
+
+            mobileNavToggle.classList.add('active');
+            mobileNavOverlay.classList.add('active');
+
+            mobileNavToggle.setAttribute('aria-expanded', 'true');
+            mobileNavOverlay.setAttribute('aria-hidden', 'false');
+
+            if (mainEl) mainEl.setAttribute('inert', '');
+            if (footerEl) footerEl.setAttribute('inert', '');
+
+            // Hide sticky CTA while menu is open
+            const stickyCta = document.getElementById('mobileStickyCta');
+            if (stickyCta) stickyCta.classList.remove('visible');
+
+            // Focus on first link
+            setTimeout(() => {
+                const firstLink = mobileNavOverlay.querySelector('a, button');
+                if (firstLink) firstLink.focus();
+            }, 100);
+        }
+
+        function closeMenu() {
+            if (!isMenuOpen) return;
+            isMenuOpen = false;
+            unlockScroll();
+
+            mobileNavToggle.classList.remove('active');
+            mobileNavOverlay.classList.remove('active');
+
+            mobileNavToggle.setAttribute('aria-expanded', 'false');
+            mobileNavOverlay.setAttribute('aria-hidden', 'true');
+
+            if (mainEl) mainEl.removeAttribute('inert');
+            if (footerEl) footerEl.removeAttribute('inert');
+
+            // Return focus to toggle button
+            mobileNavToggle.focus();
+        }
+
+        mobileNavToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isMenuOpen) closeMenu();
+            else openMenu();
+        });
+
+        // Close on clicking outside the menu container
+        mobileNavOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                closeMenu();
             }
         });
-    }, revealOptions);
 
-    reveals.forEach((reveal) => {
-        revealOnScroll.observe(reveal);
-    });
+        // Close on all menu links & action buttons
+        mobileNavOverlay.querySelectorAll('a, button').forEach((clickable) => {
+            clickable.addEventListener('click', () => {
+                closeMenu();
+            });
+        });
 
-    // Trigger immediately for elements already in viewport on load
-    setTimeout(() => {
-        reveals.forEach((reveal) => {
-            const rect = reveal.getBoundingClientRect();
-            if (rect.top < window.innerHeight) {
-                reveal.classList.add("active");
-                handleShowcaseReveal(reveal);
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMenuOpen) {
+                closeMenu();
             }
         });
-    }, 100);
 
-    // Typing animation for placeholder in claim input
-    const claimInput = document.querySelector(".claim-input");
-    if (claimInput) {
+        // Focus trap inside modal
+        mobileNavOverlay.addEventListener('keydown', (e) => {
+            if (!isMenuOpen || e.key !== 'Tab') return;
+
+            const focusables = mobileNavOverlay.querySelectorAll(
+                'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            );
+            if (focusables.length === 0) return;
+
+            const firstEl = focusables[0];
+            const lastEl = focusables[focusables.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === firstEl) {
+                    e.preventDefault();
+                    lastEl.focus();
+                }
+            } else {
+                if (document.activeElement === lastEl) {
+                    e.preventDefault();
+                    firstEl.focus();
+                }
+            }
+        });
+
+        // Close menu if viewport expanded to desktop
+        const desktopQuery = window.matchMedia('(min-width: 1024px)');
+        desktopQuery.addEventListener('change', (e) => {
+            if (e.matches && isMenuOpen) {
+                closeMenu();
+            }
+        });
+    }
+
+    // ============================================================
+    // 4. CLAIM INPUT TYPING ANIMATION (Focus-Aware, Pausable)
+    // ============================================================
+    const claimInput = document.querySelector('.claim-input');
+    if (claimInput && !prefersReducedMotion) {
         const words = [
-            "YourNameHere",
-            "kreator",
-            "bisnisanda",
-            "portofolio",
-            "toko-online",
-            "content_creator",
+            'YourNameHere',
+            'kreator',
+            'bisnisanda',
+            'portofolio',
+            'toko-online',
+            'content_creator',
         ];
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
-        let typingDelay = 150;
-        let erasingDelay = 100;
-        let newWordDelay = 2000;
+        let typingTimeout = null;
+        let isUserTyping = false;
+        let isFocused = false;
 
-        function type() {
+        function runTyping() {
+            if (isUserTyping || isFocused) return;
+
             const currentWord = words[wordIndex];
-            let currentDelay = typingDelay;
+            let delay = isDeleting ? 90 : 130;
 
             if (isDeleting) {
-                claimInput.setAttribute(
-                    "placeholder",
-                    currentWord.substring(0, charIndex),
-                );
+                claimInput.setAttribute('placeholder', currentWord.substring(0, charIndex));
                 charIndex--;
-                currentDelay = erasingDelay;
             } else {
-                claimInput.setAttribute(
-                    "placeholder",
-                    currentWord.substring(0, charIndex),
-                );
+                claimInput.setAttribute('placeholder', currentWord.substring(0, charIndex));
                 charIndex++;
-                currentDelay = typingDelay;
             }
 
             if (!isDeleting && charIndex > currentWord.length) {
                 isDeleting = true;
-                currentDelay = newWordDelay;
+                delay = 2000; // Pause on full word
             } else if (isDeleting && charIndex < 0) {
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
                 charIndex = 0;
-                currentDelay = 500;
+                delay = 400;
             }
 
-            setTimeout(type, currentDelay);
+            typingTimeout = setTimeout(runTyping, delay);
         }
 
-        setTimeout(type, 1000);
+        claimInput.addEventListener('focus', () => {
+            isFocused = true;
+            clearTimeout(typingTimeout);
+        });
+
+        claimInput.addEventListener('blur', () => {
+            isFocused = false;
+            if (!isUserTyping && claimInput.value.length === 0) {
+                typingTimeout = setTimeout(runTyping, 600);
+            }
+        });
+
+        claimInput.addEventListener('input', () => {
+            if (claimInput.value.length > 0) {
+                isUserTyping = true;
+                clearTimeout(typingTimeout);
+            } else {
+                isUserTyping = false;
+            }
+        });
+
+        typingTimeout = setTimeout(runTyping, 1200);
     }
 
-    // Mobile menu toggle logic
-    const mobileNavToggle = document.getElementById("mobileNavToggle");
-    const mobileNavOverlay = document.getElementById("mobileNavOverlay");
-    if (mobileNavToggle && mobileNavOverlay) {
-        const mobileNavLinks =
-            mobileNavOverlay.querySelectorAll(".mobile-nav-link");
+    // ============================================================
+    // 5. PRICING MOBILE CAROUSEL CONTROLLER (Option A)
+    // ============================================================
+    const pricingGrid = document.querySelector('.pricing-grid');
+    const pricingDotsContainer = document.getElementById('pricingDots');
+    const pricingSwipeHint = document.getElementById('pricingSwipeHint');
 
-        function toggleMenu() {
-            const isActive = mobileNavToggle.classList.toggle("active");
-            mobileNavOverlay.classList.toggle("active");
-            mobileNavToggle.setAttribute("aria-expanded", isActive);
-            mobileNavOverlay.setAttribute("aria-hidden", !isActive);
-            if (isActive) {
-                document.body.style.overflow = "hidden";
-            } else {
-                document.body.style.overflow = "";
+    if (pricingGrid && pricingDotsContainer) {
+        const pricingCards = pricingGrid.querySelectorAll('.pricing-card');
+        const dots = pricingDotsContainer.querySelectorAll('.pricing-dot');
+
+        // Auto-center "Popular" card on mobile/tablet without vertical page shift
+        function centerPopularCard() {
+            if (window.matchMedia('(max-width: 1023px)').matches) {
+                const popularCard = pricingGrid.querySelector('.pricing-card.popular') || pricingCards[1];
+                if (popularCard) {
+                    const scrollTarget = popularCard.offsetLeft - (pricingGrid.clientWidth - popularCard.clientWidth) / 2;
+                    pricingGrid.scrollLeft = Math.max(0, scrollTarget);
+                }
             }
         }
 
-        mobileNavToggle.addEventListener("click", toggleMenu);
+        // Run after initial paint
+        requestAnimationFrame(() => {
+            setTimeout(centerPopularCard, 100);
+        });
 
-        mobileNavLinks.forEach((link) => {
-            link.addEventListener("click", () => {
-                mobileNavToggle.classList.remove("active");
-                mobileNavOverlay.classList.remove("active");
-                mobileNavToggle.setAttribute("aria-expanded", "false");
-                mobileNavOverlay.setAttribute("aria-hidden", "true");
-                document.body.style.overflow = "";
+        // IntersectionObserver to update active dot
+        if (pricingCards.length > 0 && dots.length > 0) {
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const index = Array.from(pricingCards).indexOf(entry.target);
+                        if (index !== -1) {
+                            dots.forEach((dot, dIdx) => {
+                                const isActive = dIdx === index;
+                                dot.classList.toggle('active', isActive);
+                                dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+                            });
+                        }
+                    }
+                });
+            }, {
+                root: pricingGrid,
+                threshold: 0.6
+            });
+
+            pricingCards.forEach((card) => cardObserver.observe(card));
+
+            // Clicking dots to navigate
+            dots.forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    const targetIndex = parseInt(dot.dataset.index, 10);
+                    const targetCard = pricingCards[targetIndex];
+                    if (targetCard) {
+                        const scrollTarget = targetCard.offsetLeft - (pricingGrid.clientWidth - targetCard.clientWidth) / 2;
+                        pricingGrid.scrollTo({
+                            left: Math.max(0, scrollTarget),
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Hide swipe hint on user scroll
+            pricingGrid.addEventListener('scroll', () => {
+                if (pricingSwipeHint && !pricingSwipeHint.classList.contains('hidden')) {
+                    pricingSwipeHint.classList.add('hidden');
+                }
+            }, { passive: true, once: true });
+        }
+    }
+
+    // ============================================================
+    // 6. TESTIMONIALS MOBILE CAROUSEL CONTROLLER
+    // ============================================================
+    const testiCarousel = document.getElementById('testiMobileCarousel');
+    const testiDotsContainer = document.getElementById('testiDots') || document.getElementById('testiMobileDots');
+
+    if (testiCarousel && testiDotsContainer) {
+        const testiCards = testiCarousel.querySelectorAll('.testi-card');
+        const testiDots = testiDotsContainer.querySelectorAll('.testi-dot');
+
+        if (testiCards.length > 0 && testiDots.length > 0) {
+            const testiCardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const index = Array.from(testiCards).indexOf(entry.target);
+                        if (index !== -1 && index < testiDots.length) {
+                            testiDots.forEach((dot, dIdx) => {
+                                const isActive = dIdx === index;
+                                dot.classList.toggle('active', isActive);
+                                dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                                dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+                            });
+                        }
+                    }
+                });
+            }, {
+                root: testiCarousel,
+                threshold: 0.6
+            });
+
+            testiCards.forEach((card) => testiCardObserver.observe(card));
+
+            testiDots.forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    const targetIndex = parseInt(dot.dataset.index, 10);
+                    const targetCard = testiCards[targetIndex];
+                    if (targetCard) {
+                        const scrollTarget = targetCard.offsetLeft - (testiCarousel.clientWidth - targetCard.clientWidth) / 2;
+                        testiCarousel.scrollTo({
+                            left: Math.max(0, scrollTarget),
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+    }
+
+    // ============================================================
+    // 7. STICKY MOBILE CTA BAR OBSERVER (<= 639px)
+    // ============================================================
+    const mobileStickyCta = document.getElementById('mobileStickyCta');
+    const heroSection = document.querySelector('.hero-section');
+    const pricingSection = document.getElementById('pricing');
+    const footerWrapper = document.querySelector('.footer-wrapper');
+
+    if (mobileStickyCta && heroSection) {
+        let isHeroVisible = true;
+        let isPricingOrFooterVisible = false;
+
+        function updateStickyCtaVisibility() {
+            if (!window.matchMedia('(max-width: 639px)').matches) {
+                mobileStickyCta.classList.remove('visible');
+                document.body.classList.remove('has-sticky-cta');
+                return;
+            }
+
+            const menuOpen = document.getElementById('mobileNavOverlay')?.classList.contains('active');
+            if (menuOpen) {
+                mobileStickyCta.classList.remove('visible');
+                return;
+            }
+
+            if (!isHeroVisible && !isPricingOrFooterVisible) {
+                mobileStickyCta.classList.add('visible');
+                document.body.classList.add('has-sticky-cta');
+            } else {
+                mobileStickyCta.classList.remove('visible');
+                document.body.classList.remove('has-sticky-cta');
+            }
+        }
+
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                isHeroVisible = entry.isIntersecting;
+                updateStickyCtaVisibility();
+            });
+        }, { threshold: 0.1 });
+
+        heroObserver.observe(heroSection);
+
+        const hideObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.target === pricingSection || entry.target === footerWrapper) {
+                    isPricingOrFooterVisible = entries.some(e => e.isIntersecting);
+                    updateStickyCtaVisibility();
+                }
+            });
+        }, { threshold: 0.05 });
+
+        if (pricingSection) hideObserver.observe(pricingSection);
+        if (footerWrapper) hideObserver.observe(footerWrapper);
+    }
+
+    // ============================================================
+    // 8. ORIGIN-AWARE INTERACTIVE BUTTONS (Desktop Fine Pointer Only)
+    // ============================================================
+    if (!isTouchOnly) {
+        const originBtns = document.querySelectorAll('.origin-btn');
+        originBtns.forEach((btn) => {
+            const updateCoords = (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                btn.style.setProperty('--x', x + 'px');
+                btn.style.setProperty('--y', y + 'px');
+            };
+
+            btn.addEventListener('mouseenter', updateCoords, { passive: true });
+            btn.addEventListener('mousemove', updateCoords, { passive: true });
+        });
+    }
+
+    // ============================================================
+    // 9. SCRAMBLE TEXT EFFECT (Hover/Fine Pointer Only)
+    // ============================================================
+    if (!isTouchOnly && !prefersReducedMotion) {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const scrambleLinks = document.querySelectorAll('.scramble-link');
+
+        scrambleLinks.forEach((link) => {
+            if (!link.dataset.value) {
+                link.dataset.value = link.innerText.trim();
+            }
+
+            let timeoutId = null;
+
+            link.addEventListener('mouseenter', () => {
+                const originalText = link.dataset.value;
+                if (!originalText) return;
+
+                clearTimeout(timeoutId);
+                link.style.whiteSpace = 'nowrap';
+                link.style.display = 'inline-block';
+
+                link.innerHTML = '';
+                const tempSpans = [];
+                originalText.split('').forEach((char) => {
+                    const s = document.createElement('span');
+                    s.style.display = 'inline-block';
+                    s.style.whiteSpace = 'nowrap';
+                    s.style.visibility = 'hidden';
+                    s.textContent = char === ' ' ? '\u00A0' : char;
+                    link.appendChild(s);
+                    tempSpans.push({ span: s, char });
+                });
+
+                const charWidths = tempSpans.map(({ span, char }) => {
+                    return {
+                        char: char,
+                        width: Math.ceil(span.getBoundingClientRect().width * 10) / 10,
+                    };
+                });
+
+                link.innerHTML = '';
+                const charBoxes = [];
+
+                charWidths.forEach(({ char, width }, i) => {
+                    if (char === ' ') {
+                        const space = document.createElement('span');
+                        space.style.display = 'inline-block';
+                        space.style.whiteSpace = 'nowrap';
+                        space.style.width = width + 'px';
+                        space.innerHTML = '&nbsp;';
+                        link.appendChild(space);
+                        return;
+                    }
+
+                    const box = document.createElement('span');
+                    box.className = 'scramble-char-box';
+                    box.style.display = 'inline-block';
+                    box.style.overflow = 'hidden';
+                    box.style.whiteSpace = 'nowrap';
+                    box.style.width = width + 'px';
+                    box.style.height = '1.3em';
+                    box.style.lineHeight = '1.3em';
+                    box.style.verticalAlign = 'top';
+                    box.style.textAlign = 'center';
+
+                    const col = document.createElement('span');
+                    col.className = 'scramble-char-col';
+                    col.style.display = 'flex';
+                    col.style.flexDirection = 'column';
+                    col.style.width = '100%';
+                    col.style.whiteSpace = 'nowrap';
+
+                    const r1 = letters[Math.floor(Math.random() * letters.length)];
+                    const r2 = letters[Math.floor(Math.random() * letters.length)];
+                    const r3 = letters[Math.floor(Math.random() * letters.length)];
+                    const charList = [char, r1, r2, r3, char];
+
+                    charList.forEach((c) => {
+                        const item = document.createElement('span');
+                        item.className = 'scramble-char-item';
+                        item.style.display = 'block';
+                        item.style.height = '1.3em';
+                        item.style.lineHeight = '1.3em';
+                        item.style.width = '100%';
+                        item.style.textAlign = 'center';
+                        item.style.whiteSpace = 'nowrap';
+                        item.textContent = c;
+                        col.appendChild(item);
+                    });
+
+                    col.style.transform = 'translateY(-80%)';
+                    box.appendChild(col);
+                    link.appendChild(box);
+                    charBoxes.push({ col: col, index: i });
+                });
+
+                void link.offsetWidth;
+
+                charBoxes.forEach(({ col, index }) => {
+                    col.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ' + (index * 35) + 'ms';
+                    col.style.transform = 'translateY(0%)';
+                });
+
+                const totalDuration = 450 + originalText.length * 35 + 50;
+                timeoutId = setTimeout(() => {
+                    link.innerText = originalText;
+                    link.style.whiteSpace = '';
+                }, totalDuration);
             });
         });
     }
 
-    // Origin-aware interactive magnetic circle buttons
-    const originBtns = document.querySelectorAll(".origin-btn");
-    originBtns.forEach((btn) => {
-        const updateCoords = (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            btn.style.setProperty("--x", `${x}px`);
-            btn.style.setProperty("--y", `${y}px`);
-        };
-
-        btn.addEventListener("mouseenter", updateCoords);
-        btn.addEventListener("mousemove", updateCoords);
-    });
-
-    // Vertical Top-to-Bottom Scramble Text Effect on Navigation Links (Fixed Widths, No Layout Shift, No Drop)
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const scrambleLinks = document.querySelectorAll(".scramble-link");
-
-    scrambleLinks.forEach((link) => {
-        if (!link.dataset.value) {
-            link.dataset.value = link.innerText.trim();
-        }
-
-        let timeoutId = null;
-
-        link.addEventListener("mouseenter", () => {
-            const originalText = link.dataset.value;
-            if (!originalText) return;
-
-            clearTimeout(timeoutId);
-
-            // Ensure link never drops or wraps
-            link.style.whiteSpace = "nowrap";
-            link.style.display = "inline-block";
-
-            // Measure original letter widths
-            link.innerHTML = "";
-            const tempSpans = [];
-            originalText.split("").forEach((char) => {
-                const s = document.createElement("span");
-                s.style.display = "inline-block";
-                s.style.whiteSpace = "nowrap";
-                s.style.visibility = "hidden";
-                s.textContent = char === " " ? "\u00A0" : char;
-                link.appendChild(s);
-                tempSpans.push({ span: s, char });
-            });
-
-            const charWidths = tempSpans.map(({ span, char }) => {
-                return {
-                    char,
-                    width:
-                        Math.ceil(span.getBoundingClientRect().width * 10) / 10,
-                };
-            });
-
-            // Build character boxes with locked widths
-            link.innerHTML = "";
-            const charBoxes = [];
-
-            charWidths.forEach(({ char, width }, i) => {
-                if (char === " ") {
-                    const space = document.createElement("span");
-                    space.style.display = "inline-block";
-                    space.style.whiteSpace = "nowrap";
-                    space.style.width = `${width}px`;
-                    space.innerHTML = "&nbsp;";
-                    link.appendChild(space);
-                    return;
+    // ============================================================
+    // 10. TARGETED SMOOTH SCROLL FOR IN-PAGE ANCHORS
+    // ============================================================
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    targetEl.scrollIntoView({
+                        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                        block: 'start'
+                    });
+                    if (history.pushState) {
+                        history.pushState(null, '', targetId);
+                    }
                 }
-
-                const box = document.createElement("span");
-                box.className = "scramble-char-box";
-                box.style.display = "inline-block";
-                box.style.overflow = "hidden";
-                box.style.whiteSpace = "nowrap";
-                box.style.width = `${width}px`;
-                box.style.height = "1.3em";
-                box.style.lineHeight = "1.3em";
-                box.style.verticalAlign = "top";
-                box.style.textAlign = "center";
-
-                const col = document.createElement("span");
-                col.className = "scramble-char-col";
-                col.style.display = "flex";
-                col.style.flexDirection = "column";
-                col.style.width = "100%";
-                col.style.whiteSpace = "nowrap";
-
-                const r1 = letters[Math.floor(Math.random() * letters.length)];
-                const r2 = letters[Math.floor(Math.random() * letters.length)];
-                const r3 = letters[Math.floor(Math.random() * letters.length)];
-
-                // Items from top to bottom: [Target char, Random 1, Random 2, Random 3, Start char]
-                const charList = [char, r1, r2, r3, char];
-
-                charList.forEach((c) => {
-                    const item = document.createElement("span");
-                    item.className = "scramble-char-item";
-                    item.style.display = "block";
-                    item.style.height = "1.3em";
-                    item.style.lineHeight = "1.3em";
-                    item.style.width = "100%";
-                    item.style.textAlign = "center";
-                    item.style.whiteSpace = "nowrap";
-                    item.textContent = c;
-                    col.appendChild(item);
-                });
-
-                col.style.transform = "translateY(-80%)";
-                box.appendChild(col);
-                link.appendChild(box);
-                charBoxes.push({ col, index: i });
-            });
-
-            // Force browser reflow
-            void link.offsetWidth;
-
-            // Animate downward (atas ke bawah) with staggered easing
-            charBoxes.forEach(({ col, index }) => {
-                col.style.transition = `transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms`;
-                col.style.transform = "translateY(0%)";
-            });
-
-            const totalDuration = 450 + originalText.length * 35 + 50;
-            timeoutId = setTimeout(() => {
-                link.innerText = originalText;
-                link.style.whiteSpace = "";
-            }, totalDuration);
+            }
         });
     });
 });

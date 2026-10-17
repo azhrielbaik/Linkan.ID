@@ -57,16 +57,20 @@ class LogHttpRequests
             $level = 'info';
         }
 
-        Log::channel('daily')->log($level, 'HTTP Request Processed', [
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
-            'route' => $routeName,
-            'status' => $statusCode,
-            'duration_ms' => $durationMs,
-            'ip' => $request->ip(),
-            'user_id' => Auth::check() ? Auth::id() : null,
-            'user_agent' => $request->userAgent(),
-        ]);
+        try {
+            Log::channel('daily')->log($level, 'HTTP Request Processed', [
+                'method' => $request->method(),
+                'url' => $request->fullUrl(),
+                'route' => $routeName,
+                'status' => $statusCode,
+                'duration_ms' => $durationMs,
+                'ip' => $request->ip(),
+                'user_id' => Auth::check() ? Auth::id() : null,
+                'user_agent' => $request->userAgent(),
+            ]);
+        } catch (\Throwable $e) {
+            // Silently ignore logging failures to prevent crashing responses
+        }
 
         return $response;
     }

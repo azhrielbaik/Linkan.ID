@@ -7,7 +7,6 @@ return array (
   'shortlink' => 'Shortlink',
   'microsite' => 'Microsite',
   'shop' => 'Shop',
-  'mypurchases' => 'My Purchases',
   'appearance' => 'Appearance',
   'settings' => 'Settings',
   'logout' => 'Logout',
