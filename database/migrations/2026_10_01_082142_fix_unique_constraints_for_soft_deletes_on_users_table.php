@@ -29,13 +29,25 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if (in_array($driver, ['pgsql', 'sqlite'])) {
-            // Hapus unique index lama terlebih dahulu
-            Schema::table('users', function (Blueprint $table) {
-                // Drop unique index lama jika ada
-                try { $table->dropUnique(['email']); } catch (\Exception) {}
-                try { $table->dropUnique(['username']); } catch (\Exception) {}
-                try { $table->dropUnique(['google_id']); } catch (\Exception) {}
-            });
+            // Hapus unique index lama jika ada
+            if ($driver === 'sqlite') {
+                DB::statement('DROP INDEX IF EXISTS users_email_unique');
+                DB::statement('DROP INDEX IF EXISTS users_username_unique');
+                DB::statement('DROP INDEX IF EXISTS users_google_id_unique');
+            } else {
+                $existingIndexes = collect(Schema::getIndexes('users'))->pluck('name')->all();
+                Schema::table('users', function (Blueprint $table) use ($existingIndexes) {
+                    if (in_array('users_email_unique', $existingIndexes)) {
+                        $table->dropUnique('users_email_unique');
+                    }
+                    if (in_array('users_username_unique', $existingIndexes)) {
+                        $table->dropUnique('users_username_unique');
+                    }
+                    if (in_array('users_google_id_unique', $existingIndexes)) {
+                        $table->dropUnique('users_google_id_unique');
+                    }
+                });
+            }
 
             // Buat partial unique index (hanya untuk baris non-deleted)
             DB::statement('CREATE UNIQUE INDEX users_email_unique_active ON users (email) WHERE deleted_at IS NULL');

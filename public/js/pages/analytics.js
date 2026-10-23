@@ -114,6 +114,28 @@
     };
 
     /**
+     * Resilient helper to wait until ApexCharts library is fully loaded.
+     * @param {Function} callback
+     * @param {number} maxWaitMs
+     */
+    AnalyticsPage.helpers.ensureApexCharts = function (callback, maxWaitMs = 5000) {
+        if (typeof window.ApexCharts !== 'undefined') {
+            callback();
+            return;
+        }
+        const startTime = Date.now();
+        const poll = setInterval(() => {
+            if (typeof window.ApexCharts !== 'undefined') {
+                clearInterval(poll);
+                callback();
+            } else if (Date.now() - startTime > maxWaitMs) {
+                clearInterval(poll);
+                console.error('AnalyticsPage: ApexCharts library failed to load within timeout');
+            }
+        }, 30);
+    };
+
+    /**
      * Helper to instantiate an ApexChart with standardized options
      * @param {string|HTMLElement} container
      * @param {Object} customOptions
@@ -122,6 +144,10 @@
     AnalyticsPage.charts.buildApexChart = function (container, customOptions = {}) {
         const elem = typeof container === 'string' ? document.querySelector(container) : container;
         if (!elem) return null;
+        if (typeof window.ApexCharts === 'undefined') {
+            console.warn('AnalyticsPage: ApexCharts is not available yet.');
+            return null;
+        }
         elem.innerHTML = '';
         const theme = AnalyticsPage.ui.getThemeTokens();
 
@@ -131,7 +157,11 @@
                 parentHeightOffset: 0
             },
             grid: {
-                borderColor: theme.gridColor
+                borderColor: theme.gridColor,
+                padding: {
+                    left: 10,
+                    right: 15
+                }
             },
             tooltip: {
                 theme: theme.tooltipTheme
@@ -139,7 +169,7 @@
         };
 
         const merged = deepMerge(baseOptions, customOptions);
-        const chart = new ApexCharts(elem, merged);
+        const chart = new window.ApexCharts(elem, merged);
         chart.render();
         return chart;
     };
@@ -177,26 +207,76 @@
     };
 
     /**
-     * Destroy all existing ApexChart instances
+     * Notify UI when a chart has been zoomed or unzoomed (No-op after removing effects)
+     * @param {string} chartKey
+     * @param {boolean} isZoomed
+     */
+    AnalyticsPage.charts.onChartZoomed = function (chartKey, isZoomed) {
+        // Effects removed per user request
+    };
+
+    /**
+     * Reset a chart instance back to its original view / zoom
+     * @param {string} chartKey
+     * @param {HTMLElement|null} btnElem
+     */
+    AnalyticsPage.charts.reset = function (chartKey, btnElem) {
+        const chart = AnalyticsPage.instances[chartKey];
+        if (!chart) return;
+
+        // Visual feedback: animate spin on button icon
+        const allBtns = document.querySelectorAll(`[data-chart-reset="${chartKey}"]`);
+        allBtns.forEach(b => {
+            b.classList.add('is-spinning');
+            setTimeout(() => b.classList.remove('is-spinning'), 600);
+        });
+
+        // 1. ApexCharts zoomX() with no args triggers internal handleZoomReset()
+        try {
+            if (typeof chart.zoomX === 'function') {
+                chart.zoomX();
+            }
+        } catch (e) {}
+
+        // 2. ApexCharts resetSeries resets collapsed series and zoom state
+        try {
+            if (typeof chart.resetSeries === 'function') {
+                chart.resetSeries(true, true);
+            }
+        } catch (e) {}
+
+        // 3. Toolbar reset if initialized
+        try {
+            if (chart.toolbar && typeof chart.toolbar.handleZoomReset === 'function') {
+                chart.toolbar.handleZoomReset();
+            }
+        } catch (e) {}
+    };
+
+    /**
+     * Destroy all existing ApexChart instances and clear container DOM
      */
     AnalyticsPage.charts.destroyAll = function () {
         Object.keys(AnalyticsPage.instances).forEach(k => {
             if (AnalyticsPage.instances[k]) {
-                AnalyticsPage.instances[k].destroy();
+                try {
+                    AnalyticsPage.instances[k].destroy();
+                } catch (e) {}
                 AnalyticsPage.instances[k] = null;
             }
         });
+        const containers = document.querySelectorAll('#analytics-app .chart-inner-fill');
+        containers.forEach(c => { c.innerHTML = ''; });
     };
 
     /**
-     * Render all ApexCharts across tabs
+     * Render charts in the Overview tab
      * @param {Object} data
      */
-    AnalyticsPage.charts.renderAll = function (data) {
+    AnalyticsPage.charts.renderOverviewCharts = function (data) {
         if (!data) return;
         const theme = AnalyticsPage.ui.getThemeTokens();
         const build = AnalyticsPage.charts.buildApexChart;
-        AnalyticsPage.charts.destroyAll();
 
         // 1. Semi-Circular Radial Gauge (Store Conversion Health)
         const gaugeElem = document.querySelector("#gaugeConversionHealth");
@@ -238,7 +318,7 @@
                     gradient: {
                         shade: 'dark',
                         type: 'horizontal',
-                        gradientToColors: ['#06b6d4'],
+                        gradientToColors: ['#FF9040'],
                         stops: [0, 100]
                     }
                 },
@@ -250,12 +330,29 @@
         // 2. Traffic Spline (Views vs Clicks)
         const trafficElem = document.querySelector("#chartOverviewTraffic");
         if (trafficElem) {
+            const categories = data.labels || (data.timeline && data.timeline.labels) || [];
             AnalyticsPage.instances.traffic = build(trafficElem, {
                 series: [
                     { name: 'Views', data: data.views || (data.timeline && data.timeline.views) },
                     { name: 'Clicks', data: data.clicks || (data.timeline && data.timeline.clicks) }
                 ],
-                chart: { type: 'area', height: '100%' },
+                chart: {
+                    type: 'area',
+                    height: '100%',
+                    zoom: {
+                        enabled: true,
+                        type: 'x',
+                        autoScaleYaxis: true
+                    },
+                    events: {
+                        zoomed: function () {
+                            AnalyticsPage.charts.onChartZoomed('traffic', true);
+                        },
+                        beforeResetZoom: function () {
+                            AnalyticsPage.charts.onChartZoomed('traffic', false);
+                        }
+                    }
+                },
                 colors: ['#ED842C', '#06b6d4'],
                 fill: {
                     type: 'gradient',
@@ -264,10 +361,23 @@
                 stroke: { curve: 'smooth', width: 2.8 },
                 dataLabels: { enabled: false },
                 xaxis: {
-                    categories: data.labels || (data.timeline && data.timeline.labels),
-                    labels: { style: { colors: theme.labelColor, fontSize: '11px' } },
+                    categories: categories,
+                    tickAmount: 6,
+                    labels: {
+                        rotate: 0,
+                        rotateAlways: false,
+                        hideOverlappingLabels: true,
+                        showDuplicates: false,
+                        trim: false,
+                        style: {
+                            colors: theme.labelColor,
+                            fontSize: '11px',
+                            fontFamily: 'inherit'
+                        }
+                    },
                     axisBorder: { show: false },
-                    axisTicks: { show: false }
+                    axisTicks: { show: false },
+                    tooltip: { enabled: false }
                 },
                 yaxis: {
                     labels: {
@@ -275,16 +385,43 @@
                         style: { colors: theme.labelColor }
                     }
                 },
-                legend: { show: false }
+                legend: { show: false },
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        options: {
+                            xaxis: {
+                                tickAmount: 4
+                            }
+                        }
+                    }
+                ]
             });
         }
 
         // 3. Revenue Area Chart (Omset)
         const revElem = document.querySelector("#chartOverviewRevenue");
         if (revElem) {
+            const categories = data.labels || (data.timeline && data.timeline.labels) || [];
             AnalyticsPage.instances.revenue = build(revElem, {
                 series: [{ name: 'Omset Penjualan', data: data.sales || (data.timeline && data.timeline.sales) }],
-                chart: { type: 'area', height: '100%' },
+                chart: {
+                    type: 'area',
+                    height: '100%',
+                    zoom: {
+                        enabled: true,
+                        type: 'x',
+                        autoScaleYaxis: true
+                    },
+                    events: {
+                        zoomed: function () {
+                            AnalyticsPage.charts.onChartZoomed('revenue', true);
+                        },
+                        beforeResetZoom: function () {
+                            AnalyticsPage.charts.onChartZoomed('revenue', false);
+                        }
+                    }
+                },
                 colors: ['#10B981'],
                 fill: {
                     type: 'gradient',
@@ -293,10 +430,23 @@
                 stroke: { curve: 'smooth', width: 2.8 },
                 dataLabels: { enabled: false },
                 xaxis: {
-                    categories: data.labels || (data.timeline && data.timeline.labels),
-                    labels: { style: { colors: theme.labelColor, fontSize: '11px' } },
+                    categories: categories,
+                    tickAmount: 6,
+                    labels: {
+                        rotate: 0,
+                        rotateAlways: false,
+                        hideOverlappingLabels: true,
+                        showDuplicates: false,
+                        trim: false,
+                        style: {
+                            colors: theme.labelColor,
+                            fontSize: '11px',
+                            fontFamily: 'inherit'
+                        }
+                    },
                     axisBorder: { show: false },
-                    axisTicks: { show: false }
+                    axisTicks: { show: false },
+                    tooltip: { enabled: false }
                 },
                 yaxis: {
                     labels: {
@@ -306,9 +456,29 @@
                 },
                 tooltip: {
                     y: { formatter: v => AnalyticsPage.helpers.formatIDR(v) }
-                }
+                },
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        options: {
+                            xaxis: {
+                                tickAmount: 4
+                            }
+                        }
+                    }
+                ]
             });
         }
+    };
+
+    /**
+     * Render charts in the Shortlinks tab
+     * @param {Object} data
+     */
+    AnalyticsPage.charts.renderShortlinksCharts = function (data) {
+        if (!data) return;
+        const theme = AnalyticsPage.ui.getThemeTokens();
+        const build = AnalyticsPage.charts.buildApexChart;
 
         // 4. Shortlinks Top 5 Clicks
         const slTopElem = document.querySelector("#chartShortlinksTop");
@@ -365,6 +535,16 @@
                 legend: { position: 'bottom', labels: { colors: theme.labelColor } }
             });
         }
+    };
+
+    /**
+     * Render charts in the Products tab
+     * @param {Object} data
+     */
+    AnalyticsPage.charts.renderProductsCharts = function (data) {
+        if (!data) return;
+        const theme = AnalyticsPage.ui.getThemeTokens();
+        const build = AnalyticsPage.charts.buildApexChart;
 
         // 8. Products Revenue Bar
         const prodRevElem = document.querySelector("#chartProductsRevenue");
@@ -398,6 +578,16 @@
                 yaxis: { labels: { style: { colors: theme.labelColor } } }
             });
         }
+    };
+
+    /**
+     * Render charts in the Audience tab
+     * @param {Object} data
+     */
+    AnalyticsPage.charts.renderAudienceCharts = function (data) {
+        if (!data) return;
+        const theme = AnalyticsPage.ui.getThemeTokens();
+        const build = AnalyticsPage.charts.buildApexChart;
 
         // 10. Audience Device Donut
         const audDevElem = document.querySelector("#chartAudienceDevice");
@@ -489,6 +679,36 @@
     };
 
     /**
+     * Render charts only for the currently active tab
+     * @param {Object} data
+     */
+    AnalyticsPage.charts.renderActiveTab = function (data) {
+        if (!data) return;
+        const tab = AnalyticsPage.activeTab || 'overview';
+        if (tab === 'overview') {
+            AnalyticsPage.charts.renderOverviewCharts(data);
+        } else if (tab === 'shortlinks') {
+            AnalyticsPage.charts.renderShortlinksCharts(data);
+        } else if (tab === 'products') {
+            AnalyticsPage.charts.renderProductsCharts(data);
+        } else if (tab === 'audience') {
+            AnalyticsPage.charts.renderAudienceCharts(data);
+        }
+    };
+
+    /**
+     * Render all ApexCharts across all tabs
+     * @param {Object} data
+     */
+    AnalyticsPage.charts.renderAll = function (data) {
+        if (!data) return;
+        AnalyticsPage.charts.renderOverviewCharts(data);
+        AnalyticsPage.charts.renderShortlinksCharts(data);
+        AnalyticsPage.charts.renderProductsCharts(data);
+        AnalyticsPage.charts.renderAudienceCharts(data);
+    };
+
+    /**
      * Switch tab with dynamic re-render & resize trigger
      * @param {string} tabName
      * @param {HTMLElement} btnElem
@@ -512,9 +732,14 @@
             target.style.display = (tabName === 'overview') ? 'flex' : 'block';
         }
 
-        setTimeout(() => {
+        requestAnimationFrame(() => {
+            if (AnalyticsPage.state) {
+                AnalyticsPage.helpers.ensureApexCharts(() => {
+                    AnalyticsPage.charts.renderActiveTab(AnalyticsPage.state);
+                });
+            }
             window.dispatchEvent(new Event('resize'));
-        }, 60);
+        });
     };
 
     /**
@@ -583,12 +808,35 @@
             this.updateTriggerPill();
 
             const self = this;
+            const popover = document.getElementById('customDateExpandableBar');
+            if (popover && !popover._stopPropAttached) {
+                popover.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+                popover._stopPropAttached = true;
+            }
+
             document.removeEventListener('click', self._outsideClick);
             self._outsideClick = function (e) {
                 const anchor = document.getElementById('datePickerAnchor');
                 const popover = document.getElementById('customDateExpandableBar');
-                if (popover && popover.style.display !== 'none') {
-                    if (anchor && !anchor.contains(e.target)) {
+                const trigger = document.getElementById('btnDateRangeTrigger');
+                const backdrop = document.getElementById('customDateMobileBackdrop');
+                if (!popover || popover.style.display === 'none' || !self.isOpen) return;
+
+                if (window.innerWidth <= 768) {
+                    if (backdrop && e.target === backdrop) {
+                        self.close();
+                    }
+                } else {
+                    const path = e.composedPath ? e.composedPath() : [];
+                    const isInside = (anchor && anchor.contains(e.target)) ||
+                                     (popover && popover.contains(e.target)) ||
+                                     (trigger && trigger.contains(e.target)) ||
+                                     path.includes(anchor) ||
+                                     path.includes(popover) ||
+                                     path.includes(trigger);
+                    if (!isInside) {
                         self.close();
                     }
                 }
@@ -596,7 +844,10 @@
             document.addEventListener('click', self._outsideClick);
         },
 
-        toggle: function () {
+        toggle: function (e) {
+            if (e && typeof e.stopPropagation === 'function') {
+                e.stopPropagation();
+            }
             if (this.isOpen) {
                 this.close();
             } else {
@@ -609,6 +860,7 @@
             const trigger = document.getElementById('btnDateRangeTrigger');
             const chevron = document.getElementById('dateTriggerChevron');
             const anchor = document.getElementById('datePickerAnchor');
+            const backdrop = document.getElementById('customDateMobileBackdrop');
 
             if (anchor) {
                 anchor.style.position = 'relative';
@@ -616,6 +868,10 @@
 
             if (popover) {
                 popover.style.display = 'block';
+                if (backdrop && window.innerWidth <= 768) {
+                    backdrop.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
                 this.isOpen = true;
                 if (trigger) trigger.classList.add('active');
                 if (chevron) chevron.style.transform = 'rotate(180deg)';
@@ -649,8 +905,13 @@
             const popover = document.getElementById('customDateExpandableBar');
             const trigger = document.getElementById('btnDateRangeTrigger');
             const chevron = document.getElementById('dateTriggerChevron');
+            const backdrop = document.getElementById('customDateMobileBackdrop');
             if (popover) {
                 popover.style.display = 'none';
+                if (backdrop) {
+                    backdrop.style.display = 'none';
+                }
+                document.body.style.overflow = '';
                 this.isOpen = false;
                 this.isSelectingEnd = false;
                 this.hoverDate = null;
@@ -802,6 +1063,14 @@
                     btn.classList.remove('active');
                 }
             });
+
+            // Auto-scroll active chip into view on mobile
+            if (window.innerWidth <= 768) {
+                const activeChip = document.querySelector('.analytics-dp-mobile-presets-chips .analytics-dp-preset-btn.active');
+                if (activeChip && typeof activeChip.scrollIntoView === 'function') {
+                    activeChip.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+                }
+            }
         },
 
         renderCalendars: function () {
@@ -1012,8 +1281,11 @@
         }
 
         // Re-render sparklines & charts
+        AnalyticsPage.state = data;
         AnalyticsPage.charts.renderSparklines(data);
-        AnalyticsPage.charts.renderAll(data);
+        AnalyticsPage.helpers.ensureApexCharts(() => {
+            AnalyticsPage.charts.renderActiveTab(data);
+        });
     };
 
     /**
@@ -1140,6 +1412,9 @@
      * Initialize analytics page
      */
     function initAnalytics() {
+        const app = document.getElementById('analytics-app');
+        if (!app) return;
+
         if (AnalyticsPage.datepicker && typeof AnalyticsPage.datepicker.init === 'function') {
             AnalyticsPage.datepicker.init();
         }
@@ -1154,8 +1429,15 @@
             return;
         }
 
+        // Render sparkline SVGs immediately (pure SVG without ApexCharts)
         AnalyticsPage.charts.renderSparklines(AnalyticsPage.state);
-        AnalyticsPage.charts.renderAll(AnalyticsPage.state);
+
+        // Ensure ApexCharts library is loaded before rendering canvas charts
+        AnalyticsPage.helpers.ensureApexCharts(() => {
+            requestAnimationFrame(() => {
+                AnalyticsPage.charts.renderActiveTab(AnalyticsPage.state);
+            });
+        });
     }
 
     // Attach to global window
@@ -1173,33 +1455,54 @@
     window.exportTableToCSV = AnalyticsPage.tables.exportToCSV;
     window.handleGlobalSearch = AnalyticsPage.ui.handleGlobalSearch;
 
-    // Global keyboard shortcut ⌘K / Ctrl+K
-    document.addEventListener('keydown', function (e) {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            const searchInput = document.getElementById('globalAnalyticsSearch');
-            if (searchInput) searchInput.focus();
-        }
-    });
+    // Register event listeners once to prevent duplicate handlers across Turbo page visits
+    if (!window._analyticsListenersBound) {
+        window._analyticsListenersBound = true;
 
-    // Lifecycle events
-    document.addEventListener('DOMContentLoaded', initAnalytics);
-    document.addEventListener('turbo:load', initAnalytics);
+        document.addEventListener('DOMContentLoaded', initAnalytics);
+        document.addEventListener('turbo:load', initAnalytics);
 
-    // Dark mode observer
-    const darkObserver = new MutationObserver(mutations => {
+        // Global keyboard shortcut ⌘K / Ctrl+K
+        document.addEventListener('keydown', function (e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                const searchInput = document.getElementById('globalAnalyticsSearch');
+                if (searchInput) {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            }
+        });
+
+        // Turbo cleanup before caching page snapshot
+        document.addEventListener('turbo:before-cache', function () {
+            if (AnalyticsPage.darkObserver) {
+                AnalyticsPage.darkObserver.disconnect();
+                AnalyticsPage.darkObserver = null;
+            }
+            if (document.getElementById('analytics-app')) {
+                AnalyticsPage.charts.destroyAll();
+            }
+        });
+    }
+
+    // Theme mutation observer (disconnect previous instance if any)
+    if (AnalyticsPage.darkObserver) {
+        AnalyticsPage.darkObserver.disconnect();
+    }
+    AnalyticsPage.darkObserver = new MutationObserver(mutations => {
         mutations.forEach(m => {
-            if (m.attributeName === 'class' && AnalyticsPage.state) {
-                AnalyticsPage.charts.renderAll(AnalyticsPage.state);
+            if (m.attributeName === 'class' && AnalyticsPage.state && document.getElementById('analytics-app')) {
+                AnalyticsPage.helpers.ensureApexCharts(() => {
+                    AnalyticsPage.charts.renderActiveTab(AnalyticsPage.state);
+                });
             }
         });
     });
-    darkObserver.observe(document.documentElement, { attributes: true });
+    AnalyticsPage.darkObserver.observe(document.documentElement, { attributes: true });
 
-    // Turbo cleanup
-    document.addEventListener('turbo:before-cache', function () {
-        if (darkObserver) darkObserver.disconnect();
-        AnalyticsPage.charts.destroyAll();
-    }, { once: true });
+    // Initial trigger if script evaluates after DOM ready
+    if (document.readyState !== 'loading') {
+        initAnalytics();
+    }
 
 })();

@@ -82,16 +82,16 @@
                         <!-- Card 3: Affiliate -->
                         <div class="image-style-option-card" onclick="selectPurposeCard('affiliate', this)">
                             <div class="option-thumb-box">
-                                <div class="option-mobile-icon-badge" class="wizard-card-affiliate-bg">
-                                    <i class="fas fa-link" class="wizard-card-affiliate-icon"></i>
+                                <div class="option-mobile-icon-badge wizard-card-affiliate-bg">
+                                    <i class="fas fa-link wizard-card-affiliate-icon"></i>
                                 </div>
                                 <div class="thumb-ui-mockup affiliate-mockup">
                                     <div class="mock-link-pill">
-                                        <i class="fas fa-link" class="wizard-card-affiliate-icon-sm"></i>
+                                        <i class="fas fa-link wizard-card-affiliate-icon-sm"></i>
                                         <span>affiliate.link</span>
                                     </div>
                                     <div class="mock-link-pill sub">
-                                        <i class="fas fa-share-alt" class="wizard-card-affiliate-icon-sm-blue"></i>
+                                        <i class="fas fa-share-alt wizard-card-affiliate-icon-sm-blue"></i>
                                         <span>ref=linkan</span>
                                     </div>
                                 </div>

@@ -70,13 +70,6 @@
                     'can_lock' => true,
                 ],
                 [
-                    'route' => 'admin.purchases',
-                    'is_active' => request()->routeIs('admin.purchases'),
-                    'icon' => 'fas fa-box-open',
-                    'label' => __('sidebar.mypurchases'),
-                    'can_lock' => true,
-                ],
-                [
                     'route' => 'admin.settings',
                     'is_active' => request()->routeIs('admin.settings') || request()->routeIs('admin.account*') || request()->routeIs('admin.payout.*'),
                     'icon' => 'fas fa-cog',

@@ -58,8 +58,8 @@
 
             <!-- Mobile Actions -->
             <div class="mobile-only-actions">
-                <button type="button" class="mobile-action-circle-btn sl-btn--edit-direct" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-                <button type="button" class="mobile-action-circle-btn sl-btn--detail" title="Detail"><i class="fas fa-ellipsis-h"></i></button>
+                <button type="button" class="mobile-action-circle-btn sl-btn--edit-direct" title="Edit" aria-label="Edit"><i class="fas fa-pencil-alt"></i></button>
+                <button type="button" class="mobile-action-circle-btn sl-btn--detail" title="Detail" aria-label="Detail"><i class="fas fa-ellipsis-h"></i></button>
             </div>
         </div>
         @empty

@@ -8,4 +8,5 @@ return [
     'sign_up_free' => 'DAFTAR GRATIS',
     'about_us' => 'Tentang Kami',
     'contact_us' => 'Hubungi Kami',
+    'dispute_center' => 'Pusat Resolusi & Sengketa',
 ];

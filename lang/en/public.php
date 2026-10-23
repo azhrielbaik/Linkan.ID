@@ -10,10 +10,40 @@ return [
     'hero_subtitle' => 'Create Instant Mobile Webpage to sell your knowledge. Chat, Video Calls, Events, Digital Product. Share it across social media.',
     'claim_placeholder' => 'YourNameHere',
     'btn_create' => 'Create',
+    'trust_microcopy' => 'Free forever • No credit card required',
+    'cta_sticky_button' => 'Create Free Linkan',
+    'aria_menu_open' => 'Open navigation menu',
+    'aria_menu_close' => 'Close navigation menu',
     
     // Features
+    'features_badge' => 'All-in-One Creator Platform',
+    'features_title_prefix' => 'Not just another',
+    'features_title_highlight' => 'Link-in-Bio',
+    'features_title_suffix' => '',
     'features_title' => 'Not just another link-in-bio',
     'features_subtitle' => 'Linkan.id take care of your entire workflow, start to finish.',
+    'features_rotating' => [
+        [
+            'prefix' => 'Not just another',
+            'highlight' => 'Link-in-Bio',
+            'suffix' => '',
+        ],
+        [
+            'prefix' => 'Your ultimate',
+            'highlight' => 'Creator Toolkit',
+            'suffix' => '',
+        ],
+        [
+            'prefix' => 'Monetize your',
+            'highlight' => 'Audience',
+            'suffix' => 'easily',
+        ],
+        [
+            'prefix' => 'All your links in',
+            'highlight' => 'One Place',
+            'suffix' => '',
+        ],
+    ],
     'feat_digital_product' => 'Digital Product',
     'feat_donations' => 'Donations',
     'feat_online_course' => 'Online Course',
@@ -24,6 +54,8 @@ return [
     'btn_service' => 'Get Service',
     
     // Pricing
+    'pricing_free' => 'Free',
+    'pricing_swipe_hint' => 'Swipe to explore other plans',
     'pricing_basic_title' => 'Basic',
     'pricing_standard_title' => 'Standard',
     'pricing_unlimited_title' => 'Unlimited',
@@ -46,6 +78,7 @@ return [
     
     // Testimonials
     'testi_title' => 'See What People Are Saying',
+    'testi_subtitle' => 'Trusted by thousands of creators, online sellers, and professionals',
     
     // Creator Showcase
     'creator_tag_1' => 'Membantu Creator',

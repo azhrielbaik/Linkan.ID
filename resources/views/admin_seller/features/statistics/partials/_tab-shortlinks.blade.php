@@ -3,13 +3,13 @@
     
     <!-- Charts Row 1: Top 5 Shortlinks & Peak Hours -->
     <div class="analytics-two-cols">
-        <x-analytics.chart-card title="Top 5 Shortlink Paling Banyak Diklik">
+        <x-analytics.chart-card title="Top 5 Shortlink Paling Banyak Diklik" reset-key="shortlinksTop">
             <div class="sa-chart-wrap">
                 <div id="chartShortlinksTop" class="chart-inner-fill"></div>
             </div>
         </x-analytics.chart-card>
 
-        <x-analytics.chart-card title="Tren Jam Kunjungan (00:00 - 23:00 WIB)">
+        <x-analytics.chart-card title="Tren Jam Kunjungan (00:00 - 23:00 WIB)" reset-key="shortlinksHours">
             <div class="sa-chart-wrap">
                 <div id="chartShortlinksPeakHours" class="chart-inner-fill"></div>
             </div>
@@ -18,13 +18,13 @@
 
     <!-- Charts Row 2: Traffic Source & Device Breakdown -->
     <div class="analytics-two-cols mt-section">
-        <x-analytics.chart-card title="Distribusi Sumber Trafik">
+        <x-analytics.chart-card title="Distribusi Sumber Trafik" reset-key="shortlinksSource">
             <div class="sa-chart-wrap">
                 <div id="chartShortlinksSource" class="chart-inner-fill"></div>
             </div>
         </x-analytics.chart-card>
 
-        <x-analytics.chart-card title="Distribusi Perangkat (Device)">
+        <x-analytics.chart-card title="Distribusi Perangkat (Device)" reset-key="shortlinksDevice">
             <div class="sa-chart-wrap">
                 <div id="chartShortlinksDevice" class="chart-inner-fill"></div>
             </div>

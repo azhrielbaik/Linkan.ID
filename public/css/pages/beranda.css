@@ -588,6 +588,19 @@
     min-width: 0;
     overflow: hidden;
     position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+@media (hover: hover) and (pointer: fine),
+(min-width: 768px) {
+    .chart-wrapper {
+        cursor: grab;
+    }
+
+    .chart-wrapper.is-panning {
+        cursor: grabbing !important;
+    }
 }
 
 #statsChart {
@@ -769,7 +782,7 @@
         font-size: 16px;
     }
 
-    .dashboard-beranda-page .suspension-alert-card > div[style*="display: grid"] {
+    .dashboard-beranda-page .suspension-alert-card>div[style*="display: grid"] {
         grid-template-columns: 1fr !important;
     }
 

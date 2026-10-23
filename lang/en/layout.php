@@ -8,4 +8,5 @@ return [
     'sign_up_free' => 'SIGN UP FREE',
     'about_us' => 'About Us',
     'contact_us' => 'Contact Us',
+    'dispute_center' => 'Resolution & Dispute Center',
 ];

@@ -353,7 +353,7 @@
                         <span>{{ __('dashboard.views') }}<strong id="totalViews" style="color: #5A5BF1;">{{ $totalViews }}</strong></span>
                         <span>{{ __('dashboard.orders') }}<strong id="totalClicks" style="color: #5A5BF1;">{{ $totalClicks }}</strong></span>
                     </div>
-                    <div class="chart-wrapper">
+                    <div class="chart-wrapper" id="dashboardChartWrapper" tabindex="0" role="region" aria-label="Grafik Statistik Pengunjung dan Pesanan">
                         <div id="statsChart" style="min-height: 120px;"></div>
                     </div>
                 </div>
@@ -423,23 +423,119 @@
 @endsection
 
 @push("scripts")
-<script src="{{ asset('js/apexcharts.min.js') }}"></script>
 <script>
 (function() {
-    function initBeranda() {
-        const chartEl = document.querySelector('#statsChart');
-        if (!chartEl) return;
+    function ensureApexCharts(callback, maxWaitMs = 5000) {
+        if (typeof window.ApexCharts !== 'undefined') {
+            callback();
+            return;
+        }
+        const startTime = Date.now();
+        const poll = setInterval(function() {
+            if (typeof window.ApexCharts !== 'undefined') {
+                clearInterval(poll);
+                callback();
+            } else if (Date.now() - startTime > maxWaitMs) {
+                clearInterval(poll);
+                console.error('Dashboard: ApexCharts failed to load within timeout');
+            }
+        }, 40);
+    }
 
-        let myChart = null;
+    let myChart = null;
+    let fullChartData = null;
+    let currentZoomIndex = 2; // Default: 7 Hari
+    let panOffset = 0; // 0 = berlabuh di data terbaru (paling kanan)
+
+    // Tingkat zoom yang terstruktur & intuitif untuk metrik bisnis
+    const ZOOM_LEVELS = [
+        { days: 3,  label: '3 Hari' },
+        { days: 5,  label: '5 Hari' },
+        { days: 7,  label: '7 Hari (Default)' },
+        { days: 10, label: '10 Hari' },
+        { days: 14, label: '14 Hari' },
+        { days: 21, label: '21 Hari' },
+        { days: 30, label: '30 Hari' },
+        { days: 45, label: '45 Hari' },
+        { days: 60, label: 'Keseluruhan' }
+    ];
+    const DEFAULT_ZOOM_INDEX = 2; // 7 Hari (Default)
+
+    function getVisibleSlice() {
+        if (!fullChartData || !fullChartData.labels || fullChartData.labels.length === 0) {
+            return { labels: [], views: [], clicks: [], targetDays: 0, totalPoints: 0 };
+        }
+
+        const totalPoints = fullChartData.labels.length;
+        const targetDays = Math.min(totalPoints, ZOOM_LEVELS[currentZoomIndex].days);
+        const maxOffset = Math.max(0, totalPoints - targetDays);
+
+        // Clamp panOffset
+        panOffset = Math.max(0, Math.min(maxOffset, panOffset));
+
+        const startIndex = totalPoints - targetDays - panOffset;
+        const endIndex = startIndex + targetDays;
+
+        return {
+            labels: fullChartData.labels.slice(startIndex, endIndex),
+            views: fullChartData.views.slice(startIndex, endIndex),
+            clicks: fullChartData.clicks.slice(startIndex, endIndex),
+            targetDays: targetDays,
+            totalPoints: totalPoints
+        };
+    }
+
+    function renderZoomView(animate = true) {
+        if (!fullChartData || !myChart) return;
+        const slice = getVisibleSlice();
+
+        myChart.updateOptions({
+            xaxis: {
+                categories: slice.labels
+            },
+            series: [
+                { name: 'Views', data: slice.views },
+                { name: 'Pesanan', data: slice.clicks }
+            ]
+        }, false, animate);
+    }
+
+    function zoomIn() {
+        if (currentZoomIndex > 0) {
+            currentZoomIndex--;
+            renderZoomView(true);
+        }
+    }
+
+    function zoomOut() {
+        if (!fullChartData) return;
+        const totalPoints = fullChartData.labels.length;
+        if (currentZoomIndex < ZOOM_LEVELS.length - 1 && ZOOM_LEVELS[currentZoomIndex].days < totalPoints) {
+            currentZoomIndex++;
+            renderZoomView(true);
+        }
+    }
+
+    function resetZoom() {
+        currentZoomIndex = DEFAULT_ZOOM_INDEX;
+        panOffset = 0;
+        renderZoomView(true);
+    }
+
+    function initBeranda() {
+        const chartContainer = document.querySelector('#statsChart');
+        const wrapper = document.querySelector('#dashboardChartWrapper') || document.querySelector('.chart-wrapper');
+        if (!chartContainer || !wrapper) return;
+
+        // Reset state
+        currentZoomIndex = DEFAULT_ZOOM_INDEX;
+        panOffset = 0;
 
         function updateChart() {
-            const params = new URLSearchParams();
-            // Fetch default last 7 days from API
-
             const csrfMeta = document.querySelector('meta[name="csrf-token"]');
             const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
 
-            fetch(`{{ route('admin.chart-data') }}?${params.toString()}`, {
+            fetch(`{{ route('admin.chart-data') }}?days=60`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': csrfToken
@@ -450,22 +546,29 @@
                 return response.json();
             })
             .then((data) => {
-                if (myChart) {
-                    myChart.updateSeries([
-                        { data: data.views },
-                        { data: data.clicks }
-                    ]);
-                    myChart.updateOptions({
-                        xaxis: { categories: data.labels }
-                    });
-                } else {
-                    const chartContainer = document.querySelector("#statsChart");
-                    chartContainer.innerHTML = ''; // Prevent duplicate charts on Turbo/PJAX reload
+                fullChartData = data;
 
+                ensureApexCharts(function() {
+                    const container = document.querySelector('#statsChart');
+                    if (!container) return;
+
+                    const slice = getVisibleSlice();
+
+                    if (myChart) {
+                        try {
+                            renderZoomView(false);
+                            return;
+                        } catch (e) {
+                            myChart.destroy();
+                            myChart = null;
+                        }
+                    }
+
+                    container.innerHTML = '';
                     const options = {
                         series: [
-                            { name: 'Views', data: data.views },
-                            { name: 'Pesanan', data: data.clicks }
+                            { name: 'Views', data: slice.views },
+                            { name: 'Pesanan', data: slice.clicks }
                         ],
                         chart: {
                             type: 'area',
@@ -473,7 +576,18 @@
                             width: '100%',
                             parentHeightOffset: 0,
                             sparkline: { enabled: true },
-                            toolbar: { show: false }
+                            toolbar: { show: false },
+                            zoom: { enabled: false },
+                            selection: { enabled: false },
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 250,
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 200
+                                }
+                            }
                         },
                         colors: ['#FF9040', '#3B82F6'],
                         fill: {
@@ -490,7 +604,7 @@
                             width: 2
                         },
                         xaxis: {
-                            categories: data.labels,
+                            categories: slice.labels,
                             crosshairs: { width: 1 }
                         },
                         tooltip: {
@@ -499,14 +613,139 @@
                             marker: { show: true }
                         }
                     };
-                    myChart = new ApexCharts(document.querySelector("#statsChart"), options);
+
+                    myChart = new window.ApexCharts(container, options);
                     myChart.render();
-                }
+                });
             })
             .catch((error) => console.error('Error fetching chart data:', error));
         }
 
         updateChart();
+
+        // Bind Pure Interaction (Scroll Zoom & Drag Geser)
+        bindZoomEvents(wrapper);
+    }
+
+    function bindZoomEvents(wrapper) {
+        if (!wrapper || wrapper._zoomBound) return;
+        wrapper._zoomBound = true;
+
+        // 1. Desktop Wheel Scroll Zoom (Scroll Bawah = Zoom Out, Scroll Atas = Zoom In)
+        let wheelAccumulator = 0;
+        const WHEEL_THRESHOLD = 30;
+        let lastZoomTime = 0;
+        const ZOOM_COOLDOWN = 80;
+        let wheelResetTimer = null;
+
+        wrapper.addEventListener('wheel', function(e) {
+            // Cegah zoom hanya jika perangkat layar sentuh murni tanpa pointer mouse
+            const isPureTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(pointer: fine)').matches;
+            if (isPureTouch) return;
+
+            // Mencegah halaman utama bergulir (scroll) saat kursor berada di atas chart-wrapper
+            e.preventDefault();
+
+            const now = Date.now();
+            wheelAccumulator += e.deltaY;
+
+            clearTimeout(wheelResetTimer);
+            wheelResetTimer = setTimeout(() => {
+                wheelAccumulator = 0;
+            }, 120);
+
+            if (Math.abs(wheelAccumulator) >= WHEEL_THRESHOLD && (now - lastZoomTime) > ZOOM_COOLDOWN) {
+                if (wheelAccumulator > 0) {
+                    // Scroll ke bawah -> ZOOM OUT (melihat keseluruhan data lebih luas)
+                    zoomOut();
+                } else {
+                    // Scroll ke atas -> ZOOM IN (memperbesar dan melihat detail lebih fokus)
+                    zoomIn();
+                }
+                wheelAccumulator = 0;
+                lastZoomTime = now;
+            }
+        }, { passive: false });
+
+        // 2. Drag-to-pan / Geser horizontal saat berada pada rentang tertentu
+        let isDragging = false;
+        let startX = 0;
+        let initialOffset = 0;
+
+        wrapper.addEventListener('mousedown', function(e) {
+            if (e.button !== 0 || !fullChartData) return;
+
+            const slice = getVisibleSlice();
+            if (slice.targetDays >= slice.totalPoints) return; // Tidak perlu pan jika semua data terlihat
+
+            isDragging = true;
+            startX = e.clientX;
+            initialOffset = panOffset;
+            wrapper.classList.add('is-panning');
+        });
+
+        window.addEventListener('mousemove', function(e) {
+            if (!isDragging || !fullChartData) return;
+            const dx = e.clientX - startX;
+            // 20px pergeseran mouse = 1 hari bergeser
+            const dayShift = Math.round(dx / 20);
+            const totalPoints = fullChartData.labels.length;
+            const targetDays = Math.min(totalPoints, ZOOM_LEVELS[currentZoomIndex].days);
+            const maxOffset = Math.max(0, totalPoints - targetDays);
+
+            panOffset = Math.max(0, Math.min(maxOffset, initialOffset + dayShift));
+            renderZoomView(false);
+        });
+
+        window.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                wrapper.classList.remove('is-panning');
+            }
+        });
+
+        // 3. Double click untuk reset kembali ke 7 hari
+        wrapper.ondblclick = function() {
+            resetZoom();
+        };
+
+        // 4. Keyboard accessibility
+        wrapper.addEventListener('keydown', function(e) {
+            if (e.key === '+' || e.key === '=' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                zoomIn();
+            } else if (e.key === '-' || e.key === '_' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                zoomOut();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                panOffset = Math.min(fullChartData ? fullChartData.labels.length : 0, panOffset + 1);
+                renderZoomView(false);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                panOffset = Math.max(0, panOffset - 1);
+                renderZoomView(false);
+            } else if (e.key.toLowerCase() === 'r' || e.key === 'Escape' || e.key === 'Home') {
+                e.preventDefault();
+                resetZoom();
+            }
+        });
+    }
+
+    if (!window._dashboardListenersBound) {
+        window._dashboardListenersBound = true;
+        document.addEventListener('turbo:load', initBeranda);
+        document.addEventListener('DOMContentLoaded', initBeranda);
+        document.addEventListener('turbo:before-cache', function() {
+            if (myChart) {
+                try { myChart.destroy(); } catch (e) {}
+                myChart = null;
+            }
+            const chartEl = document.querySelector('#statsChart');
+            if (chartEl) chartEl.innerHTML = '';
+            const wrapper = document.querySelector('#dashboardChartWrapper') || document.querySelector('.chart-wrapper');
+            if (wrapper) wrapper._zoomBound = false;
+        });
     }
 
     if (document.readyState === 'loading') {
@@ -514,7 +753,6 @@
     } else {
         initBeranda();
     }
-    document.addEventListener('turbo:load', initBeranda);
 })();
 </script>
 @endpush

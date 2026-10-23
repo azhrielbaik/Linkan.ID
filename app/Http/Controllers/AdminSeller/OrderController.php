@@ -32,7 +32,7 @@ class OrderController extends Controller
         $order = $this->orderService->getOrderDetail($user->id, $id);
 
         if (!$order) {
-            return response()->json(['error' => 'Transaction not found'], 404);
+            return response()->json(['error' => __('admin.data_not_found')], 404);
         }
 
         return view('admin_seller.features.orders.partials._detail', compact('order'));
@@ -42,7 +42,7 @@ class OrderController extends Controller
     {
         try {
             $this->orderService->updateOrderStatus($id, $request->status);
-            return response()->json(['success' => true, 'message' => 'Transaction status updated']);
+            return response()->json(['success' => true, 'message' => __('admin.order_status_updated')]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }

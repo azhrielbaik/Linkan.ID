@@ -13,16 +13,19 @@
 
             <!-- Modern Date Range Trigger & Popover -->
             <div class="analytics-datepicker-anchor" id="datePickerAnchor" style="position: relative;">
-                <button type="button" id="btnDateRangeTrigger" onclick="AnalyticsPage.datepicker.toggle()" class="analytics-date-trigger-pill">
-                    <i class="far fa-calendar-alt text-indigo-500"></i>
+                <button type="button" id="btnDateRangeTrigger" onclick="AnalyticsPage.datepicker.toggle(event)" class="analytics-date-trigger-pill">
+                    <i class="far fa-calendar-alt text-orange-500"></i>
                     <span id="dateTriggerLabel">
                         {{ \Carbon\Carbon::parse($analytics['start_date'])->format('M d, Y') }} – {{ \Carbon\Carbon::parse($analytics['end_date'])->format('M d, Y') }}
                     </span>
                     <i class="fas fa-chevron-down text-[10px] text-gray-400" id="dateTriggerChevron"></i>
                 </button>
 
+                <!-- Backdrop Overlay for Mobile Bottom Sheet -->
+                <div id="customDateMobileBackdrop" class="analytics-datepicker-backdrop" style="display: none;" onclick="AnalyticsPage.datepicker.close()"></div>
+
                 <!-- Modern SaaS Date Range Picker Popover (Matching Reference Image) -->
-                <div id="customDateExpandableBar" class="analytics-datepicker-popover" style="display: none;">
+                <div id="customDateExpandableBar" class="analytics-datepicker-popover" style="display: none;" onclick="event.stopPropagation()">
                     <div class="analytics-dp-wrapper">
                         
                         <!-- Left Sidebar: Presets (Desktop) -->
@@ -40,34 +43,53 @@
 
                         <!-- Main Calendar Area -->
                         <div class="analytics-dp-main">
-                            <!-- Mobile Header: Inputs & Quick Links (Right side of screenshot) -->
+                            <!-- Mobile Header: Handle, Title, Inputs & Scrollable Presets -->
                             <div class="analytics-dp-mobile-top">
-                                <div class="analytics-dp-inputs">
+                                <div class="analytics-dp-handle-bar"></div>
+                                <div class="analytics-dp-mobile-header">
+                                    <div class="analytics-dp-mobile-title">
+                                        <i class="far fa-calendar-alt text-orange-500"></i>
+                                        <span>Pilih Rentang Tanggal</span>
+                                    </div>
+                                    <button type="button" class="analytics-dp-mobile-close" onclick="AnalyticsPage.datepicker.close()" title="Tutup">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="analytics-dp-inputs analytics-dp-mobile-inputs">
                                     <div class="analytics-dp-input-box">
+                                        <span class="analytics-dp-input-label">Mulai</span>
                                         <span class="dp-val-start">{{ \Carbon\Carbon::parse($analytics['start_date'])->format('m/d/Y') }}</span>
                                     </div>
-                                    <span class="analytics-dp-separator">–</span>
+                                    <span class="analytics-dp-separator"><i class="fas fa-arrow-right"></i></span>
                                     <div class="analytics-dp-input-box">
+                                        <span class="analytics-dp-input-label">Selesai</span>
                                         <span class="dp-val-end">{{ \Carbon\Carbon::parse($analytics['end_date'])->format('m/d/Y') }}</span>
                                     </div>
                                 </div>
-                                <div class="analytics-dp-mobile-presets">
-                                    <button type="button" class="analytics-dp-quick-link" onclick="AnalyticsPage.datepicker.selectPreset('last_week')">Last week</button>
-                                    <button type="button" class="analytics-dp-quick-link" onclick="AnalyticsPage.datepicker.selectPreset('last_month')">Last month</button>
-                                    <button type="button" class="analytics-dp-quick-link" onclick="AnalyticsPage.datepicker.selectPreset('last_year')">Last year</button>
+
+                                <div class="analytics-dp-mobile-presets-chips">
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'today' ? 'active' : '' }}" data-preset="today" onclick="AnalyticsPage.datepicker.selectPreset('today')">Hari Ini</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'yesterday' ? 'active' : '' }}" data-preset="yesterday" onclick="AnalyticsPage.datepicker.selectPreset('yesterday')">Kemarin</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'this_week' ? 'active' : '' }}" data-preset="this_week" onclick="AnalyticsPage.datepicker.selectPreset('this_week')">Minggu Ini</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ in_array(($analytics['preset'] ?? ''), ['last_week', '7days']) ? 'active' : '' }}" data-preset="last_week" onclick="AnalyticsPage.datepicker.selectPreset('last_week')">7 Hari Lalu</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'month' ? 'active' : '' }}" data-preset="month" onclick="AnalyticsPage.datepicker.selectPreset('month')">Bulan Ini</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'last_month' ? 'active' : '' }}" data-preset="last_month" onclick="AnalyticsPage.datepicker.selectPreset('last_month')">Bulan Lalu</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'this_year' ? 'active' : '' }}" data-preset="this_year" onclick="AnalyticsPage.datepicker.selectPreset('this_year')">Tahun Ini</button>
+                                    <button type="button" class="analytics-dp-preset-btn {{ ($analytics['preset'] ?? '') === 'all_time' ? 'active' : '' }}" data-preset="all_time" onclick="AnalyticsPage.datepicker.selectPreset('all_time')">Semua</button>
                                 </div>
                             </div>
 
                             <!-- Calendars Grid -->
                             <div class="analytics-dp-calendars">
-                                <!-- Month 1 (Left) -->
+                                <!-- Month 1 (Left / Mobile Calendar) -->
                                 <div class="analytics-dp-calendar" id="dpMonthLeft">
                                     <div class="analytics-dp-cal-header">
                                         <button type="button" class="analytics-dp-nav-btn" onclick="AnalyticsPage.datepicker.prevMonth()" title="Bulan Sebelumnya">
                                             <i class="fas fa-chevron-left"></i>
                                         </button>
                                         <span class="analytics-dp-month-title" id="dpMonthTitleLeft"></span>
-                                        <button type="button" class="analytics-dp-nav-btn md:hidden" onclick="AnalyticsPage.datepicker.nextMonth()" title="Bulan Berikutnya">
+                                        <button type="button" class="analytics-dp-nav-btn analytics-dp-next-mobile" onclick="AnalyticsPage.datepicker.nextMonth()" title="Bulan Berikutnya">
                                             <i class="fas fa-chevron-right"></i>
                                         </button>
                                     </div>
@@ -284,9 +306,19 @@
                     <i class="far fa-user text-cyan-500"></i>
                     <span>User Overview & Kunjungan</span>
                 </h3>
-                <div class="sa-chart-legend">
-                    <span class="sa-legend-item"><span class="analytics-legend-dot dot-brand"></span> Views</span>
-                    <span class="sa-legend-item"><span class="analytics-legend-dot dot-teal"></span> Clicks</span>
+                <div class="flex items-center gap-2.5">
+                    <div class="sa-chart-legend">
+                        <span class="sa-legend-item"><span class="analytics-legend-dot dot-brand"></span> Views</span>
+                        <span class="sa-legend-item"><span class="analytics-legend-dot dot-teal"></span> Clicks</span>
+                    </div>
+                    <button type="button" 
+                            class="analytics-chart-reset-btn" 
+                            data-chart-reset="traffic"
+                            onclick="AnalyticsPage.charts.reset('traffic', this)" 
+                            title="Reset Grafik ke Tampilan Awal"
+                            aria-label="Reset Grafik">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
                 </div>
             </div>
 
@@ -297,7 +329,7 @@
                         <i class="fas fa-shopping-cart text-xs"></i>
                     </div>
                     <div class="analytics-chip-info">
-                        <span class="analytics-chip-title">AOV <i class="fas fa-info-circle text-[10px] text-gray-400"></i></span>
+                        <span class="analytics-chip-title">AOV <i class="fas fa-info-circle text-[10px] text-gray-400 cursor-help" title="Average Order Value: Rata-rata nominal belanja yang dikeluarkan pembeli dalam satu transaksi sukses (Total Omset ÷ Transaksi Sukses)."></i></span>
                         <span class="analytics-chip-number">
                             <span id="chipAovVal">{{ $analytics['scorecards']['aov']['formatted'] }}</span>
                             <span class="text-[11px] font-bold {{ $analytics['scorecards']['aov']['trend'] === 'up' ? 'text-emerald-500' : 'text-rose-500' }}">
@@ -346,9 +378,16 @@
                     <i class="fas fa-chart-area text-emerald-500"></i>
                     <span>Sessions & Engagement (Omset)</span>
                 </h3>
-                <a href="{{ route('admin.orders') }}" class="analytics-card-link">
-                    Lihat Semua Pesanan <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
+                <div class="flex items-center gap-2.5">
+                    <button type="button" 
+                            class="analytics-chart-reset-btn" 
+                            data-chart-reset="revenue"
+                            onclick="AnalyticsPage.charts.reset('revenue', this)" 
+                            title="Reset Grafik ke Tampilan Awal"
+                            aria-label="Reset Grafik">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Stats Row -->

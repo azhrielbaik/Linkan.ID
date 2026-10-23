@@ -102,54 +102,73 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $days = (int) $request->input('days', 60);
+        if ($days < 7) {
+            $days = 7;
+        } elseif ($days > 90) {
+            $days = 90;
+        }
+
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
 
         try {
-            $startDate = $startDate ? Carbon::parse($startDate) : Carbon::now()->subDays(6);
-            $endDate = $endDate ? Carbon::parse($endDate) : Carbon::now();
+            $endDate = $endDateInput ? Carbon::parse($endDateInput) : Carbon::now();
+            $startDate = $startDateInput ? Carbon::parse($startDateInput) : $endDate->copy()->subDays($days - 1);
         } catch (\Exception $e) {
-            $startDate = Carbon::now()->subDays(6);
             $endDate = Carbon::now();
+            $startDate = $endDate->copy()->subDays($days - 1);
         }
 
-        if ($startDate->diffInDays($endDate) > 30) {
-            $endDate = $startDate->copy()->addDays(30);
+        if ($startDate->gt($endDate)) {
+            $startDate = $endDate->copy()->subDays($days - 1);
         }
+
+        if ($startDate->diffInDays($endDate) > 90) {
+            $startDate = $endDate->copy()->subDays(89);
+        }
+
+        $startBoundary = $startDate->copy()->startOfDay();
+        $endBoundary = $endDate->copy()->endOfDay();
+
+        $viewsByDate = DB::table('link_views')
+            ->where('user_id', $user->id)
+            ->whereBetween('created_at', [$startBoundary, $endBoundary])
+            ->selectRaw('DATE(created_at) as date_val, count(*) as total')
+            ->groupBy('date_val')
+            ->pluck('total', 'date_val')
+            ->toArray();
+
+        $ordersByDate = DB::table('transactions')
+            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
+            ->where('digital_products.user_id', $user->id)
+            ->where('transactions.status', 'success')
+            ->whereBetween('transactions.created_at', [$startBoundary, $endBoundary])
+            ->selectRaw('DATE(transactions.created_at) as date_val, count(*) as total')
+            ->groupBy('date_val')
+            ->pluck('total', 'date_val')
+            ->toArray();
 
         $dates = [];
         $views = [];
         $clicks = [];
 
         $currentDate = $startDate->copy();
-
         while ($currentDate <= $endDate) {
             $dates[] = $currentDate->format('d M');
-
-            $viewCount = DB::table('link_views')
-                ->where('user_id', $user->id)
-                ->whereDate('created_at', $currentDate)
-                ->count();
-
-            $orderCount = DB::table('transactions')
-                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
-                ->where('digital_products.user_id', $user->id)
-                ->where('transactions.status', 'success')
-                ->whereDate('transactions.created_at', $currentDate)
-                ->count();
-
-            $views[] = $viewCount;
-            $clicks[] = $orderCount;
-
+            $dateKey = $currentDate->format('Y-m-d');
+            $views[] = (int) ($viewsByDate[$dateKey] ?? 0);
+            $clicks[] = (int) ($ordersByDate[$dateKey] ?? 0);
             $currentDate->addDay();
         }
 
         return response()->json([
-            'labels' => $dates,
-            'views' => $views,
-            'clicks' => $clicks,
+            'labels'     => $dates,
+            'views'      => $views,
+            'clicks'     => $clicks,
             'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d')
+            'end_date'   => $endDate->format('Y-m-d'),
+            'days'       => count($dates),
         ]);
     }
 
