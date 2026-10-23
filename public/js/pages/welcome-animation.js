@@ -7,114 +7,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     // ============================================================
-    // 1. ROTATING TITLE WITH DYNAMIC I18N PHRASES
+    // 1. KINETIC VERTICAL FADE IN/OUT LOOPING TEXT ANIMATION
     // ============================================================
-    const changingTitle = document.getElementById('changing-title');
-    if (changingTitle) {
-        let phrases = [
-            "Not just another link-in-bio",
-            "Your ultimate creator toolkit",
-            "Monetize your audience easily",
-            "All your links in one place"
-        ];
+    const motionHeader = document.getElementById('featuresMotionHeader');
+    const looperStage = document.getElementById('verticalLooperStage');
+    const looperItems = document.querySelectorAll('.vertical-looper-item');
+    const ambientGlow = document.querySelector('.kinetic-ambient-glow');
 
-        try {
-            if (changingTitle.dataset.phrases) {
-                const parsed = JSON.parse(changingTitle.dataset.phrases);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    phrases = parsed;
-                }
-            }
-        } catch (e) {
-            console.warn('Could not parse changing-title data-phrases, using fallback.', e);
-        }
-
+    if (motionHeader && looperStage && looperItems.length > 0) {
         if (prefersReducedMotion) {
-            // Display static first phrase for users with reduced motion preference
-            changingTitle.textContent = phrases[0];
-            changingTitle.style.opacity = '1';
-        } else {
-            let phraseIndex = 0;
-            let isVisible = false;
-            let isRunning = false;
-            let rotationTimeout = null;
-            let currentTimeline = null;
-
-            function animateChangingText() {
-                if (!isVisible) {
-                    isRunning = false;
-                    return;
+            looperItems.forEach((item, idx) => {
+                if (idx === 0) {
+                    item.classList.add('is-active');
+                    item.style.opacity = '1';
+                    item.style.transform = 'none';
+                    item.style.filter = 'none';
+                } else {
+                    item.style.display = 'none';
                 }
-                isRunning = true;
+            });
+        } else {
+            // Initial state: Item 0 is active, others prepared below
+            looperItems.forEach((item, idx) => {
+                if (idx === 0) {
+                    item.classList.add('is-active');
+                } else {
+                    item.classList.remove('is-active', 'is-exiting');
+                }
+            });
 
-                changingTitle.style.opacity = '0';
-                changingTitle.innerHTML = phrases[phraseIndex];
+            let currentIndex = 0;
+            let loopTimer = null;
+            let isVisible = false;
 
-                const split = splitText(changingTitle, {
-                    lines: false,
-                    words: false,
-                    chars: { wrap: true }
+            const transitionToNext = () => {
+                if (!isVisible || looperItems.length < 2) return;
+
+                const currentItem = looperItems[currentIndex];
+                const nextIndex = (currentIndex + 1) % looperItems.length;
+                const nextItem = looperItems[nextIndex];
+
+                // 1. Slide and fade out current item upwards
+                currentItem.classList.remove('is-active');
+                currentItem.classList.add('is-exiting');
+                currentItem.setAttribute('aria-hidden', 'true');
+
+                // 2. Prepare next item from below
+                nextItem.classList.remove('is-exiting');
+
+                // 3. Slide and fade in next item to center asynchronously to prevent layout thrashing
+                requestAnimationFrame(() => {
+                    nextItem.classList.add('is-active');
+                    nextItem.setAttribute('aria-hidden', 'false');
                 });
 
-                const charElements = changingTitle.querySelectorAll('span');
-                charElements.forEach((el) => {
-                    el.style.display = 'inline-block';
-                    if (el.textContent === ' ' || el.innerHTML === ' ') {
-                        el.innerHTML = '&nbsp;';
-                    }
-                });
+                // 4. After transition ends, clean up the exited item so it resets to below
+                setTimeout(() => {
+                    currentItem.classList.remove('is-exiting');
+                }, 700);
 
-                changingTitle.style.opacity = '1';
+                currentIndex = nextIndex;
+                loopTimer = setTimeout(transitionToNext, 3000);
+            };
 
-                currentTimeline = createTimeline({
-                    onComplete: () => {
-                        phraseIndex = (phraseIndex + 1) % phrases.length;
-                        if (isVisible) {
-                            rotationTimeout = setTimeout(animateChangingText, 50);
-                        } else {
-                            isRunning = false;
-                        }
-                    }
-                });
-
-                currentTimeline.add(split.chars, {
-                    y: ['25px', '0px'],
-                    opacity: [0, 1],
-                    duration: 800,
-                    ease: 'outQuad',
-                    delay: stagger(30)
-                }).add(split.chars, {
-                    y: ['0px', '-25px'],
-                    opacity: [1, 0],
-                    duration: 500,
-                    ease: 'inQuad',
-                    delay: stagger(20, { from: 'first' })
-                }, '+=2500');
-            }
-
-            // Pause/Resume Anime.js title rotation when entering or leaving viewport
-            const titleObserver = new IntersectionObserver((entries) => {
+            const headerObserver = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
-                    const previouslyVisible = isVisible;
                     isVisible = entry.isIntersecting;
-
                     if (isVisible) {
-                        if (!isRunning) {
-                            clearTimeout(rotationTimeout);
-                            rotationTimeout = setTimeout(animateChangingText, previouslyVisible ? 50 : 300);
-                        } else if (currentTimeline && typeof currentTimeline.play === 'function') {
-                            currentTimeline.play();
-                        }
+                        clearTimeout(loopTimer);
+                        loopTimer = setTimeout(transitionToNext, 2600);
                     } else {
-                        clearTimeout(rotationTimeout);
-                        if (currentTimeline && typeof currentTimeline.pause === 'function') {
-                            currentTimeline.pause();
-                        }
+                        clearTimeout(loopTimer);
                     }
                 });
-            }, { threshold: 0.05 });
+            }, { threshold: 0.15 });
 
-            titleObserver.observe(changingTitle);
+            headerObserver.observe(motionHeader);
+
+            // Desktop pointer interactions: subtle ambient glow parallax
+            if (isFinePointer && ambientGlow) {
+                motionHeader.addEventListener('mousemove', (e) => {
+                    const rect = motionHeader.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    ambientGlow.style.transform = `translate(calc(-50% + ${x * 35}px), calc(-50% + ${y * 25}px)) scale(1.08)`;
+                }, { passive: true });
+
+                motionHeader.addEventListener('mouseleave', () => {
+                    ambientGlow.style.transform = '';
+                });
+            }
         }
     }
 

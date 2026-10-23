@@ -16,13 +16,33 @@ return [
     'aria_menu_close' => 'Close navigation menu',
     
     // Features
+    'features_badge' => 'All-in-One Creator Platform',
+    'features_title_prefix' => 'Not just another',
+    'features_title_highlight' => 'Link-in-Bio',
+    'features_title_suffix' => '',
     'features_title' => 'Not just another link-in-bio',
     'features_subtitle' => 'Linkan.id take care of your entire workflow, start to finish.',
     'features_rotating' => [
-        'Not just another link-in-bio',
-        'Your ultimate creator toolkit',
-        'Monetize your audience easily',
-        'All your links in one place',
+        [
+            'prefix' => 'Not just another',
+            'highlight' => 'Link-in-Bio',
+            'suffix' => '',
+        ],
+        [
+            'prefix' => 'Your ultimate',
+            'highlight' => 'Creator Toolkit',
+            'suffix' => '',
+        ],
+        [
+            'prefix' => 'Monetize your',
+            'highlight' => 'Audience',
+            'suffix' => 'easily',
+        ],
+        [
+            'prefix' => 'All your links in',
+            'highlight' => 'One Place',
+            'suffix' => '',
+        ],
     ],
     'feat_digital_product' => 'Digital Product',
     'feat_donations' => 'Donations',

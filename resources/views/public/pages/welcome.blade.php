@@ -185,9 +185,52 @@
         </section>
 
     <!-- FEATURES SECTION -->
-    <section class="features-section reveal">
-        <h2 class="section-title" id="changing-title" data-phrases='@json(__("public.features_rotating"))' style="min-height: calc(2 * 1.3em); overflow: hidden; position: relative;">{{ __('public.features_title') }}</h2>
-        <p class="section-subtitle">{{ __('public.features_subtitle') }}</p>
+    <section class="features-section reveal" id="features">
+        <div class="features-motion-header" id="featuresMotionHeader">
+            <!-- KINETIC VERTICAL FADE IN/OUT LOOPING TEXT CONTAINER -->
+            <div class="vertical-looper-container" id="verticalLooperContainer">
+                <div class="kinetic-ambient-glow" aria-hidden="true"></div>
+
+                <!-- Floating Kinetic Star / Sparkle Accents -->
+                <div class="kinetic-sparkle kinetic-sparkle-1" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                    </svg>
+                </div>
+                <div class="kinetic-sparkle kinetic-sparkle-2" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                    </svg>
+                </div>
+
+                <div class="vertical-looper-stage" id="verticalLooperStage" aria-live="polite">
+                    @foreach(__('public.features_rotating') as $index => $item)
+                        @php
+                            $isArr = is_array($item);
+                            $prefix = $isArr ? ($item['prefix'] ?? '') : $item;
+                            $highlight = $isArr ? ($item['highlight'] ?? '') : '';
+                            $suffix = $isArr ? ($item['suffix'] ?? '') : '';
+                        @endphp
+                        <h2 class="section-title vertical-looper-item {{ $index === 0 ? 'is-active' : '' }}" data-index="{{ $index }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}">
+                            @if($isArr && !empty($highlight))
+                                <span class="kinetic-word">{{ $prefix }}</span>
+                                <span class="kinetic-highlight-wrapper">
+                                    <span class="kinetic-highlight-text">{{ $highlight }}</span>
+                                    <span class="kinetic-shimmer-sweep" aria-hidden="true"></span>
+                                </span>
+                                @if(!empty($suffix))
+                                    <span class="kinetic-word">{{ $suffix }}</span>
+                                @endif
+                            @else
+                                <span>{{ $prefix }}</span>
+                            @endif
+                        </h2>
+                    @endforeach
+                </div>
+            </div>
+
+            <p class="section-subtitle">{{ __('public.features_subtitle') }}</p>
+        </div>
 
         <div class="feature-pills">
             <div class="feature-pill">{{ __('public.feat_digital_product') }}</div>

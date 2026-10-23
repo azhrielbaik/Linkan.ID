@@ -16,13 +16,33 @@ return [
     'aria_menu_close' => 'Tutup menu navigasi',
     
     // Features
+    'features_badge' => 'Platform Kreator All-in-One',
+    'features_title_prefix' => 'Bukan sekadar',
+    'features_title_highlight' => 'Link-in-Bio',
+    'features_title_suffix' => 'biasa',
     'features_title' => 'Bukan sekadar link-in-bio biasa',
     'features_subtitle' => 'Linkan.id mengurus seluruh alur kerja Anda, dari awal hingga akhir.',
     'features_rotating' => [
-        'Bukan sekadar link-in-bio biasa',
-        'Pusat kendali kreator terbaik Anda',
-        'Monetisasi audiens Anda dengan mudah',
-        'Semua tautan Anda di satu tempat',
+        [
+            'prefix' => 'Bukan sekadar',
+            'highlight' => 'Link-in-Bio',
+            'suffix' => 'biasa',
+        ],
+        [
+            'prefix' => 'Pusat kendali',
+            'highlight' => 'Kreator',
+            'suffix' => 'terbaik Anda',
+        ],
+        [
+            'prefix' => 'Monetisasi',
+            'highlight' => 'Audiens Anda',
+            'suffix' => 'dengan mudah',
+        ],
+        [
+            'prefix' => 'Semua tautan Anda di',
+            'highlight' => 'Satu Tempat',
+            'suffix' => '',
+        ],
     ],
     'feat_digital_product' => 'Produk Digital',
     'feat_donations' => 'Donasi',
