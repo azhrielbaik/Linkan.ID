@@ -20,7 +20,7 @@ return new class extends Migration
             'text_elements',
             'divider_elements',
             'video_elements',
-            'social_media_elements'
+            'social_media_elements',
         ];
 
         foreach ($elementTables as $tableName) {
@@ -40,7 +40,7 @@ return new class extends Migration
             'text_elements',
             'divider_elements',
             'video_elements',
-            'social_media_elements'
+            'social_media_elements',
         ];
 
         foreach ($elementTables as $tableName) {

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\AdminSeller;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use App\Models\DigitalProduct;
 use App\Models\User;
 use App\Services\AdminSeller\DashboardService;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -41,7 +41,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->isSuspended()) {
+        if (! $user->isSuspended()) {
             return back()->with('info', 'Akun Anda saat ini dalam status aktif dan tidak ditangguhkan.');
         }
 
@@ -69,10 +69,17 @@ class DashboardController extends Controller
             if (now()->lt($cooldownUntil)) {
                 $diff = now()->diff($cooldownUntil);
                 $remainingParts = [];
-                if ($diff->h > 0) $remainingParts[] = $diff->h . ' jam';
-                if ($diff->i > 0) $remainingParts[] = $diff->i . ' menit';
-                if (empty($remainingParts)) $remainingParts[] = $diff->s . ' detik';
+                if ($diff->h > 0) {
+                    $remainingParts[] = $diff->h.' jam';
+                }
+                if ($diff->i > 0) {
+                    $remainingParts[] = $diff->i.' menit';
+                }
+                if (empty($remainingParts)) {
+                    $remainingParts[] = $diff->s.' detik';
+                }
                 $remainingText = implode(' ', $remainingParts);
+
                 return back()->with('error', "Permohonan banding Anda sebelumnya telah ditolak. Anda baru dapat mengajukan banding kembali setelah 1 hari (tersisa {$remainingText}).");
             }
         }
@@ -81,17 +88,18 @@ class DashboardController extends Controller
             'appeal_reason' => ['required', 'string', 'min:10', 'max:1500'],
         ], [
             'appeal_reason.required' => 'Mohon jelaskan alasan atau klarifikasi banding Anda.',
-            'appeal_reason.min'      => 'Penjelasan banding minimal 10 karakter.',
-            'appeal_reason.max'      => 'Penjelasan banding maksimal 1500 karakter.',
+            'appeal_reason.min' => 'Penjelasan banding minimal 10 karakter.',
+            'appeal_reason.max' => 'Penjelasan banding maksimal 1500 karakter.',
         ]);
 
         \App\Models\SuspensionAppeal::create([
-            'user_id'       => $user->id,
+            'user_id' => $user->id,
             'appeal_reason' => strip_tags($request->appeal_reason),
-            'status'        => 'pending',
+            'status' => 'pending',
         ]);
 
         $attemptNumber = $totalAppeals + 1;
+
         return back()->with('success', "Permohonan banding ke-{$attemptNumber} dari 3 berhasil dikirimkan. Tim Platform Admin akan segera meninjau permohonan Anda.");
     }
 
@@ -163,12 +171,12 @@ class DashboardController extends Controller
         }
 
         return response()->json([
-            'labels'     => $dates,
-            'views'      => $views,
-            'clicks'     => $clicks,
+            'labels' => $dates,
+            'views' => $views,
+            'clicks' => $clicks,
             'start_date' => $startDate->format('Y-m-d'),
-            'end_date'   => $endDate->format('Y-m-d'),
-            'days'       => count($dates),
+            'end_date' => $endDate->format('Y-m-d'),
+            'days' => count($dates),
         ]);
     }
 
@@ -186,7 +194,7 @@ class DashboardController extends Controller
 
         return response()->json([
             'total' => $digitalProducts->count(),
-            'products' => $digitalProducts
+            'products' => $digitalProducts,
         ]);
     }
 
@@ -197,12 +205,12 @@ class DashboardController extends Controller
         $linkId = $request->query('link_id');
         $target = $request->query('target');
 
-        if ($target !== '#' && !filter_var($target, FILTER_VALIDATE_URL)) {
+        if ($target !== '#' && ! filter_var($target, FILTER_VALIDATE_URL)) {
             abort(400, 'Invalid target URL');
         }
 
         $user = User::where('username', $linkId)->first();
-        if (!$user) {
+        if (! $user) {
             abort(404, 'User not found');
         }
 
@@ -212,7 +220,7 @@ class DashboardController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->header('User-Agent'),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -228,6 +236,7 @@ class DashboardController extends Controller
         if ($request->has('notification_key')) {
             $this->dashboardService->markNotificationRead($user, $request->notification_key);
         }
+
         return response()->json(['status' => 'success']);
     }
 
@@ -235,6 +244,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $this->dashboardService->markAllNotificationsRead($user);
+
         return response()->json(['status' => 'success']);
     }
 }

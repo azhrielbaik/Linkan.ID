@@ -4,8 +4,6 @@ namespace App\Http\Controllers\PlatformAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Dispute;
-use App\Models\Transaction;
-use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,25 +29,25 @@ class DisputeManagementController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('dispute_code', 'like', "%{$search}%")
-                  ->orWhere('order_id', 'like', "%{$search}%")
-                  ->orWhere('buyer_name', 'like', "%{$search}%")
-                  ->orWhere('buyer_email', 'like', "%{$search}%")
-                  ->orWhereHas('seller', function ($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('product', function ($pq) use ($search) {
-                      $pq->where('title', 'like', "%{$search}%");
-                  });
+                    ->orWhere('order_id', 'like', "%{$search}%")
+                    ->orWhere('buyer_name', 'like', "%{$search}%")
+                    ->orWhere('buyer_email', 'like', "%{$search}%")
+                    ->orWhereHas('seller', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('product', function ($pq) use ($search) {
+                        $pq->where('title', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Filter Tanggal
         $startDate = $request->input('start_date');
-        $endDate   = $request->input('end_date');
+        $endDate = $request->input('end_date');
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -78,6 +76,7 @@ class DisputeManagementController extends Controller
     public function show($id)
     {
         $dispute = Dispute::with(['transaction', 'product', 'seller', 'resolver'])->findOrFail($id);
+
         return view('platformadmin.disputes.show', compact('dispute'));
     }
 
@@ -121,7 +120,7 @@ class DisputeManagementController extends Controller
         ]);
 
         // Verifikasi kata sandi admin yang sedang login
-        if (!Hash::check($request->admin_password, Auth::user()->password)) {
+        if (! Hash::check($request->admin_password, Auth::user()->password)) {
             return back()->with('error', 'Kata sandi admin salah. Tindakan refund dibatalkan demi keamanan.');
         }
 
@@ -152,7 +151,7 @@ class DisputeManagementController extends Controller
 
             ActivityLogger::log(
                 'approve_dispute_refund',
-                "Admin menerbitkan refund untuk sengketa {$dispute->dispute_code} sebesar Rp " . number_format($dispute->amount, 0, ',', '.') . " ke {$dispute->buyer_name} ({$dispute->refund_bank_name} - {$dispute->refund_account_number}). Ref: {$request->refund_reference}",
+                "Admin menerbitkan refund untuk sengketa {$dispute->dispute_code} sebesar Rp ".number_format($dispute->amount, 0, ',', '.')." ke {$dispute->buyer_name} ({$dispute->refund_bank_name} - {$dispute->refund_account_number}). Ref: {$request->refund_reference}",
                 [
                     'dispute_code' => $dispute->dispute_code,
                     'order_id' => $dispute->order_id,
@@ -179,7 +178,7 @@ class DisputeManagementController extends Controller
             'admin_notes.required' => 'Alasan penolakan sengketa wajib diisi untuk transparansi.',
         ]);
 
-        if (!Hash::check($request->admin_password, Auth::user()->password)) {
+        if (! Hash::check($request->admin_password, Auth::user()->password)) {
             return back()->with('error', 'Kata sandi admin salah. Tindakan dibatalkan demi keamanan.');
         }
 

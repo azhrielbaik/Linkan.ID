@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller\Microsite;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\ImageElement;
-use App\Models\Appearance;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
 
 class ImageElementController extends Controller
 {
@@ -15,7 +17,7 @@ class ImageElementController extends Controller
             'image' => 'nullable|image|max:2048',
             'link_url' => 'nullable|url',
             'element_id' => 'nullable|integer',
-            'appearance_id' => 'required|integer|exists:appearances,id'
+            'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
         $user = $request->user();
@@ -25,8 +27,8 @@ class ImageElementController extends Controller
             $imageElement = ImageElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
         }
 
-        if (!$imageElement) {
-            $imageElement = new ImageElement();
+        if (! $imageElement) {
+            $imageElement = new ImageElement;
             $imageElement->user_id = $user->id;
             $imageElement->appearance_id = $request->appearance_id;
             $maxOrder = ImageElement::where('appearance_id', $request->appearance_id)->max('order_position');
@@ -39,9 +41,9 @@ class ImageElementController extends Controller
             }
 
             $file = $request->file('image');
-            $filename = 'elements/images/' . time() . '_' . \Illuminate\Support\Str::random(10) . '.webp';
+            $filename = 'elements/images/'.time().'_'.Str::random(10).'.webp';
 
-            $image = \Intervention\Image\ImageManager::gd()->read($file)
+            $image = ImageManager::gd()->read($file)
                 ->scaleDown(width: 1200);
 
             $encoded = $image->toWebp(80);
@@ -57,7 +59,7 @@ class ImageElementController extends Controller
         return response()->json([
             'success' => true,
             'id' => $imageElement->id,
-            'image_url' => $imageElement->image_path ? asset('storage/' . $imageElement->image_path) : null
+            'image_url' => $imageElement->image_path ? asset('storage/'.$imageElement->image_path) : null,
         ]);
     }
 
@@ -70,8 +72,10 @@ class ImageElementController extends Controller
                 Storage::disk('public')->delete($element->image_path);
             }
             $element->delete();
+
             return response()->json(['success' => true]);
         }
+
         return response()->json(['success' => false], 404);
     }
 }

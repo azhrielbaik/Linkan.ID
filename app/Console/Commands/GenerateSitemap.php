@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\DigitalProduct;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use App\Models\User;
-use App\Models\DigitalProduct;
-use Carbon\Carbon;
 
 class GenerateSitemap extends Command
 {
@@ -64,7 +64,7 @@ class GenerateSitemap extends Command
         foreach ($appearances as $appearance) {
             $user = $appearance->user;
             // Lewati jika user/seller pemilik sedang ditangguhkan
-            if (!$user || $user->isSuspended()) {
+            if (! $user || $user->isSuspended()) {
                 continue;
             }
 
@@ -87,7 +87,7 @@ class GenerateSitemap extends Command
         $indexedProducts = 0;
         foreach ($products as $product) {
             $seller = $product->user;
-            if (!$seller || $seller->isSuspended()) {
+            if (! $seller || $seller->isSuspended()) {
                 continue;
             }
 

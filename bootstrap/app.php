@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Middleware\AdminIdleTimeout;
 use App\Http\Middleware\CheckSuspended;
 use App\Http\Middleware\Localization;
 use App\Http\Middleware\LogHttpRequests;
 use App\Http\Middleware\RoleMiddleware;
-use App\Http\Middleware\AdminIdleTimeout;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
         $middleware->validateCsrfTokens(except: [
             'midtrans/callback',
-            'midtrans-callback'
+            'midtrans-callback',
         ]);
         $middleware->web(prepend: [
             Localization::class,

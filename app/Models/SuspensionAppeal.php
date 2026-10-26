@@ -37,12 +37,12 @@ class SuspensionAppeal extends Model
         parent::boot();
 
         static::created(function ($model) {
-            broadcast(new \App\Events\PlatformNotificationEvent());
+            broadcast(new \App\Events\PlatformNotificationEvent);
         });
 
         static::updated(function ($model) {
             if ($model->isDirty('status')) {
-                broadcast(new \App\Events\PlatformNotificationEvent());
+                broadcast(new \App\Events\PlatformNotificationEvent);
             }
         });
     }

@@ -61,7 +61,7 @@ class PublicProfileTest extends TestCase
         \App\Models\Appearance::create([
             'user_id' => $user->id,
             'alias' => $user->username,
-            'name' => 'Test User'
+            'name' => 'Test User',
         ]);
 
         // First visit should insert a view

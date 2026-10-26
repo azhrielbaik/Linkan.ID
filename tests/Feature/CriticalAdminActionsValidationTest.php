@@ -13,6 +13,7 @@ class CriticalAdminActionsValidationTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $seller;
 
     protected function setUp(): void
@@ -149,7 +150,7 @@ class CriticalAdminActionsValidationTest extends TestCase
         $response->assertSessionHas('success');
 
         $product->refresh();
-        $this->assertTrue((bool)$product->is_active);
+        $this->assertTrue((bool) $product->is_active);
         $this->assertNull($product->takedown_reason);
         $this->assertNull($product->takedown_at);
     }

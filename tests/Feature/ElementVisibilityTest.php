@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\ImageElement;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\ImageElement;
 
 class ElementVisibilityTest extends TestCase
 {
@@ -19,7 +19,7 @@ class ElementVisibilityTest extends TestCase
             'user_id' => $user->id,
             'image_path' => 'dummy/path.png',
             'order_position' => 1,
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         // Assert Initial State
@@ -29,7 +29,7 @@ class ElementVisibilityTest extends TestCase
         $response = $this->actingAs($user)->postJson('/admin/elements/toggle-visibility', [
             'element_type' => 'image',
             'element_id' => $element->id,
-            'is_active' => false
+            'is_active' => false,
         ]);
 
         // Assert Response

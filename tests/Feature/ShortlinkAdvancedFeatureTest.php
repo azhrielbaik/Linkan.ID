@@ -17,7 +17,7 @@ class ShortlinkAdvancedFeatureTest extends TestCase
         $shortlink = Shortlink::create([
             'user_id' => $user->id,
             'slug' => 'old-slug',
-            'destination' => 'https://example.com'
+            'destination' => 'https://example.com',
         ]);
 
         $response = $this->actingAs($user)->put(route('admin.shortlinks.update', $shortlink), [
@@ -56,7 +56,7 @@ class ShortlinkAdvancedFeatureTest extends TestCase
             'user_id' => $user->id,
             'slug' => 'locked-link',
             'destination' => 'https://example.com',
-            'password' => 'secret123'
+            'password' => 'secret123',
         ]);
 
         $response = $this->get('/locked-link');
@@ -70,16 +70,16 @@ class ShortlinkAdvancedFeatureTest extends TestCase
             'user_id' => $user->id,
             'slug' => 'locked-link-2',
             'destination' => 'https://example.com',
-            'password' => 'secret123'
+            'password' => 'secret123',
         ]);
 
         $response = $this->post(route('shortlink.password.verify', 'locked-link-2'), [
-            'password' => 'secret123'
+            'password' => 'secret123',
         ]);
 
         $response->assertRedirect('/locked-link-2');
-        $this->assertTrue(session()->has('unlocked_shortlink_' . $shortlink->id));
-        
+        $this->assertTrue(session()->has('unlocked_shortlink_'.$shortlink->id));
+
         // After unlocking, hitting the link directly should redirect to destination
         $redirectResponse = $this->get('/locked-link-2');
         $redirectResponse->assertRedirect('https://example.com');

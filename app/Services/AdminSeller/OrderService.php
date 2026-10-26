@@ -3,7 +3,6 @@
 namespace App\Services\AdminSeller;
 
 use App\Models\Transaction;
-use App\Models\DigitalProduct;
 use App\Support\Pagination\EncryptedCursorPaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,9 +12,6 @@ class OrderService
     /**
      * Get paginated orders for a seller with obfuscated cursor URLs.
      *
-     * @param int $userId
-     * @param array $filters
-     * @param int $perPage
      * @return \Illuminate\Contracts\Pagination\CursorPaginator
      */
     public function getOrders(int $userId, array $filters = [], int $perPage = 10)
@@ -24,11 +20,11 @@ class OrderService
         $this->autoCancelExpiredPendingOrders($userId, 24);
 
         $query = Transaction::with(['product'])
-            ->whereHas('product', function($query) use ($userId) {
+            ->whereHas('product', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             });
 
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $status = strtolower($filters['status']);
             if (in_array($status, ['success', 'completed', 'complete'])) {
                 $status = 'success';
@@ -38,20 +34,20 @@ class OrderService
             $query->where('status', $status);
         }
 
-        if (!empty($filters['date'])) {
+        if (! empty($filters['date'])) {
             $query->whereDate('created_at', $filters['date']);
         } elseif (empty($filters['search'])) {
             // Default to last 30 days if no date filter and no search is applied
             $query->where('created_at', '>=', now()->subDays(30));
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
-                $q->whereHas('product', function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('product', function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%");
                 })
-                ->orWhere('buyer_name', 'like', "%{$search}%");
+                    ->orWhere('buyer_name', 'like', "%{$search}%");
             });
         }
 
@@ -62,15 +58,11 @@ class OrderService
 
     /**
      * Get specific order details.
-     *
-     * @param int $userId
-     * @param int $orderId
-     * @return Transaction|null
      */
     public function getOrderDetail(int $userId, int $orderId): ?Transaction
     {
         $order = Transaction::with(['product'])
-            ->whereHas('product', function($query) use ($userId) {
+            ->whereHas('product', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
             ->where('id', $orderId)
@@ -87,8 +79,8 @@ class OrderService
     /**
      * Auto-cancel pending orders that are older than the specified hours (default 24 hours).
      *
-     * @param int|null $userId If specified, only cancels for this seller; otherwise globally.
-     * @param int $hours Expiration threshold in hours (default 24).
+     * @param  int|null  $userId  If specified, only cancels for this seller; otherwise globally.
+     * @param  int  $hours  Expiration threshold in hours (default 24).
      * @return int Number of cancelled orders.
      */
     public function autoCancelExpiredPendingOrders(?int $userId = null, int $hours = 24): int
@@ -123,9 +115,6 @@ class OrderService
     /**
      * Update order status and manage seller balance.
      *
-     * @param int $orderId
-     * @param string $newStatus
-     * @return bool
      * @throws \Exception
      */
     public function updateOrderStatus(int $orderId, string $newStatus): bool
@@ -140,7 +129,7 @@ class OrderService
             $normalizedStatus = 'success';
         }
 
-        if (!in_array($normalizedStatus, Transaction::getValidStatuses())) {
+        if (! in_array($normalizedStatus, Transaction::getValidStatuses())) {
             throw new \Exception('Invalid status');
         }
 
@@ -152,7 +141,7 @@ class OrderService
             DB::table('users')
                 ->where('id', $seller->id)
                 ->increment('balance', $transaction->total_price);
-        } else if ($oldStatus === 'success' && $normalizedStatus !== 'success') {
+        } elseif ($oldStatus === 'success' && $normalizedStatus !== 'success') {
             $seller = $transaction->product->user;
             DB::table('users')
                 ->where('id', $seller->id)

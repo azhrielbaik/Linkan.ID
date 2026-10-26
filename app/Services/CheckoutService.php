@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\MidtransStatus;
+use App\Enums\TransactionStatus;
 use App\Mail\SendDigitalProductMail;
 use App\Models\DigitalProduct;
 use App\Models\Transaction;
@@ -10,9 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Notification;
-use App\Enums\TransactionStatus;
-use App\Enums\MidtransStatus;
 
 class CheckoutService
 {
@@ -28,7 +27,7 @@ class CheckoutService
 
         $totalPrice = $itemPrice * $qty;
         $snapToken = null;
-        $orderId = 'ORDER-' . uniqid();
+        $orderId = 'ORDER-'.uniqid();
 
         if ($totalPrice > 0) {
             Config::$serverKey = config('services.midtrans.server_key');
@@ -85,7 +84,7 @@ class CheckoutService
             ]);
 
             // Ubah status dari Midtrans ke status yang kita gunakan
-            // PERBAIKAN: Untuk mencegah race condition dengan webhook, storeTransaction 
+            // PERBAIKAN: Untuk mencegah race condition dengan webhook, storeTransaction
             // hanya menyimpan status 'pending' untuk transaksi berbayar.
             if ($data['total_price'] == 0) {
                 $status = TransactionStatus::SUCCESS;
@@ -132,26 +131,27 @@ class CheckoutService
     /**
      * Handle Midtrans Webhook Callback
      */
-    public function handleCallback(array $payload = null)
+    public function handleCallback(?array $payload = null)
     {
         Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = config('services.midtrans.is_production');
-        
-        // Cek status langsung menggunakan order_id dari payload untuk menghindari isu php://input 
+
+        // Cek status langsung menggunakan order_id dari payload untuk menghindari isu php://input
         try {
             $payloadArray = request()->all();
             if (empty($payloadArray['order_id'])) {
                 return ['status' => 400, 'message' => 'Missing order_id in payload'];
             }
-            
+
             $status_response = \Midtrans\Transaction::status($payloadArray['order_id']);
             $orderId = $status_response->order_id;
             $transactionStatusRaw = $status_response->transaction_status;
-            
+
         } catch (\Exception $e) {
-            Log::channel('payment')->error('Midtrans Callback Error: ' . $e->getMessage(), [
+            Log::channel('payment')->error('Midtrans Callback Error: '.$e->getMessage(), [
                 'error_message' => $e->getMessage(),
             ]);
+
             return ['status' => 400, 'message' => 'Invalid notification payload'];
         }
 
@@ -160,11 +160,11 @@ class CheckoutService
 
         // Enhance payment type with bank/store details if available
         if ($paymentType === 'bank_transfer' && isset($status_response->va_numbers[0]->bank)) {
-            $paymentType .= '-' . $status_response->va_numbers[0]->bank;
+            $paymentType .= '-'.$status_response->va_numbers[0]->bank;
         } elseif ($paymentType === 'echannel') {
             $paymentType = 'bank_transfer-mandiri';
         } elseif ($paymentType === 'cstore' && isset($status_response->store)) {
-            $paymentType .= '-' . $status_response->store;
+            $paymentType .= '-'.$status_response->store;
         }
 
         Log::channel('payment')->info('Midtrans webhook callback received', [
@@ -177,10 +177,11 @@ class CheckoutService
             // Kunci baris transaksi ini untuk mencegah eksekusi webhook ganda secara paralel
             $trx = Transaction::where('order_id', $orderId)->lockForUpdate()->first();
 
-            if (!$trx) {
+            if (! $trx) {
                 Log::channel('payment')->error('Midtrans Callback - Transaction not found', [
                     'order_id' => $orderId,
                 ]);
+
                 return ['status' => 404, 'message' => 'Transaction not found'];
             }
 
@@ -190,6 +191,7 @@ class CheckoutService
                 Log::channel('payment')->info('Midtrans Callback - Transaction already success, skipping double processing', [
                     'order_id' => $orderId,
                 ]);
+
                 return ['status' => 200, 'message' => 'Transaction already processed'];
             }
 
@@ -211,13 +213,13 @@ class CheckoutService
                 $product = $trx->product;
                 if ($product && $product->user_id) {
                     $sellerId = $product->user_id;
-                    
+
                     Log::channel('payment')->info('Midtrans Callback - Updating seller balance', [
                         'order_id' => $orderId,
                         'seller_id' => $sellerId,
                         'amount' => $trx->total_price,
                     ]);
-                    
+
                     // Kunci baris user sebelum mengubah balance untuk mencegah race condition dengan payout
                     DB::table('users')
                         ->where('id', $sellerId)

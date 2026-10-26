@@ -19,13 +19,13 @@ class SellerDetailResource extends JsonResource
         $user = $this->resource;
 
         // Fetch related stats
-        $totalProducts    = $user->digitalProducts()->count();
-        $activeProducts   = $user->digitalProducts()->where('is_active', true)->where('verification_status', 'approved')->count();
-        $pendingProducts  = $user->digitalProducts()->where('verification_status', 'pending')->count();
+        $totalProducts = $user->digitalProducts()->count();
+        $activeProducts = $user->digitalProducts()->where('is_active', true)->where('verification_status', 'approved')->count();
+        $pendingProducts = $user->digitalProducts()->where('verification_status', 'pending')->count();
         $rejectedProducts = $user->digitalProducts()->where('verification_status', 'rejected')->count();
         $takedownProducts = $user->digitalProducts()->where('is_active', false)->count();
 
-        $totalViews  = DB::table('link_views')->where('link_id', $user->username)->count();
+        $totalViews = DB::table('link_views')->where('link_id', $user->username)->count();
         $totalClicks = DB::table('link_clicks')->where('link_id', $user->username)->count();
 
         $totalTurnover = (float) DB::table('transactions')
@@ -59,15 +59,15 @@ class SellerDetailResource extends JsonResource
             ->get()
             ->map(function ($p) {
                 return [
-                    'id'                  => $p->id,
-                    'title'               => $p->title,
-                    'price'               => (float) $p->price,
-                    'sale_price'          => $p->sale_price ? (float) $p->sale_price : null,
-                    'image'               => $p->image ? asset('storage/' . $p->image) : null,
-                    'platform_type'       => $p->platform_type,
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'price' => (float) $p->price,
+                    'sale_price' => $p->sale_price ? (float) $p->sale_price : null,
+                    'image' => $p->image ? asset('storage/'.$p->image) : null,
+                    'platform_type' => $p->platform_type,
                     'verification_status' => $p->verification_status,
-                    'is_active'           => (bool) $p->is_active,
-                    'created_at'          => $p->created_at ? $p->created_at->format('d M Y') : '-',
+                    'is_active' => (bool) $p->is_active,
+                    'created_at' => $p->created_at ? $p->created_at->format('d M Y') : '-',
                 ];
             });
 
@@ -82,13 +82,13 @@ class SellerDetailResource extends JsonResource
             ->get()
             ->map(function ($a, $index) {
                 return [
-                    'id'            => $a->id,
-                    'attempt'       => $index + 1,
+                    'id' => $a->id,
+                    'attempt' => $index + 1,
                     'appeal_reason' => $a->appeal_reason,
-                    'status'        => $a->status,
-                    'admin_notes'   => $a->admin_notes,
-                    'submitted_at'  => $a->created_at->format('d M Y, H:i'),
-                    'resolved_at'   => $a->resolved_at ? $a->resolved_at->format('d M Y, H:i') : null,
+                    'status' => $a->status,
+                    'admin_notes' => $a->admin_notes,
+                    'submitted_at' => $a->created_at->format('d M Y, H:i'),
+                    'resolved_at' => $a->resolved_at ? $a->resolved_at->format('d M Y, H:i') : null,
                 ];
             })
             ->values();
@@ -97,41 +97,41 @@ class SellerDetailResource extends JsonResource
         if ($user->avatar) {
             $avatarUrl = Str::startsWith($user->avatar, ['http://', 'https://'])
                 ? $user->avatar
-                : asset('storage/' . $user->avatar);
+                : asset('storage/'.$user->avatar);
         }
 
         return [
             'status' => 'success',
             'user' => [
-                'id'           => $user->id,
-                'name'         => $user->name,
-                'email'        => class_exists('\App\Models\ActivityLog') && method_exists('\App\Models\ActivityLog', 'maskEmail') 
-                                  ? \App\Models\ActivityLog::maskEmail($user->email) 
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => class_exists('\App\Models\ActivityLog') && method_exists('\App\Models\ActivityLog', 'maskEmail')
+                                  ? \App\Models\ActivityLog::maskEmail($user->email)
                                   : $user->email,
-                'username'     => $user->username,
-                'role'         => $user->role,
+                'username' => $user->username,
+                'role' => $user->role,
                 'is_suspended' => $user->isSuspended(),
-                'avatar'       => $avatarUrl,
-                'joined_at'    => $user->created_at ? $user->created_at->format('d M Y, H:i') : '-',
-                'microsite_url'=> url('/linkan.id/' . ($user->username ?? $user->id)),
+                'avatar' => $avatarUrl,
+                'joined_at' => $user->created_at ? $user->created_at->format('d M Y, H:i') : '-',
+                'microsite_url' => url('/linkan.id/'.($user->username ?? $user->id)),
             ],
             'stats' => [
-                'total_products'    => $totalProducts,
-                'active_products'   => $activeProducts,
-                'pending_products'  => $pendingProducts,
+                'total_products' => $totalProducts,
+                'active_products' => $activeProducts,
+                'pending_products' => $pendingProducts,
                 'rejected_products' => $rejectedProducts,
                 'takedown_products' => $takedownProducts,
-                'total_views'       => $totalViews,
-                'total_clicks'      => $totalClicks,
-                'total_turnover'    => $totalTurnover,
-                'total_orders'      => $totalOrders,
-                'total_withdrawn'   => $totalWithdrawn,
-                'pending_withdraw'  => $pendingWithdraw,
-                'current_balance'   => $currentBalance,
+                'total_views' => $totalViews,
+                'total_clicks' => $totalClicks,
+                'total_turnover' => $totalTurnover,
+                'total_orders' => $totalOrders,
+                'total_withdrawn' => $totalWithdrawn,
+                'pending_withdraw' => $pendingWithdraw,
+                'current_balance' => $currentBalance,
             ],
-            'recent_products'  => $recentProducts,
-            'recent_payouts'   => $recentPayouts,
-            'appeals_history'  => $appealsHistory,
+            'recent_products' => $recentProducts,
+            'recent_payouts' => $recentPayouts,
+            'appeals_history' => $appealsHistory,
         ];
     }
 }

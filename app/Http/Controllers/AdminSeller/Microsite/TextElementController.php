@@ -1,8 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller\Microsite;
 
+use App\Http\Controllers\Controller;
+use App\Models\TextElement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
 
 class TextElementController extends Controller
 {
@@ -30,14 +35,14 @@ class TextElementController extends Controller
 
         $textElement = null;
         if ($request->element_id) {
-            $textElement = \App\Models\TextElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
+            $textElement = TextElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
         }
 
-        if (!$textElement) {
-            $textElement = new \App\Models\TextElement();
+        if (! $textElement) {
+            $textElement = new TextElement;
             $textElement->user_id = $user->id;
             $textElement->appearance_id = $request->appearance_id;
-            $maxOrder = \App\Models\TextElement::where('appearance_id', $request->appearance_id)->max('order_position');
+            $maxOrder = TextElement::where('appearance_id', $request->appearance_id)->max('order_position');
             $textElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
         }
 
@@ -55,17 +60,16 @@ class TextElementController extends Controller
             } elseif ($request->button_icon_type === 'url') {
                 $textElement->button_icon_value = $request->button_icon_url;
             } elseif ($request->button_icon_type === 'upload' && $request->hasFile('button_icon_upload')) {
-                // Delete old if exists
                 if ($textElement->button_icon_type === 'upload' && $textElement->button_icon_value) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($textElement->button_icon_value);
+                    Storage::disk('public')->delete($textElement->button_icon_value);
                 }
 
                 $file = $request->file('button_icon_upload');
-                $filename = 'text_icons/' . time() . '_' . \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
+                $filename = 'text_icons/'.time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.webp';
 
-                $image = \Intervention\Image\ImageManager::gd()->read($file)->scaleDown(width: 200);
+                $image = ImageManager::gd()->read($file)->scaleDown(width: 200);
                 $encoded = $image->toWebp(80);
-                \Illuminate\Support\Facades\Storage::disk('public')->put($filename, (string) $encoded);
+                Storage::disk('public')->put($filename, (string) $encoded);
 
                 $textElement->button_icon_value = $filename;
             } elseif ($request->button_icon_type === 'none') {
@@ -91,11 +95,13 @@ class TextElementController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
-        $element = \App\Models\TextElement::where('id', $id)->where('user_id', $user->id)->first();
+        $element = TextElement::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
             $element->delete();
+
             return response()->json(['success' => true]);
         }
+
         return response()->json(['success' => false], 404);
     }
 }

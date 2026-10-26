@@ -39,7 +39,7 @@ return new class extends Migration
                 'status',
                 'rejection_reason',
                 'processed_at',
-                'processed_by'
+                'processed_by',
             ]);
         });
     }

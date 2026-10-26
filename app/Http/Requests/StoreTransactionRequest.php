@@ -28,7 +28,7 @@ class StoreTransactionRequest extends FormRequest
             'buyer_email' => 'required|email',
             'buyer_name' => 'required|string',
             'qty' => 'required|integer|min:1',
-            'total_price' => 'required|numeric'
+            'total_price' => 'required|numeric',
         ];
     }
 }

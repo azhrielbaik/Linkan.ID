@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class DashboardTest extends TestCase
 {
@@ -43,7 +43,7 @@ class DashboardTest extends TestCase
             'clicks',
             'start_date',
             'end_date',
-            'days'
+            'days',
         ]);
         $this->assertEquals(60, $response->json('days'));
     }

@@ -38,32 +38,32 @@ class SupportTicket extends Model
     public function getCategoryLabelAttribute(): string
     {
         return match ($this->category) {
-            'payout'  => 'Penarikan / Payout',
+            'payout' => 'Penarikan / Payout',
             'product' => 'Produk Digital',
             'account' => 'Akun & Keamanan',
-            default   => 'Pertanyaan Umum',
+            default => 'Pertanyaan Umum',
         };
     }
 
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'open'        => 'Menunggu Respon',
+            'open' => 'Menunggu Respon',
             'in_progress' => 'Sedang Ditangani',
-            'resolved'    => 'Selesai',
-            'closed'      => 'Ditutup',
-            default       => ucfirst($this->status),
+            'resolved' => 'Selesai',
+            'closed' => 'Ditutup',
+            default => ucfirst($this->status),
         };
     }
 
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->status) {
-            'open'        => 'badge-status-open',
+            'open' => 'badge-status-open',
             'in_progress' => 'badge-status-progress',
-            'resolved'    => 'badge-status-resolved',
-            'closed'      => 'badge-status-closed',
-            default       => 'badge-status-open',
+            'resolved' => 'badge-status-resolved',
+            'closed' => 'badge-status-closed',
+            default => 'badge-status-open',
         };
     }
 
@@ -71,10 +71,10 @@ class SupportTicket extends Model
     {
         return match ($this->priority) {
             'urgent' => 'badge-priority-urgent',
-            'high'   => 'badge-priority-high',
+            'high' => 'badge-priority-high',
             'medium' => 'badge-priority-medium',
-            'low'    => 'badge-priority-low',
-            default  => 'badge-priority-medium',
+            'low' => 'badge-priority-low',
+            default => 'badge-priority-medium',
         };
     }
 
@@ -83,30 +83,31 @@ class SupportTicket extends Model
         $code = $this->ticket_code ?? '';
         $parts = explode('-', $code);
         if (count($parts) >= 3) {
-            return 'ISSUE-' . $parts[2];
+            return 'ISSUE-'.$parts[2];
         }
+
         return str_replace('TKT-', 'ISSUE-', $code);
     }
 
     public function getUiStatusClassAttribute(): string
     {
         return match ($this->status) {
-            'open'        => 'status-open',
+            'open' => 'status-open',
             'in_progress' => 'status-in-progress',
-            'resolved'    => 'status-resolved',
-            'closed'      => 'status-closed',
-            default       => 'status-pending',
+            'resolved' => 'status-resolved',
+            'closed' => 'status-closed',
+            default => 'status-pending',
         };
     }
 
     public function getUiStatusTextAttribute(): string
     {
         return match ($this->status) {
-            'open'        => 'Open',
+            'open' => 'Open',
             'in_progress' => 'In Progress',
-            'resolved'    => 'Resolved',
-            'closed'      => 'Closed',
-            default       => 'Pending',
+            'resolved' => 'Resolved',
+            'closed' => 'Closed',
+            default => 'Pending',
         };
     }
 }

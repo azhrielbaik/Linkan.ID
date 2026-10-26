@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\DigitalProduct;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class DigitalProductTest extends TestCase
 {
@@ -30,20 +29,20 @@ class DigitalProductTest extends TestCase
             'has_quantity_limit' => '0',
             'is_scheduled' => '0',
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/download'
+            'deliverable_url' => 'https://example.com/download',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'title' => 'E-Book Laravel Mastery'
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'title' => 'E-Book Laravel Mastery',
+            ]);
 
         $this->assertDatabaseHas('digital_products', [
             'title' => 'E-Book Laravel Mastery',
             'user_id' => $this->user->id,
             'pricing_type' => 'fixed',
-            'price' => 150000
+            'price' => 150000,
         ]);
     }
 
@@ -59,21 +58,21 @@ class DigitalProductTest extends TestCase
             'has_quantity_limit' => '0',
             'is_scheduled' => '0',
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/download'
+            'deliverable_url' => 'https://example.com/download',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'title' => 'Template Design'
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'title' => 'Template Design',
+            ]);
 
         $this->assertDatabaseHas('digital_products', [
             'title' => 'Template Design',
             'user_id' => $this->user->id,
             'pricing_type' => 'pwyw',
             'price_min' => 10000,
-            'price_max' => 50000
+            'price_max' => 50000,
         ]);
     }
 
@@ -85,7 +84,7 @@ class DigitalProductTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['title']);
+            ->assertJsonValidationErrors(['title']);
     }
 
     public function test_destroy_digital_product_only_unpins_from_microsite_and_preserves_product(): void
@@ -109,14 +108,14 @@ class DigitalProductTest extends TestCase
             'user_id' => $this->user->id,
             'name' => 'Microsite A',
             'alias' => 'microsite-a',
-            'blocks_order' => 'profile,digitalproduct_' . $product->id . ',text_1'
+            'blocks_order' => 'profile,digitalproduct_'.$product->id.',text_1',
         ]);
 
         $appearanceB = \App\Models\Appearance::create([
             'user_id' => $this->user->id,
             'name' => 'Microsite B',
             'alias' => 'microsite-b',
-            'blocks_order' => 'profile,digitalproduct_' . $product->id . ',video_1'
+            'blocks_order' => 'profile,digitalproduct_'.$product->id.',video_1',
         ]);
 
         $response = $this->actingAs($this->user)->deleteJson(
@@ -125,21 +124,21 @@ class DigitalProductTest extends TestCase
         );
 
         $response->assertStatus(200)
-                 ->assertJson(['success' => true]);
+            ->assertJson(['success' => true]);
 
         // Produk TIDAK boleh terhapus dari database (harus tetap ada di Toko)
         $this->assertDatabaseHas('digital_products', [
             'id' => $product->id,
-            'deleted_at' => null
+            'deleted_at' => null,
         ]);
 
         // Appearance A tidak lagi memiliki produk ini
         $appearanceA->refresh();
-        $this->assertStringNotContainsString('digitalproduct_' . $product->id, (string) $appearanceA->blocks_order);
+        $this->assertStringNotContainsString('digitalproduct_'.$product->id, (string) $appearanceA->blocks_order);
 
         // Appearance B TETAP memiliki produk ini
         $appearanceB->refresh();
-        $this->assertStringContainsString('digitalproduct_' . $product->id, (string) $appearanceB->blocks_order);
+        $this->assertStringContainsString('digitalproduct_'.$product->id, (string) $appearanceB->blocks_order);
     }
 
     public function test_store_digital_product_with_image_upload_success(): void
@@ -156,14 +155,14 @@ class DigitalProductTest extends TestCase
             'media_count' => 1,
             'media_0' => $imageFile,
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/item'
+            'deliverable_url' => 'https://example.com/item',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'title' => 'Produk Dengan Gambar'
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'title' => 'Produk Dengan Gambar',
+            ]);
 
         $product = DigitalProduct::where('title', 'Produk Dengan Gambar')->first();
         $this->assertNotNull($product);
@@ -189,7 +188,7 @@ class DigitalProductTest extends TestCase
             'platform_type' => 'other',
             'button_text' => 'Beli Sekarang',
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/test'
+            'deliverable_url' => 'https://example.com/test',
         ]);
 
         $newImageFile = \Illuminate\Http\UploadedFile::fake()->image('new_cover.png', 500, 500);
@@ -203,15 +202,15 @@ class DigitalProductTest extends TestCase
             'media_count' => 1,
             'media_0' => $newImageFile,
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/test'
+            'deliverable_url' => 'https://example.com/test',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'id' => $product->id,
-                     'title' => 'Produk Diedit'
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'id' => $product->id,
+                'title' => 'Produk Diedit',
+            ]);
 
         $product->refresh();
         $this->assertEquals('Produk Diedit', $product->title);
@@ -242,8 +241,8 @@ class DigitalProductTest extends TestCase
             'deliverable_url' => 'https://example.com/test',
             'image' => $oldImagePath,
             'media_files' => [
-                ['url' => $oldImagePath, 'type' => 'image/webp', 'path' => $oldImagePath]
-            ]
+                ['url' => $oldImagePath, 'type' => 'image/webp', 'path' => $oldImagePath],
+            ],
         ]);
 
         $newImageFile = \Illuminate\Http\UploadedFile::fake()->image('second_image.jpg', 600, 600);
@@ -255,20 +254,20 @@ class DigitalProductTest extends TestCase
             'pricing_type' => 'fixed',
             'price_fixed' => 50000,
             'existing_media' => json_encode([
-                ['url' => '/storage/' . $oldImagePath] // simulating URL sent by JS preview
+                ['url' => '/storage/'.$oldImagePath], // simulating URL sent by JS preview
             ]),
             'media_count' => 1,
             'media_0' => $newImageFile,
             'deliverable_type' => 'other',
-            'deliverable_url' => 'https://example.com/test'
+            'deliverable_url' => 'https://example.com/test',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'id' => $product->id,
-                     'title' => 'Produk Dua Gambar Updated'
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'id' => $product->id,
+                'title' => 'Produk Dua Gambar Updated',
+            ]);
 
         $product->refresh();
         $this->assertCount(2, $product->media_files);
@@ -279,5 +278,3 @@ class DigitalProductTest extends TestCase
         \Illuminate\Support\Facades\Storage::disk('public')->assertExists($newStoredPath);
     }
 }
-
-

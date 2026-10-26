@@ -12,7 +12,8 @@ class ReviewTokenHelper
     {
         $payload = rtrim(strtr(base64_encode($orderId), '+/', '-_'), '=');
         $signature = hash_hmac('sha256', $orderId, config('app.key'));
-        return $payload . '.' . $signature;
+
+        return $payload.'.'.$signature;
     }
 
     /**
@@ -32,12 +33,12 @@ class ReviewTokenHelper
             $payload .= str_repeat('=', 4 - $remainder);
         }
         $orderId = base64_decode(strtr($payload, '-_', '+/'));
-        if (!$orderId) {
+        if (! $orderId) {
             return null;
         }
 
         $expected = hash_hmac('sha256', $orderId, config('app.key'));
-        if (!hash_equals($expected, $signature)) {
+        if (! hash_equals($expected, $signature)) {
             return null;
         }
 

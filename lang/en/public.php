@@ -3,7 +3,7 @@
 return [
     'meta_title' => 'Linkan - Powering Creators Economy',
     'meta_desc' => 'Create your microsite, shorten links, and sell digital products all in one platform. Join the vibrant creators economy with Linkan.',
-    
+
     // Hero
     'hero_title_1' => 'Powering Creators',
     'hero_title_2' => 'Economy',
@@ -14,7 +14,7 @@ return [
     'cta_sticky_button' => 'Create Free Linkan',
     'aria_menu_open' => 'Open navigation menu',
     'aria_menu_close' => 'Close navigation menu',
-    
+
     // Features
     'features_badge' => 'All-in-One Creator Platform',
     'features_title_prefix' => 'Not just another',
@@ -47,12 +47,12 @@ return [
     'feat_digital_product' => 'Digital Product',
     'feat_donations' => 'Donations',
     'feat_online_course' => 'Online Course',
-    
+
     // Marketing
     'marketing_title' => 'Digital marketing<br>for your business',
     'marketing_subtitle' => 'optimize digital marketing in your business through billions of users on various effective internet marketing channels',
     'btn_service' => 'Get Service',
-    
+
     // Pricing
     'pricing_free' => 'Free',
     'pricing_swipe_hint' => 'Swipe to explore other plans',
@@ -75,17 +75,17 @@ return [
     'feat_transaction_fee' => 'Transaction Fee',
     'feat_priority_support' => 'Priority Support',
     'feat_custom_domain' => 'Custom Domain',
-    
+
     // Testimonials
     'testi_title' => 'See What People Are Saying',
     'testi_subtitle' => 'Trusted by thousands of creators, online sellers, and professionals',
-    
+
     // Creator Showcase
     'creator_tag_1' => 'Membantu Creator',
     'creator_tag_2' => 'Memudahkan Pengguna',
     'creator_tag_3' => 'Top 1 Platform Microsite',
     'creator_tag_4' => 'Optimalisasi digital',
-    
+
     // Footer
     'footer_copyright' => '© 2026 Linkan. Built for the Creator Economy.',
     // About

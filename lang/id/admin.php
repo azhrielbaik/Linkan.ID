@@ -145,7 +145,7 @@ return [
     'search_by_product_buyer' => 'Cari berdasarkan judul produk atau nama pembeli',
     'detail' => 'Detail',
     'transaction_detail_empty' => 'Detail transaksi Anda akan muncul di sini.<br>Klik tombol <strong>Detail</strong> di sebelah kiri',
-    
+
     // Payout
     'payout_title' => 'Penarikan Dana',
     'my_earnings' => 'Pendapatan Saya',
@@ -165,7 +165,7 @@ return [
     'payment_method' => 'Metode Pembayaran',
     'no_withdrawal_history' => 'Belum ada riwayat penarikan',
     'amount' => 'Jumlah',
-    
+
     // Payout Method Form
     'form' => 'Formulir',
     'method_type' => 'Jenis Metode',
@@ -183,7 +183,7 @@ return [
     'my_account_desc' => 'Detail akun, informasi toko, dll',
     'payout_settings' => 'Pengaturan Penarikan',
     'payout_settings_desc' => 'Tarik pendapatan, Rekening bank, dll',
-    
+
     // Statistic
     'statistic_title' => 'Statistik',
     'total_click_views' => 'Total Klik & Penayangan',
@@ -198,7 +198,7 @@ return [
     'amount_to_withdraw' => 'Jumlah yang Ditarik',
     'withdrawal_method' => 'Metode Penarikan',
     'withdraw_now' => 'Tarik Sekarang',
-    
+
     // Shortlink Analytics
     'analytics_shortlink' => 'Analitik Tautan Pendek',
     'total_clicks' => 'Total Klik',
@@ -216,7 +216,7 @@ return [
     'home' => 'Beranda',
     'verification' => 'Verifikasi',
     'logout' => 'Keluar',
-    
+
     // Platform Admin Dashboard
     'commission_history_title' => 'Riwayat Komisi - Admin Platform',
     'commission_history' => 'Riwayat Komisi',
@@ -233,7 +233,7 @@ return [
     'platform_admin' => 'Admin Platform',
     'print_report' => 'Cetak Laporan',
     'close' => 'Tutup',
-    
+
     // Platform Admin Verification
     'verification_content' => 'Verifikasi Konten',
     'pending_verification' => 'Menunggu Verifikasi',
@@ -355,4 +355,3 @@ return [
     'link_copied' => 'Link berhasil disalin!',
     'dashboard_title' => 'Dasbor',
 ];
-

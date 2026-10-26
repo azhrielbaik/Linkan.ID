@@ -29,10 +29,8 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli Sekarang',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
-
-
 
         $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi'));
 
@@ -47,7 +45,7 @@ class VerificationTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin_platform']);
         $seller = User::factory()->create();
-        
+
         $product = DigitalProduct::create([
             'user_id' => $seller->id,
             'title' => 'Test Product',
@@ -57,11 +55,11 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli Sekarang',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
 
         $response = $this->actingAs($admin)->post(route('platform-admin.verifikasi.verify', $product->id), [
-            'status' => 'approved'
+            'status' => 'approved',
         ]);
 
         $response->assertRedirect();
@@ -70,7 +68,7 @@ class VerificationTest extends TestCase
         $this->assertDatabaseHas('digital_products', [
             'id' => $product->id,
             'verification_status' => 'approved',
-            'rejection_reason' => null
+            'rejection_reason' => null,
         ]);
     }
 
@@ -81,7 +79,7 @@ class VerificationTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin_platform']);
         $seller = User::factory()->create();
-        
+
         $product = DigitalProduct::create([
             'user_id' => $seller->id,
             'title' => 'Test Product',
@@ -91,12 +89,12 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli Sekarang',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
 
         $response = $this->actingAs($admin)->post(route('platform-admin.verifikasi.verify', $product->id), [
             'status' => 'rejected',
-            'rejection_reason' => 'Data tidak lengkap'
+            'rejection_reason' => 'Data tidak lengkap',
         ]);
 
         $response->assertRedirect();
@@ -105,7 +103,7 @@ class VerificationTest extends TestCase
         $this->assertDatabaseHas('digital_products', [
             'id' => $product->id,
             'verification_status' => 'rejected',
-            'rejection_reason' => 'Data tidak lengkap'
+            'rejection_reason' => 'Data tidak lengkap',
         ]);
     }
 
@@ -126,7 +124,7 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
 
         DigitalProduct::create([
@@ -138,7 +136,7 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli',
             'is_featured' => 0,
-            'verification_status' => 'approved'
+            'verification_status' => 'approved',
         ]);
 
         // When viewing pending tab (default)
@@ -171,7 +169,7 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
 
         DigitalProduct::create([
@@ -183,7 +181,7 @@ class VerificationTest extends TestCase
             'platform_type' => 'upload',
             'button_text' => 'Beli',
             'is_featured' => 0,
-            'verification_status' => 'pending'
+            'verification_status' => 'pending',
         ]);
 
         $response = $this->actingAs($admin)->get(route('platform-admin.verifikasi', ['search' => 'Super Unique']));
@@ -211,7 +209,7 @@ class VerificationTest extends TestCase
                 'button_text' => 'Beli',
                 'is_featured' => 0,
                 'verification_status' => 'pending',
-                'created_at' => now()->subMinutes(25 - $i)
+                'created_at' => now()->subMinutes(25 - $i),
             ]);
         }
 

@@ -32,9 +32,9 @@ return new class extends Migration
     {
         Schema::table('digital_products', function (Blueprint $table) {
             $table->dropColumn([
-                'media_files', 'pricing_type', 'price_min', 'price_max', 
-                'quantity_min', 'is_scheduled', 'start_time', 'end_time', 
-                'deliverable_type', 'deliverable_url'
+                'media_files', 'pricing_type', 'price_min', 'price_max',
+                'quantity_min', 'is_scheduled', 'start_time', 'end_time',
+                'deliverable_type', 'deliverable_url',
             ]);
         });
     }

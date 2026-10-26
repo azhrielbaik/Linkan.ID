@@ -22,8 +22,8 @@ class UpdateSettingsRequest extends FormRequest
     {
         return [
             'commission_percent' => 'required|numeric|min:0|max:100',
-            'min_withdraw'       => 'required|numeric|min:0',
-            'admin_password'     => 'required|string',
+            'min_withdraw' => 'required|numeric|min:0',
+            'admin_password' => 'required|string',
         ];
     }
 
@@ -34,13 +34,13 @@ class UpdateSettingsRequest extends FormRequest
     {
         return [
             'commission_percent.required' => 'Persentase komisi wajib diisi.',
-            'commission_percent.numeric'  => 'Persentase komisi harus berupa angka.',
-            'commission_percent.min'      => 'Persentase komisi minimal 0%.',
-            'commission_percent.max'      => 'Persentase komisi maksimal 100%.',
-            'min_withdraw.required'       => 'Batas minimum penarikan wajib diisi.',
-            'min_withdraw.numeric'        => 'Batas minimum penarikan harus berupa angka.',
-            'min_withdraw.min'            => 'Batas minimum penarikan minimal Rp 0.',
-            'admin_password.required'     => 'Password admin wajib dimasukkan untuk konfirmasi keamanan.',
+            'commission_percent.numeric' => 'Persentase komisi harus berupa angka.',
+            'commission_percent.min' => 'Persentase komisi minimal 0%.',
+            'commission_percent.max' => 'Persentase komisi maksimal 100%.',
+            'min_withdraw.required' => 'Batas minimum penarikan wajib diisi.',
+            'min_withdraw.numeric' => 'Batas minimum penarikan harus berupa angka.',
+            'min_withdraw.min' => 'Batas minimum penarikan minimal Rp 0.',
+            'admin_password.required' => 'Password admin wajib dimasukkan untuk konfirmasi keamanan.',
         ];
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Services\AppearanceService;
+use Illuminate\Support\Facades\DB;
 
 class PublicPageController extends Controller
 {
@@ -35,14 +34,14 @@ class PublicPageController extends Controller
             ->whereDate('created_at', now()->toDateString())
             ->first();
 
-        if (!$existing) {
+        if (! $existing) {
             DB::table('link_views')->insert([
                 'user_id' => $user->id,
                 'link_id' => $appearance->alias,
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 

@@ -5,15 +5,12 @@ namespace App\Http\Controllers\PlatformAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\BroadcastAnnouncement;
 use App\Models\PlatformSetting;
+use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\PlatformAdmin\UpdateSettingsRequest;
-
 use Illuminate\Support\Facades\Hash;
-
-use App\Models\User;
 
 class SettingController extends Controller
 {
@@ -50,21 +47,21 @@ class SettingController extends Controller
     {
         $request->validate([
             'commission_percent' => 'required|numeric|min:0|max:100',
-            'min_withdraw'       => 'required|numeric|min:0',
-            'admin_password'     => 'required|string',
+            'min_withdraw' => 'required|numeric|min:0',
+            'admin_password' => 'required|string',
         ], [
             'commission_percent.required' => 'Persentase komisi wajib diisi.',
-            'commission_percent.numeric'  => 'Persentase komisi harus berupa angka.',
-            'commission_percent.min'      => 'Persentase komisi minimal 0%.',
-            'commission_percent.max'      => 'Persentase komisi maksimal 100%.',
-            'min_withdraw.required'       => 'Batas minimum penarikan wajib diisi.',
-            'min_withdraw.numeric'        => 'Batas minimum penarikan harus berupa angka.',
-            'min_withdraw.min'            => 'Batas minimum penarikan minimal Rp 0.',
-            'admin_password.required'     => 'Password admin wajib dimasukkan untuk konfirmasi keamanan.',
+            'commission_percent.numeric' => 'Persentase komisi harus berupa angka.',
+            'commission_percent.min' => 'Persentase komisi minimal 0%.',
+            'commission_percent.max' => 'Persentase komisi maksimal 100%.',
+            'min_withdraw.required' => 'Batas minimum penarikan wajib diisi.',
+            'min_withdraw.numeric' => 'Batas minimum penarikan harus berupa angka.',
+            'min_withdraw.min' => 'Batas minimum penarikan minimal Rp 0.',
+            'admin_password.required' => 'Password admin wajib dimasukkan untuk konfirmasi keamanan.',
         ]);
 
         // Verifikasi password admin yang sedang aktif
-        if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
+        if (! Hash::check($request->input('admin_password'), Auth::user()->password)) {
             return back()->withInput()->with('error', __('platform.invalid_admin_password'));
         }
 
@@ -78,7 +75,7 @@ class SettingController extends Controller
             // Catat ke Log Aktivitas
             ActivityLogger::log(
                 'update_settings',
-                "Mengubah pengaturan platform: Komisi ({$oldCommission}% -> {$request->commission_percent}%), Min Withdraw (Rp " . number_format($oldMinWithdraw, 0, ',', '.') . " -> Rp " . number_format($request->min_withdraw, 0, ',', '.') . ")",
+                "Mengubah pengaturan platform: Komisi ({$oldCommission}% -> {$request->commission_percent}%), Min Withdraw (Rp ".number_format($oldMinWithdraw, 0, ',', '.').' -> Rp '.number_format($request->min_withdraw, 0, ',', '.').')',
                 [
                     'old_commission' => $oldCommission,
                     'new_commission' => $request->commission_percent,
@@ -98,16 +95,16 @@ class SettingController extends Controller
     public function updateEmergencySwitches(Request $request)
     {
         $request->validate([
-            'admin_password'           => 'required|string',
-            'freeze_payouts'           => 'nullable',
-            'freeze_payouts_message'   => 'nullable|string|max:255',
-            'disable_checkout'         => 'nullable',
+            'admin_password' => 'required|string',
+            'freeze_payouts' => 'nullable',
+            'freeze_payouts_message' => 'nullable|string|max:255',
+            'disable_checkout' => 'nullable',
             'disable_checkout_message' => 'nullable|string|max:255',
         ], [
             'admin_password.required' => 'Password admin wajib dimasukkan untuk mengonfirmasi perubahan sakelar darurat.',
         ]);
 
-        if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
+        if (! Hash::check($request->input('admin_password'), Auth::user()->password)) {
             return back()->withInput()->with('error', __('platform.invalid_admin_password'));
         }
 
@@ -133,8 +130,8 @@ class SettingController extends Controller
                 $logActions[] = "Freeze Payouts {$statusStr}";
                 $logDetails['freeze_payouts'] = [
                     'from' => $oldFreeze,
-                    'to'   => $newFreezePayouts,
-                    'msg'  => $newFreezeMsg
+                    'to' => $newFreezePayouts,
+                    'msg' => $newFreezeMsg,
                 ];
             }
 
@@ -143,12 +140,12 @@ class SettingController extends Controller
                 $logActions[] = "Disable Checkout {$statusStr}";
                 $logDetails['disable_checkout'] = [
                     'from' => $oldCheckout,
-                    'to'   => $newDisableCheckout,
-                    'msg'  => $newCheckoutMsg
+                    'to' => $newDisableCheckout,
+                    'msg' => $newCheckoutMsg,
                 ];
             }
 
-            $actionSummary = !empty($logActions) ? implode(', ', $logActions) : 'Pembaruan pesan/konfigurasi sakelar darurat';
+            $actionSummary = ! empty($logActions) ? implode(', ', $logActions) : 'Pembaruan pesan/konfigurasi sakelar darurat';
 
             ActivityLogger::log(
                 'update_emergency_switches',
@@ -167,28 +164,28 @@ class SettingController extends Controller
     public function storeBroadcast(Request $request)
     {
         $request->validate([
-            'title'      => 'required|string|max:255',
-            'message'    => 'required|string|max:2000',
-            'type'       => 'required|in:info,warning,success,danger',
+            'title' => 'required|string|max:255',
+            'message' => 'required|string|max:2000',
+            'type' => 'required|in:info,warning,success,danger',
             'send_email' => 'nullable|boolean',
         ], [
-            'title.required'   => 'Judul pengumuman wajib diisi.',
+            'title.required' => 'Judul pengumuman wajib diisi.',
             'message.required' => 'Isi pesan pengumuman wajib diisi.',
-            'type.required'    => 'Tipe pengumuman wajib dipilih.',
+            'type.required' => 'Tipe pengumuman wajib dipilih.',
         ]);
 
         $shouldSendEmail = $request->boolean('send_email');
 
         $announcement = BroadcastAnnouncement::create([
-            'admin_id'           => Auth::id(),
-            'title'              => $request->input('title'),
-            'message'            => $request->input('message'),
-            'type'               => $request->input('type'),
-            'target_role'        => 'all_sellers',
-            'is_active'          => true,
-            'send_email'         => $shouldSendEmail,
-            'emails_sent_count'  => 0,
-            'email_sent_at'      => $shouldSendEmail ? now() : null,
+            'admin_id' => Auth::id(),
+            'title' => $request->input('title'),
+            'message' => $request->input('message'),
+            'type' => $request->input('type'),
+            'target_role' => 'all_sellers',
+            'is_active' => true,
+            'send_email' => $shouldSendEmail,
+            'emails_sent_count' => 0,
+            'email_sent_at' => $shouldSendEmail ? now() : null,
         ]);
 
         $recipientCount = 0;
@@ -205,19 +202,19 @@ class SettingController extends Controller
         // Catat ke Log Aktivitas
         ActivityLogger::log(
             'create_broadcast',
-            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})" . ($shouldSendEmail ? " [Email dijadwalkan: {$recipientCount} penerima]" : ""),
+            "Membuat broadcast pengumuman: {$announcement->title} (Tipe: {$announcement->type})".($shouldSendEmail ? " [Email dijadwalkan: {$recipientCount} penerima]" : ''),
             [
-                'announcement_id'   => $announcement->id,
-                'title'             => $announcement->title,
-                'type'              => $announcement->type,
-                'send_email'        => $shouldSendEmail,
+                'announcement_id' => $announcement->id,
+                'title' => $announcement->title,
+                'type' => $announcement->type,
+                'send_email' => $shouldSendEmail,
                 'queued_recipients' => $recipientCount,
             ]
         );
 
         $msg = __('messages.broadcast_success');
         if ($shouldSendEmail) {
-            $msg .= " " . __('messages.broadcast_email_sent', ['count' => $recipientCount]);
+            $msg .= ' '.__('messages.broadcast_email_sent', ['count' => $recipientCount]);
         }
 
         return back()->with('success', $msg);
@@ -232,7 +229,7 @@ class SettingController extends Controller
         $statusText = $announcement->is_active ? 'dinonaktifkan' : 'diaktifkan';
 
         DB::transaction(function () use ($announcement, $statusText) {
-            $announcement->is_active = !$announcement->is_active;
+            $announcement->is_active = ! $announcement->is_active;
             $announcement->save();
 
             // Catat ke Log Aktivitas

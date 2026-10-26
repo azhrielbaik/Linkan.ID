@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller\Microsite;
 
-use Illuminate\Http\Request;
-use App\Models\SocialMediaElement;
+use App\Http\Controllers\Controller;
 use App\Models\Appearance;
+use App\Models\SocialMediaElement;
+use Illuminate\Http\Request;
 
 class SocialMediaElementController extends Controller
 {
@@ -13,60 +14,59 @@ class SocialMediaElementController extends Controller
         $request->validate([
             'platforms' => 'nullable|array',
             'element_id' => 'nullable|integer',
-            'appearance_id' => 'required|integer|exists:appearances,id'
+            'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
         $user = auth()->user();
-        
+
         $element = null;
         if ($request->element_id) {
             $element = SocialMediaElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
         }
 
-        if (!$element) {
-            $element = new SocialMediaElement();
+        if (! $element) {
+            $element = new SocialMediaElement;
             $element->user_id = $user->id;
             $element->appearance_id = $request->appearance_id;
             $element->is_active = true;
-        } 
-        
-        $element->platforms = $request->platforms ?? [];
+        }
 
+        $element->platforms = $request->platforms ?? [];
         $element->save();
 
         return response()->json([
             'success' => true,
             'id' => $element->id,
-            'element' => $element
+            'element' => $element,
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'platforms' => 'nullable|array'
+            'platforms' => 'nullable|array',
         ]);
 
         $element = SocialMediaElement::where('user_id', auth()->id())->find($id);
         if ($element) {
-            // Process empty inputs from frontend
             $platforms = [];
             if ($request->platforms && is_array($request->platforms)) {
                 foreach ($request->platforms as $key => $val) {
-                    if (!empty($val)) {
+                    if (! empty($val)) {
                         $platforms[$key] = $val;
                     }
                 }
             }
-            
+
             $element->platforms = $platforms;
             $element->save();
 
             return response()->json([
                 'success' => true,
-                'element' => $element
+                'element' => $element,
             ]);
         }
+
         return response()->json(['success' => false], 404);
     }
 
@@ -75,19 +75,14 @@ class SocialMediaElementController extends Controller
         $element = SocialMediaElement::where('user_id', auth()->id())->find($id);
         if ($element) {
             $appearance = Appearance::find($element->appearance_id);
-            if ($appearance && $appearance->blocks_order) {
-                $order = json_decode($appearance->blocks_order, true);
-                if (is_array($order)) {
-                    $order = array_filter($order, function($item) use ($id) {
-                        return $item !== 'social_' . $id;
-                    });
-                    $appearance->blocks_order = json_encode(array_values($order));
-                    $appearance->save();
-                }
+            if ($appearance) {
+                $appearance->removeBlock('social_'.$id);
             }
             $element->delete();
+
             return response()->json(['success' => true]);
         }
+
         return response()->json(['success' => false], 404);
     }
 }

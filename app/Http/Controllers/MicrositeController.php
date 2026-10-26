@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\DigitalProduct;
 use App\Models\Appearance;
-use App\Models\ImageElement;
+use App\Models\DigitalProduct;
 use App\Models\DividerElement;
+use App\Models\ImageElement;
+use App\Models\SocialMediaElement;
 use App\Models\TextElement;
 use App\Models\VideoElement;
-use App\Models\SocialMediaElement;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,29 +59,53 @@ class MicrositeController extends Controller
 
         // Mode Edit: Harus ada ID microsite
         $appearanceId = $request->query('id');
-        if (!$appearanceId) {
+        if (! $appearanceId) {
             return redirect()->route('admin.microsites.index', ['mode' => 'gallery'])->with('error', 'Pilih microsite yang ingin diedit.');
         }
 
         $appearance = Appearance::where('user_id', $user->id)->findOrFail($appearanceId);
-        
-        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+
+        $blocksOrder = $appearance->blocks_order;
         $productIds = [];
         foreach ($blocksOrder as $block) {
             if (str_starts_with($block, 'digitalproduct_')) {
                 $productIds[] = str_replace('digitalproduct_', '', $block);
             }
         }
-        
+
         $digitalProducts = $allDigitalProducts->whereIn('id', $productIds);
 
-        $imageElements = ImageElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'image'; return $el; });
-        $dividerElements = DividerElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'divider'; return $el; });
-        $textElements = TextElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'text'; return $el; });
-        $videoElements = VideoElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'video'; return $el; });
-        $socialMediaElements = SocialMediaElement::where('appearance_id', $appearance->id)->get()->map(function($el) { $el->type = 'social'; return $el; });
-        
-        $digitalProducts = $digitalProducts->map(function($el) { $el->type = 'digitalproduct'; return $el; });
+        $imageElements = ImageElement::where('appearance_id', $appearance->id)->get()->map(function ($el) {
+            $el->type = 'image';
+
+            return $el;
+        });
+        $dividerElements = DividerElement::where('appearance_id', $appearance->id)->get()->map(function ($el) {
+            $el->type = 'divider';
+
+            return $el;
+        });
+        $textElements = TextElement::where('appearance_id', $appearance->id)->get()->map(function ($el) {
+            $el->type = 'text';
+
+            return $el;
+        });
+        $videoElements = VideoElement::where('appearance_id', $appearance->id)->get()->map(function ($el) {
+            $el->type = 'video';
+
+            return $el;
+        });
+        $socialMediaElements = SocialMediaElement::where('appearance_id', $appearance->id)->get()->map(function ($el) {
+            $el->type = 'social';
+
+            return $el;
+        });
+
+        $digitalProducts = $digitalProducts->map(function ($el) {
+            $el->type = 'digitalproduct';
+
+            return $el;
+        });
 
         $allElements = collect()
             ->concat($imageElements)
@@ -91,9 +115,10 @@ class MicrositeController extends Controller
             ->concat($socialMediaElements)
             ->concat($digitalProducts);
 
-        $allElements = $allElements->sortBy(function($element) use ($blocksOrder) {
-            $key = $element->type . '_' . $element->id;
+        $allElements = $allElements->sortBy(function ($element) use ($blocksOrder) {
+            $key = $element->type.'_'.$element->id;
             $pos = array_search($key, $blocksOrder);
+
             return $pos !== false ? $pos : 9999;
         })->values();
 
@@ -109,17 +134,18 @@ class MicrositeController extends Controller
                 if (is_array($mediaFiles) && count($mediaFiles) > 0) {
                     $url = $mediaFiles[0]['url'] ?? $mediaFiles[0]['path'] ?? null;
                     if ($url) {
-                        $image = str_starts_with($url, 'http') ? $url : asset('storage/' . $url);
+                        $image = str_starts_with($url, 'http') ? $url : asset('storage/'.$url);
                     }
                 } elseif ($p->image) {
-                    $image = str_starts_with($p->image, 'http') ? $p->image : asset('storage/' . $p->image);
+                    $image = str_starts_with($p->image, 'http') ? $p->image : asset('storage/'.$p->image);
                 }
+
                 return [
-                    'id'    => $p->id,
+                    'id' => $p->id,
                     'title' => $p->title,
                     'price' => $p->pricing_type === 'fixed'
-                        ? 'Rp ' . number_format($p->price, 0, ',', '.')
-                        : 'Mulai Rp ' . number_format($p->price_min, 0, ',', '.'),
+                        ? 'Rp '.number_format($p->price, 0, ',', '.')
+                        : 'Mulai Rp '.number_format($p->price_min, 0, ',', '.'),
                     'image' => $image,
                 ];
             });
@@ -152,15 +178,15 @@ class MicrositeController extends Controller
 
         $themeColors = [
             'portofolio' => '#2563EB',
-            'marketing'  => '#FF9040',
-            'affiliate'  => '#059669',
-            'lainnya'    => '#7C3AED',
+            'marketing' => '#FF9040',
+            'affiliate' => '#059669',
+            'lainnya' => '#7C3AED',
         ];
 
         $themeColor = $themeColors[$request->purpose] ?? '#FF9040';
 
         // Selalu buat microsite baru
-        $appearance = new Appearance();
+        $appearance = new Appearance;
         $appearance->user_id = $user->id;
         $appearance->title = $request->title;
         $appearance->alias = strtolower($request->alias);
@@ -170,18 +196,18 @@ class MicrositeController extends Controller
         $appearance->save();
 
         return redirect()->route('admin.microsites.index', ['mode' => 'edit', 'id' => $appearance->id])
-            ->with('success', 'Microsite baru "' . $request->title . '" berhasil dibuat! Alamat Anda sekarang: linkan.id/' . $appearance->alias);
+            ->with('success', 'Microsite baru "'.$request->title.'" berhasil dibuat! Alamat Anda sekarang: linkan.id/'.$appearance->alias);
     }
 
     public function destroy($id)
     {
         $user = auth()->user();
         $appearance = Appearance::where('user_id', $user->id)->findOrFail($id);
-        
+
         $title = $appearance->title ?? $appearance->name;
 
         // Clean up digital products associated with this microsite
-        $blocksOrder = $appearance->blocks_order ? explode(',', $appearance->blocks_order) : [];
+        $blocksOrder = $appearance->blocks_order;
         foreach ($blocksOrder as $block) {
             if (str_starts_with($block, 'digitalproduct_')) {
                 $productId = str_replace('digitalproduct_', '', $block);
@@ -191,7 +217,9 @@ class MicrositeController extends Controller
                         $mediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : $product->media_files;
                         if (is_array($mediaFiles)) {
                             foreach ($mediaFiles as $media) {
-                                if (isset($media['path'])) Storage::disk('public')->delete($media['path']);
+                                if (isset($media['path'])) {
+                                    Storage::disk('public')->delete($media['path']);
+                                }
                             }
                         }
                     }
@@ -206,6 +234,6 @@ class MicrositeController extends Controller
         $appearance->delete();
 
         return redirect()->route('admin.microsites.index', ['mode' => 'gallery'])
-            ->with('success', 'Microsite "' . $title . '" berhasil dihapus.');
+            ->with('success', 'Microsite "'.$title.'" berhasil dihapus.');
     }
 }

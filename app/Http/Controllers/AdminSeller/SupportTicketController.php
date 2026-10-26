@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller;
 
+use App\Http\Controllers\Controller;
 use App\Mail\SupportTicketCreatedMail;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
@@ -9,6 +10,7 @@ use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -32,20 +34,18 @@ class SupportTicketController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_code', 'like', "%{$search}%")
-                  ->orWhere('subject', 'like', "%{$search}%")
-                  ->orWhere('message', 'like', "%{$search}%");
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%");
             });
         }
 
         $tickets = $query->latest()->paginate(10)->withQueryString();
 
-        // Hitung statistik tiket seller
         $totalTickets = SupportTicket::where('user_id', $userId)->count();
         $openTickets = SupportTicket::where('user_id', $userId)->where('status', 'open')->count();
         $inProgressTickets = SupportTicket::where('user_id', $userId)->where('status', 'in_progress')->count();
         $resolvedTickets = SupportTicket::where('user_id', $userId)->where('status', 'resolved')->count();
 
-        // Cek apakah ada tiket aktif (open atau in_progress)
         $activeTicket = SupportTicket::where('user_id', $userId)
             ->whereIn('status', ['open', 'in_progress'])
             ->latest()
@@ -68,7 +68,6 @@ class SupportTicketController extends Controller
      */
     public function store(Request $request)
     {
-        // Rate Limiter: Pengguna yang masih memiliki tiket aktif tidak dapat membuat tiket baru
         $activeTicket = SupportTicket::where('user_id', Auth::id())
             ->whereIn('status', ['open', 'in_progress'])
             ->latest()
@@ -81,26 +80,24 @@ class SupportTicketController extends Controller
         }
 
         $request->validate([
-            'category'   => 'required|in:payout,product,account,general',
-            'subject'    => 'required|string|max:200',
-            'message'    => 'required|string|max:3000',
+            'category' => 'required|in:payout,product,account,general',
+            'subject' => 'required|string|max:200',
+            'message' => 'required|string|max:3000',
             'attachment' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
-            'category.required'   => 'Pilih kategori kendala.',
-            'subject.required'    => 'Subjek kendala wajib diisi.',
-            'subject.max'         => 'Subjek kendala maksimal 200 karakter.',
-            'message.required'    => 'Rincian pesan kendala wajib diisi.',
-            'message.max'         => 'Rincian pesan kendala maksimal 3000 karakter.',
-            'attachment.image'    => 'Lampiran harus berupa gambar.',
-            'attachment.max'      => 'Ukuran gambar lampiran maksimal 2MB.',
+            'category.required' => 'Pilih kategori kendala.',
+            'subject.required' => 'Subjek kendala wajib diisi.',
+            'subject.max' => 'Subjek kendala maksimal 200 karakter.',
+            'message.required' => 'Rincian pesan kendala wajib diisi.',
+            'message.max' => 'Rincian pesan kendala maksimal 3000 karakter.',
+            'attachment.image' => 'Lampiran harus berupa gambar.',
+            'attachment.max' => 'Ukuran gambar lampiran maksimal 2MB.',
         ]);
 
-        // Generate unique ticket code: TKT-YYYYMM-XXXX
         $datePrefix = date('Ym');
         $randomSuffix = strtoupper(Str::random(4));
         $ticketCode = "TKT-{$datePrefix}-{$randomSuffix}";
 
-        // Simpan attachment jika ada
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
             $attachmentPath = $request->file('attachment')->store('support_attachments', 'public');
@@ -108,48 +105,45 @@ class SupportTicketController extends Controller
 
         $ticket = DB::transaction(function () use ($request, $ticketCode, $attachmentPath) {
             $ticket = SupportTicket::create([
-                'ticket_code'     => $ticketCode,
-                'user_id'         => Auth::id(),
-                'category'        => $request->category,
-                'subject'         => $request->subject,
-                'message'         => $request->message,
-                'status'          => 'open',
-                'priority'        => 'medium',
+                'ticket_code' => $ticketCode,
+                'user_id' => Auth::id(),
+                'category' => $request->category,
+                'subject' => $request->subject,
+                'message' => $request->message,
+                'status' => 'open',
+                'priority' => 'medium',
                 'last_replied_at' => now(),
             ]);
 
-            // Jika ada lampiran di pesan awal, buat reply pertama sebagai catatan lampiran
             if ($attachmentPath) {
                 SupportTicketReply::create([
                     'support_ticket_id' => $ticket->id,
-                    'user_id'           => Auth::id(),
-                    'is_admin_reply'    => false,
-                    'message'           => 'Lampiran Bukti Kendala Terlampir.',
-                    'attachment'        => $attachmentPath,
+                    'user_id' => Auth::id(),
+                    'is_admin_reply' => false,
+                    'message' => 'Lampiran Bukti Kendala Terlampir.',
+                    'attachment' => $attachmentPath,
                 ]);
             }
 
-            // Catat ke log aktivitas
             ActivityLogger::log(
                 'create_support_ticket',
                 "Membuat tiket bantuan baru: #{$ticketCode} ({$ticket->subject})",
                 [
-                    'ticket_id'   => $ticket->id,
+                    'ticket_id' => $ticket->id,
                     'ticket_code' => $ticketCode,
-                    'category'    => $ticket->category,
+                    'category' => $ticket->category,
                 ]
             );
 
             return $ticket;
         });
 
-        // Kirim email konfirmasi ke seller via SMTP
         try {
             if (Auth::user()->email) {
                 Mail::to(Auth::user()->email)->send(new SupportTicketCreatedMail($ticket));
             }
         } catch (\Exception $e) {
-            \Log::error('Support Ticket Mail error: ' . $e->getMessage());
+            Log::error('Support Ticket Mail error: '.$e->getMessage());
         }
 
         return redirect()->route('admin.tickets.show', $ticket->id)
@@ -176,13 +170,13 @@ class SupportTicketController extends Controller
         $ticket = SupportTicket::where('user_id', Auth::id())->findOrFail($id);
 
         $request->validate([
-            'message'    => 'required|string|max:3000',
+            'message' => 'required|string|max:3000',
             'attachment' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'message.required' => 'Pesan balasan tidak boleh kosong.',
-            'message.max'      => 'Pesan balasan maksimal 3000 karakter.',
+            'message.max' => 'Pesan balasan maksimal 3000 karakter.',
             'attachment.image' => 'Lampiran harus berupa file gambar.',
-            'attachment.max'   => 'Ukuran lampiran maksimal 2MB.',
+            'attachment.max' => 'Ukuran lampiran maksimal 2MB.',
         ]);
 
         $attachmentPath = null;
@@ -193,25 +187,23 @@ class SupportTicketController extends Controller
         DB::transaction(function () use ($ticket, $request, $attachmentPath) {
             SupportTicketReply::create([
                 'support_ticket_id' => $ticket->id,
-                'user_id'           => Auth::id(),
-                'is_admin_reply'    => false,
-                'message'           => $request->message,
-                'attachment'        => $attachmentPath,
+                'user_id' => Auth::id(),
+                'is_admin_reply' => false,
+                'message' => $request->message,
+                'attachment' => $attachmentPath,
             ]);
 
-            // Update status & waktu balasan tiket
             if (in_array($ticket->status, ['resolved', 'closed'])) {
-                $ticket->status = 'open'; // Re-open jika seller membalas kembali
+                $ticket->status = 'open';
             }
             $ticket->last_replied_at = now();
             $ticket->save();
 
-            // Catat ke log aktivitas
             ActivityLogger::log(
                 'reply_support_ticket',
                 "Mengirim balasan pada tiket bantuan: #{$ticket->ticket_code}",
                 [
-                    'ticket_id'   => $ticket->id,
+                    'ticket_id' => $ticket->id,
                     'ticket_code' => $ticket->ticket_code,
                 ]
             );

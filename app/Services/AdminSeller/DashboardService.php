@@ -2,18 +2,14 @@
 
 namespace App\Services\AdminSeller;
 
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use App\Models\DigitalProduct;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
     /**
      * Get seller dashboard statistics.
-     *
-     * @param User $user
-     * @return array
      */
     public function getDashboardStats(User $user): array
     {
@@ -38,18 +34,18 @@ class DashboardService
             ->where('transactions.status', 'success')
             ->sum('transactions.qty');
 
-        $totalSales = (float)DB::table('transactions')
+        $totalSales = (float) DB::table('transactions')
             ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
             ->where('digital_products.user_id', $user->id)
             ->where('transactions.status', 'success')
             ->sum('transactions.total_price');
 
-        $approvedGross = (float)DB::table('payout_transactions')
+        $approvedGross = (float) DB::table('payout_transactions')
             ->where('user_id', $user->id)
             ->whereIn('status', ['approved', 'completed'])
             ->sum(DB::raw('COALESCE(gross_amount, amount)'));
 
-        $pendingGross = (float)DB::table('payout_transactions')
+        $pendingGross = (float) DB::table('payout_transactions')
             ->where('user_id', $user->id)
             ->where('status', 'pending')
             ->sum(DB::raw('COALESCE(gross_amount, amount)'));
@@ -59,7 +55,7 @@ class DashboardService
         $availableBalance = max(0, $totalSales - $approvedGross - $pendingGross);
 
         // Self-healing: sinkronkan nilai users.balance jika terjadi inkonsistensi
-        $currentBalance = (float)(DB::table('users')->where('id', $user->id)->value('balance') ?? 0);
+        $currentBalance = (float) (DB::table('users')->where('id', $user->id)->value('balance') ?? 0);
         if ($currentBalance != $availableBalance) {
             DB::table('users')
                 ->where('id', $user->id)
@@ -115,9 +111,6 @@ class DashboardService
 
     /**
      * Calculate and return appeal data for the user.
-     *
-     * @param User $user
-     * @return array
      */
     private function getAppealData(User $user): array
     {
@@ -139,9 +132,15 @@ class DashboardService
                 $canSubmitAppeal = false;
                 $diff = now()->diff($cooldownUntil);
                 $remainingParts = [];
-                if ($diff->h > 0) $remainingParts[] = $diff->h . ' jam';
-                if ($diff->i > 0) $remainingParts[] = $diff->i . ' menit';
-                if (empty($remainingParts)) $remainingParts[] = $diff->s . ' detik';
+                if ($diff->h > 0) {
+                    $remainingParts[] = $diff->h.' jam';
+                }
+                if ($diff->i > 0) {
+                    $remainingParts[] = $diff->i.' menit';
+                }
+                if (empty($remainingParts)) {
+                    $remainingParts[] = $diff->s.' detik';
+                }
                 $remainingCooldownText = implode(' ', $remainingParts);
             }
         }
@@ -159,9 +158,6 @@ class DashboardService
 
     /**
      * Fetch seller notification data.
-     *
-     * @param User $user
-     * @return array
      */
     public function fetchSellerNotificationsData(User $user): array
     {
@@ -182,20 +178,20 @@ class DashboardService
             $isSuccess = $t->status === 'success';
 
             $notifications[] = [
-                'id'            => 'tx_' . $t->id,
-                'type'          => 'transaction',
-                'status'        => $t->status,
-                'title'         => $isSuccess ? 'Pembayaran Diterima!' : 'Pembaruan Pesanan',
-                'message'       => $isSuccess
+                'id' => 'tx_'.$t->id,
+                'type' => 'transaction',
+                'status' => $t->status,
+                'title' => $isSuccess ? 'Pembayaran Diterima!' : 'Pembaruan Pesanan',
+                'message' => $isSuccess
                     ? "{$buyerName} membeli {$t->product_title}"
                     : "Pesanan {$t->product_title} dari {$buyerName} berstatus: {$t->status}",
-                'buyer_name'    => $buyerName,
+                'buyer_name' => $buyerName,
                 'product_title' => $t->product_title,
-                'amount'        => (float) ($t->total_price ?? 0),
-                'avatar_url'    => 'https://ui-avatars.com/api/?name=' . urlencode($buyerName) . '&background=random',
-                'url'           => route('admin.orders'),
-                'time_ago'      => $timeAgo,
-                'timestamp'     => strtotime($t->updated_at),
+                'amount' => (float) ($t->total_price ?? 0),
+                'avatar_url' => 'https://ui-avatars.com/api/?name='.urlencode($buyerName).'&background=random',
+                'url' => route('admin.orders'),
+                'time_ago' => $timeAgo,
+                'timestamp' => strtotime($t->updated_at),
             ];
         }
 
@@ -211,34 +207,34 @@ class DashboardService
             $isCompleted = in_array($p->status, ['completed', 'success', 'approved']);
 
             $notifications[] = [
-                'id'          => 'pay_' . $p->id,
-                'type'        => 'payout',
-                'status'      => $isCompleted ? 'success' : 'rejected',
-                'title'       => $isCompleted ? 'Penarikan Dana Berhasil' : 'Penarikan Dana Gagal',
-                'message'     => $isCompleted
-                    ? "Penarikan Rp " . number_format($p->amount, 0, ',', '.') . " ke {$p->method} berhasil"
-                    : "Penarikan Rp " . number_format($p->amount, 0, ',', '.') . " ditolak",
-                'amount'      => (float) $p->amount,
-                'method'      => $p->method,
-                'avatar_url'  => null,
-                'url'         => route('admin.payout.history'),
-                'time_ago'    => $timeAgo,
-                'timestamp'   => strtotime($p->updated_at),
+                'id' => 'pay_'.$p->id,
+                'type' => 'payout',
+                'status' => $isCompleted ? 'success' : 'rejected',
+                'title' => $isCompleted ? 'Penarikan Dana Berhasil' : 'Penarikan Dana Gagal',
+                'message' => $isCompleted
+                    ? 'Penarikan Rp '.number_format($p->amount, 0, ',', '.')." ke {$p->method} berhasil"
+                    : 'Penarikan Rp '.number_format($p->amount, 0, ',', '.').' ditolak',
+                'amount' => (float) $p->amount,
+                'method' => $p->method,
+                'avatar_url' => null,
+                'url' => route('admin.payout.history'),
+                'time_ago' => $timeAgo,
+                'timestamp' => strtotime($p->updated_at),
             ];
         }
 
         // 3. User Suspension Alert (Current Status)
         if ($user->isSuspended()) {
             $notifications[] = [
-                'id'          => 'sys_suspension',
-                'type'        => 'system_alert',
-                'status'      => 'suspended',
-                'title'       => 'AKUN DITANGGUHKAN',
-                'message'     => 'Sistem membekukan akun Anda. Segera ajukan banding.',
-                'avatar_url'  => null,
-                'url'         => route('admin.dashboard'),
-                'time_ago'    => 'Saat Ini',
-                'timestamp'   => time(),
+                'id' => 'sys_suspension',
+                'type' => 'system_alert',
+                'status' => 'suspended',
+                'title' => 'AKUN DITANGGUHKAN',
+                'message' => 'Sistem membekukan akun Anda. Segera ajukan banding.',
+                'avatar_url' => null,
+                'url' => route('admin.dashboard'),
+                'time_ago' => 'Saat Ini',
+                'timestamp' => time(),
             ];
         }
 
@@ -254,17 +250,17 @@ class DashboardService
             $isApproved = $appeal->status === 'approved';
 
             $notifications[] = [
-                'id'          => 'appeal_' . $appeal->id,
-                'type'        => 'appeal',
-                'status'      => $appeal->status,
-                'title'       => $isApproved ? 'Banding Akun Disetujui!' : 'Banding Akun Ditolak',
-                'message'     => $isApproved
+                'id' => 'appeal_'.$appeal->id,
+                'type' => 'appeal',
+                'status' => $appeal->status,
+                'title' => $isApproved ? 'Banding Akun Disetujui!' : 'Banding Akun Ditolak',
+                'message' => $isApproved
                     ? 'Banding Akun disetujui, akun dipulihkan'
                     : 'Banding Akun ditolak oleh Admin Platform',
-                'avatar_url'  => null,
-                'url'         => route('admin.dashboard'),
-                'time_ago'    => $timeAgo,
-                'timestamp'   => strtotime($appeal->resolved_at ?? $appeal->updated_at),
+                'avatar_url' => null,
+                'url' => route('admin.dashboard'),
+                'time_ago' => $timeAgo,
+                'timestamp' => strtotime($appeal->resolved_at ?? $appeal->updated_at),
             ];
         }
 
@@ -278,15 +274,15 @@ class DashboardService
         foreach ($broadcasts as $b) {
             $timeAgo = \Carbon\Carbon::parse($b->created_at)->diffForHumans();
             $notifications[] = [
-                'id'          => 'broadcast_' . $b->id,
-                'type'        => 'broadcast',
-                'status'      => 'active',
-                'title'       => $b->title,
-                'message'     => 'Pengumuman: ' . $b->title,
-                'avatar_url'  => null,
-                'url'         => route('admin.dashboard'),
-                'time_ago'    => $timeAgo,
-                'timestamp'   => strtotime($b->created_at),
+                'id' => 'broadcast_'.$b->id,
+                'type' => 'broadcast',
+                'status' => 'active',
+                'title' => $b->title,
+                'message' => 'Pengumuman: '.$b->title,
+                'avatar_url' => null,
+                'url' => route('admin.dashboard'),
+                'time_ago' => $timeAgo,
+                'timestamp' => strtotime($b->created_at),
             ];
         }
 
@@ -305,13 +301,13 @@ class DashboardService
             $notification['is_read'] = isset($readKeys[$notification['id']]);
         }
         unset($notification);
-        $unreadCount = count(array_filter($notifications, fn ($notification) => !$notification['is_read']));
+        $unreadCount = count(array_filter($notifications, fn ($notification) => ! $notification['is_read']));
 
         return [
-            'status'        => 'success',
-            'unread_count'  => $unreadCount,
+            'status' => 'success',
+            'unread_count' => $unreadCount,
             'notifications' => array_slice($notifications, 0, 20),
-            'all_keys'      => array_column($notifications, 'id')
+            'all_keys' => array_column($notifications, 'id'),
         ];
     }
 

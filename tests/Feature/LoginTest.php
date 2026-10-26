@@ -18,7 +18,7 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'seller@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'admin_seller'
+            'role' => 'admin_seller',
         ]);
 
         $response = $this->post('/login', [
@@ -38,7 +38,7 @@ class LoginTest extends TestCase
         $admin = User::factory()->create([
             'email' => 'admin@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'admin_platform'
+            'role' => 'admin_platform',
         ]);
 
         $response = $this->post('/login', [

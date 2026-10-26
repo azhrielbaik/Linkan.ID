@@ -13,16 +13,16 @@ return new class extends Migration
     {
         // 1. Tambahkan kolom suspended_until dan suspend_reason ke tabel users
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'suspended_until')) {
+            if (! Schema::hasColumn('users', 'suspended_until')) {
                 $table->timestamp('suspended_until')->nullable()->after('suspended_at');
             }
-            if (!Schema::hasColumn('users', 'suspend_reason')) {
+            if (! Schema::hasColumn('users', 'suspend_reason')) {
                 $table->text('suspend_reason')->nullable()->after('suspended_until');
             }
         });
 
         // 2. Buat tabel suspension_appeals untuk banding seller
-        if (!Schema::hasTable('suspension_appeals')) {
+        if (! Schema::hasTable('suspension_appeals')) {
             Schema::create('suspension_appeals', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

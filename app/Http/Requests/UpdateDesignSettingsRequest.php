@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Appearance;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateDesignSettingsRequest extends FormRequest
@@ -15,14 +15,14 @@ class UpdateDesignSettingsRequest extends FormRequest
     {
         // Otorisasi: Pastikan appearance_id yang di-request adalah milik user yang sedang login
         $appearanceId = $this->input('appearance_id');
-        
-        if (!$appearanceId) {
+
+        if (! $appearanceId) {
             return false;
         }
 
         return Appearance::where('id', $appearanceId)
-                         ->where('user_id', Auth::id())
-                         ->exists();
+            ->where('user_id', Auth::id())
+            ->exists();
     }
 
     /**
@@ -31,11 +31,11 @@ class UpdateDesignSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'appearance_id'    => 'required|integer|exists:appearances,id',
-            'background_type'  => 'nullable|string|in:color,image',
+            'appearance_id' => 'required|integer|exists:appearances,id',
+            'background_type' => 'nullable|string|in:color,image',
             'background_color' => 'nullable|string|max:100',
-            'profile_layout'   => 'nullable|string|in:classic,title-top,side',
-            'block_shape'      => 'nullable|string|in:sharp,rounded,pill',
+            'profile_layout' => 'nullable|string|in:classic,title-top,side',
+            'block_shape' => 'nullable|string|in:sharp,rounded,pill',
         ];
     }
 }

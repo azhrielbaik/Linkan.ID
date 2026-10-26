@@ -41,21 +41,21 @@ class SupportTicketManagementController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_code', 'like', "%{$search}%")
-                  ->orWhere('subject', 'like', "%{$search}%")
-                  ->orWhere('message', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Filter Tanggal Tiket
         $startDate = $request->input('start_date') ?: $request->input('date', '');
-        $endDate   = $request->input('end_date', '');
+        $endDate = $request->input('end_date', '');
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -105,14 +105,14 @@ class SupportTicketManagementController extends Controller
         $ticket = SupportTicket::with('user')->findOrFail($id);
 
         $request->validate([
-            'message'    => 'required|string|max:4000',
-            'status'     => 'nullable|in:open,in_progress,resolved,closed',
+            'message' => 'required|string|max:4000',
+            'status' => 'nullable|in:open,in_progress,resolved,closed',
             'attachment' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'message.required' => 'Pesan balasan admin wajib diisi.',
-            'message.max'      => 'Pesan balasan maksimal 4000 karakter.',
+            'message.max' => 'Pesan balasan maksimal 4000 karakter.',
             'attachment.image' => 'Lampiran harus berupa file gambar.',
-            'attachment.max'   => 'Ukuran lampiran maksimal 2MB.',
+            'attachment.max' => 'Ukuran lampiran maksimal 2MB.',
         ]);
 
         $attachmentPath = null;
@@ -123,10 +123,10 @@ class SupportTicketManagementController extends Controller
         $reply = DB::transaction(function () use ($ticket, $request, $attachmentPath) {
             $reply = SupportTicketReply::create([
                 'support_ticket_id' => $ticket->id,
-                'user_id'           => Auth::id(),
-                'is_admin_reply'    => true,
-                'message'           => $request->message,
-                'attachment'        => $attachmentPath,
+                'user_id' => Auth::id(),
+                'is_admin_reply' => true,
+                'message' => $request->message,
+                'attachment' => $attachmentPath,
             ]);
 
             // Update status tiket
@@ -144,10 +144,10 @@ class SupportTicketManagementController extends Controller
                 'admin_reply_ticket',
                 "Membalas tiket bantuan #{$ticket->ticket_code} (Seller: {$ticket->user->name}, Status: {$ticket->status})",
                 [
-                    'ticket_id'    => $ticket->id,
-                    'ticket_code'  => $ticket->ticket_code,
+                    'ticket_id' => $ticket->id,
+                    'ticket_code' => $ticket->ticket_code,
                     'seller_email' => $ticket->user->email ?? null,
-                    'new_status'   => $ticket->status,
+                    'new_status' => $ticket->status,
                 ]
             );
 
@@ -162,7 +162,7 @@ class SupportTicketManagementController extends Controller
                 Mail::to($ticket->user->email)->send(new SupportTicketReplyMail($ticket, $reply));
             }
         } catch (\Exception $e) {
-            \Log::error('Support Ticket Reply Mail error: ' . $e->getMessage());
+            \Log::error('Support Ticket Reply Mail error: '.$e->getMessage());
         }
 
         return back()->with('success', 'Balasan resmi berhasil dikirim ke seller dan notifikasi email telah diteruskan.');
@@ -176,7 +176,7 @@ class SupportTicketManagementController extends Controller
         $ticket = SupportTicket::with('user')->findOrFail($id);
 
         $request->validate([
-            'status'   => 'required|in:open,in_progress,resolved,closed',
+            'status' => 'required|in:open,in_progress,resolved,closed',
             'priority' => 'required|in:low,medium,high,urgent',
         ]);
 
@@ -193,10 +193,10 @@ class SupportTicketManagementController extends Controller
                 'update_ticket_status',
                 "Mengubah status tiket #{$ticket->ticket_code}: [{$oldStatus} -> {$ticket->status}], Prioritas: [{$oldPriority} -> {$ticket->priority}]",
                 [
-                    'ticket_id'   => $ticket->id,
+                    'ticket_id' => $ticket->id,
                     'ticket_code' => $ticket->ticket_code,
-                    'status'      => $ticket->status,
-                    'priority'    => $ticket->priority,
+                    'status' => $ticket->status,
+                    'priority' => $ticket->priority,
                 ]
             );
         });

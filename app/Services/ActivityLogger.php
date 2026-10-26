@@ -13,14 +13,14 @@ class ActivityLogger
         'token', 'secret', 'server_key', 'client_key', 'api_key',
         'access_token', 'refresh_token', 'account_number',
     ];
+
     /**
      * Catat aktivitas admin ke database.
      *
-     * @param string $action Nama aksi (misal: 'approve_product', 'suspend_user')
-     * @param string $description Penjelasan aktivitas
-     * @param array $properties Metadata tambahan
-     * @param int|null $userId User ID yang melakukan (default Auth::id())
-     * @return ActivityLog|null
+     * @param  string  $action  Nama aksi (misal: 'approve_product', 'suspend_user')
+     * @param  string  $description  Penjelasan aktivitas
+     * @param  array  $properties  Metadata tambahan
+     * @param  int|null  $userId  User ID yang melakukan (default Auth::id())
      */
     public static function log(string $action, string $description, array $properties = [], ?int $userId = null): ?ActivityLog
     {
@@ -31,10 +31,10 @@ class ActivityLogger
                 'description' => self::redactText($description),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
-                'properties' => !empty($properties) ? self::sanitizeProperties($properties) : null,
+                'properties' => ! empty($properties) ? self::sanitizeProperties($properties) : null,
             ]);
         } catch (\Exception $e) {
-            Log::error('Failed to log admin activity: ' . $e->getMessage());
+            Log::error('Failed to log admin activity: '.$e->getMessage());
             throw new \Exception('Gagal mencatat aktivitas log sistem. Operasi dibatalkan demi konsistensi data.', 0, $e);
         }
     }
@@ -47,6 +47,7 @@ class ActivityLogger
             $normalizedKey = strtolower((string) $key);
             if (in_array($normalizedKey, self::SENSITIVE_KEYS, true)) {
                 $sanitized[$key] = '[REDACTED]';
+
                 continue;
             }
 

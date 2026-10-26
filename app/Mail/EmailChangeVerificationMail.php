@@ -13,6 +13,7 @@ class EmailChangeVerificationMail extends Mailable
     use Queueable, SerializesModels;
 
     public string $verificationUrl;
+
     public string $userName;
 
     /**

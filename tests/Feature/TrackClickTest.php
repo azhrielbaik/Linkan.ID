@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\DigitalProduct;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,7 +20,7 @@ class TrackClickTest extends TestCase
             'username' => 'testuserclick',
         ]);
 
-        $product = new DigitalProduct();
+        $product = new DigitalProduct;
         $product->user_id = $user->id;
         $product->title = 'Test Product';
         $product->price = 10000;

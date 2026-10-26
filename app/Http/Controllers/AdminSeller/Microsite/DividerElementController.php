@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller\Microsite;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\DividerElement;
-use App\Models\Appearance;
+use Illuminate\Http\Request;
 
 class DividerElementController extends Controller
 {
@@ -14,18 +14,18 @@ class DividerElementController extends Controller
             'type' => 'required|string|in:line,space',
             'size' => 'required|integer|min:1|max:200',
             'element_id' => 'nullable|integer',
-            'appearance_id' => 'required|integer|exists:appearances,id'
+            'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
         $user = auth()->user();
-        
+
         $dividerElement = null;
         if ($request->element_id) {
             $dividerElement = DividerElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
         }
 
-        if (!$dividerElement) {
-            $dividerElement = new DividerElement();
+        if (! $dividerElement) {
+            $dividerElement = new DividerElement;
             $dividerElement->user_id = $user->id;
             $dividerElement->appearance_id = $request->appearance_id;
             $maxOrder = DividerElement::where('appearance_id', $request->appearance_id)->max('order_position');
@@ -40,7 +40,7 @@ class DividerElementController extends Controller
             'success' => true,
             'id' => $dividerElement->id,
             'type' => $dividerElement->type,
-            'size' => $dividerElement->size
+            'size' => $dividerElement->size,
         ]);
     }
 
@@ -50,8 +50,10 @@ class DividerElementController extends Controller
         $element = DividerElement::where('id', $id)->where('user_id', $user->id)->first();
         if ($element) {
             $element->delete();
+
             return response()->json(['success' => true]);
         }
+
         return response()->json(['success' => false], 404);
     }
 }

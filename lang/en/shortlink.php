@@ -9,7 +9,7 @@ return [
     'engagement' => 'Engagement All Time',
     'results' => 'Result(s)',
     'detail' => 'Detail',
-    
+
     'create_new_link' => 'Create New Link',
     'create_desc' => 'Create, short, and manage your links',
     'custom_link' => 'Custom Your Link',
@@ -20,36 +20,36 @@ return [
     'desc_label' => 'Description (Optional)',
     'desc_placeholder' => 'Short description of the link',
     'btn_create' => 'Create Link',
-    
+
     'link_detail' => 'Link Detail',
     'original_link' => 'Original Link',
     'short_link' => 'Short Link',
     'config_status' => 'Configuration Status',
-    
+
     'password_lock' => 'Password Lock',
     'password_hint' => 'Enable to require a visitor password',
     'set_password' => 'Set Password',
-    
+
     'expiration' => 'Expiration Date',
     'expiration_hint' => 'Enable access time limit',
     'set_time' => 'Set Time',
-    
+
     'protected_link' => 'Protected Link',
     'updated' => 'Updated',
-    
+
     'password_label' => 'Password Lock (Optional)',
     'password_placeholder' => 'Leave empty if you don\'t want to lock it',
-    
+
     'expiration_label' => 'Access Time Limit (Optional)',
-    
+
     'edit_slug_label' => 'Change Short URL (Slug)',
     'save_changes' => 'Save Changes',
     'cancel' => 'Cancel',
-    
+
     'copied' => 'Copied!',
     'copy' => 'Copy',
     'saved_successfully' => 'Saved Successfully!',
-    
+
     'created_by' => 'Created By',
     'status' => 'Status',
     'active' => 'Active',

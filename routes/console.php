@@ -1,11 +1,10 @@
 <?php
 
+use App\Models\ActivityLog;
+use App\Services\ActivityLogger;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\ActivityLog;
-
 use Illuminate\Support\Facades\Schedule;
-use App\Services\ActivityLogger;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -45,4 +44,3 @@ Artisan::command('orders:cancel-expired {hours=24}', function (int $hours = 24) 
 
 // Jadwal Pembatalan Otomatis Pesanan Pending > 24 Jam Setiap Jam
 Schedule::command('orders:cancel-expired 24')->hourly();
-

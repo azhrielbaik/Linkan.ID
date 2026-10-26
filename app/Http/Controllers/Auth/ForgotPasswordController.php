@@ -3,21 +3,23 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Mail\ResetPasswordOtpMail;
+use App\Http\Requests\Auth\PasswordResetOtpRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\VerifyOtpRequest;
 use App\Models\ActivityLog;
 use App\Models\PasswordResetRequest;
-use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Services\Auth\PasswordResetOtpService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
+    protected PasswordResetOtpService $otpService;
+
+    public function __construct(PasswordResetOtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
     /**
      * Step 1: Halaman Formulir Masukkan Email.
      */
@@ -29,83 +31,21 @@ class ForgotPasswordController extends Controller
     /**
      * Step 1 -> Step 2: Kirim kode OTP reset password langsung ke email pengguna (SMTP).
      */
-    public function requestOtp(Request $request)
+    public function requestOtp(PasswordResetOtpRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email|max:255',
-        ], [
-            'email.required' => 'Email address is required.',
-            'email.email' => 'Please enter a valid email address.',
-        ]);
+        $result = $this->otpService->requestOtp($request->email, $request->ip());
 
-        $email = strtolower(trim($request->email));
-        $requestKey = 'password-reset-request|'.$request->ip().'|'.hash('sha256', $email);
-        if (RateLimiter::tooManyAttempts($requestKey, 3)) {
-            return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
-        }
-        RateLimiter::hit($requestKey, 900);
-
-        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
-
-        if (! $user) {
-            return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
-        }
-
-        // Generate 4-digit OTP acak
-        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
-        $resetToken = Str::random(64);
-        $expiresMinutes = 1;
-
-        // Jalankan transaksi database
-        $resetRequest = DB::transaction(function () use ($user, $resetToken, $otp, $expiresMinutes) {
-            // Tandai permohonan aktif sebelumnya agar tidak duplikat
-            PasswordResetRequest::where('user_id', $user->id)
-                ->whereIn('status', ['pending', 'approved'])
-                ->update([
-                    'status' => 'rejected',
-                    'admin_notes' => 'Digantikan oleh permintaan kode OTP baru',
-                    'resolved_at' => now(),
-                ]);
-
-            // Simpan request OTP baru dengan status langsung approved
-            $resetRequest = PasswordResetRequest::create([
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'reset_token_hash' => hash('sha256', $resetToken),
-                'reason' => 'Permintaan reset password via email OTP',
-                'otp_hash' => Hash::make($otp),
-                'status' => 'approved',
-                'expires_at' => now()->addMinutes($expiresMinutes),
-                'resolved_at' => now(),
+        if (isset($result['token'])) {
+            session([
+                'reset_token' => $result['token'],
+                'reset_request_id' => $result['reset_request_id'],
             ]);
 
-            // Catat di activity log
-            ActivityLogger::log(
-                'password_reset_otp_sent',
-                "Kode OTP verifikasi reset password dikirimkan ke {$user->email}.",
-                ['user_id' => $user->id, 'email' => $user->email]
-            );
-
-            return $resetRequest;
-        });
-
-        // Kirim email OTP langsung via SMTP (dilakukan di luar DB Transaction agar tidak menunda DB lock)
-        try {
-            Mail::to($user->email)->send(new ResetPasswordOtpMail($otp, $user->name ?? 'Pengguna', $expiresMinutes));
-        } catch (\Throwable $e) {
-            Log::error('Gagal mengirim email OTP Reset Password: '.$e->getMessage());
-
-            return back()->withInput()->with('status', 'Jika email terdaftar, instruksi reset password akan dikirim.');
+            return redirect()->route('password.verify-otp', ['token' => $result['token']])
+                ->with('status', $result['message']);
         }
 
-        // Simpan email di session
-        session([
-            'reset_token' => $resetToken,
-            'reset_request_id' => $resetRequest->id,
-        ]);
-
-        return redirect()->route('password.verify-otp', ['token' => $resetToken])
-            ->with('status', 'Kode OTP 4 digit telah dikirim ke email Anda. Silakan periksa inbox atau folder spam.');
+        return back()->withInput()->with('status', $result['message']);
     }
 
     /**
@@ -114,88 +54,35 @@ class ForgotPasswordController extends Controller
     public function showVerifyOtpForm(Request $request)
     {
         $token = $request->query('token') ?? session('reset_token');
-        if (! $token) {
-            return redirect()->route('password.request');
-        }
+        $verifyData = $this->otpService->getVerifyData($token);
 
-        $latestRequest = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))
-            ->where('status', 'approved')
-            ->first();
-        if (! $latestRequest || $latestRequest->used_at) {
-            return redirect()->route('password.request')->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
-        }
-
-        return view('auth.verify-otp', [
-            'email' => ActivityLog::maskEmail($latestRequest->email),
-            'token' => $token,
-            'latestRequest' => $latestRequest,
-        ]);
-    }
-
-    public function resendOtp(Request $request)
-    {
-        $request->validate([
-            'token' => 'required|string|size:64',
-        ]);
-
-        $tokenHash = hash('sha256', $request->token);
-        $resendKey = 'password-reset-resend|'.$request->ip().'|'.$tokenHash;
-        if (RateLimiter::tooManyAttempts($resendKey, 1)) {
-            return redirect()->route('password.verify-otp', ['token' => $request->token])
-                ->with('status', 'Silakan tunggu sebentar sebelum meminta kode baru.');
-        }
-
-        $resetRequest = PasswordResetRequest::with('user')
-            ->where('reset_token_hash', $tokenHash)
-            ->where('status', 'approved')
-            ->first();
-
-        if (! $resetRequest || $resetRequest->used_at || ! $resetRequest->user) {
+        if (! $verifyData) {
             return redirect()->route('password.request')
                 ->with('status', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
         }
 
-        RateLimiter::hit($resendKey, 60);
-        $otp = str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
-        $newToken = Str::random(64);
+        return view('auth.verify-otp', $verifyData);
+    }
 
-        $resetRequest->update([
-            'status' => 'rejected',
-            'resolved_at' => now(),
-        ]);
+    public function resendOtp(Request $request)
+    {
+        $request->validate(['token' => 'required|string|size:64']);
 
-        $newRequest = PasswordResetRequest::create([
-            'user_id' => $resetRequest->user_id,
-            'email' => $resetRequest->email,
-            'reset_token_hash' => hash('sha256', $newToken),
-            'reason' => 'Permintaan ulang kode OTP reset password',
-            'otp_hash' => Hash::make($otp),
-            'status' => 'approved',
-            'expires_at' => now()->addMinute(),
-            'resolved_at' => now(),
-        ]);
+        $result = $this->otpService->resendOtp($request->token, $request->ip());
 
-        try {
-            Mail::to($resetRequest->email)->send(new ResetPasswordOtpMail(
-                $otp,
-                $resetRequest->user->name ?? 'Pengguna',
-                1
-            ));
-        } catch (\Throwable $e) {
-            Log::error('Gagal mengirim ulang email OTP Reset Password: '.$e->getMessage());
-            $newRequest->update(['status' => 'rejected', 'resolved_at' => now()]);
-
-            return redirect()->route('password.verify-otp', ['token' => $request->token])
-                ->with('status', 'Jika kode belum diterima, silakan coba lagi setelah beberapa saat.');
+        if (! empty($result['invalid'])) {
+            return redirect()->route('password.request')->with('status', $result['message']);
         }
 
-        session([
-            'reset_token' => $newToken,
-            'reset_request_id' => $newRequest->id,
-        ]);
+        if (! empty($result['token']) && ! empty($result['reset_request_id'])) {
+            session([
+                'reset_token' => $result['token'],
+                'reset_request_id' => $result['reset_request_id'],
+            ]);
+        }
 
-        return redirect()->route('password.verify-otp', ['token' => $newToken])
-            ->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+        return redirect()->route('password.verify-otp', ['token' => $result['token']])
+            ->with('status', $result['message']);
     }
 
     /**
@@ -203,100 +90,36 @@ class ForgotPasswordController extends Controller
      */
     public function checkOtpStatus(Request $request)
     {
-        $token = $request->query('token');
-        if (! $token) {
+        $status = $this->otpService->checkOtpStatus($request->query('token'));
+
+        if ($status === 'error') {
             return response()->json(['status' => 'error'], 400);
         }
 
-        $req = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))->first();
-
-        if (! $req) {
-            return response()->json(['status' => 'none']);
-        }
-
-        if ($req->isExpired() || $req->used_at) {
-            return response()->json(['status' => 'expired']);
-        }
-
-        return response()->json(['status' => $req->status]);
+        return response()->json(['status' => $status]);
     }
 
     /**
      * Step 2 -> Step 3: Verifikasi Kode OTP.
      */
-    public function verifyOtp(Request $request)
+    public function verifyOtp(VerifyOtpRequest $request)
     {
-        $request->validate([
-            'token' => 'required|string|size:64',
-            'otp_code' => 'required|string|size:4',
-        ], [
-            'otp_code.required' => 'Please enter the 4-digit code.',
-            'otp_code.size' => 'The verification code must be 4 digits.',
-        ]);
+        $result = $this->otpService->verifyOtp($request->token, $request->otp_code, $request->ip());
 
-        $resetReq = PasswordResetRequest::where('reset_token_hash', hash('sha256', $request->token))
-            ->where('status', 'approved')
-            ->first();
-
-        if (! $resetReq) {
+        if (! $result['success']) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
+                    'message' => $result['message'],
                 ], 422);
             }
 
             return back()->withInput()->withErrors([
-                'otp_code' => 'Tidak ada kode OTP aktif yang ditemukan. Silakan minta kode baru.',
+                'otp_code' => $result['message'],
             ]);
         }
 
-        if ($resetReq->isExpired() || $resetReq->used_at) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.',
-                ], 422);
-            }
-
-            return back()->withInput()->withErrors([
-                'otp_code' => 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.',
-            ]);
-        }
-
-        $otpKey = 'password-reset-otp|'.$request->ip().'|'.$resetReq->id;
-        if ($resetReq->attempts >= 5 || RateLimiter::tooManyAttempts($otpKey, 5)) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.',
-                ], 422);
-            }
-
-            return back()->withErrors([
-                'otp_code' => 'Terlalu banyak percobaan OTP. Silakan minta kode baru.',
-            ]);
-        }
-
-        $resetReq->increment('attempts');
-        RateLimiter::hit($otpKey, 900);
-
-        if (! Hash::check(trim($request->otp_code), $resetReq->otp_hash)) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Kode OTP salah. Silakan periksa kembali.',
-                ], 422);
-            }
-
-            return back()->withInput()->withErrors([
-                'otp_code' => 'Kode OTP salah. Silakan periksa kembali.',
-            ]);
-        }
-
-        // Simpan sesi verifikasi OTP untuk step 3
-        RateLimiter::clear($otpKey);
-        session(['otp_request_id' => $resetReq->id]);
+        session(['otp_request_id' => $result['reset_request_id']]);
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -326,49 +149,15 @@ class ForgotPasswordController extends Controller
     /**
      * Step 3 -> Step 4: Simpan Password Baru.
      */
-    public function submitCreatePassword(Request $request)
+    public function submitCreatePassword(ResetPasswordRequest $request)
     {
-        $resetRequest = PasswordResetRequest::with('user')->find(session('otp_request_id'));
-        if (! $resetRequest || $resetRequest->status !== 'approved' || $resetRequest->isExpired() || $resetRequest->used_at) {
-            return redirect()->route('password.request')->withErrors(['email' => 'Sesi reset password tidak valid atau sudah kedaluwarsa.']);
+        $requestId = (int) session('otp_request_id');
+        $result = $this->otpService->resetPassword($requestId, $request->password);
+
+        if (! $result['success']) {
+            return redirect()->route('password.request')->withErrors(['email' => $result['message']]);
         }
 
-        $request->validate([
-            'password' => 'required|string|min:8|same:password_confirmation',
-            'password_confirmation' => 'required|string|min:8',
-        ], [
-            'password.required' => 'Please enter a new password.',
-            'password.min' => 'Password must be at least 8 characters.',
-            'password.same' => 'Password confirmation does not match.',
-        ]);
-
-        $user = $resetRequest->user;
-        if (! $user) {
-            return redirect()->route('password.request')->withErrors(['email' => 'User not found.']);
-        }
-
-        DB::transaction(function () use ($user, $request, $resetRequest) {
-            // Update password
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-
-            // Tandai permohonan selesai
-            $resetRequest->update([
-                'status' => 'completed',
-                'resolved_at' => now(),
-                'used_at' => now(),
-            ]);
-
-            // Catat di log
-            ActivityLogger::log(
-                'password_reset_success',
-                "User {$user->name} ({$user->email}) berhasil memperbarui password baru.",
-                ['user_id' => $user->id, 'email' => $user->email]
-            );
-        });
-
-        // Hapus session temporary
         session()->forget(['reset_token', 'reset_request_id', 'otp_request_id']);
 
         return redirect()->route('password.success');

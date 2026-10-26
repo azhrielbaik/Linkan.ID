@@ -3,9 +3,7 @@
 namespace App\Events;
 
 use App\Services\PlatformAdminService;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -34,7 +32,7 @@ class PlatformNotificationEvent implements ShouldBroadcast
             new PrivateChannel('admin-notifications'),
         ];
     }
-    
+
     public function broadcastAs(): string
     {
         return 'notifications';

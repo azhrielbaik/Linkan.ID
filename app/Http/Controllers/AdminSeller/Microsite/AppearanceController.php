@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AdminSeller\Microsite;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Appearance;
-use App\Models\DigitalProduct;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateAppearanceRequest;
 use App\Http\Requests\UpdateDesignSettingsRequest;
+use App\Models\Appearance;
+use App\Models\DigitalProduct;
 use App\Services\AppearanceService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AppearanceController extends Controller
 {
@@ -24,72 +26,58 @@ class AppearanceController extends Controller
         $user = Auth::user();
         $appearance = Appearance::where('user_id', $user->id)->first();
         $digitalProducts = DigitalProduct::where('user_id', $user->id)->latest()->get();
-        
+
         return view('homeadminS.appearance', compact('appearance', 'digitalProducts'));
     }
 
     public function update(UpdateAppearanceRequest $request)
     {
-        // 1. Ekstrak data murni (tanpa membocorkan instance Request ke Service)
         $payload = $request->validated();
         $bannerFile = $request->file('banner');
         $profileFile = $request->file('profile_image');
 
-        // 2. Delegasikan ke Service
         $appearance = $this->appearanceService->updateAppearance(
-            Auth::user(), 
-            $payload, 
-            $bannerFile, 
+            Auth::user(),
+            $payload,
+            $bannerFile,
             $profileFile
         );
 
-        // 3. Kembalikan HTTP Response
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Profil berhasil diperbarui!',
-                'appearance' => $appearance
+                'appearance' => $appearance,
             ]);
         }
 
         return redirect()->back()->with('success', 'Appearance updated successfully!');
     }
 
-    /**
-     * Auto-save design settings via AJAX.
-     * Logika ini relatif ringan, namun bisa dipindah ke service yang sama jika dibutuhkan nanti.
-     */
     public function updateDesignSettings(UpdateDesignSettingsRequest $request)
     {
-        // Otorisasi kepemilikan sudah dilakukan di FormRequest (authorize method)
         $appearance = Appearance::findOrFail($request->appearance_id);
 
         $appearance->fill($request->safe()->only([
             'background_type',
             'background_color',
             'profile_layout',
-            'block_shape'
+            'block_shape',
         ]))->save();
 
         return response()->json([
-            'success'    => true,
+            'success' => true,
             'appearance' => $appearance->only(
                 'background_type', 'background_color', 'profile_layout', 'block_shape'
             ),
         ]);
     }
 
-    /**
-     * Update blocks ordering for the user's microsite appearance.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updateOrder(Request $request): \Illuminate\Http\JsonResponse
+    public function updateOrder(Request $request): JsonResponse
     {
         $request->validate([
             'blocks_order' => 'required|string',
-            'appearance_id' => 'required|integer|exists:appearances,id'
+            'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
         $user = Auth::user();

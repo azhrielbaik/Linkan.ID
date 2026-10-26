@@ -28,7 +28,7 @@ class CheckoutDigitalProductRequest extends FormRequest
                 'qty' => 'required|integer|min:1',
             ];
         }
-        
+
         return [];
     }
 }
