@@ -62,6 +62,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'permission' => 0666,
             'replace_placeholders' => true,
         ],
 
@@ -70,7 +71,29 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 14),
+            'permission' => 0666,
             'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
+        ],
+
+        'application' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 14),
+            'permission' => 0666,
+            'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
+        ],
+
+        'audit' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/audit.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 60,
+            'permission' => 0666,
+            'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
         ],
 
         'auth' => [
@@ -78,7 +101,9 @@ return [
             'path' => storage_path('logs/auth.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 30,
+            'permission' => 0666,
             'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
         ],
 
         'payment' => [
@@ -86,7 +111,9 @@ return [
             'path' => storage_path('logs/payment.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 90,
+            'permission' => 0666,
             'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
         ],
 
         'jobs' => [
@@ -94,7 +121,9 @@ return [
             'path' => storage_path('logs/jobs.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
+            'permission' => 0666,
             'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
         ],
 
         'errors' => [
@@ -102,7 +131,9 @@ return [
             'path' => storage_path('logs/errors.log'),
             'level' => 'error',
             'days' => 60,
+            'permission' => 0666,
             'replace_placeholders' => true,
+            'tap' => [App\Logging\ConfigureStructuredChannel::class],
         ],
 
         'slack' => [

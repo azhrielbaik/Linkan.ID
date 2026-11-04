@@ -57,6 +57,8 @@ class LoginController extends Controller
             } elseif ($user->role === 'admin_platform') {
                 return redirect()->route('platform-admin.dashboard');
             }
+
+            return redirect()->intended('/');
         }
 
         return view('auth.login');
@@ -119,6 +121,8 @@ class LoginController extends Controller
             } elseif ($user->role === 'admin_platform') {
                 return redirect()->route('platform-admin.dashboard');
             }
+
+            return redirect()->intended('/');
         }
 
         Log::channel('auth')->warning('Login failed: invalid credentials', [

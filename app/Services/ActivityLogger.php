@@ -25,14 +25,30 @@ class ActivityLogger
     public static function log(string $action, string $description, array $properties = [], ?int $userId = null): ?ActivityLog
     {
         try {
-            return ActivityLog::create([
-                'user_id' => $userId ?? Auth::id(),
+            $effectiveUserId = $userId ?? Auth::id();
+            $log = ActivityLog::create([
+                'user_id' => $effectiveUserId,
                 'action' => $action,
                 'description' => self::redactText($description),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'properties' => ! empty($properties) ? self::sanitizeProperties($properties) : null,
             ]);
+
+            try {
+                Log::channel('audit')->info('admin_audit_'.$action, [
+                    'event' => 'admin_audit_'.$action,
+                    'action' => $action,
+                    'description' => self::redactText($description),
+                    'user_id' => $effectiveUserId,
+                    'properties' => $properties,
+                    'ip_address' => request()->ip(),
+                ]);
+            } catch (\Throwable) {
+                // Fail-safe
+            }
+
+            return $log;
         } catch (\Exception $e) {
             Log::error('Failed to log admin activity: '.$e->getMessage());
             throw new \Exception('Gagal mencatat aktivitas log sistem. Operasi dibatalkan demi konsistensi data.', 0, $e);

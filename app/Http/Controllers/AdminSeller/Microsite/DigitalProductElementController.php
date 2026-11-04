@@ -168,7 +168,7 @@ class DigitalProductElementController extends Controller
             ->firstOrFail();
 
         $key = 'digitalproduct_'.$product->id;
-        if (in_array($key, $appearance->blocks_order, true)) {
+        if (in_array($key, $appearance->getBlocksOrderArray(), true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Produk ini sudah ada di microsite Anda.',

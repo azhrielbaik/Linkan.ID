@@ -8,6 +8,7 @@ use App\Models\PasswordResetRequest;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -33,9 +34,17 @@ class PasswordResetOtpService
         $user = User::whereRaw('LOWER(email) = ?', [$normalizedEmail])->first();
 
         if (! $user) {
+            $dummyToken = Str::random(64);
+            Cache::put('dummy_reset_'.$dummyToken, [
+                'email' => ActivityLog::maskEmail($normalizedEmail),
+                'token' => $dummyToken,
+            ], now()->addMinutes(3));
+
             return [
                 'success' => true,
-                'message' => 'Jika email terdaftar, instruksi reset password akan dikirim.',
+                'token' => $dummyToken,
+                'reset_request_id' => 0,
+                'message' => 'Kode OTP 4 digit telah dikirim ke email Anda jika terdaftar. Silakan periksa inbox atau folder spam.',
             ];
         }
 
@@ -97,6 +106,20 @@ class PasswordResetOtpService
             return null;
         }
 
+        $dummy = Cache::get('dummy_reset_'.$token);
+        if ($dummy) {
+            return [
+                'email' => $dummy['email'],
+                'token' => $token,
+                'latestRequest' => (object) [
+                    'id' => 0,
+                    'created_at' => now(),
+                    'expires_at' => now()->addMinute(),
+                    'email' => $dummy['email'],
+                ],
+            ];
+        }
+
         $latestRequest = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))
             ->where('status', 'approved')
             ->first();
@@ -122,6 +145,19 @@ class PasswordResetOtpService
                 'success' => false,
                 'message' => 'Silakan tunggu sebentar sebelum meminta kode baru.',
                 'token' => $token,
+            ];
+        }
+
+        if (Cache::has('dummy_reset_'.$token)) {
+            $newToken = Str::random(64);
+            $dummy = Cache::get('dummy_reset_'.$token);
+            Cache::put('dummy_reset_'.$newToken, $dummy, now()->addMinutes(3));
+
+            return [
+                'success' => true,
+                'token' => $newToken,
+                'reset_request_id' => 0,
+                'message' => 'Kode OTP baru telah dikirimkan ke email Anda jika terdaftar.',
             ];
         }
 
@@ -189,6 +225,10 @@ class PasswordResetOtpService
             return 'error';
         }
 
+        if (Cache::has('dummy_reset_'.$token)) {
+            return 'approved';
+        }
+
         $req = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))->first();
 
         if (! $req) {
@@ -204,6 +244,15 @@ class PasswordResetOtpService
 
     public function verifyOtp(string $token, string $otpCode, string $ip): array
     {
+        if (Cache::has('dummy_reset_'.$token)) {
+            Hash::check($otpCode, '$2y$12$e0MYzXyjpJS7Pd0RVvHwHeT9oK4gRkLq40a1oE96v5p5q0bK4h.Gy');
+
+            return [
+                'success' => false,
+                'message' => 'Kode OTP yang Anda masukkan salah atau telah kedaluwarsa.',
+            ];
+        }
+
         $resetReq = PasswordResetRequest::where('reset_token_hash', hash('sha256', $token))
             ->where('status', 'approved')
             ->first();

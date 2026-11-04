@@ -52,8 +52,8 @@ export class NotificationSSEManager {
                 try {
                     const data = JSON.parse(event.data);
                     this.handleNotificationEvent(data);
-                } catch (err) {
-                    console.debug('SSE parse message', event.data);
+                } catch {
+                    // Non-JSON heartbeat or comment frame; suppress logging raw data
                 }
             };
 

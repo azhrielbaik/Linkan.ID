@@ -8,4 +8,22 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        cssMinify: true,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('pusher-js') || id.includes('laravel-echo')) {
+                            return 'vendor-echo';
+                        }
+                        if (id.includes('axios')) {
+                            return 'vendor-axios';
+                        }
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+    },
 });

@@ -15,40 +15,35 @@ class DashboardService
     {
         app(OrderService::class)->autoCancelExpiredPendingOrders($user->id, 24);
 
-        $digitalProducts = DigitalProduct::where('user_id', $user->id)->get();
-        $totalProducts = $digitalProducts->count();
+        $totalProducts = DigitalProduct::where('user_id', $user->id)->count();
 
         $totalViews = DB::table('link_views')
             ->where('user_id', $user->id)
             ->count();
 
-        $totalClicks = DB::table('transactions')
+        // Consolidated single query for transactions join digital_products
+        $transactionStats = DB::table('transactions')
             ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
             ->where('digital_products.user_id', $user->id)
             ->where('transactions.status', 'success')
-            ->count();
+            ->selectRaw('COUNT(*) as total_clicks, COALESCE(SUM(transactions.qty), 0) as lifetime_orders, COALESCE(SUM(transactions.total_price), 0) as total_sales')
+            ->first();
 
-        $lifetimeOrders = DB::table('transactions')
-            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
-            ->where('digital_products.user_id', $user->id)
-            ->where('transactions.status', 'success')
-            ->sum('transactions.qty');
+        $totalClicks = (int) ($transactionStats->total_clicks ?? 0);
+        $lifetimeOrders = (int) ($transactionStats->lifetime_orders ?? 0);
+        $totalSales = (float) ($transactionStats->total_sales ?? 0);
 
-        $totalSales = (float) DB::table('transactions')
-            ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
-            ->where('digital_products.user_id', $user->id)
-            ->where('transactions.status', 'success')
-            ->sum('transactions.total_price');
-
-        $approvedGross = (float) DB::table('payout_transactions')
+        // Consolidated single query for payout transactions
+        $payoutStats = DB::table('payout_transactions')
             ->where('user_id', $user->id)
-            ->whereIn('status', ['approved', 'completed'])
-            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
+            ->selectRaw("
+                COALESCE(SUM(CASE WHEN status IN ('approved', 'completed') THEN COALESCE(gross_amount, amount) ELSE 0 END), 0) as approved_gross,
+                COALESCE(SUM(CASE WHEN status = 'pending' THEN COALESCE(gross_amount, amount) ELSE 0 END), 0) as pending_gross
+            ")
+            ->first();
 
-        $pendingGross = (float) DB::table('payout_transactions')
-            ->where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->sum(DB::raw('COALESCE(gross_amount, amount)'));
+        $approvedGross = (float) ($payoutStats->approved_gross ?? 0);
+        $pendingGross = (float) ($payoutStats->pending_gross ?? 0);
 
         // Saldo yang tersedia: pendapatan kotor penjualan dikurangi payout yang approved dan pending
         // Transaksi payout yang berstatus 'rejected' tidak dihitung sebagai pengurang sehingga otomatis kembali ke user

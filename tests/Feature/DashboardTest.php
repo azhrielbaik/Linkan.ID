@@ -47,4 +47,27 @@ class DashboardTest extends TestCase
         ]);
         $this->assertEquals(60, $response->json('days'));
     }
+
+    public function test_notifications_endpoint_returns_json_notifications(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson(route('admin.notifications'));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'notifications',
+            'unread_count',
+        ]);
+    }
+
+    public function test_notifications_stream_endpoint_returns_event_stream(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('admin.notifications.stream'));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('text/event-stream', (string) $response->headers->get('Content-Type'));
+    }
 }

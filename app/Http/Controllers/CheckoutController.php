@@ -67,10 +67,7 @@ class CheckoutController extends Controller
         $appearances = Appearance::where('user_id', $product->user_id)->get();
         $micrositeAlias = null;
         foreach ($appearances as $appearance) {
-            $blocksOrder = is_array($appearance->blocks_order)
-                ? implode(',', $appearance->blocks_order)
-                : (string) $appearance->blocks_order;
-            if (str_contains($blocksOrder, 'digitalproduct_'.$product->id)) {
+            if (in_array((int) $product->id, $appearance->getDigitalProductIds(), true)) {
                 $micrositeAlias = $appearance->alias;
                 break;
             }
@@ -185,19 +182,45 @@ class CheckoutController extends Controller
 
     public function midtransCallback(Request $request)
     {
-        Log::info('Midtrans Webhook Raw Payload: ', $request->all());
+        Log::channel('payment')->info('midtrans_webhook_received', [
+            'event' => 'midtrans_webhook_received',
+            'order_id' => $request->input('order_id'),
+            'transaction_status' => $request->input('transaction_status'),
+            'status_code' => $request->input('status_code'),
+            'gross_amount' => $request->input('gross_amount'),
+            'payment_type' => $request->input('payment_type'),
+            'signature_prefix' => substr((string) $request->input('signature_key'), 0, 8).'***',
+            'ip_address' => $request->ip(),
+        ]);
 
         try {
             $result = $this->checkoutService->handleCallback();
         } catch (Exception $e) {
-            Log::error('Midtrans Webhook Error: '.$e->getMessage());
+            Log::channel('payment')->error('midtrans_webhook_processing_failed', [
+                'event' => 'midtrans_webhook_processing_failed',
+                'order_id' => $request->input('order_id'),
+                'error_message' => $e->getMessage(),
+                'exception_class' => get_class($e),
+            ]);
 
             return response()->json(['error' => 'Webhook error'], 400);
         }
 
         if ($result['status'] === 404) {
+            Log::channel('payment')->warning('midtrans_webhook_transaction_not_found', [
+                'event' => 'midtrans_webhook_transaction_not_found',
+                'order_id' => $request->input('order_id'),
+                'status_code' => 404,
+            ]);
+
             return response()->json(['error' => $result['message']], 404);
         }
+
+        Log::channel('payment')->info('midtrans_webhook_processed_successfully', [
+            'event' => 'midtrans_webhook_processed_successfully',
+            'order_id' => $request->input('order_id'),
+            'status_code' => 200,
+        ]);
 
         return response()->json(['message' => $result['message']], 200);
     }

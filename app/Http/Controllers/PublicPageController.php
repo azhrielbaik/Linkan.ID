@@ -14,8 +14,8 @@ class PublicPageController extends Controller
 
     public function show($username)
     {
-        // Parameter $username is now an alias for the Appearance
-        $appearance = \App\Models\Appearance::where('alias', $username)->firstOrFail();
+        // Parameter $username is now an alias for the Appearance (eager load user to eliminate N+1)
+        $appearance = \App\Models\Appearance::with('user')->where('alias', $username)->firstOrFail();
         $user = $appearance->user;
 
         if ($user->isSuspended()) {
@@ -26,15 +26,17 @@ class PublicPageController extends Controller
         $ipAddress = request()->ip();
         $userAgent = request()->header('User-Agent');
 
-        // Cek apakah hari ini sudah pernah view dari kombinasi IP dan User Agent yang sama
-        $existing = DB::table('link_views')
+        // Cek apakah hari ini sudah pernah view dari kombinasi IP dan User Agent yang sama (menggunakan index range scan)
+        $todayStart = now()->startOfDay();
+        $todayEnd = now()->endOfDay();
+        $alreadyViewedToday = DB::table('link_views')
             ->where('link_id', $appearance->alias)
             ->where('ip_address', $ipAddress)
             ->where('user_agent', $userAgent)
-            ->whereDate('created_at', now()->toDateString())
-            ->first();
+            ->whereBetween('created_at', [$todayStart, $todayEnd])
+            ->exists();
 
-        if (! $existing) {
+        if (! $alreadyViewedToday) {
             DB::table('link_views')->insert([
                 'user_id' => $user->id,
                 'link_id' => $appearance->alias,

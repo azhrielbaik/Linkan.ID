@@ -51,6 +51,27 @@ class LoginTest extends TestCase
     }
 
     /**
+     * Test successful login for a user with standard/custom role redirects safely
+     */
+    public function test_login_successful_custom_role_redirects_safely(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'custom@example.com',
+            'password' => bcrypt('password123'),
+            'role' => 'user',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'custom@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect('/');
+        $response->assertSessionHasNoErrors();
+        $this->assertAuthenticatedAs($user);
+    }
+
+    /**
      * Test login failure with incorrect password
      */
     public function test_login_fails_with_incorrect_credentials(): void

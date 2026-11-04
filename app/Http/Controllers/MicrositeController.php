@@ -65,7 +65,7 @@ class MicrositeController extends Controller
 
         $appearance = Appearance::where('user_id', $user->id)->findOrFail($appearanceId);
 
-        $blocksOrder = $appearance->blocks_order;
+        $blocksOrder = $appearance->getBlocksOrderArray();
         $productIds = [];
         foreach ($blocksOrder as $block) {
             if (str_starts_with($block, 'digitalproduct_')) {
@@ -207,7 +207,7 @@ class MicrositeController extends Controller
         $title = $appearance->title ?? $appearance->name;
 
         // Clean up digital products associated with this microsite
-        $blocksOrder = $appearance->blocks_order;
+        $blocksOrder = $appearance->getBlocksOrderArray();
         foreach ($blocksOrder as $block) {
             if (str_starts_with($block, 'digitalproduct_')) {
                 $productId = str_replace('digitalproduct_', '', $block);

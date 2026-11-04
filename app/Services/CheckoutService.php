@@ -54,8 +54,17 @@ class CheckoutService
 
             try {
                 $snapToken = Snap::getSnapToken($params);
+                Log::channel('payment')->info('payment_snap_token_created', [
+                    'event' => 'payment_snap_token_created',
+                    'order_id' => $orderId,
+                    'product_id' => $product->id,
+                    'total_price' => $totalPrice,
+                    'buyer_email' => $buyerEmail,
+                ]);
             } catch (\Exception $e) {
                 Log::channel('payment')->error('Failed to generate Midtrans Snap Token', [
+                    'event' => 'payment_snap_token_failed',
+                    'order_id' => $orderId,
                     'product_id' => $product->id,
                     'buyer_email' => $buyerEmail,
                     'error_message' => $e->getMessage(),
@@ -79,6 +88,7 @@ class CheckoutService
     {
         return DB::transaction(function () use ($data) {
             Log::channel('payment')->info('Store transaction initiated', [
+                'event' => 'payment_store_transaction_initiated',
                 'order_id' => $data['order_id'],
                 'initial_status' => $data['transaction_status'],
             ]);
@@ -93,6 +103,7 @@ class CheckoutService
             }
 
             Log::channel('payment')->info('Store transaction status converted', [
+                'event' => 'payment_transaction_status_converted',
                 'order_id' => $data['order_id'],
                 'converted_status' => $status->value,
             ]);
@@ -110,6 +121,7 @@ class CheckoutService
             );
 
             Log::channel('payment')->info('Store transaction upserted successfully', [
+                'event' => 'payment_transaction_upserted',
                 'order_id' => $data['order_id'],
                 'transaction_id' => $transaction->id,
             ]);
@@ -149,6 +161,7 @@ class CheckoutService
 
         } catch (\Exception $e) {
             Log::channel('payment')->error('Midtrans Callback Error: '.$e->getMessage(), [
+                'event' => 'midtrans_callback_status_query_failed',
                 'error_message' => $e->getMessage(),
             ]);
 
@@ -168,6 +181,7 @@ class CheckoutService
         }
 
         Log::channel('payment')->info('Midtrans webhook callback received', [
+            'event' => 'midtrans_webhook_received',
             'order_id' => $orderId,
             'transaction_status' => $transactionStatus?->value ?? $transactionStatusRaw,
             'payment_type' => $paymentType,
@@ -179,6 +193,7 @@ class CheckoutService
 
             if (! $trx) {
                 Log::channel('payment')->error('Midtrans Callback - Transaction not found', [
+                    'event' => 'midtrans_transaction_not_found',
                     'order_id' => $orderId,
                 ]);
 
@@ -189,6 +204,7 @@ class CheckoutService
             // hentikan eksekusi agar tidak terjadi double penambahan saldo
             if ($trx->status === TransactionStatus::SUCCESS) {
                 Log::channel('payment')->info('Midtrans Callback - Transaction already success, skipping double processing', [
+                    'event' => 'midtrans_duplicate_webhook_ignored',
                     'order_id' => $orderId,
                 ]);
 
@@ -204,6 +220,7 @@ class CheckoutService
                 $trx->save();
 
                 Log::channel('payment')->info('Midtrans Callback - Updating transaction status to success', [
+                    'event' => 'payment_status_updated_success',
                     'order_id' => $orderId,
                     'transaction_id' => $trx->id,
                     'amount' => $trx->total_price,
@@ -215,6 +232,7 @@ class CheckoutService
                     $sellerId = $product->user_id;
 
                     Log::channel('payment')->info('Midtrans Callback - Updating seller balance', [
+                        'event' => 'payment_seller_balance_credited',
                         'order_id' => $orderId,
                         'seller_id' => $sellerId,
                         'amount' => $trx->total_price,
@@ -234,9 +252,20 @@ class CheckoutService
             } elseif ($transactionStatus === MidtransStatus::CANCEL || $transactionStatus === MidtransStatus::DENY || $transactionStatus === MidtransStatus::EXPIRE) {
                 $trx->status = TransactionStatus::FAILED;
                 $trx->save();
+
+                Log::channel('payment')->warning('midtrans_webhook_transaction_failed', [
+                    'event' => 'midtrans_webhook_transaction_failed',
+                    'order_id' => $orderId,
+                    'transaction_status' => $transactionStatus->value,
+                ]);
             } elseif ($transactionStatus === MidtransStatus::PENDING) {
                 $trx->status = TransactionStatus::PENDING;
                 $trx->save();
+
+                Log::channel('payment')->info('midtrans_webhook_transaction_pending', [
+                    'event' => 'midtrans_webhook_transaction_pending',
+                    'order_id' => $orderId,
+                ]);
             }
 
             return ['status' => 200, 'message' => 'Callback processed'];

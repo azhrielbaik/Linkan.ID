@@ -99,7 +99,7 @@
                     
                     <div class="form-input-group">
                         <label for="email">{{ __('auth.email') }}</label>
-                        <input type="text" id="email" name="email" placeholder="{{ __('auth.email_placeholder') }}" value="{{ old('email') }}" required autocomplete="email">
+                        <input type="email" id="email" name="email" inputmode="email" placeholder="{{ __('auth.email_placeholder') }}" value="{{ old('email') }}" required autocomplete="email">
                         <!-- Removed input-hint to match the exact spacing of the design unless needed -->
                     </div>
 

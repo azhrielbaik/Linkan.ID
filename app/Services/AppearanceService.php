@@ -23,14 +23,9 @@ class AppearanceService
      */
     public function getSortedBlocksForPublic(Appearance $appearance, User $user): array
     {
-        $blocksOrder = [];
-        if ($appearance && ! empty($appearance->blocks_order)) {
-            $blocksOrder = is_array($appearance->blocks_order)
-                ? $appearance->blocks_order
-                : explode(',', (string) $appearance->blocks_order);
-        } else {
-            $blocksOrder = ['profile'];
-        }
+        $blocksOrder = ($appearance && ! empty($appearance->getBlocksOrderArray()))
+            ? $appearance->getBlocksOrderArray()
+            : ['profile'];
 
         // Ambil elemen-elemen aktif per appearance
         $imageElements = ImageElement::where('appearance_id', $appearance->id)->where('is_active', true)->get()->keyBy('id');

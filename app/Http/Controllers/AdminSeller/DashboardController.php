@@ -247,4 +247,56 @@ class DashboardController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
+    /**
+     * Endpoint JSON notifikasi standar untuk Seller (Admin Seller).
+     */
+    public function getNotifications(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => 'error', 'notifications' => [], 'unread_count' => 0], 401);
+        }
+
+        return response()->json($this->dashboardService->fetchSellerNotificationsData($user));
+    }
+
+    /**
+     * Server-Sent Events (SSE) Stream endpoint untuk Seller (Admin Seller).
+     */
+    public function streamNotifications(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => 'error'], 401);
+        }
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+        if ($request->hasSession()) {
+            $request->session()->save();
+        }
+
+        return response()->stream(function () use ($user) {
+            @set_time_limit(0);
+            @ini_set('implicit_flush', 1);
+            if (ob_get_level()) {
+                @ob_end_flush();
+            }
+            flush();
+
+            $data = $this->dashboardService->fetchSellerNotificationsData($user);
+
+            echo "retry: 3000\n";
+            echo "event: notifications\n";
+            echo "data: ".json_encode($data)."\n\n";
+            flush();
+        }, 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Connection' => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
+        ]);
+    }
 }

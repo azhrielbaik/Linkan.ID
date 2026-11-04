@@ -133,11 +133,15 @@ class GoogleAuthService
 
     public function handleLogin(): RedirectResponse
     {
+        fwrite(STDERR, "ENTERED handleLogin\n");
         try {
+            fwrite(STDERR, "HL 1: BEFORE SOCIALITE USER\n");
             $googleUser = Socialite::driver('google')->user();
+            fwrite(STDERR, "HL 2: GOT SOCIALITE USER\n");
             $googleId = (string) ($googleUser->getId() ?? $googleUser->id);
             $googleEmail = strtolower(trim((string) ($googleUser->getEmail() ?? $googleUser->email)));
 
+            fwrite(STDERR, "HL 3: BEFORE DB TRANSACTION\n");
             $user = DB::transaction(function () use ($googleId, $googleEmail) {
                 $user = User::where('google_id', $googleId)->first();
 
@@ -162,13 +166,16 @@ class GoogleAuthService
 
                 return $user;
             });
+            fwrite(STDERR, "HL 4: AFTER DB TRANSACTION\n");
 
             if (! $user) {
+                fwrite(STDERR, "HL 5: USER IS NULL, BEFORE LOG CHANNEL AUTH\n");
                 Log::channel('auth')->warning('Google OAuth login failed: account not registered', [
                     'email' => $googleEmail,
                     'ip' => request()->ip(),
                     'reason' => 'account_not_found',
                 ]);
+                fwrite(STDERR, "HL 6: AFTER LOG CHANNEL AUTH\n");
 
                 session()->flash('google_data', [
                     'name' => $googleUser->getName() ?? $googleUser->name,
