@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\MidtransStatus;
 use App\Enums\TransactionStatus;
+use App\Jobs\SendDigitalProductEmailJob;
 use App\Mail\SendDigitalProductMail;
 use App\Models\DigitalProduct;
 use App\Models\Transaction;
@@ -126,13 +127,11 @@ class CheckoutService
                 'transaction_id' => $transaction->id,
             ]);
 
-            // Hanya kirim email dari frontend jika transaksi otomatis sukses (misal: produk gratis)
+            // Hanya kirim email jika transaksi otomatis sukses (misal: produk gratis)
             if ($status === TransactionStatus::SUCCESS) {
                 $product = DigitalProduct::where('id', $data['product_id'])->lockForUpdate()->first();
                 if ($product) {
-                    Mail::to($transaction->buyer_email)->send(
-                        new SendDigitalProductMail($product, $transaction->buyer_name, $transaction)
-                    );
+                    SendDigitalProductEmailJob::dispatch($product, $transaction)->afterCommit();
                 }
             }
 
@@ -150,7 +149,7 @@ class CheckoutService
 
         // Cek status langsung menggunakan order_id dari payload untuk menghindari isu php://input
         try {
-            $payloadArray = request()->all();
+            $payloadArray = $payload ?? request()->all();
             if (empty($payloadArray['order_id'])) {
                 return ['status' => 400, 'message' => 'Missing order_id in payload'];
             }
@@ -244,10 +243,8 @@ class CheckoutService
                         ->lockForUpdate()
                         ->increment('balance', $trx->total_price);
 
-                    // Kirim email produk digital menggunakan template SendDigitalProductMail
-                    Mail::to($trx->buyer_email)->send(
-                        new SendDigitalProductMail($product, $trx->buyer_name, $trx)
-                    );
+                    // Kirim email produk digital secara asynchronous setelah transaksi database commit
+                    SendDigitalProductEmailJob::dispatch($product, $trx)->afterCommit();
                 }
             } elseif ($transactionStatus === MidtransStatus::CANCEL || $transactionStatus === MidtransStatus::DENY || $transactionStatus === MidtransStatus::EXPIRE) {
                 $trx->status = TransactionStatus::FAILED;

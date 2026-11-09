@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\AdminSeller\Microsite;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appearance;
 use App\Models\SocialMediaElement;
+use App\Services\AdminSeller\MicrositeElementManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SocialMediaElementController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(
+        protected MicrositeElementManager $elementManager
+    ) {}
+
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'platforms' => 'nullable|array',
@@ -17,22 +22,12 @@ class SocialMediaElementController extends Controller
             'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
-        $user = auth()->user();
-
-        $element = null;
-        if ($request->element_id) {
-            $element = SocialMediaElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
-        }
-
-        if (! $element) {
-            $element = new SocialMediaElement;
-            $element->user_id = $user->id;
-            $element->appearance_id = $request->appearance_id;
-            $element->is_active = true;
-        }
-
-        $element->platforms = $request->platforms ?? [];
-        $element->save();
+        $element = $this->elementManager->storeSocial(
+            (int) auth()->id(),
+            (int) $request->appearance_id,
+            $request->platforms ?? [],
+            $request->element_id ? (int) $request->element_id : null
+        );
 
         return response()->json([
             'success' => true,
@@ -41,7 +36,7 @@ class SocialMediaElementController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         $request->validate([
             'platforms' => 'nullable|array',
@@ -70,16 +65,12 @@ class SocialMediaElementController extends Controller
         return response()->json(['success' => false], 404);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id): JsonResponse
     {
-        $element = SocialMediaElement::where('user_id', auth()->id())->find($id);
-        if ($element) {
-            $appearance = Appearance::find($element->appearance_id);
-            if ($appearance) {
-                $appearance->removeBlock('social_'.$id);
-            }
-            $element->delete();
+        $appearanceId = $request->input('appearance_id') ? (int) $request->input('appearance_id') : null;
+        $success = $this->elementManager->destroy('social', (int) $id, (int) auth()->id(), $appearanceId);
 
+        if ($success) {
             return response()->json(['success' => true]);
         }
 

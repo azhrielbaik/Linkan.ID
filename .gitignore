@@ -116,6 +116,7 @@ public/error_log
 jmeter.log
 cloudflared.exe
 scratch/
+analysis_outputs/
 
 # Unused/Temporary Dev Scripts
 test_route.php

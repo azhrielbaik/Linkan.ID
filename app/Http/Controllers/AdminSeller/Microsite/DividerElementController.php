@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\AdminSeller\Microsite;
 
 use App\Http\Controllers\Controller;
-use App\Models\DividerElement;
+use App\Services\AdminSeller\MicrositeElementManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DividerElementController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(
+        protected MicrositeElementManager $elementManager
+    ) {}
+
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'type' => 'required|string|in:line,space',
@@ -17,24 +22,13 @@ class DividerElementController extends Controller
             'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
-        $user = auth()->user();
-
-        $dividerElement = null;
-        if ($request->element_id) {
-            $dividerElement = DividerElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
-        }
-
-        if (! $dividerElement) {
-            $dividerElement = new DividerElement;
-            $dividerElement->user_id = $user->id;
-            $dividerElement->appearance_id = $request->appearance_id;
-            $maxOrder = DividerElement::where('appearance_id', $request->appearance_id)->max('order_position');
-            $dividerElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
-        }
-
-        $dividerElement->type = $request->type;
-        $dividerElement->size = $request->size;
-        $dividerElement->save();
+        $dividerElement = $this->elementManager->storeDivider(
+            (int) auth()->id(),
+            (int) $request->appearance_id,
+            $request->type,
+            (int) $request->size,
+            $request->element_id ? (int) $request->element_id : null
+        );
 
         return response()->json([
             'success' => true,
@@ -44,13 +38,12 @@ class DividerElementController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id): JsonResponse
     {
-        $user = auth()->user();
-        $element = DividerElement::where('id', $id)->where('user_id', $user->id)->first();
-        if ($element) {
-            $element->delete();
+        $appearanceId = $request->input('appearance_id') ? (int) $request->input('appearance_id') : null;
+        $success = $this->elementManager->destroy('divider', (int) $id, (int) auth()->id(), $appearanceId);
 
+        if ($success) {
             return response()->json(['success' => true]);
         }
 
