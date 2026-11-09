@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\AdminSeller\Microsite;
 
 use App\Http\Controllers\Controller;
-use App\Services\AdminSeller\MicrositeElementService;
+use App\Services\AdminSeller\MicrositeElementManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ElementVisibilityController extends Controller
 {
     public function __construct(
-        protected MicrositeElementService $elementService
+        protected MicrositeElementManager $elementManager
     ) {}
 
-    public function toggle(Request $request)
+    public function toggle(Request $request): JsonResponse
     {
         $request->validate([
             'element_type' => 'required|string|in:image,divider,text,video,social',
@@ -21,7 +22,7 @@ class ElementVisibilityController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        $success = $this->elementService->toggleVisibility(
+        $success = $this->elementManager->toggleVisibility(
             $request->element_type,
             (int) $request->element_id,
             (int) Auth::id(),

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\AdminSeller\Microsite;
 
 use App\Http\Controllers\Controller;
-use App\Models\ImageElement;
+use App\Services\AdminSeller\MicrositeElementManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
 
 class ImageElementController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(
+        protected MicrositeElementManager $elementManager
+    ) {}
+
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'image' => 'nullable|image|max:2048',
@@ -20,41 +22,13 @@ class ImageElementController extends Controller
             'appearance_id' => 'required|integer|exists:appearances,id',
         ]);
 
-        $user = $request->user();
-
-        $imageElement = null;
-        if ($request->element_id) {
-            $imageElement = ImageElement::where('id', $request->element_id)->where('user_id', $user->id)->first();
-        }
-
-        if (! $imageElement) {
-            $imageElement = new ImageElement;
-            $imageElement->user_id = $user->id;
-            $imageElement->appearance_id = $request->appearance_id;
-            $maxOrder = ImageElement::where('appearance_id', $request->appearance_id)->max('order_position');
-            $imageElement->order_position = $maxOrder ? $maxOrder + 1 : 1;
-        }
-
-        if ($request->hasFile('image')) {
-            if ($imageElement->image_path) {
-                Storage::disk('public')->delete($imageElement->image_path);
-            }
-
-            $file = $request->file('image');
-            $filename = 'elements/images/'.time().'_'.Str::random(10).'.webp';
-
-            $image = ImageManager::gd()->read($file)
-                ->scaleDown(width: 1200);
-
-            $encoded = $image->toWebp(80);
-
-            Storage::disk('public')->put($filename, (string) $encoded);
-
-            $imageElement->image_path = $filename;
-        }
-
-        $imageElement->link_url = $request->link_url;
-        $imageElement->save();
+        $imageElement = $this->elementManager->storeImage(
+            (int) $request->user()->id,
+            (int) $request->appearance_id,
+            $request->file('image'),
+            $request->link_url,
+            $request->element_id ? (int) $request->element_id : null
+        );
 
         return response()->json([
             'success' => true,
@@ -63,16 +37,12 @@ class ImageElementController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id): JsonResponse
     {
-        $user = $request->user();
-        $element = ImageElement::where('id', $id)->where('user_id', $user->id)->first();
-        if ($element) {
-            if ($element->image_path) {
-                Storage::disk('public')->delete($element->image_path);
-            }
-            $element->delete();
+        $appearanceId = $request->input('appearance_id') ? (int) $request->input('appearance_id') : null;
+        $success = $this->elementManager->destroy('image', (int) $id, (int) $request->user()->id, $appearanceId);
 
+        if ($success) {
             return response()->json(['success' => true]);
         }
 

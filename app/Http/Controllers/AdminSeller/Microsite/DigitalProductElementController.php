@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appearance;
 use App\Models\DigitalProduct;
 use App\Services\AdminSeller\DigitalProductService;
+use App\Services\AdminSeller\MicrositeElementManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +14,8 @@ use Illuminate\Support\Facades\Log;
 class DigitalProductElementController extends Controller
 {
     public function __construct(
-        protected DigitalProductService $digitalProductService
+        protected DigitalProductService $digitalProductService,
+        protected MicrositeElementManager $elementManager
     ) {}
 
     public function store(Request $request)
@@ -125,23 +127,15 @@ class DigitalProductElementController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
-        $product = DigitalProduct::where('id', $id)->where('user_id', $user->id)->first();
-        if (! $product) {
+        $appearanceId = $request->input('appearance_id') ?? $request->query('appearance_id');
+
+        $success = $this->elementManager->destroy('digitalproduct', (int) $id, (int) $user->id, $appearanceId ? (int) $appearanceId : null);
+
+        if (! $success) {
             return response()->json([
                 'success' => false,
                 'message' => 'Produk tidak ditemukan.',
             ], 404);
-        }
-
-        $appearanceId = $request->input('appearance_id') ?? $request->query('appearance_id');
-        if ($appearanceId) {
-            $appearance = Appearance::where('id', $appearanceId)
-                ->where('user_id', $user->id)
-                ->first();
-
-            if ($appearance) {
-                $appearance->removeBlock('digitalproduct_'.$product->id);
-            }
         }
 
         return response()->json([

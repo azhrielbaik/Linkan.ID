@@ -65,110 +65,38 @@
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>http://linkan.gov/id/linkan.id/mulyono</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/mulyono" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/mulyono" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/mulyono" />
-    <lastmod>2026-09-30T07:49:16+00:00</lastmod>
+    <loc>http://linkan.gov/id/linkan.id/seoseller</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/seoseller" />
+    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/seoseller" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/seoseller" />
+    <lastmod>2026-11-09T08:08:30+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
             </url>
     <url>
-    <loc>http://linkan.gov/en/linkan.id/mulyono</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/mulyono" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/mulyono" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/mulyono" />
-    <lastmod>2026-09-30T07:49:16+00:00</lastmod>
+    <loc>http://linkan.gov/en/linkan.id/seoseller</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/seoseller" />
+    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/seoseller" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/seoseller" />
+    <lastmod>2026-11-09T08:08:30+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
             </url>
     <url>
-    <loc>http://linkan.gov/id/linkan.id/tahu-bulat</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/tahu-bulat" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/tahu-bulat" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/tahu-bulat" />
-    <lastmod>2026-09-30T05:15:04+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/en/linkan.id/tahu-bulat</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/tahu-bulat" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/tahu-bulat" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/tahu-bulat" />
-    <lastmod>2026-09-30T05:15:04+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/id/linkan.id/testproduct</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/testproduct" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/testproduct" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/testproduct" />
-    <lastmod>2026-11-04T09:47:32+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/en/linkan.id/testproduct</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/linkan.id/testproduct" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/linkan.id/testproduct" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/linkan.id/testproduct" />
-    <lastmod>2026-11-04T09:47:32+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/id/product/17</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/17" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/17" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/17" />
-    <lastmod>2026-09-29T06:32:20+00:00</lastmod>
+    <loc>http://linkan.gov/id/product/1</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/1" />
+    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/1" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/1" />
+    <lastmod>2026-11-09T08:08:30+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>http://linkan.gov/en/product/17</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/17" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/17" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/17" />
-    <lastmod>2026-09-29T06:32:20+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/id/product/19</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/19" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/19" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/19" />
-    <lastmod>2026-09-30T07:39:16+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/en/product/19</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/19" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/19" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/19" />
-    <lastmod>2026-09-30T07:39:16+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/id/product/20</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/20" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/20" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/20" />
-    <lastmod>2026-09-30T07:46:16+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>http://linkan.gov/en/product/20</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/20" />
-    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/20" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/20" />
-    <lastmod>2026-09-30T07:46:16+00:00</lastmod>
+    <loc>http://linkan.gov/en/product/1</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="http://linkan.gov/id/product/1" />
+    <xhtml:link rel="alternate" hreflang="en" href="http://linkan.gov/en/product/1" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="http://linkan.gov/id/product/1" />
+    <lastmod>2026-11-09T08:08:30+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
             </url>
