@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminSeller;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\AdminSeller\AccountService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,9 +39,11 @@ class AccountController extends Controller
 
         $sessions = $rawSessions->map(function ($session) use ($currentSessionId) {
             $userAgent = $session->user_agent ?? '';
+            $appKey = (string) config('app.key');
+            $secureHash = hash_hmac('sha256', $session->id, $appKey);
 
             return (object) [
-                'id' => $session->id,
+                'id' => $secureHash,
                 'ip_address' => $session->ip_address,
                 'user_agent' => $userAgent,
                 'browser' => $this->parseBrowser($userAgent),
@@ -212,25 +215,44 @@ class AccountController extends Controller
     public function revokeSession(string $sessionId)
     {
         $currentSessionId = session()->getId();
-        if ($sessionId === $currentSessionId) {
+        $appKey = (string) config('app.key');
+        $currentHash = hash_hmac('sha256', $currentSessionId, $appKey);
+
+        if ($sessionId === $currentSessionId || $sessionId === $currentHash) {
             return redirect()->route('admin.account')->withErrors([
                 'session' => 'Anda tidak dapat mengakhiri sesi yang sedang aktif saat ini.',
             ]);
         }
 
-        $deleted = DB::table('sessions')
-            ->where('id', $sessionId)
+        $userSessions = DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->get();
+
+        $targetSession = $userSessions->first(function ($session) use ($sessionId, $appKey) {
+            return $session->id === $sessionId || hash_hmac('sha256', $session->id, $appKey) === $sessionId;
+        });
+
+        if (! $targetSession) {
+            return redirect()->route('admin.account')->withErrors([
+                'session' => 'Sesi perangkat tidak ditemukan atau sudah tidak aktif.',
+            ]);
+        }
+
+        DB::table('sessions')
+            ->where('id', $targetSession->id)
             ->where('user_id', Auth::id())
             ->delete();
 
-        if ($deleted) {
-            ActivityLogger::log(
-                'session_revoked',
-                'User '.Auth::user()->name.' mengakhiri salah satu sesi login aktif.',
-                ['revoked_session_id' => $sessionId],
-                Auth::id()
-            );
-        }
+        ActivityLogger::log(
+            'session_revoked',
+            'User '.Auth::user()->name.' mengakhiri salah satu sesi login aktif.',
+            [
+                'device' => $this->parseDevice($targetSession->user_agent ?? ''),
+                'browser' => $this->parseBrowser($targetSession->user_agent ?? ''),
+                'ip' => $targetSession->ip_address,
+            ],
+            Auth::id()
+        );
 
         return redirect()->route('admin.account')->with('success', 'Sesi perangkat berhasil diakhiri.');
     }

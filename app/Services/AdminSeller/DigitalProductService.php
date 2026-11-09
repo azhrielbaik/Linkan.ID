@@ -3,11 +3,11 @@
 namespace App\Services\AdminSeller;
 
 use App\Models\DigitalProduct;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DigitalProductService
 {
@@ -42,7 +42,7 @@ class DigitalProductService
             if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
                 $path = $this->handleImageUpload($file);
                 $mediaFiles[] = [
-                    'url'  => $path,
+                    'url' => $path,
                     'path' => $path,
                     'type' => $file->getMimeType() ?: 'image/jpeg',
                 ];
@@ -63,7 +63,7 @@ class DigitalProductService
 
             ActivityLogger::log(
                 'create_product',
-                "Seller " . (Auth::user()->name ?? 'Seller') . " menambahkan produk digital baru: '{$product->title}'.",
+                'Seller '.(Auth::user()->name ?? 'Seller')." menambahkan produk digital baru: '{$product->title}'.",
                 ['product_id' => $product->id, 'title' => $product->title, 'price' => $product->price]
             );
 
@@ -83,7 +83,7 @@ class DigitalProductService
                 Storage::disk('public')->delete($product->platform_file);
             }
             $data['platform_file'] = $this->handleFileUpload($platformFile);
-        } else if ($data['platform_type'] !== 'upload') {
+        } elseif ($data['platform_type'] !== 'upload') {
             if ($product->platform_file) {
                 Storage::disk('public')->delete($product->platform_file);
                 $data['platform_file'] = null;
@@ -92,13 +92,13 @@ class DigitalProductService
 
         // Handle media_files & existing photos
         $oldMediaFiles = is_string($product->media_files) ? json_decode($product->media_files, true) : ($product->media_files ?? []);
-        if (!is_array($oldMediaFiles)) {
+        if (! is_array($oldMediaFiles)) {
             $oldMediaFiles = [];
         }
         // If old media_files was empty but product has image, treat that image as an old media item
-        if (empty($oldMediaFiles) && !empty($product->image)) {
+        if (empty($oldMediaFiles) && ! empty($product->image)) {
             $oldMediaFiles[] = [
-                'url'  => $product->image,
+                'url' => $product->image,
                 'path' => $product->image,
                 'type' => 'image/jpeg',
             ];
@@ -106,26 +106,42 @@ class DigitalProductService
 
         $mediaFiles = [];
 
+        $normalizePath = function (?string $u): string {
+            if (! $u) {
+                return '';
+            }
+            $u = str_replace(url('/storage').'/', '', $u);
+            $u = str_replace(asset('storage').'/', '', $u);
+            $u = ltrim($u, '/');
+            if (str_starts_with($u, 'storage/')) {
+                $u = substr($u, 8);
+            }
+
+            return $u;
+        };
+
         // Check which existing media were kept
         if ($existingMedia !== null) {
             $keptExisting = is_string($existingMedia) ? json_decode($existingMedia, true) : $existingMedia;
             if (is_array($keptExisting)) {
-                $keptPaths = array_map(function($item) {
-                    return is_array($item) ? ($item['path'] ?? $item['url'] ?? '') : (string)$item;
+                $keptPaths = array_map(function ($item) use ($normalizePath) {
+                    $raw = is_array($item) ? ($item['path'] ?? $item['url'] ?? '') : (string) $item;
+
+                    return $normalizePath($raw);
                 }, $keptExisting);
 
                 foreach ($oldMediaFiles as $old) {
-                    $oldPath = $old['path'] ?? $old['url'] ?? '';
-                    if (in_array($oldPath, $keptPaths)) {
+                    $oldNorm = $normalizePath($old['path'] ?? $old['url'] ?? '');
+                    if (in_array($oldNorm, $keptPaths)) {
                         $mediaFiles[] = $old;
-                    } else if (!empty($old['path'])) {
+                    } elseif (! empty($old['path'])) {
                         Storage::disk('public')->delete($old['path']);
                     }
                 }
             } else {
                 // If existingMedia was explicitly sent as empty, delete all old files
                 foreach ($oldMediaFiles as $old) {
-                    if (!empty($old['path'])) {
+                    if (! empty($old['path'])) {
                         Storage::disk('public')->delete($old['path']);
                     }
                 }
@@ -146,7 +162,7 @@ class DigitalProductService
             if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
                 $path = $this->handleImageUpload($file);
                 $mediaFiles[] = [
-                    'url'  => $path,
+                    'url' => $path,
                     'path' => $path,
                     'type' => $file->getMimeType() ?: 'image/jpeg',
                 ];
@@ -166,7 +182,7 @@ class DigitalProductService
 
             ActivityLogger::log(
                 'update_product',
-                "Seller " . (Auth::user()->name ?? 'Seller') . " memperbarui informasi produk digital: '{$product->title}'.",
+                'Seller '.(Auth::user()->name ?? 'Seller')." memperbarui informasi produk digital: '{$product->title}'.",
                 ['product_id' => $product->id, 'title' => $product->title]
             );
         });
@@ -193,7 +209,7 @@ class DigitalProductService
 
             ActivityLogger::log(
                 'delete_product',
-                "Seller " . (Auth::user()->name ?? 'Seller') . " menghapus produk digital: '{$productTitle}'.",
+                'Seller '.(Auth::user()->name ?? 'Seller')." menghapus produk digital: '{$productTitle}'.",
                 ['product_id' => $productId, 'title' => $productTitle]
             );
 
@@ -205,7 +221,7 @@ class DigitalProductService
 
     private function handleImageUpload($file): string
     {
-        $filename = 'product_images/' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
+        $filename = 'product_images/'.time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.webp';
 
         $image = \Intervention\Image\ImageManager::gd()->read($file)
             ->scaleDown(width: 1200);
@@ -219,7 +235,8 @@ class DigitalProductService
 
     private function handleFileUpload($file): string
     {
-        $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+        $filename = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
+
         return $file->storeAs('digital_products', $filename, 'public');
     }
 }

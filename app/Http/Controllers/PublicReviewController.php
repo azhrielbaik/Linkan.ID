@@ -16,7 +16,7 @@ class PublicReviewController extends Controller
     public function show(string $token)
     {
         $orderId = ReviewTokenHelper::verify($token);
-        if (!$orderId) {
+        if (! $orderId) {
             abort(403, 'Link ulasan tidak valid atau sudah kadaluarsa.');
         }
 
@@ -24,12 +24,12 @@ class PublicReviewController extends Controller
         $transaction = Transaction::where('order_id', $orderId)
             ->where(function ($query) {
                 $query->where('status', 'success')
-                      ->orWhere('status', 'completed');
+                    ->orWhere('status', 'completed');
             })
             ->with('product') // eager load produk
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             abort(404, 'Transaksi tidak ditemukan atau belum berstatus sukses.');
         }
 
@@ -47,14 +47,14 @@ class PublicReviewController extends Controller
     public function store(Request $request, string $token)
     {
         $orderId = ReviewTokenHelper::verify($token);
-        if (!$orderId) {
+        if (! $orderId) {
             return back()->withErrors(['token' => 'Link ulasan tidak valid atau tanda tangan digital rusak.']);
         }
 
         $transaction = Transaction::where('order_id', $orderId)
             ->where(function ($query) {
                 $query->where('status', 'success')
-                      ->orWhere('status', 'completed');
+                    ->orWhere('status', 'completed');
             })
             ->firstOrFail();
 
@@ -64,13 +64,13 @@ class PublicReviewController extends Controller
         }
 
         $request->validate([
-            'rating'  => ['required', 'integer', 'min:1', 'max:5'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['nullable', 'string', 'max:500'],
         ], [
             'rating.required' => 'Silakan pilih rating bintang terlebih dahulu (1 - 5 bintang).',
-            'rating.min'      => 'Rating minimal adalah 1 bintang.',
-            'rating.max'      => 'Rating maksimal adalah 5 bintang.',
-            'comment.max'     => 'Panjang ulasan tidak boleh melebihi 500 karakter.',
+            'rating.min' => 'Rating minimal adalah 1 bintang.',
+            'rating.max' => 'Rating maksimal adalah 5 bintang.',
+            'comment.max' => 'Panjang ulasan tidak boleh melebihi 500 karakter.',
         ]);
 
         // Samarkan nama buyer: "Budi Santoso" → "Budi S."
@@ -79,17 +79,17 @@ class PublicReviewController extends Controller
         $maskedName = $nameParts[0];
         if (count($nameParts) > 1) {
             $lastPart = end($nameParts);
-            $maskedName .= ' ' . strtoupper(mb_substr($lastPart, 0, 1)) . '.';
+            $maskedName .= ' '.strtoupper(mb_substr($lastPart, 0, 1)).'.';
         }
 
         ProductReview::create([
-            'product_id'  => $transaction->product_id,
-            'order_id'    => $orderId,
-            'buyer_name'  => $maskedName,
+            'product_id' => $transaction->product_id,
+            'order_id' => $orderId,
+            'buyer_name' => $maskedName,
             'buyer_email' => $transaction->buyer_email,
-            'rating'      => (int) $request->rating,
-            'comment'     => $request->filled('comment') ? trim($request->comment) : null,
-            'is_visible'  => true,
+            'rating' => (int) $request->rating,
+            'comment' => $request->filled('comment') ? trim($request->comment) : null,
+            'is_visible' => true,
         ]);
 
         return redirect()->back()->with('review_success', true);

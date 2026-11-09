@@ -22,7 +22,7 @@ return new class extends Migration
                 $columnsToDrop[] = 'theme_color';
             }
 
-            if (!empty($columnsToDrop)) {
+            if (! empty($columnsToDrop)) {
                 $table->dropColumn($columnsToDrop);
             }
         });
@@ -34,11 +34,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'theme')) {
+            if (! Schema::hasColumn('users', 'theme')) {
                 $table->string('theme')->nullable()->default('light')->after('role');
             }
 
-            if (!Schema::hasColumn('users', 'theme_color')) {
+            if (! Schema::hasColumn('users', 'theme_color')) {
                 $table->string('theme_color', 20)->nullable()->default('#ed842c')->after('theme');
             }
         });

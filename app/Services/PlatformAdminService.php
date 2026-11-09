@@ -3,148 +3,33 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\SuspensionAppeal;
-use App\Services\ActivityLogger;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
+use App\Services\PlatformAdmin\CommissionExportService;
+use App\Services\PlatformAdmin\PlatformDashboardService;
+use App\Services\PlatformAdmin\PlatformNotificationService;
+use App\Services\PlatformAdmin\UserSuspensionService;
 
 class PlatformAdminService
 {
     const ROLE_PLATFORM_ADMIN = 'admin_platform';
+
+    public function __construct(
+        protected ?PlatformDashboardService $dashboardService = null,
+        protected ?PlatformNotificationService $notificationService = null,
+        protected ?UserSuspensionService $suspensionService = null,
+        protected ?CommissionExportService $commissionService = null
+    ) {
+        $this->dashboardService = $dashboardService ?? new PlatformDashboardService;
+        $this->notificationService = $notificationService ?? new PlatformNotificationService;
+        $this->suspensionService = $suspensionService ?? new UserSuspensionService($this->notificationService);
+        $this->commissionService = $commissionService ?? new CommissionExportService;
+    }
 
     /**
      * Get statistics and charts for dashboard
      */
     public function getDashboardStats(): array
     {
-        return Cache::remember('platform_admin_dashboard_stats', 300, function () {
-            $totalUsers = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->count();
-            $totalTransactions = DB::table('transactions')->where('status', 'success')->count();
-            $totalCommission = DB::table('platform_commissions')->sum('commission') ?? 0;
-            $totalProducts = DB::table('digital_products')->count();
-
-            // 2. Chart Pendapatan Harian - 30 Hari Terakhir (Harian)
-            $start30Days = now()->subDays(29)->startOfDay();
-            $daily30Sums = DB::table('platform_commissions')
-                ->where('created_at', '>=', $start30Days)
-                ->selectRaw("DATE(created_at) as date_val, SUM(commission) as total")
-                ->groupBy('date_val')
-                ->pluck('total', 'date_val');
-
-            $daily30Labels = [];
-            $daily30Data = [];
-            for ($i = 29; $i >= 0; $i--) {
-                $dayDate = now()->subDays($i);
-                $daily30Labels[] = $dayDate->translatedFormat('d M');
-                $key = $dayDate->toDateString();
-                $daily30Data[] = (float) ($daily30Sums[$key] ?? 0);
-            }
-
-            // Chart Pendapatan Harian - 7 Hari Terakhir (Harian)
-            $start7Days = now()->subDays(6)->startOfDay();
-            $daily7Sums = DB::table('platform_commissions')
-                ->where('created_at', '>=', $start7Days)
-                ->selectRaw("DATE(created_at) as date_val, SUM(commission) as total")
-                ->groupBy('date_val')
-                ->pluck('total', 'date_val');
-
-            $daily7Labels = [];
-            $daily7Data = [];
-            for ($i = 6; $i >= 0; $i--) {
-                $dayDate = now()->subDays($i);
-                $daily7Labels[] = $dayDate->translatedFormat('d M');
-                $key = $dayDate->toDateString();
-                $daily7Data[] = (float) ($daily7Sums[$key] ?? 0);
-            }
-
-            // 3. Top Seller Ranking (Berdasarkan data penjualan nyata di tabel transactions status success)
-            $salesBySeller = DB::table('transactions')
-                ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
-                ->where('transactions.status', 'success')
-                ->select(
-                    'digital_products.user_id as seller_id',
-                    DB::raw('COUNT(transactions.id) as total_sales_count'),
-                    DB::raw('SUM(transactions.total_price) as total_turnover')
-                )
-                ->groupBy('digital_products.user_id')
-                ->orderByDesc('total_sales_count')
-                ->orderByDesc('total_turnover')
-                ->limit(5)
-                ->get()
-                ->keyBy('seller_id');
-
-            $topSellerIds = $salesBySeller->keys()->toArray();
-
-            // Jika seller dengan penjualan kurang dari 5, lengkapi dari seller lain agar slot top 5 terisi
-            if (count($topSellerIds) < 5) {
-                $fallbackIds = DB::table('users')
-                    ->where('role', '!=', self::ROLE_PLATFORM_ADMIN)
-                    ->whereNotIn('id', $topSellerIds)
-                    ->limit(5 - count($topSellerIds))
-                    ->pluck('id')
-                    ->toArray();
-
-                $topSellerIds = array_merge($topSellerIds, $fallbackIds);
-            }
-
-            $sellersData = DB::table('users')
-                ->whereIn('id', $topSellerIds)
-                ->select('id', 'name', 'email', 'avatar')
-                ->get()
-                ->keyBy('id');
-
-            $productCounts = DB::table('digital_products')
-                ->whereIn('user_id', $topSellerIds)
-                ->select('user_id', DB::raw('COUNT(id) as total'))
-                ->groupBy('user_id')
-                ->pluck('total', 'user_id');
-
-            $commissionSums = DB::table('platform_commissions')
-                ->whereIn('seller_id', $topSellerIds)
-                ->select('seller_id', DB::raw('SUM(commission) as total_comm'))
-                ->groupBy('seller_id')
-                ->pluck('total_comm', 'seller_id');
-
-            $topSellers = collect();
-            foreach ($topSellerIds as $sId) {
-                if (!isset($sellersData[$sId])) continue;
-                $seller = $sellersData[$sId];
-                $sale = $salesBySeller->get($sId);
-
-                $seller->total_products = (int) ($productCounts[$sId] ?? 0);
-                $seller->total_sales_count = (int) ($sale->total_sales_count ?? 0);
-                $seller->total_turnover = (float) ($sale->total_turnover ?? 0);
-                $seller->total_commission_earned = (float) ($commissionSums[$sId] ?? 0);
-
-                $topSellers->push($seller);
-            }
-
-            // 4. Riwayat Komisi Terkini
-            $commissions = DB::table('platform_commissions')
-                ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
-                ->select(
-                    'platform_commissions.*',
-                    'sellers.name as seller_name',
-                    'sellers.email as seller_email'
-                )
-                ->orderBy('platform_commissions.created_at', 'desc')
-                ->limit(10)
-                ->get();
-
-            return compact(
-                'totalUsers',
-                'totalTransactions',
-                'totalCommission',
-                'totalProducts',
-                'daily7Labels',
-                'daily7Data',
-                'daily30Labels',
-                'daily30Data',
-                'topSellers',
-                'commissions'
-            );
-        });
+        return $this->dashboardService->getDashboardStats();
     }
 
     /**
@@ -152,7 +37,7 @@ class PlatformAdminService
      */
     public static function clearDashboardCache(): void
     {
-        Cache::forget('platform_admin_dashboard_stats');
+        (new PlatformDashboardService)->clearDashboardCache();
     }
 
     /**
@@ -160,9 +45,7 @@ class PlatformAdminService
      */
     public static function getPendingTicketsCount(): int
     {
-        return Cache::remember('platform_admin_pending_tickets_count', 60, function () {
-            return (int) DB::table('support_tickets')->where('status', 'open')->count();
-        });
+        return (new PlatformNotificationService)->getPendingTicketsCount();
     }
 
     /**
@@ -170,7 +53,7 @@ class PlatformAdminService
      */
     public static function clearPendingTicketsCache(): void
     {
-        Cache::forget('platform_admin_pending_tickets_count');
+        (new PlatformNotificationService)->clearPendingTicketsCache();
     }
 
     /**
@@ -178,8 +61,7 @@ class PlatformAdminService
      */
     public static function clearNotificationsCache(): void
     {
-        Cache::forget('platform_admin_raw_notifications');
-        Cache::forget('platform_admin_dashboard_stats');
+        (new PlatformNotificationService)->clearNotificationsCache();
     }
 
     /**
@@ -187,157 +69,15 @@ class PlatformAdminService
      */
     public function getCachedRawNotifications(): array
     {
-        return Cache::remember('platform_admin_raw_notifications', 10, function () {
-            $notifications = [];
-
-            // 1. Pending Digital Products
-            $pendingProducts = DB::table('digital_products')
-                ->join('users', 'digital_products.user_id', '=', 'users.id')
-                ->where('digital_products.verification_status', 'pending')
-                ->select(
-                    'digital_products.id',
-                    'digital_products.title as product_name',
-                    'digital_products.created_at',
-                    'users.name as seller_name',
-                    'users.email as seller_email'
-                )
-                ->orderBy('digital_products.created_at', 'desc')
-                ->limit(10)
-                ->get();
-
-            foreach ($pendingProducts as $prod) {
-                $notifId = 'prod_' . $prod->id;
-                $notifications[] = [
-                    'id'           => $notifId,
-                    'type'         => 'product',
-                    'title'        => 'Verifikasi Produk Baru',
-                    'seller_name'  => $prod->seller_name,
-                    'product_name' => $prod->product_name,
-                    'url'          => route('platform-admin.verifikasi'),
-                    'time_ago'     => Carbon::parse($prod->created_at)->diffForHumans(),
-                    'timestamp'    => strtotime($prod->created_at),
-                ];
-            }
-
-            // 2. Pending Payout Requests
-            $pendingPayouts = DB::table('payout_transactions')
-                ->join('users', 'payout_transactions.user_id', '=', 'users.id')
-                ->where('payout_transactions.status', 'pending')
-                ->select(
-                    'payout_transactions.id',
-                    'payout_transactions.amount',
-                    'payout_transactions.method',
-                    'payout_transactions.bank_name',
-                    'payout_transactions.created_at',
-                    'users.name as seller_name'
-                )
-                ->orderBy('payout_transactions.created_at', 'desc')
-                ->limit(10)
-                ->get();
-
-            foreach ($pendingPayouts as $payout) {
-                $notifId = 'payout_' . $payout->id;
-                $notifications[] = [
-                    'id'           => $notifId,
-                    'type'         => 'payout',
-                    'title'        => 'Permintaan Payout Baru',
-                    'seller_name'  => $payout->seller_name,
-                    'amount'       => number_format($payout->amount, 0, ',', '.'),
-                    'bank'         => $payout->bank_name ?? strtoupper($payout->method),
-                    'url'          => route('platform-admin.payouts.index'),
-                    'time_ago'     => Carbon::parse($payout->created_at)->diffForHumans(),
-                    'timestamp'    => strtotime($payout->created_at),
-                ];
-            }
-
-            // 3. Pending Suspension Appeals
-            $pendingAppeals = DB::table('suspension_appeals')
-                ->join('users', 'suspension_appeals.user_id', '=', 'users.id')
-                ->where('suspension_appeals.status', 'pending')
-                ->select(
-                    'suspension_appeals.id',
-                    'suspension_appeals.appeal_reason',
-                    'suspension_appeals.created_at',
-                    'users.name as seller_name'
-                )
-                ->orderBy('suspension_appeals.created_at', 'desc')
-                ->limit(10)
-                ->get();
-
-            foreach ($pendingAppeals as $appeal) {
-                $notifId = 'appeal_' . $appeal->id;
-                $notifications[] = [
-                    'id'           => $notifId,
-                    'type'         => 'appeal',
-                    'title'        => 'Permohonan Banding Akun',
-                    'seller_name'  => $appeal->seller_name,
-                    'url'          => route('platform-admin.users', ['view' => 'appeals']),
-                    'time_ago'     => Carbon::parse($appeal->created_at)->diffForHumans(),
-                    'timestamp'    => strtotime($appeal->created_at),
-                ];
-            }
-
-            // 4. Peringatan Pembersihan Log (H-1) jika ada log berumur >= 29 hari
-            $expiringLogsCount = DB::table('activity_logs')
-                ->where('created_at', '<=', Carbon::now()->subDays(29))
-                ->count();
-
-            if ($expiringLogsCount > 0) {
-                $logNotifId = 'log_cleanup_warning';
-                $notifications[] = [
-                    'id'           => $logNotifId,
-                    'type'         => 'log_cleanup',
-                    'title'        => 'Pembersihan Log (H-1)',
-                    'seller_name'  => 'Sistem Platform',
-                    'url'          => route('platform-admin.logs.activity.export-archive'),
-                    'time_ago'     => 'Besok 02:00',
-                    'timestamp'    => time(),
-                    'message'      => "{$expiringLogsCount} log (> 29 hari) akan dibersihkan otomatis besok pkl 02:00. Klik untuk mengunduh cadangan CSV.",
-                ];
-            }
-
-            usort($notifications, fn ($a, $b) => $b['timestamp'] - $a['timestamp']);
-
-            return [
-                'items' => $notifications,
-                'counts' => [
-                    'products'    => count($pendingProducts),
-                    'payouts'     => count($pendingPayouts),
-                    'appeals'     => count($pendingAppeals),
-                    'log_cleanup' => $expiringLogsCount > 0 ? 1 : 0,
-                ],
-            ];
-        });
+        return $this->notificationService->getCachedRawNotifications();
     }
 
     /**
      * Fetch formatted notifications data with user read state
-     *
-     * @param array $readKeys Daftar notification ID yang sudah ditandai dibaca oleh admin (dari session)
      */
     public function getNotificationsData(array $readKeys = []): array
     {
-        $cached = $this->getCachedRawNotifications();
-        $items = $cached['items'] ?? [];
-
-        $notifications = array_map(function ($item) use ($readKeys) {
-            $item['is_read'] = in_array($item['id'], $readKeys, true);
-            return $item;
-        }, $items);
-
-        $unreadCount = count(array_filter($notifications, fn ($n) => !$n['is_read']));
-
-        return [
-            'status'        => 'success',
-            'unread_count'  => $unreadCount,
-            'counts'        => $cached['counts'] ?? [
-                'products'    => 0,
-                'payouts'     => 0,
-                'appeals'     => 0,
-                'log_cleanup' => 0,
-            ],
-            'notifications' => array_slice($notifications, 0, 20)
-        ];
+        return $this->notificationService->getNotificationsData($readKeys);
     }
 
     /**
@@ -345,27 +85,15 @@ class PlatformAdminService
      */
     public function getCommissionsData()
     {
-        return DB::table('platform_commissions')
-            ->join('users as sellers', 'platform_commissions.seller_id', '=', 'sellers.id')
-            ->select(
-                'platform_commissions.id',
-                'platform_commissions.seller_id',
-                'platform_commissions.amount',
-                'platform_commissions.commission',
-                'platform_commissions.created_at',
-                'sellers.name as seller_name',
-                'sellers.email as seller_email'
-            )
-            ->orderBy('platform_commissions.created_at', 'desc')
-            ->get();
+        return $this->commissionService->getCommissionsData();
     }
-    
+
     /**
      * Get total platform earnings
      */
     public function getTotalEarnings(): float
     {
-        return (float) (DB::table('platform_commissions')->sum('commission') ?? 0);
+        return $this->commissionService->getTotalEarnings();
     }
 
     /**
@@ -373,29 +101,7 @@ class PlatformAdminService
      */
     public function streamCommissionsCsv(callable $callback)
     {
-        $commissions = $this->getCommissionsData();
-        $columns = ['ID', 'Nama Seller', 'Email Seller', 'Nominal Transaksi (IDR)', 'Komisi Platform (IDR)', 'Waktu'];
-
-        return function () use ($callback, $commissions, $columns) {
-            $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF"); // Add BOM for UTF-8 Excel support
-            fputcsv($file, $columns);
-
-            foreach ($commissions as $row) {
-                fputcsv($file, [
-                    $row->id,
-                    $row->seller_name,
-                    $row->seller_email,
-                    $row->amount,
-                    $row->commission,
-                    $row->created_at,
-                ]);
-            }
-            fclose($file);
-            if (is_callable($callback)) {
-                $callback();
-            }
-        };
+        return $this->commissionService->streamCommissionsCsv($callback);
     }
 
     /**
@@ -403,63 +109,7 @@ class PlatformAdminService
      */
     public function getUsersList($search, $filter, $startDate, $endDate, $appealStatus)
     {
-        $query = User::with(['suspensionAppeals' => function ($q) {
-            $q->where('status', 'pending')->latest()->limit(1);
-        }])->where('role', '!=', self::ROLE_PLATFORM_ADMIN);
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if ($filter === 'active') {
-            $query->where(function ($q) {
-                $q->whereNull('suspended_at')
-                  ->orWhere(function ($sub) {
-                      $sub->whereNotNull('suspended_until')->where('suspended_until', '<=', now());
-                  });
-            });
-        } elseif ($filter === 'suspended') {
-            $query->whereNotNull('suspended_at')->where(function ($q) {
-                $q->whereNull('suspended_until')
-                  ->orWhere('suspended_until', '>', now());
-            });
-        }
-
-        if ($startDate && $endDate) {
-            $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
-        } elseif ($startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
-        } elseif ($endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
-        }
-
-        $users = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
-
-        $totalUsers     = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->count();
-        $totalActive    = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->where(function ($q) {
-            $q->whereNull('suspended_at')
-              ->orWhere(function ($sub) {
-                  $sub->whereNotNull('suspended_until')->where('suspended_until', '<=', now());
-              });
-        })->count();
-        $totalSuspended = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)->whereNotNull('suspended_at')->where(function ($q) {
-            $q->whereNull('suspended_until')
-              ->orWhere('suspended_until', '>', now());
-        })->count();
-
-        // Appeals
-        $appealsQuery = SuspensionAppeal::with('user')->latest();
-        if ($appealStatus) {
-            $appealsQuery->where('status', $appealStatus);
-        }
-        $appeals = $appealsQuery->paginate(15, ['*'], 'appeals_page')->withQueryString();
-        $pendingAppealsCount = SuspensionAppeal::where('status', 'pending')->count();
-
-        return compact('users', 'totalUsers', 'totalActive', 'totalSuspended', 'appeals', 'pendingAppealsCount');
+        return $this->suspensionService->getUsersList($search, $filter, $startDate, $endDate, $appealStatus);
     }
 
     /**
@@ -467,25 +117,7 @@ class PlatformAdminService
      */
     public function getSuggestions(string $q): array
     {
-        $users = User::where('role', '!=', self::ROLE_PLATFORM_ADMIN)
-            ->where(function ($query) use ($q) {
-                $query->where('name', 'like', "%{$q}%")
-                      ->orWhere('email', 'like', "%{$q}%");
-            })
-            ->limit(10)
-            ->get();
-
-        $suggestions = collect();
-        foreach ($users as $user) {
-            if ($user->name && stripos($user->name, $q) !== false) {
-                $suggestions->push(['label' => $user->name . ' (Nama)', 'value' => $user->name]);
-            }
-            if ($user->email && stripos($user->email, $q) !== false) {
-                $suggestions->push(['label' => $user->email . ' (Email)', 'value' => $user->email]);
-            }
-        }
-
-        return $suggestions->unique('value')->values()->take(5)->toArray();
+        return $this->suspensionService->getSuggestions($q);
     }
 
     /**
@@ -493,55 +125,7 @@ class PlatformAdminService
      */
     public function suspendUser(User $user, string $duration, ?string $reason): string
     {
-        $suspendedUntil = null;
-        $durationLabel = 'Permanen';
-
-        switch ($duration) {
-            case '1_day':
-                $suspendedUntil = now()->addDay();
-                $durationLabel = '1 Hari (s.d ' . $suspendedUntil->format('d M Y, H:i') . ')';
-                break;
-            case '3_days':
-                $suspendedUntil = now()->addDays(3);
-                $durationLabel = '3 Hari (s.d ' . $suspendedUntil->format('d M Y, H:i') . ')';
-                break;
-            case '7_days':
-                $suspendedUntil = now()->addDays(7);
-                $durationLabel = '7 Hari / 1 Minggu (s.d ' . $suspendedUntil->format('d M Y, H:i') . ')';
-                break;
-            case '30_days':
-                $suspendedUntil = now()->addDays(30);
-                $durationLabel = '30 Hari / 1 Bulan (s.d ' . $suspendedUntil->format('d M Y, H:i') . ')';
-                break;
-            case 'permanent':
-            default:
-                break;
-        }
-
-        DB::transaction(function () use ($user, $duration, $reason, $durationLabel, $suspendedUntil) {
-            $user->update([
-                'suspended_at'    => now(),
-                'suspended_until' => $suspendedUntil,
-                'suspend_reason'  => $reason,
-            ]);
-
-            ActivityLogger::log(
-                'suspend_user',
-                "Men-suspend akun user: {$user->name} ({$user->email}) - Durasi: {$durationLabel}. Alasan: {$reason}",
-                [
-                    'target_user_id'  => $user->id,
-                    'user_name'       => $user->name,
-                    'user_email'      => $user->email,
-                    'duration'        => $duration,
-                    'suspended_until' => $suspendedUntil ? $suspendedUntil->toDateTimeString() : null,
-                    'reason'          => $reason
-                ]
-            );
-        });
-
-        self::clearNotificationsCache();
-
-        return $durationLabel;
+        return $this->suspensionService->suspendUser($user, $duration, $reason);
     }
 
     /**
@@ -549,38 +133,6 @@ class PlatformAdminService
      */
     public function activateUser(User $user, ?string $reason = null): void
     {
-        DB::transaction(function () use ($user, $reason) {
-            $user->update([
-                'suspended_at'    => null,
-                'suspended_until' => null,
-                'suspend_reason'  => null,
-            ]);
-
-            SuspensionAppeal::where('user_id', $user->id)
-                ->where('status', 'pending')
-                ->update([
-                    'status'      => 'approved',
-                    'admin_notes' => $reason ?: 'Akun dipulihkan secara manual oleh Admin Platform.',
-                    'resolved_at' => now(),
-                ]);
-
-            $logDesc = "Mengaktifkan kembali akun user: {$user->name} ({$user->email})";
-            if ($reason) {
-                $logDesc .= ". Catatan: {$reason}";
-            }
-
-            ActivityLogger::log(
-                'activate_user',
-                $logDesc,
-                [
-                    'target_user_id' => $user->id,
-                    'user_name'      => $user->name,
-                    'user_email'     => $user->email,
-                    'reason'         => $reason
-                ]
-            );
-        });
-
-        self::clearNotificationsCache();
+        $this->suspensionService->activateUser($user, $reason);
     }
 }

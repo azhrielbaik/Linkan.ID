@@ -59,6 +59,7 @@ class LogHttpRequests
 
         try {
             Log::channel('daily')->log($level, 'HTTP Request Processed', [
+                'event' => 'http_request_processed',
                 'method' => $request->method(),
                 'url' => $request->fullUrl(),
                 'route' => $routeName,

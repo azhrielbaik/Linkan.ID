@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\PlatformAdmin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\PlatformAdmin\VerifikasiRequest;
 use App\Http\Requests\PlatformAdmin\BulkVerifikasiRequest;
 use App\Models\DigitalProduct;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VerifikasiController extends Controller
 {
@@ -42,11 +41,11 @@ class VerifikasiController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -58,7 +57,7 @@ class VerifikasiController extends Controller
         // Filter Rentang Tanggal
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -105,7 +104,7 @@ class VerifikasiController extends Controller
             // Catat Log Aktivitas
             $action = $request->status === 'approved' ? 'approve_product' : 'reject_product';
             $desc = $request->status === 'approved'
-                ? "Menyetujui verifikasi produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")"
+                ? "Menyetujui verifikasi produk: {$product->title} (Seller: ".($product->user->name ?? 'User').')'
                 : "Menolak verifikasi produk: {$product->title} (Alasan: {$request->rejection_reason})";
 
             \App\Services\ActivityLogger::log($action, $desc, [
@@ -113,7 +112,7 @@ class VerifikasiController extends Controller
                 'product_title' => $product->title,
                 'seller_id' => $product->user_id,
                 'status' => $request->status,
-                'rejection_reason' => $request->rejection_reason
+                'rejection_reason' => $request->rejection_reason,
             ]);
         });
 
@@ -159,6 +158,6 @@ class VerifikasiController extends Controller
 
         \App\Services\PlatformAdminService::clearNotificationsCache();
 
-        return redirect()->back()->with('success', count($products) . ' produk berhasil diperbarui.');
+        return redirect()->back()->with('success', count($products).' produk berhasil diperbarui.');
     }
 }

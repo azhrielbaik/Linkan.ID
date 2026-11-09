@@ -12,13 +12,13 @@ class FailedCallback extends Model
         'created_at',
         'is_processed',
         'processed_at',
-        'error_message'
+        'error_message',
     ];
 
     protected $casts = [
         'payload' => 'array',
         'created_at' => 'datetime',
         'processed_at' => 'datetime',
-        'is_processed' => 'boolean'
+        'is_processed' => 'boolean',
     ];
-} 
+}

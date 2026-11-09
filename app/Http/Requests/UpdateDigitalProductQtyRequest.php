@@ -24,7 +24,7 @@ class UpdateDigitalProductQtyRequest extends FormRequest
         return [
             'product_id' => 'required|integer',
             'qty' => 'required|integer|min:1',
-            'price' => 'nullable|numeric|min:0'
+            'price' => 'nullable|numeric|min:0',
         ];
     }
 }

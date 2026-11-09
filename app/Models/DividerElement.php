@@ -15,7 +15,7 @@ class DividerElement extends Model
         'user_id',
         'type',
         'size',
-        'order_position', 'is_active'
+        'order_position', 'is_active',
     ];
 
     public function user()

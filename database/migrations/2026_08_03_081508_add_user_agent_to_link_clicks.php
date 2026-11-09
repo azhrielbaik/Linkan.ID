@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('link_clicks', function (Blueprint $table) {
-            if (!Schema::hasColumn('link_clicks', 'user_agent')) {
+            if (! Schema::hasColumn('link_clicks', 'user_agent')) {
                 $table->text('user_agent')->nullable();
             }
         });

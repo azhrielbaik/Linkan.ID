@@ -16,7 +16,7 @@ class TextElement extends Model
         'content',
         'order_position', 'is_active',
         'has_button', 'button_text', 'button_link',
-        'button_icon_type', 'button_icon_value', 'button_color'
+        'button_icon_type', 'button_icon_value', 'button_color',
     ];
 
     public function user()

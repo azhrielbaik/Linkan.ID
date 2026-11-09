@@ -5,7 +5,6 @@ namespace App\Http\Controllers\PlatformAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\PayoutTransaction;
 use App\Models\PlatformSetting;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,12 +29,12 @@ class PayoutManagementController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('account_name', 'like', "%{$search}%")
-                  ->orWhere('account_number', 'like', "%{$search}%")
-                  ->orWhere('method', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('account_number', 'like', "%{$search}%")
+                    ->orWhere('method', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -46,11 +45,11 @@ class PayoutManagementController extends Controller
 
         // Filter Tanggal
         $startDate = $request->input('start_date') ?: $request->input('date', '');
-        $endDate   = $request->input('end_date', '');
+        $endDate = $request->input('end_date', '');
 
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -60,10 +59,10 @@ class PayoutManagementController extends Controller
         $payouts = $query->paginate(15)->withQueryString();
 
         // Ringkasan Statistik
-        $totalPendingCount  = PayoutTransaction::where('status', 'pending')->count();
+        $totalPendingCount = PayoutTransaction::where('status', 'pending')->count();
         $totalPendingAmount = PayoutTransaction::where('status', 'pending')->sum('amount');
 
-        $totalApprovedCount  = PayoutTransaction::where('status', 'approved')->count();
+        $totalApprovedCount = PayoutTransaction::where('status', 'approved')->count();
         $totalApprovedAmount = PayoutTransaction::where('status', 'approved')->sum('amount');
 
         $totalRejectedCount = PayoutTransaction::where('status', 'rejected')->count();
@@ -103,7 +102,7 @@ class PayoutManagementController extends Controller
             return back()->with('error', 'Pencairan dana tidak dapat disetujui karena mode "Freeze Payouts" sedang aktif di Pengaturan Platform. Nonaktifkan status pembekuan terlebih dahulu jika ingin memproses dana.');
         }
 
-        if (!Hash::check($request->input('admin_password'), Auth::user()->password)) {
+        if (! Hash::check($request->input('admin_password'), Auth::user()->password)) {
             return back()->with('error', __('platform.invalid_payout_password'));
         }
 
@@ -114,7 +113,7 @@ class PayoutManagementController extends Controller
                 // Kunci baris payout secara eksklusif (SELECT ... FOR UPDATE) untuk mencegah race condition / double approval
                 $payout = PayoutTransaction::where('id', $id)->lockForUpdate()->first();
 
-                if (!$payout) {
+                if (! $payout) {
                     throw new \Exception('Permintaan payout tidak ditemukan.');
                 }
 
@@ -163,7 +162,7 @@ class PayoutManagementController extends Controller
         // Catat Log Aktivitas
         \App\Services\ActivityLogger::log(
             'approve_payout',
-            "Menyetujui penarikan dana Rp " . number_format($payout->amount, 0, ',', '.') . " ke {$payout->account_name} ({$payout->method})",
+            'Menyetujui penarikan dana Rp '.number_format($payout->amount, 0, ',', '.')." ke {$payout->account_name} ({$payout->method})",
             [
                 'payout_id' => $payout->id,
                 'seller_id' => $payout->user_id,
@@ -172,13 +171,13 @@ class PayoutManagementController extends Controller
                 'commission' => $commission,
                 'method' => $payout->method,
                 'account_name' => $payout->account_name,
-                'account_number' => $payout->account_number
+                'account_number' => $payout->account_number,
             ]
         );
 
         \App\Services\PlatformAdminService::clearNotificationsCache();
 
-        return back()->with('success', 'Permintaan penarikan sebesar Rp ' . number_format($payout->amount, 0, ',', '.') . ' berhasil disetujui.');
+        return back()->with('success', 'Permintaan penarikan sebesar Rp '.number_format($payout->amount, 0, ',', '.').' berhasil disetujui.');
     }
 
     /**
@@ -200,7 +199,7 @@ class PayoutManagementController extends Controller
                 // Kunci baris payout secara eksklusif (SELECT ... FOR UPDATE) untuk mencegah race condition / double refund
                 $payout = PayoutTransaction::where('id', $id)->lockForUpdate()->first();
 
-                if (!$payout) {
+                if (! $payout) {
                     throw new \Exception('Permintaan payout tidak ditemukan.');
                 }
 
@@ -237,18 +236,18 @@ class PayoutManagementController extends Controller
         // Catat Log Aktivitas
         \App\Services\ActivityLogger::log(
             'reject_payout',
-            "Menolak penarikan dana Rp " . number_format($payout->amount, 0, ',', '.') . " ke {$payout->account_name}. Alasan: {$reason}",
+            'Menolak penarikan dana Rp '.number_format($payout->amount, 0, ',', '.')." ke {$payout->account_name}. Alasan: {$reason}",
             [
                 'payout_id' => $payout->id,
                 'seller_id' => $payout->user_id,
                 'refund_amount' => $refundAmount,
                 'method' => $payout->method,
-                'rejection_reason' => $reason
+                'rejection_reason' => $reason,
             ]
         );
 
         \App\Services\PlatformAdminService::clearNotificationsCache();
 
-        return back()->with('success', 'Permintaan penarikan berhasil ditolak. Saldo Rp ' . number_format($refundAmount, 0, ',', '.') . ' telah dikembalikan ke akun seller.');
+        return back()->with('success', 'Permintaan penarikan berhasil ditolak. Saldo Rp '.number_format($refundAmount, 0, ',', '.').' telah dikembalikan ke akun seller.');
     }
 }

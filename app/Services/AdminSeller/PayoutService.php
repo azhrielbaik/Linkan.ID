@@ -2,19 +2,16 @@
 
 namespace App\Services\AdminSeller;
 
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Models\UserPayoutDetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use App\Models\PlatformSetting;
 
 class PayoutService
 {
     /**
      * Get payout overview data for a user.
-     *
-     * @param User $user
-     * @return array
      */
     public function getPayoutOverview(User $user): array
     {
@@ -71,15 +68,12 @@ class PayoutService
             'netPayoutAmount' => $netPayout,
             'frozenDisputeAmount' => $frozenDisputeAmount,
             'payoutDetail' => $payoutDetail,
-            'history' => $this->getPayoutHistory($user->id)->take(10)
+            'history' => $this->getPayoutHistory($user->id)->take(10),
         ];
     }
 
     /**
      * Get withdraw form settings.
-     *
-     * @param User $user
-     * @return array
      */
     public function getWithdrawFormSettings(User $user): array
     {
@@ -89,15 +83,13 @@ class PayoutService
             'currentEarnings' => $currentEarnings,
             'payoutDetail' => UserPayoutDetail::where('user_id', $user->id)->first(),
             'minWithdraw' => (float) PlatformSetting::get('min_withdraw_amount', 10000),
-            'commissionPercent' => (float) PlatformSetting::get('platform_commission_percent', 5)
+            'commissionPercent' => (float) PlatformSetting::get('platform_commission_percent', 5),
         ];
     }
 
     /**
      * Save payout method for a user.
      *
-     * @param User $user
-     * @param array $data
      * @return string Message
      */
     public function savePayoutMethod(User $user, array $data): string
@@ -112,6 +104,7 @@ class PayoutService
                 'account_number' => $data['account_number'],
                 'bank_name' => $bankName,
             ]);
+
             return 'Pengaturan metode pembayaran berhasil diperbarui!';
         }
 
@@ -122,15 +115,13 @@ class PayoutService
             'account_number' => $data['account_number'],
             'bank_name' => $bankName,
         ]);
-        
+
         return 'Pengaturan metode pembayaran berhasil disimpan!';
     }
 
     /**
      * Process withdrawal request.
      *
-     * @param User $user
-     * @param array $data
      * @return array Message payload
      */
     public function processWithdrawal(User $user, array $data): array
@@ -146,15 +137,15 @@ class PayoutService
         $commission = $amount * ($commissionPercent / 100);
         $amountAfterCommission = $amount - $commission;
 
-        DB::transaction(function() use ($user, $data, $amount, $commission, $amountAfterCommission) {
+        DB::transaction(function () use ($user, $data, $amount, $commission, $amountAfterCommission) {
             $freshUser = DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
             $frozenDisputeAmount = $this->getFrozenDisputeAmount($user->id);
             $withdrawableBalance = max(0, (float) ($freshUser->balance ?? 0) - $frozenDisputeAmount);
 
-            if (!$freshUser || $withdrawableBalance < $amount) {
+            if (! $freshUser || $withdrawableBalance < $amount) {
                 $err = 'Saldo Anda tidak mencukupi untuk melakukan penarikan ini.';
                 if ($frozenDisputeAmount > 0) {
-                    $err .= ' (Terdapat dana tertahan sengketa sebesar Rp ' . number_format($frozenDisputeAmount, 0, ',', '.') . ')';
+                    $err .= ' (Terdapat dana tertahan sengketa sebesar Rp '.number_format($frozenDisputeAmount, 0, ',', '.').')';
                 }
                 throw new \Exception($err);
             }
@@ -172,12 +163,12 @@ class PayoutService
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
+
             DB::table('users')->where('id', $user->id)->decrement('balance', $amount);
 
             \App\Services\ActivityLogger::log(
                 'request_payout',
-                "Seller {$user->name} mengajukan penarikan dana sebesar Rp " . number_format($amount, 0, ',', '.') . " via {$data['method']}.",
+                "Seller {$user->name} mengajukan penarikan dana sebesar Rp ".number_format($amount, 0, ',', '.')." via {$data['method']}.",
                 ['amount' => $amount, 'net_amount' => $amountAfterCommission, 'method' => $data['method'], 'account_name' => $data['account_name']],
                 $user->id
             );
@@ -185,14 +176,13 @@ class PayoutService
 
         return [
             'success' => true,
-            'message' => 'Permintaan penarikan sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil diajukan melalui ' . $data['method'] . '. Menunggu verifikasi admin platform.'
+            'message' => 'Permintaan penarikan sebesar Rp '.number_format($amount, 0, ',', '.').' berhasil diajukan melalui '.$data['method'].'. Menunggu verifikasi admin platform.',
         ];
     }
 
     /**
      * Get payout history.
      *
-     * @param int $userId
      * @return \Illuminate\Support\Collection
      */
     public function getPayoutHistory(int $userId)
@@ -205,13 +195,10 @@ class PayoutService
 
     /**
      * Calculate total frozen funds for active disputes defensively.
-     *
-     * @param int $sellerId
-     * @return float
      */
     private function getFrozenDisputeAmount(int $sellerId): float
     {
-        if (!Schema::hasTable('disputes')) {
+        if (! Schema::hasTable('disputes')) {
             return 0.0;
         }
 

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\AdminSeller;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdminSeller\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\AdminSeller\OrderService;
 
 class OrderController extends Controller
 {
@@ -19,7 +19,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        
+
         $filters = $request->only(['status', 'date', 'search']);
         $transactions = $this->orderService->getOrders($user->id, $filters);
 
@@ -31,7 +31,7 @@ class OrderController extends Controller
         $user = Auth::user();
         $order = $this->orderService->getOrderDetail($user->id, $id);
 
-        if (!$order) {
+        if (! $order) {
             return response()->json(['error' => __('admin.data_not_found')], 404);
         }
 
@@ -42,6 +42,7 @@ class OrderController extends Controller
     {
         try {
             $this->orderService->updateOrderStatus($id, $request->status);
+
             return response()->json(['success' => true, 'message' => __('admin.order_status_updated')]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);

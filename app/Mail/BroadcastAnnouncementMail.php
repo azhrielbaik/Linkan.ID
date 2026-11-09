@@ -13,6 +13,7 @@ class BroadcastAnnouncementMail extends Mailable
     use Queueable, SerializesModels;
 
     public BroadcastAnnouncement $announcement;
+
     public User $recipient;
 
     public function __construct(BroadcastAnnouncement $announcement, User $recipient)
@@ -25,16 +26,16 @@ class BroadcastAnnouncementMail extends Mailable
     {
         $badgePrefix = match ($this->announcement->type) {
             'warning' => '⚠️ [PENTING]',
-            'danger'  => '🚨 [MENDESAK]',
+            'danger' => '🚨 [MENDESAK]',
             'success' => '✨ [INFO UPDATE]',
-            default   => '📢 [PENGUMUMAN]',
+            default => '📢 [PENGUMUMAN]',
         };
 
-        return $this->subject($badgePrefix . ' ' . $this->announcement->title . ' — Linkan.ID')
-                    ->view('emails.broadcast-announcement')
-                    ->with([
-                        'announcement' => $this->announcement,
-                        'recipient'    => $this->recipient,
-                    ]);
+        return $this->subject($badgePrefix.' '.$this->announcement->title.' — Linkan.ID')
+            ->view('emails.broadcast-announcement')
+            ->with([
+                'announcement' => $this->announcement,
+                'recipient' => $this->recipient,
+            ]);
     }
 }

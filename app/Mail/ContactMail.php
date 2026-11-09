@@ -3,11 +3,9 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+
 class ContactMail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -22,9 +20,9 @@ class ContactMail extends Mailable
     public function build()
     {
         return $this->from('sense.xj@gmail.com', $this->data['name']) // Nama pengirim = dari form
-                    ->replyTo($this->data['email'], $this->data['name']) // Agar penerima bisa balas ke email user
-                    ->subject('Pesan Baru dari ' . $this->data['name'])
-                    ->view('emails.contact')
-                    ->with('data', $this->data);
+            ->replyTo($this->data['email'], $this->data['name']) // Agar penerima bisa balas ke email user
+            ->subject('Pesan Baru dari '.$this->data['name'])
+            ->view('emails.contact')
+            ->with('data', $this->data);
     }
 }

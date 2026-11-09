@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Middleware\AdminIdleTimeout;
+use App\Http\Middleware\AssignRequestId;
 use App\Http\Middleware\CheckSuspended;
 use App\Http\Middleware\Localization;
 use App\Http\Middleware\LogHttpRequests;
 use App\Http\Middleware\RoleMiddleware;
-use App\Http\Middleware\AdminIdleTimeout;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,10 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->prepend(AssignRequestId::class);
         $middleware->trustProxies(at: '*');
         $middleware->validateCsrfTokens(except: [
             'midtrans/callback',
-            'midtrans-callback'
+            'midtrans-callback',
         ]);
         $middleware->web(prepend: [
             Localization::class,
@@ -76,13 +78,17 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $traceLines = array_slice(explode("\n", $e->getTraceAsString()), 0, 10);
+            $requestId = $request?->attributes?->get('request_id') ?? (method_exists(Log::class, 'sharedContext') ? (Log::sharedContext()['request_id'] ?? null) : null);
 
             Log::channel('errors')->error($e->getMessage(), [
+                'event' => 'unhandled_exception',
+                'request_id' => $requestId,
                 'exception_class' => get_class($e),
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'url' => $request ? $request->fullUrl() : 'console',
+                'route' => $request ? ($request->route()?->getName() ?? $request->path()) : 'console',
                 'method' => $request ? $request->method() : 'CLI',
                 'ip' => $request ? $request->ip() : '127.0.0.1',
                 'user_id' => Auth::check() ? Auth::id() : null,

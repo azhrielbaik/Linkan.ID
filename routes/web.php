@@ -1,34 +1,19 @@
 <?php
 
-use App\Http\Controllers\AdminSeller\AccountController;
 use App\Http\Controllers\AdminSeller\DashboardController;
-use App\Http\Controllers\AdminSeller\DigitalProductController as AdminDigitalProductController;
-use App\Http\Controllers\AdminSeller\OrderController;
-use App\Http\Controllers\AdminSeller\PayoutController;
-use App\Http\Controllers\AdminSeller\SettingController;
-use App\Http\Controllers\AdminSeller\StatisticController;
-use App\Http\Controllers\AppearanceController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DigitalProductController;
-use App\Http\Controllers\PlatformAdmin\VerifikasiController;
-use App\Http\Controllers\PlatformAdminController;
-use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\ShortlinkController;
+use App\Http\Controllers\CheckoutController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| External Callbacks & Utilities (No locale prefix required)
 |--------------------------------------------------------------------------
 */
-
-// Root fallback
-Route::get('/', fn () => redirect('/id'));
-Route::get('/bantuan/sengketa', fn () => redirect('/id/bantuan/sengketa'));
-Route::get('/review/{token}', fn (string $token) => redirect('/id/review/' . $token));
+Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
+Route::post('/midtrans/callback', [CheckoutController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
 
 // Switch Language Route (Redirects to new locale)
 Route::get('/lang/{lang}', function ($lang) {
@@ -39,7 +24,6 @@ Route::get('/lang/{lang}', function ($lang) {
             $path = $parsed['path'] ?? '/';
             $segments = explode('/', ltrim($path, '/'));
 
-            // The locale is typically the first segment in the path
             if (isset($segments[0]) && in_array($segments[0], ['id', 'en'])) {
                 $segments[0] = $lang;
                 $newPath = '/'.implode('/', $segments);
@@ -55,387 +39,52 @@ Route::get('/lang/{lang}', function ($lang) {
     return redirect()->back();
 })->name('lang.switch');
 
-// External callbacks (No locale needed)
-Route::post('/midtrans/callback', [DigitalProductController::class, 'midtransCallback'])->middleware('throttle:30,1')->name('midtrans.callback');
-Route::get('/track-click', [DashboardController::class, 'trackClick'])->name('track.click');
-
-
-
-// Fallbacks for admin elements AJAX routes without locale prefix
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-    Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle']);
-    Route::post('/elements/order', [\App\Http\Controllers\AppearanceController::class, 'updateOrder']);
-    Route::post('/elements/video', [\App\Http\Controllers\VideoElementController::class, 'store']);
-    Route::put('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'update']);
-    Route::delete('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'destroy']);
-    Route::post('/elements/text', [\App\Http\Controllers\TextElementController::class, 'store']);
-    Route::put('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'update']);
-    Route::delete('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'destroy']);
-    Route::delete('/elements/digital-product/{id}', [\App\Http\Controllers\DigitalProductElementController::class, 'destroy']);
-});
-
-// Fallback for admin orders detail without locale prefix
-Route::get('/admin/orders/{id}', function (\Illuminate\Http\Request $request, $id) {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/admin/orders/{$id}");
-})->middleware(['auth']);
-
-// Fallbacks for auth pages without locale prefix
-Route::get('/login', function () {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/login");
-});
+/*
+|--------------------------------------------------------------------------
+| Non-prefixed POST Fallbacks for Auth & Cart Actions (Testing & Compatibility)
+|--------------------------------------------------------------------------
+*/
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
-
-Route::get('/register', function () {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/register");
-});
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/cart/update-qty', [CheckoutController::class, 'updateQty']);
+Route::post('/transaction/store', [CheckoutController::class, 'storeTransaction']);
+Route::post('/admin/elements/toggle-visibility', [\App\Http\Controllers\AdminSeller\Microsite\ElementVisibilityController::class, 'toggle'])->middleware(['auth']);
 
-Route::get('/login/google', function () {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/login/google");
-});
-
-Route::get('/register/google', function () {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/register/google");
-});
-
-Route::get('/auth/google/connect', function () {
-    $locale = session('locale', config('app.locale', 'id'));
-
-    return redirect()->to("/{$locale}/auth/google/connect");
-})->middleware('auth');
-
-// Fallbacks for public product & checkout pages without locale prefix
-Route::get('/checkout/{id}', function (\Illuminate\Http\Request $request, $id) {
-    $locale = session('locale', config('app.locale', 'id'));
-    $query = $request->getQueryString();
-    return redirect()->to("/{$locale}/checkout/{$id}" . ($query ? '?' . $query : ''));
-});
-Route::post('/checkout/{id}', [DigitalProductController::class, 'checkout']);
-
-Route::get('/checkout/{id}/success', function (\Illuminate\Http\Request $request, $id) {
-    $locale = session('locale', config('app.locale', 'id'));
-    $query = $request->getQueryString();
-    return redirect()->to("/{$locale}/checkout/{$id}/success" . ($query ? '?' . $query : ''));
-});
-
-Route::get('/product/{id}', function (\Illuminate\Http\Request $request, $id) {
-    $locale = session('locale', config('app.locale', 'id'));
-    $query = $request->getQueryString();
-    return redirect()->to("/{$locale}/product/{$id}" . ($query ? '?' . $query : ''));
-});
-
-Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty']);
-Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction']);
-
-// Unprefixed admin notification routes for Ajax fallback
-Route::middleware(['auth'])->group(function () {
-    Route::post('/admin/notifications/read', [\App\Http\Controllers\AdminSeller\DashboardController::class, 'markNotificationRead']);
-    Route::post('/admin/notifications/read-all', [\App\Http\Controllers\AdminSeller\DashboardController::class, 'markAllNotificationsRead']);
-});
-
+/*
+|--------------------------------------------------------------------------
+| Localized Application Routes
+|--------------------------------------------------------------------------
+*/
 Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'id|en']], function () {
-    Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
-
-    // Static pages
-    Route::view('/pricing', 'pricing')->name('pricing');
-    Route::view('/faq', 'public.pages.faq')->name('FAQ');
-    Route::view('/about', 'public.pages.about')->name('about');
-
-    // Auth
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1')->name('login.submit');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
-
-    // Google OAuth
-    Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
-    Route::get('register/google', [LoginController::class, 'redirectToGoogleRegister'])->name('google.register');
-    Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('google.callback');
-    Route::get('/auth/google/connect', [LoginController::class, 'redirectToGoogleConnect'])->middleware('auth')->name('google.connect');
-
-    // Password Reset via Admin Platform OTP (4-Step Flow)
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'requestOtp'])->middleware('throttle:5,1')->name('password.request-otp');
-    Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verify-otp');
-    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->middleware('throttle:5,1')->name('password.verify-otp.submit');
-    Route::post('/verify-otp/resend', [ForgotPasswordController::class, 'resendOtp'])->middleware('throttle:5,1')->name('password.verify-otp.resend');
-    Route::get('/verify-otp/status', [ForgotPasswordController::class, 'checkOtpStatus'])->middleware('throttle:5,1')->name('password.otp.status');
-    Route::get('/create-new-password', [ForgotPasswordController::class, 'showCreatePasswordForm'])->name('password.create-new');
-    Route::post('/create-new-password', [ForgotPasswordController::class, 'submitCreatePassword'])->name('password.create-new.submit');
-    Route::get('/password-reset-success', [ForgotPasswordController::class, 'showSuccessPage'])->name('password.success');
-
-    // Contact
-    Route::get('/contact', [ContactController::class, 'index'])->name('contact.form');
-    Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
-
-    // Public microsite & link tracking
-    Route::get('/linkan.id/{username}', [PublicPageController::class, 'show'])->name('track.view');
-    // Route::get('/profile/{username}', [PublicPageController::class, 'show'])->name('public.profile'); // Moved to end of file as catch-all
-
-    // Public product & checkout (no auth required to browse/buy)
-    Route::get('/product/{id}', [DigitalProductController::class, 'show'])->name('product.show');
-    Route::match(['get', 'post'], '/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
-    Route::get('/checkout/{id}/success', [DigitalProductController::class, 'checkoutSuccess'])->name('checkout.success');
-    Route::post('/cart/update-qty', [DigitalProductController::class, 'updateQty'])->name('cart.updateQty');
-
-    // Digital product payment flow (public callbacks & result pages)
-    Route::post('/transaction/store', [DigitalProductController::class, 'storeTransaction'])->name('transaction.store');
-
-    // Layanan Pengaduan Sengketa & Refund Pembeli (Public Dispute & Complaint)
-    Route::get('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'create'])->name('public.dispute.create');
-    Route::post('/bantuan/sengketa/check-order', [\App\Http\Controllers\PublicDisputeController::class, 'checkOrder'])->middleware('throttle:30,1')->name('public.dispute.check_order');
-    Route::post('/bantuan/sengketa', [\App\Http\Controllers\PublicDisputeController::class, 'store'])->middleware('throttle:10,1')->name('public.dispute.store');
-
-    // Review Produk Digital (Publik, Tanpa Login, Token-based)
-    Route::get('/review/{token}', [\App\Http\Controllers\PublicReviewController::class, 'show'])
-        ->middleware('throttle:10,1')
-        ->name('public.review.show');
-    Route::post('/review/{token}', [\App\Http\Controllers\PublicReviewController::class, 'store'])
-        ->middleware('throttle:5,1')
-        ->name('public.review.store');
-
-    // Password-protected shortlink
-    Route::get('/p/{slug}', [ShortlinkController::class, 'passwordForm'])->name('shortlink.password.form');
-    Route::post('/p/{slug}', [ShortlinkController::class, 'verifyPassword'])->name('shortlink.password.verify');
-
-    /*
-    |--------------------------------------------------------------------------
-    | User Admin Routes — prefix: /admin
-    |--------------------------------------------------------------------------
-    | Semua halaman dashboard user (seller) dikelompokkan di sini.
-    | Naming convention: admin.<resource>.<action>
-    */
-
-    Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-
-        // Dashboard / Beranda
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/get-chart-data', [DashboardController::class, 'getChartData'])->name('chart-data');
-        Route::get('/notifications', [DashboardController::class, 'getNotifications'])->name('notifications');
-        Route::post('/notifications/read', [DashboardController::class, 'markNotificationRead'])->name('notifications.read');
-        Route::post('/notifications/read-all', [DashboardController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
-        Route::get('/notifications/stream', [DashboardController::class, 'streamNotifications'])->name('notifications.stream');
-        Route::post('/appeal', [DashboardController::class, 'submitAppeal'])->name('appeal.store');
-
-        // My Linkan (microsite builder)
-        Route::get('/microsites', [\App\Http\Controllers\MicrositeController::class, 'index'])->name('microsites.index');
-        Route::post('/microsites', [\App\Http\Controllers\MicrositeController::class, 'store'])->name('microsites.store');
-        Route::delete('/microsites/{id}', [\App\Http\Controllers\MicrositeController::class, 'destroy'])->name('microsites.destroy');
-
-
-        // Appearance (Profile Block settings)
-        Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
-        Route::post('/appearance/design-settings', [AppearanceController::class, 'updateDesignSettings'])->name('appearance.design-settings.update');
-
-        // Microsite Elements
-        Route::post('/elements/image', [\App\Http\Controllers\ImageElementController::class, 'store'])->name('elements.image.store');
-        Route::delete('/elements/image/{id}', [\App\Http\Controllers\ImageElementController::class, 'destroy'])->name('elements.image.destroy');
-
-        // Text Element Routes
-        Route::post('/elements/text', [\App\Http\Controllers\TextElementController::class, 'store'])->name('elements.text.store');
-        Route::delete('/elements/text/{id}', [\App\Http\Controllers\TextElementController::class, 'destroy'])->name('elements.text.destroy');
-
-        // Divider Element Routes
-        Route::post('/elements/divider', [\App\Http\Controllers\DividerElementController::class, 'store'])->name('elements.divider.store');
-        Route::delete('/elements/divider/{id}', [\App\Http\Controllers\DividerElementController::class, 'destroy'])->name('elements.divider.destroy');
-
-        // Video Element
-        Route::post('/elements/video', [\App\Http\Controllers\VideoElementController::class, 'store'])->name('elements.video.store');
-        Route::put('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'update'])->name('elements.video.update');
-        Route::delete('/elements/video/{id}', [\App\Http\Controllers\VideoElementController::class, 'destroy'])->name('elements.video.destroy');
-
-        // Social Media Element
-        Route::post('/elements/social', [\App\Http\Controllers\SocialMediaElementController::class, 'store'])->name('elements.social.store');
-        Route::put('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'update'])->name('elements.social.update');
-        Route::delete('/elements/social/{id}', [\App\Http\Controllers\SocialMediaElementController::class, 'destroy'])->name('elements.social.destroy');
-
-        // Digital Product Element Routes
-        Route::post('/elements/digital-product/pin', [\App\Http\Controllers\DigitalProductElementController::class, 'pinExisting'])->name('elements.digital-product.pin');
-        Route::post('/elements/digital-product', [\App\Http\Controllers\DigitalProductElementController::class, 'store'])->name('elements.digital-product.store');
-        Route::delete('/elements/digital-product/{id}', [\App\Http\Controllers\DigitalProductElementController::class, 'destroy'])->name('elements.digital-product.destroy');
-
-        // Visibility Toggle Route
-        Route::post('/elements/toggle-visibility', [\App\Http\Controllers\ElementVisibilityController::class, 'toggle'])->name('elements.toggleVisibility');
-
-        Route::post('/elements/order', [AppearanceController::class, 'updateOrder'])->name('elements.order.update');
-
-        // Settings (general)
-        Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-
-        // Account
-        Route::get('/account', [AccountController::class, 'edit'])->name('account');
-        Route::post('/account', [AccountController::class, 'update'])->name('account.update');
-        Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
-        Route::post('/account/notifications', [AccountController::class, 'updateNotifications'])->name('account.notifications');
-        Route::post('/account/email/request-otp', [AccountController::class, 'requestEmailChangeOtp'])->name('account.email.request-otp');
-        Route::post('/account/email/verify-otp', [AccountController::class, 'verifyEmailChangeOtp'])->name('account.email.verify-otp');
-        Route::get('/account/email/verify/{token}', [AccountController::class, 'verifyEmailChange'])->name('account.email.verify');
-        Route::delete('/account/google', [AccountController::class, 'disconnectGoogle'])->name('account.google.disconnect');
-        Route::delete('/account/sessions/{sessionId}', [AccountController::class, 'revokeSession'])->name('account.session.revoke');
-        Route::delete('/account/sessions', [AccountController::class, 'revokeAllSessions'])->name('account.sessions.revoke-all');
-        Route::delete('/account', [AccountController::class, 'delete'])->middleware('throttle:5,1')->name('account.delete');
-
-        // Payout
-        Route::prefix('payout')->name('payout.')->group(function () {
-            Route::get('/', [PayoutController::class, 'index'])->name('index');
-            Route::get('/withdraw', [PayoutController::class, 'showWithdrawForm'])->name('withdraw');
-            Route::post('/withdraw', [PayoutController::class, 'processWithdrawal'])->middleware('throttle:6,1')->name('withdraw.process');
-            Route::get('/history', [PayoutController::class, 'showPayoutHistory'])->name('history');
-            Route::get('/method', [PayoutController::class, 'showPayoutMethodForm'])->name('method');
-            Route::post('/method', [PayoutController::class, 'savePayoutMethod'])->name('method.save');
-        });
-
-        // Statistics
-        Route::get('/statistics', [StatisticController::class, 'index'])->name('statistics');
-        Route::get('/statistics/chart-data', [StatisticController::class, 'getChartData'])->name('statistics.chart-data');
-
-        // Orders
-        Route::get('/orders', [OrderController::class, 'index'])->name('orders');
-        Route::get('/orders/{id}', [OrderController::class, 'getOrderDetail'])->name('orders.detail');
-
-        // Digital Products Seller CRUD
-        Route::resource('digital-products', AdminDigitalProductController::class);
-
-        // Digital Products Public Show
-
-        // Digital product payment flow (initiated from admin context)
-        Route::prefix('digital-products')->name('digital-products.')->group(function () {
-            Route::get('/checkout/{id}', [DigitalProductController::class, 'checkout'])->name('checkout');
-            Route::post('/transaction', [DigitalProductController::class, 'storeTransaction'])->name('transaction');
-        });
-
-        // Shortlinks
-        Route::prefix('shortlinks')->name('shortlinks.')->group(function () {
-            Route::get('/', [ShortlinkController::class, 'index'])->name('index');
-            Route::post('/', [ShortlinkController::class, 'store'])->name('store');
-            Route::put('/{shortlink}', [ShortlinkController::class, 'update'])->name('update');
-            Route::get('/{shortlink}/analytics', [ShortlinkController::class, 'analytics'])->name('analytics');
-            Route::get('/{shortlink}/analytics/chart', [ShortlinkController::class, 'analyticsChart'])->name('analytics.chart');
-        });
-
-        // Support Tickets (Seller Helpdesk)
-        Route::prefix('tickets')->name('tickets.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\SupportTicketController::class, 'index'])->name('index');
-            Route::post('/', [\App\Http\Controllers\SupportTicketController::class, 'store'])->name('store');
-            Route::get('/{id}', [\App\Http\Controllers\SupportTicketController::class, 'show'])->name('show');
-            Route::post('/{id}/reply', [\App\Http\Controllers\SupportTicketController::class, 'reply'])->name('reply');
-        });
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Platform Admin Routes — prefix: /platform-admin
-    |--------------------------------------------------------------------------
-    | Semua halaman back-office platform admin dikelompokkan di sini.
-    | Naming convention: platform-admin.<resource>.<action>
-    */
-
-    Route::prefix('platform-admin')->name('platform-admin.')->middleware(['auth', 'role:admin_platform', 'admin.timeout'])->group(function () {
-
-        Route::get('/dashboard', [PlatformAdminController::class, 'beranda'])->name('dashboard');
-
-        // Verifikasi produk
-        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi');
-        Route::post('/verifikasi/bulk', [VerifikasiController::class, 'bulkVerify'])->middleware('throttle:30,1')->name('verifikasi.bulk');
-        Route::post('/verifikasi/{id}', [VerifikasiController::class, 'verify'])->middleware('throttle:30,1')->name('verifikasi.verify');
-
-        // Print / laporan & Export
-        Route::match(['get', 'post'], '/print', [PlatformAdminController::class, 'print'])->name('print');
-        Route::get('/export/excel', [PlatformAdminController::class, 'exportExcel'])->name('export.excel');
-
-        // Komisi & Notifikasi (API endpoint realtime & SSE stream)
-        Route::get('/commissions', [PlatformAdminController::class, 'getCommissions'])->name('commissions');
-        Route::get('/notifications', [PlatformAdminController::class, 'getNotifications'])->name('notifications');
-        Route::post('/notifications/read', [PlatformAdminController::class, 'markNotificationRead'])->name('notifications.read');
-        Route::post('/notifications/read-all', [PlatformAdminController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
-        Route::get('/notifications/stream', [PlatformAdminController::class, 'streamNotifications'])->name('notifications.stream');
-
-        // Manajemen User & Banding Suspend (Aksi Kritis: Rate Limiting 15/menit)
-        Route::get('/users', [PlatformAdminController::class, 'users'])->name('users');
-        Route::get('/users/suggest', [PlatformAdminController::class, 'userSuggest'])->middleware('throttle:60,1')->name('users.suggest');
-        Route::get('/users/appeals', [PlatformAdminController::class, 'appeals'])->name('users.appeals');
-        Route::get('/users/{id}/detail', [PlatformAdminController::class, 'sellerDetail'])->name('users.detail');
-        Route::post('/users/{id}/suspend', [PlatformAdminController::class, 'suspend'])->middleware('throttle:15,1')->name('users.suspend');
-        Route::post('/users/{id}/activate', [PlatformAdminController::class, 'activate'])->middleware('throttle:15,1')->name('users.activate');
-        Route::post('/users/appeals/{id}/approve', [PlatformAdminController::class, 'approveAppeal'])->middleware('throttle:15,1')->name('users.appeals.approve');
-        Route::post('/users/appeals/{id}/reject', [PlatformAdminController::class, 'rejectAppeal'])->middleware('throttle:15,1')->name('users.appeals.reject');
-
-        // Pusat Bantuan / Support Tickets (Platform Admin)
-        Route::prefix('tickets')->name('tickets.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'index'])->name('index');
-            Route::get('/{id}', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'show'])->name('show');
-            Route::post('/{id}/reply', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'reply'])->middleware('throttle:20,1')->name('reply');
-            Route::post('/{id}/status', [\App\Http\Controllers\PlatformAdmin\SupportTicketManagementController::class, 'updateStatus'])->middleware('throttle:20,1')->name('status');
-        });
-
-        // Manajemen Payout (Request Withdraw & Riwayat Global - Aksi Kritis: Rate Limiting 15/menit)
-        Route::get('/payouts', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'index'])->name('payouts.index');
-        Route::post('/payouts/{id}/approve', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'approve'])->middleware('throttle:15,1')->name('payouts.approve');
-        Route::post('/payouts/{id}/reject', [\App\Http\Controllers\PlatformAdmin\PayoutManagementController::class, 'reject'])->middleware('throttle:15,1')->name('payouts.reject');
-
-        // Manajemen Produk (Semua Produk, Takedown, Restore)
-        Route::get('/products', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'index'])->name('products.index');
-        Route::post('/products/{id}/takedown', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'takedown'])->middleware('throttle:20,1')->name('products.takedown');
-        Route::post('/products/{id}/restore', [\App\Http\Controllers\PlatformAdmin\ProductManagementController::class, 'restore'])->middleware('throttle:20,1')->name('products.restore');
-
-        // Log & Audit
-        Route::get('/logs/activity', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activityLogs'])->name('logs.activity');
-        Route::get('/logs/activity/export-archive', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'exportArchive'])->name('logs.activity.export-archive');
-        Route::get('/logs/activity/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'activitySuggest'])->middleware('throttle:60,1')->name('logs.activity.suggest');
-        Route::get('/logs/transactions', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionLogs'])->name('logs.transactions');
-        Route::get('/logs/transactions/suggest', [\App\Http\Controllers\PlatformAdmin\LogController::class, 'transactionSuggest'])->middleware('throttle:60,1')->name('logs.transactions.suggest');
-
-        // Pengaturan Platform & Broadcast (Aksi Kritis: Rate Limiting 10-15/menit)
-        Route::get('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateSettings'])->middleware('throttle:10,1')->name('settings.update');
-        Route::post('/settings/emergency-switches', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'updateEmergencySwitches'])->middleware('throttle:10,1')->name('settings.emergency');
-        Route::post('/settings/broadcast', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'storeBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.store');
-        Route::post('/settings/broadcast/{id}/toggle', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'toggleBroadcast'])->middleware('throttle:20,1')->name('settings.broadcast.toggle');
-        Route::delete('/settings/broadcast/{id}', [\App\Http\Controllers\PlatformAdmin\SettingController::class, 'deleteBroadcast'])->middleware('throttle:15,1')->name('settings.broadcast.delete');
-
-        Route::post('/password/update', [PlatformAdminController::class, 'updatePassword'])->middleware('throttle:10,1')->name('password.update');
-
-        // Profil & Avatar Platform Admin
-        Route::post('/profile/update', [PlatformAdminController::class, 'updateProfile'])->middleware('throttle:15,1')->name('profile.update');
-        Route::delete('/profile/avatar', [PlatformAdminController::class, 'deleteAvatar'])->middleware('throttle:15,1')->name('profile.avatar.delete');
-
-        // Manajemen Sesi Aktif
-        Route::get('/sessions', [PlatformAdminController::class, 'getActiveSessions'])->name('sessions.index');
-        Route::post('/sessions/revoke-others', [PlatformAdminController::class, 'revokeOtherSessions'])->middleware('throttle:10,1')->name('sessions.revoke-others');
-
-        // Manajemen Sengketa & Refund Pembeli (Dispute & Refund Management)
-        Route::get('/disputes', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'index'])->name('disputes.index');
-        Route::get('/disputes/{id}', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'show'])->name('disputes.show');
-        Route::post('/disputes/{id}/review', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'startReview'])->middleware('throttle:15,1')->name('disputes.review');
-        Route::post('/disputes/{id}/refund', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'processRefund'])->middleware('throttle:10,1')->name('disputes.refund');
-        Route::post('/disputes/{id}/reject', [\App\Http\Controllers\PlatformAdmin\DisputeManagementController::class, 'rejectDispute'])->middleware('throttle:10,1')->name('disputes.reject');
-    });
-
+    require __DIR__.'/web/public.php';
+    require __DIR__.'/web/auth.php';
+    require __DIR__.'/web/admin_seller.php';
+    require __DIR__.'/web/platform_admin.php';
 });
 
 /*
 |--------------------------------------------------------------------------
-| Dev / Debug Routes (remove in production)
+| Centralized Fallback Redirect for Standard App Paths without Locale Prefix
 |--------------------------------------------------------------------------
+| Automatically redirects unprefixed standard routes (e.g., /login, /pricing,
+| /checkout/{id}) to /{locale}/{path} while leaving user shortlinks untouched.
 */
-Route::get('/test-email', fn () => view('emails.send-digital-product'));
+Route::get('/', fn () => redirect('/'.session('locale', config('app.locale', 'id'))));
+
+Route::get('/{prefix}/{subpath?}', function (Request $request, string $prefix, ?string $subpath = null) {
+    $locale = session('locale', config('app.locale', 'id'));
+    $target = $subpath ? "{$prefix}/{$subpath}" : $prefix;
+    $query = $request->getQueryString();
+
+    return redirect()->to("/{$locale}/{$target}".($query ? '?'.$query : ''));
+})->where('prefix', 'login|register|checkout|product|bantuan|review|pricing|faq|about|contact|forgot-password|verify-otp|create-new-password|password-reset-success|admin|platform-admin|auth')
+    ->where('subpath', '.*');
+
+use App\Http\Controllers\PublicShortlinkController;
 
 /*
 |--------------------------------------------------------------------------
 | Profile & Shortlink Catch-all Redirect — MUST remain last
 |--------------------------------------------------------------------------
-| Menangani pengalihan shortlink (/{slug}) dan tampilan profil microsite
-| (/{username}) via ShortlinkController::redirect secara terpadu.
 */
-Route::get('/{username}', [ShortlinkController::class, 'redirect'])->name('public.profile');
+Route::get('/{username}', [PublicShortlinkController::class, 'redirect'])->name('public.profile');

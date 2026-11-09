@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\User;
 use Tests\TestCase;
 
 class DatabaseSeederTest extends TestCase
@@ -18,13 +18,13 @@ class DatabaseSeederTest extends TestCase
     {
         // Run the seeder
         Artisan::call('db:seed');
-        
+
         // Assert the test user was created
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
-            'name' => 'Test User'
+            'name' => 'Test User',
         ]);
-        
+
         // Ensure username was populated (from our previous fix)
         $user = User::where('email', 'test@example.com')->first();
         $this->assertNotNull($user->username);
@@ -37,13 +37,13 @@ class DatabaseSeederTest extends TestCase
     {
         // Run the seeder for the first time
         Artisan::call('db:seed');
-        
+
         // Count users
         $initialCount = User::count();
-        
+
         // Run it again - should not throw DuplicateEntry exception
         Artisan::call('db:seed');
-        
+
         // Count should remain the same (no duplicate users)
         $this->assertEquals($initialCount, User::count());
     }

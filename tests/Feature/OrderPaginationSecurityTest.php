@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\DigitalProduct;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Support\Pagination\EncryptedCursorPaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +22,7 @@ class OrderPaginationSecurityTest extends TestCase
             'role' => 'admin_seller',
         ]);
 
-        $product = DigitalProduct::withoutEvents(function() {
+        $product = DigitalProduct::withoutEvents(function () {
             return DigitalProduct::create([
                 'user_id' => $this->seller->id,
                 'title' => 'E-Book Panduan Digital',
@@ -36,7 +35,7 @@ class OrderPaginationSecurityTest extends TestCase
         });
 
         // Create 25 transactions across different timestamps to ensure multiple pages
-        Transaction::withoutEvents(function() use ($product) {
+        Transaction::withoutEvents(function () use ($product) {
             for ($i = 1; $i <= 25; $i++) {
                 Transaction::create([
                     'product_id' => $product->id,

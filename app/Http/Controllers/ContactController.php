@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactMail;
 
 class ContactController extends Controller
 {
@@ -17,17 +17,17 @@ class ContactController extends Controller
     {
         $request->validate([
             'first_name' => 'nullable|string|max:255',
-            'last_name'  => 'nullable|string|max:255',
-            'name'       => 'nullable|string|max:255',
-            'email'      => 'required|email',
-            'phone'      => 'nullable|string|max:50',
-            'message'    => 'required|string',
+            'last_name' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'nullable|string|max:50',
+            'message' => 'required|string',
         ]);
 
         $data = $request->all();
 
         // Buat field name dari first_name & last_name jika ada
-        $fullName = trim(($request->first_name ?? '') . ' ' . ($request->last_name ?? ''));
+        $fullName = trim(($request->first_name ?? '').' '.($request->last_name ?? ''));
         if (empty($fullName)) {
             $fullName = $request->name ?? 'User';
         }
@@ -39,7 +39,7 @@ class ContactController extends Controller
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            \Log::error('Contact mail sending error: ' . $e->getMessage());
+            \Log::error('Contact mail sending error: '.$e->getMessage());
         }
 
         return back()->with('success', 'Your message has been sent successfully!');

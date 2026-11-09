@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     protected $fillable = [
-        'order_id', 'product_id', 'buyer_name', 'buyer_email', 'qty', 'total_price', 'status', 'payment_method'
+        'order_id', 'product_id', 'buyer_name', 'buyer_email', 'qty', 'total_price', 'status', 'payment_method',
     ];
 
     protected $casts = [
         'total_price' => 'decimal:2',
         'qty' => 'integer',
-        'status' => \App\Enums\TransactionStatus::class
+        'status' => \App\Enums\TransactionStatus::class,
     ];
 
     protected $with = ['product']; // Eager load product relationship
@@ -31,6 +31,7 @@ class Transaction extends Model
     public function getStatusLabelAttribute(): string
     {
         $status = strtolower($this->status_value);
+
         return match ($status) {
             'success', 'completed', 'complete' => __('admin.status_completed'),
             'failed', 'cancelled', 'cancel' => __('admin.status_cancelled'),
@@ -41,6 +42,7 @@ class Transaction extends Model
     public function getStatusClassAttribute(): string
     {
         $status = strtolower($this->status_value);
+
         return match ($status) {
             'success', 'completed', 'complete' => 'status-success',
             'failed', 'cancelled', 'cancel' => 'status-failed',
@@ -57,12 +59,19 @@ class Transaction extends Model
 
         $parts = explode('-', $paymentMethod);
         $mainType = ucwords(str_replace('_', ' ', $parts[0]));
-        if (strtolower($mainType) === 'qris') $mainType = 'QRIS';
-        if (strtolower($mainType) === 'gopay') $mainType = 'GoPay';
-        if (strtolower($mainType) === 'shopeepay') $mainType = 'ShopeePay';
+        if (strtolower($mainType) === 'qris') {
+            $mainType = 'QRIS';
+        }
+        if (strtolower($mainType) === 'gopay') {
+            $mainType = 'GoPay';
+        }
+        if (strtolower($mainType) === 'shopeepay') {
+            $mainType = 'ShopeePay';
+        }
 
         if (count($parts) > 1) {
             $subType = strtoupper($parts[1]);
+
             return "{$mainType} ({$subType})";
         }
 
@@ -79,8 +88,6 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'buyer_email', 'email');
     }
 
-
-
     protected static function boot()
     {
         parent::boot();
@@ -94,4 +101,3 @@ class Transaction extends Model
         });
     }
 }
-

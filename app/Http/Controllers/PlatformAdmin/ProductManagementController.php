@@ -23,9 +23,11 @@ class ProductManagementController extends Controller
             return $email; // fallback if not a valid email
         }
         [$local, $domain] = $parts;
-        $maskedLocal = substr($local, 0, 2) . str_repeat('*', max(0, strlen($local) - 2));
-        return $maskedLocal . '@' . $domain;
+        $maskedLocal = substr($local, 0, 2).str_repeat('*', max(0, strlen($local) - 2));
+
+        return $maskedLocal.'@'.$domain;
     }
+
     /**
      * Menampilkan daftar semua produk digital dari seluruh seller dengan filter lengkap.
      */
@@ -40,11 +42,11 @@ class ProductManagementController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -76,10 +78,10 @@ class ProductManagementController extends Controller
 
         // 6. Filter Rentang Tanggal Upload
         $startDate = $request->input('start_date') ?: $request->input('date', '');
-        $endDate   = $request->input('end_date', '');
+        $endDate = $request->input('end_date', '');
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -105,9 +107,9 @@ class ProductManagementController extends Controller
         });
 
         // Data Statistik (Produk aktif & takedown pada produk yang disetujui)
-        $totalProductsCount  = DigitalProduct::where('verification_status', 'approved')->count();
+        $totalProductsCount = DigitalProduct::where('verification_status', 'approved')->count();
         $activeProductsCount = DigitalProduct::where('verification_status', 'approved')->where('is_active', true)->count();
-        $takedownCount       = DigitalProduct::where('verification_status', 'approved')->where('is_active', false)->count();
+        $takedownCount = DigitalProduct::where('verification_status', 'approved')->where('is_active', false)->count();
 
         // List seller untuk dropdown filter
         $sellers = User::where('role', '!=', 'admin_platform')
@@ -146,9 +148,9 @@ class ProductManagementController extends Controller
     public function takedown(Request $request, $id)
     {
         $request->validate([
-            'reason' => 'required|string|max:1000'
+            'reason' => 'required|string|max:1000',
         ], [
-            'reason.required' => 'Alasan takedown produk wajib diisi.'
+            'reason.required' => 'Alasan takedown produk wajib diisi.',
         ]);
 
         $product = DigitalProduct::with('user')->findOrFail($id);
@@ -163,12 +165,12 @@ class ProductManagementController extends Controller
             // Catat ke Log Aktivitas
             ActivityLogger::log(
                 'takedown_product',
-                "Melakukan takedown produk: {$product->title} (Seller: " . ($product->user->name ?? 'User') . "). Alasan: {$request->input('reason')}",
+                "Melakukan takedown produk: {$product->title} (Seller: ".($product->user->name ?? 'User')."). Alasan: {$request->input('reason')}",
                 [
                     'product_id' => $product->id,
                     'product_title' => $product->title,
                     'seller_id' => $product->user_id,
-                    'reason' => $request->input('reason')
+                    'reason' => $request->input('reason'),
                 ]
             );
         });
@@ -197,7 +199,7 @@ class ProductManagementController extends Controller
             'takedown_at' => null,
         ]);
 
-        $logDesc = "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: " . ($product->user->name ?? 'User') . ")";
+        $logDesc = "Mengaktifkan kembali produk yang di-takedown: {$product->title} (Seller: ".($product->user->name ?? 'User').')';
         if ($restoreReason) {
             $logDesc .= ". Alasan/Catatan: {$restoreReason}";
         }
@@ -207,9 +209,9 @@ class ProductManagementController extends Controller
             'restore_product',
             $logDesc,
             [
-                'product_id'     => $product->id,
-                'product_title'  => $product->title,
-                'seller_id'      => $product->user_id,
+                'product_id' => $product->id,
+                'product_title' => $product->title,
+                'seller_id' => $product->user_id,
                 'restore_reason' => $restoreReason,
             ]
         );

@@ -25,8 +25,8 @@ return new class extends Migration
                 'custom_link',
                 'is_link_active',
                 'bio',
-                'avatar'
+                'avatar',
             ]);
         });
     }
-}; 
+};

@@ -3,7 +3,21 @@
 return [
     'meta_title' => 'Linkan - Memberdayakan Ekonomi Kreator',
     'meta_desc' => 'Buat situs mikro Anda, pendekkan tautan, dan jual produk digital dalam satu platform. Bergabunglah dengan ekonomi kreator yang dinamis bersama Linkan.',
-    
+
+    // SEO Meta Strings
+    'seo_title_welcome' => 'Linkan - Memberdayakan Ekonomi Kreator',
+    'seo_desc_welcome' => 'Buat situs mikro Anda, pendekkan tautan, dan jual produk digital dalam satu platform. Bergabunglah dengan ekonomi kreator yang dinamis bersama Linkan.',
+    'seo_title_faq' => 'FAQ - Pertanyaan Umum | Linkan.id',
+    'seo_desc_faq' => 'Temukan jawaban lengkap seputar fitur Linkan.id, cara pembayaran, produk digital, payout saldo, hingga keamanan akun kreator Anda di sini.',
+    'seo_title_about' => 'Tentang Kami - Platform Kreator | Linkan.id',
+    'seo_desc_about' => 'Pelajari visi, misi, dan teknologi Linkan.id dalam memberdayakan para kreator dan pebisnis online Indonesia untuk memonetisasi karya mereka.',
+    'seo_title_contact' => 'Hubungi Kami - Dukungan & Bantuan | Linkan.id',
+    'seo_desc_contact' => 'Punya pertanyaan atau butuh bantuan? Hubungi tim Linkan.id terkait akun, produk digital, pembayaran, hingga integrasi fitur platform kami hari ini.',
+    'seo_product_title_pattern' => 'Beli :title - Produk Digital | Linkan.id',
+    'seo_product_desc_fallback' => 'Dapatkan :title oleh :seller secara instan di Linkan.id. Pembayaran aman terverifikasi via QRIS, Virtual Account, dan E-Wallet resmi.',
+    'seo_microsite_title_pattern' => ':name (@:username) - Profil Resmi | Linkan.id',
+    'seo_microsite_desc_fallback' => 'Temukan semua tautan resmi, produk digital, dan penawaran terbaru dari :name di Linkan.id. Terhubung langsung dengan kreator favorit Anda.',
+
     // Hero
     'hero_title_1' => 'Memberdayakan',
     'hero_title_2' => 'Ekonomi Kreator',
@@ -14,7 +28,7 @@ return [
     'cta_sticky_button' => 'Buat Linkan Gratis',
     'aria_menu_open' => 'Buka menu navigasi',
     'aria_menu_close' => 'Tutup menu navigasi',
-    
+
     // Features
     'features_badge' => 'Platform Kreator All-in-One',
     'features_title_prefix' => 'Bukan sekadar',
@@ -47,12 +61,12 @@ return [
     'feat_digital_product' => 'Produk Digital',
     'feat_donations' => 'Donasi',
     'feat_online_course' => 'Kursus Online',
-    
+
     // Marketing
     'marketing_title' => 'Pemasaran Digital<br>untuk bisnis Anda',
     'marketing_subtitle' => 'optimalkan pemasaran digital dalam bisnis Anda melalui miliaran pengguna di berbagai saluran pemasaran internet yang efektif',
     'btn_service' => 'Dapatkan Layanan',
-    
+
     // Pricing
     'pricing_free' => 'Gratis',
     'pricing_swipe_hint' => 'Geser untuk melihat paket lainnya',
@@ -75,17 +89,17 @@ return [
     'feat_transaction_fee' => 'Biaya Transaksi',
     'feat_priority_support' => 'Dukungan Prioritas',
     'feat_custom_domain' => 'Domain Kustom',
-    
+
     // Testimonials
     'testi_title' => 'Lihat Apa Kata Mereka',
     'testi_subtitle' => 'Dipercaya oleh ribuan kreator, pebisnis online, dan profesional di seluruh Indonesia',
-    
+
     // Creator Showcase
     'creator_tag_1' => 'Membantu Kreator',
     'creator_tag_2' => 'Memudahkan Pengguna',
     'creator_tag_3' => 'Platform Microsite No. 1',
     'creator_tag_4' => 'Optimalisasi Digital',
-    
+
     // Footer
     'footer_copyright' => '© 2026 Linkan. Dibangun untuk Ekonomi Kreator.',
     // About

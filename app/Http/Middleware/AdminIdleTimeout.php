@@ -17,10 +17,6 @@ class AdminIdleTimeout
     /**
      * Handle an incoming request.
      * Memeriksa apakah admin platform sudah idle tanpa aktivitas selama lebih dari 10 menit.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -33,7 +29,7 @@ class AdminIdleTimeout
                 if (class_exists(\App\Services\ActivityLogger::class)) {
                     \App\Services\ActivityLogger::log(
                         'admin_session_timeout',
-                        "Sesi Platform Admin berakhir otomatis karena tidak ada aktivitas selama 10 menit (" . Auth::user()->email . ")",
+                        'Sesi Platform Admin berakhir otomatis karena tidak ada aktivitas selama 10 menit ('.Auth::user()->email.')',
                         [
                             'user_id' => Auth::id(),
                             'idle_seconds' => $now - $lastActivity,
@@ -59,11 +55,11 @@ class AdminIdleTimeout
 
             // Pengecualian: jangan perbarui timestamp jika request adalah background SSE / polling berkala
             // agar background fetch otomatis tidak mereset timer saat admin tidak aktif di browser
-            $isBackgroundPoll = $request->is('platform-admin/notifications*') 
+            $isBackgroundPoll = $request->is('platform-admin/notifications*')
                 || $request->is('platform-admin/commissions*')
                 || $request->header('X-Background-Ping') === 'true';
 
-            if (!$isBackgroundPoll) {
+            if (! $isBackgroundPoll) {
                 session(['admin_last_activity_time' => $now]);
             }
         }

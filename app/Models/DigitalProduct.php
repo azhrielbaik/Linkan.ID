@@ -40,7 +40,7 @@ class DigitalProduct extends Model
         'start_time',
         'end_time',
         'deliverable_type',
-        'deliverable_url'
+        'deliverable_url',
     ];
 
     protected $casts = [
@@ -49,11 +49,13 @@ class DigitalProduct extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
     ];
-     // ✅ Tambahkan ini
+
+    // ✅ Tambahkan ini
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'product_id');
@@ -62,6 +64,72 @@ class DigitalProduct extends Model
     public function reviews()
     {
         return $this->hasMany(ProductReview::class, 'product_id');
+    }
+
+    public function setPlatformTypeAttribute($value): void
+    {
+        $this->attributes['platform_type'] = $value;
+        if (! isset($this->attributes['deliverable_type']) || empty($this->attributes['deliverable_type'])) {
+            $this->attributes['deliverable_type'] = $value;
+        }
+    }
+
+    public function setDeliverableTypeAttribute($value): void
+    {
+        $this->attributes['deliverable_type'] = $value;
+        if (! isset($this->attributes['platform_type']) || empty($this->attributes['platform_type'])) {
+            $this->attributes['platform_type'] = $value;
+        }
+    }
+
+    public function getDeliverableTypeAttribute($value): ?string
+    {
+        return $value ?: ($this->attributes['platform_type'] ?? null);
+    }
+
+    public function getPlatformTypeAttribute($value): ?string
+    {
+        return $value ?: ($this->attributes['deliverable_type'] ?? null);
+    }
+
+    public function setPlatformFileAttribute($value): void
+    {
+        $this->attributes['platform_file'] = $value;
+        $type = $this->deliverable_type ?? $this->platform_type ?? 'link';
+        if ($value && $type === 'upload') {
+            $this->attributes['deliverable_url'] = $value;
+        }
+    }
+
+    public function setDeliverableUrlAttribute($value): void
+    {
+        $this->attributes['deliverable_url'] = $value;
+        $type = $this->deliverable_type ?? $this->platform_type ?? 'link';
+        if ($type === 'upload' && $value) {
+            $this->attributes['platform_file'] = $value;
+        } elseif ($type !== 'upload' && $value) {
+            $this->attributes['platform_url'] = $value;
+        }
+    }
+
+    public function getDeliverableUrlAttribute($value): ?string
+    {
+        if (! empty($value)) {
+            return $value;
+        }
+        $type = $this->deliverable_type ?? $this->platform_type ?? 'link';
+
+        return $type === 'upload' ? ($this->attributes['platform_file'] ?? null) : ($this->attributes['platform_url'] ?? null);
+    }
+
+    public function getPlatformFileAttribute($value): ?string
+    {
+        if (! empty($value)) {
+            return $value;
+        }
+        $type = $this->deliverable_type ?? $this->platform_type ?? 'link';
+
+        return $type === 'upload' ? ($this->attributes['deliverable_url'] ?? null) : null;
     }
 
     public static function resolveImageUrl(?string $path): string
@@ -80,7 +148,7 @@ class DigitalProduct extends Model
     public function getImageUrlAttribute(): string
     {
         $path = null;
-        if (!empty($this->media_files) && is_array($this->media_files) && count($this->media_files) > 0) {
+        if (! empty($this->media_files) && is_array($this->media_files) && count($this->media_files) > 0) {
             $path = $this->media_files[0]['url'] ?? $this->media_files[0]['path'] ?? null;
         }
         if (empty($path)) {
@@ -93,11 +161,12 @@ class DigitalProduct extends Model
     public function getCleanDescriptionAttribute(): string
     {
         $desc = $this->description ?? '';
-        if (!empty($desc)) {
+        if (! empty($desc)) {
             $desc = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $desc);
             $desc = preg_replace('/<\/?span[^>]*>/i', '', $desc);
             $desc = preg_replace('/<\/?font[^>]*>/i', '', $desc);
         }
+
         return $desc;
     }
 
@@ -112,23 +181,24 @@ class DigitalProduct extends Model
                     $url = static::resolveImageUrl($path);
                     $photos[] = [
                         'path' => $path,
-                        'url'  => $url,
+                        'url' => $url,
                     ];
                 }
             }
         }
-        if (empty($photos) && !empty($this->image)) {
+        if (empty($photos) && ! empty($this->image)) {
             $photos[] = [
                 'path' => $this->image,
-                'url'  => static::resolveImageUrl($this->image),
+                'url' => static::resolveImageUrl($this->image),
             ];
         }
+
         return $photos;
     }
 
     public function getHasPlatformFileAttribute(): bool
     {
-        return !empty($this->platform_file) || (!empty($this->deliverable_url) && ($this->deliverable_type ?? 'upload') === 'upload');
+        return ! empty($this->platform_file) || (! empty($this->deliverable_url) && ($this->deliverable_type ?? 'upload') === 'upload');
     }
 
     protected static function boot()
@@ -136,12 +206,12 @@ class DigitalProduct extends Model
         parent::boot();
 
         static::created(function ($model) {
-            broadcast(new \App\Events\PlatformNotificationEvent());
+            broadcast(new \App\Events\PlatformNotificationEvent);
         });
 
         static::updated(function ($model) {
             if ($model->isDirty('verification_status')) {
-                broadcast(new \App\Events\PlatformNotificationEvent());
+                broadcast(new \App\Events\PlatformNotificationEvent);
             }
         });
     }

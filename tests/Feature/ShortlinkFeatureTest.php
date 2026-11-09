@@ -25,14 +25,14 @@ class ShortlinkFeatureTest extends TestCase
             'title' => 'My Test Title',
             'description' => 'My Test Description',
             'slug' => 'test-slug-1',
-            'destination' => 'https://example.com/dest1'
+            'destination' => 'https://example.com/dest1',
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('shortlinks', [
             'slug' => 'test-slug-1',
             'title' => 'My Test Title',
-            'description' => 'My Test Description'
+            'description' => 'My Test Description',
         ]);
     }
 
@@ -40,14 +40,14 @@ class ShortlinkFeatureTest extends TestCase
     {
         $response = $this->post(route('admin.shortlinks.store'), [
             'slug' => 'test-slug-2',
-            'destination' => 'https://example.com/dest2'
+            'destination' => 'https://example.com/dest2',
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('shortlinks', [
             'slug' => 'test-slug-2',
             'title' => null,
-            'description' => null
+            'description' => null,
         ]);
     }
 
@@ -56,7 +56,7 @@ class ShortlinkFeatureTest extends TestCase
         $response = $this->post(route('admin.shortlinks.store'), [
             'title' => str_repeat('a', 256),
             'slug' => 'test-slug-3',
-            'destination' => 'https://example.com/dest3'
+            'destination' => 'https://example.com/dest3',
         ]);
 
         $response->assertSessionHasErrors(['title']);
@@ -68,7 +68,7 @@ class ShortlinkFeatureTest extends TestCase
             'user_id' => $this->user->id,
             'slug' => 'test-render-slug',
             'destination' => 'https://example.com/render',
-            'title' => 'Render Title'
+            'title' => 'Render Title',
         ]);
 
         $response = $this->get(route('admin.shortlinks.index'));
@@ -85,7 +85,7 @@ class ShortlinkFeatureTest extends TestCase
         $shortlink = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'test-analytics-1',
-            'destination' => 'https://example.com'
+            'destination' => 'https://example.com',
         ]);
 
         ShortlinkClick::create([
@@ -93,20 +93,20 @@ class ShortlinkFeatureTest extends TestCase
             'user_id' => $this->user->id,
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mobile Safari',
-            'source' => 'direct'
+            'source' => 'direct',
         ]);
         ShortlinkClick::create([
             'shortlink_id' => $shortlink->id,
             'user_id' => $this->user->id,
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mobile Safari',
-            'source' => 'direct'
+            'source' => 'direct',
         ]);
 
         $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
-        
+
         $this->assertArrayHasKey('ip_breakdown', $json);
         $this->assertCount(1, $json['ip_breakdown']);
         $this->assertEquals('127.0.0.1', $json['ip_breakdown'][0]['label']);
@@ -118,7 +118,7 @@ class ShortlinkFeatureTest extends TestCase
         $shortlink = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'test-analytics-2',
-            'destination' => 'https://example.com'
+            'destination' => 'https://example.com',
         ]);
 
         ShortlinkClick::create([
@@ -126,30 +126,30 @@ class ShortlinkFeatureTest extends TestCase
             'user_id' => $this->user->id,
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X)', // Mobile
-            'source' => 'direct'
+            'source' => 'direct',
         ]);
         ShortlinkClick::create([
             'shortlink_id' => $shortlink->id,
             'user_id' => $this->user->id,
             'ip_address' => '127.0.0.2',
             'user_agent' => 'Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X)', // Tablet
-            'source' => 'direct'
+            'source' => 'direct',
         ]);
         ShortlinkClick::create([
             'shortlink_id' => $shortlink->id,
             'user_id' => $this->user->id,
             'ip_address' => '127.0.0.3',
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', // Desktop
-            'source' => 'direct'
+            'source' => 'direct',
         ]);
 
         $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
-        
+
         $this->assertArrayHasKey('device_breakdown', $json);
         $this->assertCount(3, $json['device_breakdown']);
-        
+
         $deviceMap = [];
         foreach ($json['device_breakdown'] as $entry) {
             $deviceMap[$entry['label']] = $entry['total'];
@@ -165,15 +165,15 @@ class ShortlinkFeatureTest extends TestCase
         $shortlink = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'test-analytics-3',
-            'destination' => 'https://example.com'
+            'destination' => 'https://example.com',
         ]);
 
         $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $response->assertOk();
         $json = $response->json();
-        
+
         $this->assertEmpty($json['ip_breakdown']);
-        
+
         // device_breakdown always returns 3 items even if 0
         $this->assertCount(3, $json['device_breakdown']);
         foreach ($json['device_breakdown'] as $entry) {
@@ -186,33 +186,33 @@ class ShortlinkFeatureTest extends TestCase
         $shortlink = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'test-analytics-4',
-            'destination' => 'https://example.com'
+            'destination' => 'https://example.com',
         ]);
 
         $response = $this->get(route('admin.shortlinks.analytics.chart', $shortlink->id));
         $json = $response->json();
 
         $requiredFields = ['labels', 'clicks', 'sources', 'total_clicks', 'start_date', 'end_date', 'ip_breakdown', 'device_breakdown'];
-        
+
         foreach ($requiredFields as $field) {
             $this->assertArrayHasKey($field, $json);
         }
     }
-    
+
     public function test_card_renders_title_or_slug_fallback()
     {
         $link1 = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'slug-only-1',
             'destination' => 'https://example.com/1',
-            'title' => null
+            'title' => null,
         ]);
-        
+
         $link2 = Shortlink::create([
             'user_id' => $this->user->id,
             'slug' => 'slug-only-2',
             'destination' => 'https://example.com/2',
-            'title' => 'Explicit Title'
+            'title' => 'Explicit Title',
         ]);
 
         $response = $this->get(route('admin.shortlinks.index'));
@@ -228,18 +228,18 @@ class ShortlinkFeatureTest extends TestCase
             'slug' => 'test-panel-slug',
             'destination' => 'https://example.com/panel',
             'title' => 'Panel Title',
-            'description' => 'Panel Description'
+            'description' => 'Panel Description',
         ]);
 
         $response = $this->get(route('admin.shortlinks.index'));
         $response->assertOk();
-        
-        $response->assertSee('data-id="' . $link->id . '"', false);
+
+        $response->assertSee('data-id="'.$link->id.'"', false);
         $response->assertSee('data-title="Panel Title"', false);
         $response->assertSee('data-description="Panel Description"', false);
         $response->assertSee('data-destination="https://example.com/panel"', false);
-        $response->assertSee('data-url="' . url('/' . $link->slug) . '"', false);
-        $response->assertSee('data-created="' . $link->created_at->format('d M Y, H:i') . '"', false);
-        $response->assertSee('data-updated="' . $link->updated_at->format('d M Y, H:i') . '"', false);
+        $response->assertSee('data-url="'.url('/'.$link->slug).'"', false);
+        $response->assertSee('data-created="'.$link->created_at->format('d M Y, H:i').'"', false);
+        $response->assertSee('data-updated="'.$link->updated_at->format('d M Y, H:i').'"', false);
     }
 }

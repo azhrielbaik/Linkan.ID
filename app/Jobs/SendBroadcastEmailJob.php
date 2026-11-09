@@ -33,6 +33,7 @@ class SendBroadcastEmailJob implements ShouldQueue
     public int $timeout = 30;
 
     protected BroadcastAnnouncement $announcement;
+
     protected User $recipient;
 
     /**

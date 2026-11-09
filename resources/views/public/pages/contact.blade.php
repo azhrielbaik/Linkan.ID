@@ -5,34 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @php
-        $contactTitle = app()->getLocale() == 'id'
-            ? 'Hubungi Kami - Linkan.id | Bantuan & Dukungan'
-            : 'Contact Us - Linkan.id | Help & Support';
-        $contactDesc = app()->getLocale() == 'id'
-            ? 'Ada pertanyaan atau butuh bantuan? Hubungi tim Linkan.id. Kami siap membantu Anda terkait akun, produk digital, pembayaran, dan fitur platform.'
-            : 'Have questions or need help? Contact the Linkan.id team. We are ready to assist you with accounts, digital products, payments, and platform features.';
-        $contactUrl = url('/contact');
+        $contactJsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'ContactPage',
+            'name' => __('public.seo_title_contact'),
+            'description' => __('public.seo_desc_contact'),
+            'url' => url('/' . app()->getLocale() . '/contact'),
+            'mainEntity' => [
+                '@type' => 'Organization',
+                'name' => 'Linkan.ID',
+                'url' => url('/' . app()->getLocale()),
+                'logo' => asset('images/Logo.png'),
+            ],
+        ];
     @endphp
 
-    <title>{{ $contactTitle }}</title>
-    <meta name="description" content="{{ $contactDesc }}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ $contactUrl }}">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ $contactUrl }}">
-    <meta property="og:site_name" content="Linkan.ID">
-    <meta property="og:title" content="{{ $contactTitle }}">
-    <meta property="og:description" content="{{ $contactDesc }}">
-    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
-    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $contactTitle }}">
-    <meta name="twitter:description" content="{{ $contactDesc }}">
-    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
+    <x-seo.meta
+        :title="__('public.seo_title_contact')"
+        :description="__('public.seo_desc_contact')"
+        :canonical="url('/' . app()->getLocale() . '/contact')"
+        :locales="['id' => url('/id/contact'), 'en' => url('/en/contact'), 'x-default' => url('/id/contact')]"
+        :jsonLd="$contactJsonLd"
+    />
 
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +39,7 @@
     <div class="navbar-wrapper">
         <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" width="125" height="35">
             </a>
             <div class="nav-links">
                 <div class="lang-toggle-pill" aria-label="Language selector">
@@ -173,7 +167,7 @@
     <div class="footer-wrapper">
         <div class="footer-pill">
             <a href="{{ url('/') }}" class="footer-logo">
-                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" width="125" height="35" loading="lazy">
             </a>
             <div class="footer-links">
                 <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>

@@ -20,10 +20,10 @@ class SupportTicketCreatedMail extends Mailable
 
     public function build()
     {
-        return $this->subject('[Linkan.ID] Tiket Bantuan Diterima: ' . $this->ticket->ticket_code . ' - ' . $this->ticket->subject)
-                    ->view('emails.support-ticket-created')
-                    ->with([
-                        'ticket' => $this->ticket,
-                    ]);
+        return $this->subject('[Linkan.ID] Tiket Bantuan Diterima: '.$this->ticket->ticket_code.' - '.$this->ticket->subject)
+            ->view('emails.support-ticket-created')
+            ->with([
+                'ticket' => $this->ticket,
+            ]);
     }
 }

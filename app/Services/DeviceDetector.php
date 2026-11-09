@@ -7,7 +7,6 @@ class DeviceDetector
     /**
      * Detect device type from user agent string.
      *
-     * @param string $userAgent
      * @return string "Mobile", "Tablet", or "Desktop"
      */
     public static function detect(string $userAgent): string
@@ -30,7 +29,7 @@ class DeviceDetector
         }
 
         // Additional heuristic: Android without Mobile is usually a tablet
-        if (str_contains($userAgent, 'android') && !str_contains($userAgent, 'mobile')) {
+        if (str_contains($userAgent, 'android') && ! str_contains($userAgent, 'mobile')) {
             return 'Tablet';
         }
 

@@ -145,7 +145,7 @@ return [
     'search_by_product_buyer' => 'Search by product title or buyer name',
     'detail' => 'Detail',
     'transaction_detail_empty' => 'Your transaction detail will appear here.<br>Click <strong>Detail</strong> button on the left side',
-    
+
     // Payout
     'payout_title' => 'Payout',
     'my_earnings' => 'My Earnings',
@@ -165,7 +165,7 @@ return [
     'payment_method' => 'Payment Method',
     'no_withdrawal_history' => 'No withdrawal history yet',
     'amount' => 'Amount',
-    
+
     // Payout Method Form
     'form' => 'Form',
     'method_type' => 'Method Type',
@@ -183,7 +183,7 @@ return [
     'my_account_desc' => 'Account detail, shop information, etc',
     'payout_settings' => 'Payout Settings',
     'payout_settings_desc' => 'Withdraw earnings, Bank account, etc',
-    
+
     // Statistic
     'statistic_title' => 'Statistic',
     'total_click_views' => 'Total Click & Views',
@@ -198,7 +198,7 @@ return [
     'amount_to_withdraw' => 'Amount to Withdraw',
     'withdrawal_method' => 'Withdrawal Method',
     'withdraw_now' => 'Withdraw Now',
-    
+
     // Shortlink Analytics
     'analytics_shortlink' => 'Analytics Shortlink',
     'total_clicks' => 'Total Clicks',
@@ -216,7 +216,7 @@ return [
     'home' => 'Home',
     'verification' => 'Verification',
     'logout' => 'LogOut',
-    
+
     // Platform Admin Dashboard
     'commission_history_title' => 'Commission History - Admin Platform',
     'commission_history' => 'Commission History',
@@ -233,7 +233,7 @@ return [
     'platform_admin' => 'Platform Admin',
     'print_report' => 'Print Report',
     'close' => 'Close',
-    
+
     // Platform Admin Verification
     'verification_content' => 'Verification Content',
     'pending_verification' => 'Pending Verification',
@@ -355,4 +355,3 @@ return [
     'link_copied' => 'Link copied to clipboard!',
     'dashboard_title' => 'Dashboard',
 ];
-

@@ -55,8 +55,8 @@ class AccountService
 
             ActivityLogger::log(
                 'update_account',
-                "User {$user->name} memperbarui informasi akun" . ($password ? " dan kata sandi" : "") . ".",
-                ['username' => $user->username, 'password_changed' => (bool)$password],
+                "User {$user->name} memperbarui informasi akun".($password ? ' dan kata sandi' : '').'.',
+                ['username' => $user->username, 'password_changed' => (bool) $password],
                 $user->id
             );
         });
@@ -101,7 +101,6 @@ class AccountService
     /**
      * Get email change cooldown status and remaining seconds.
      *
-     * @param User $user
      * @return array [bool $isCooldown, int $secondsRemaining]
      */
     public function getEmailChangeCooldown(User $user): array
@@ -186,6 +185,7 @@ class AccountService
      * Verify OTP and initiate pending email confirmation.
      *
      * @return string The verified new email address
+     *
      * @throws ValidationException
      */
     public function verifyEmailChangeOtp(User $user, string $otp): string
@@ -283,7 +283,6 @@ class AccountService
     /**
      * Finalize email change through verification token.
      *
-     * @return array
      * @throws ValidationException
      */
     public function verifyEmailChange(string $token): array
@@ -393,9 +392,9 @@ class AccountService
 
             // Anonymize kolom unik agar tidak memblokir pendaftaran ulang
             // dengan email / username yang sama setelah akun ini dihapus.
-            $anonymousSuffix = '_deleted_' . $user->id . '_' . now()->timestamp;
-            $user->email     = $user->email . $anonymousSuffix;
-            $user->username  = $user->username . $anonymousSuffix;
+            $anonymousSuffix = '_deleted_'.$user->id.'_'.now()->timestamp;
+            $user->email = $user->email.$anonymousSuffix;
+            $user->username = $user->username.$anonymousSuffix;
             $user->google_id = null;
             $user->save();
 

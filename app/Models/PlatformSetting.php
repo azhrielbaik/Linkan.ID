@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class PlatformSetting extends Model
 {
@@ -21,6 +20,7 @@ class PlatformSetting extends Model
     public static function get(string $key, $default = null)
     {
         $setting = static::where('key', $key)->first();
+
         return $setting ? $setting->value : $default;
     }
 
@@ -36,6 +36,7 @@ class PlatformSetting extends Model
                 $setting->description = $description;
             }
             $setting->save();
+
             return $setting;
         }
 

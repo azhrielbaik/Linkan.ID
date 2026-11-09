@@ -13,6 +13,7 @@ class SupportTicketReplyMail extends Mailable
     use Queueable, SerializesModels;
 
     public SupportTicket $ticket;
+
     public SupportTicketReply $reply;
 
     public function __construct(SupportTicket $ticket, SupportTicketReply $reply)
@@ -23,11 +24,11 @@ class SupportTicketReplyMail extends Mailable
 
     public function build()
     {
-        return $this->subject('[Linkan.ID] Balasan Baru untuk Tiket ' . $this->ticket->ticket_code . ': ' . $this->ticket->subject)
-                    ->view('emails.support-ticket-reply')
-                    ->with([
-                        'ticket' => $this->ticket,
-                        'reply'  => $this->reply,
-                    ]);
+        return $this->subject('[Linkan.ID] Balasan Baru untuk Tiket '.$this->ticket->ticket_code.': '.$this->ticket->subject)
+            ->view('emails.support-ticket-reply')
+            ->with([
+                'ticket' => $this->ticket,
+                'reply' => $this->reply,
+            ]);
     }
 }

@@ -15,7 +15,7 @@ class ImageElement extends Model
         'user_id',
         'image_path',
         'link_url',
-        'order_position', 'is_active'
+        'order_position', 'is_active',
     ];
 
     public function user()

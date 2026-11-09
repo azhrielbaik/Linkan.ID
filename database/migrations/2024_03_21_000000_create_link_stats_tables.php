@@ -66,4 +66,4 @@ return new class extends Migration
         Schema::dropIfExists('link_clicks');
         Schema::dropIfExists('link_views');
     }
-}; 
+};

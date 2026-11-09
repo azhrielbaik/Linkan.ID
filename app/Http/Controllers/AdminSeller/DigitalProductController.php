@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDigitalProductRequest;
 use App\Http\Requests\UpdateDigitalProductRequest;
 use App\Services\AdminSeller\DigitalProductService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DigitalProductController extends Controller
@@ -21,12 +20,12 @@ class DigitalProductController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         $products = \App\Models\DigitalProduct::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
-            
-        $totalSales = (float)\Illuminate\Support\Facades\DB::table('transactions')
+
+        $totalSales = (float) \Illuminate\Support\Facades\DB::table('transactions')
             ->join('digital_products', 'transactions.product_id', '=', 'digital_products.id')
             ->where('digital_products.user_id', $user->id)
             ->where('transactions.status', 'success')
@@ -46,7 +45,7 @@ class DigitalProductController extends Controller
     public function create()
     {
         $cleanDescription = old('description', '');
-        if (!empty($cleanDescription)) {
+        if (! empty($cleanDescription)) {
             $cleanDescription = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $cleanDescription);
             $cleanDescription = preg_replace('/<\/?span[^>]*>/i', '', $cleanDescription);
             $cleanDescription = preg_replace('/<\/?font[^>]*>/i', '', $cleanDescription);
@@ -65,7 +64,7 @@ class DigitalProductController extends Controller
     {
         $data = $request->only([
             'title', 'description', 'platform_type', 'platform_url',
-            'button_text'
+            'button_text',
         ]);
 
         $data['price'] = $request->price_raw;
@@ -89,7 +88,7 @@ class DigitalProductController extends Controller
     public function edit($id)
     {
         $product = $this->digitalProductService->getProduct($id, Auth::id());
-        
+
         $cleanDescription = old('description');
         if ($cleanDescription !== null) {
             $cleanDescription = preg_replace('/\s*style\s*=\s*(["\']).*?\1/i', '', $cleanDescription);
@@ -117,11 +116,10 @@ class DigitalProductController extends Controller
             'hasInitialPlatformFile'
         ));
     }
-    
-    
+
     public function show($id)
     {
-        $user    = Auth::user();
+        $user = Auth::user();
         $product = \App\Models\DigitalProduct::where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
         // Ambil review terbaru, hanya yang is_visible = true
@@ -131,7 +129,7 @@ class DigitalProductController extends Controller
             ->get();
 
         // Hitung rata-rata rating
-        $avgRating   = $reviews->avg('rating') ?? 0;
+        $avgRating = $reviews->avg('rating') ?? 0;
         $reviewCount = $reviews->count();
 
         // Siapkan data gambar
@@ -181,13 +179,14 @@ class DigitalProductController extends Controller
             'ratingDistribution'
         ));
     }
+
     public function update(UpdateDigitalProductRequest $request, $id)
     {
         $product = $this->digitalProductService->getProduct($id, Auth::id());
-        
+
         $data = $request->only([
             'title', 'description', 'platform_type', 'platform_url',
-            'button_text'
+            'button_text',
         ]);
 
         $data['price'] = $request->price_raw;
@@ -215,16 +214,9 @@ class DigitalProductController extends Controller
 
         // Hapus dari blocks_order semua appearances milik user ini
         $appearances = \App\Models\Appearance::where('user_id', $user->id)->get();
-        $key = 'digitalproduct_' . $product->id;
+        $key = 'digitalproduct_'.$product->id;
         foreach ($appearances as $appearance) {
-            if ($appearance->blocks_order && str_contains($appearance->blocks_order, $key)) {
-                $order = array_filter(
-                    explode(',', $appearance->blocks_order),
-                    fn($b) => $b !== $key
-                );
-                $appearance->blocks_order = implode(',', array_values($order));
-                $appearance->save();
-            }
+            $appearance->removeBlock($key);
         }
 
         $msg = $this->digitalProductService->deleteProduct($product);

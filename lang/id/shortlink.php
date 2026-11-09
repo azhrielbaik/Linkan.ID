@@ -9,7 +9,7 @@ return [
     'engagement' => 'Keterlibatan Sepanjang Waktu',
     'results' => 'Hasil',
     'detail' => 'Detail',
-    
+
     'create_new_link' => 'Buat Tautan Baru',
     'create_desc' => 'Buat, pendekkan, dan kelola tautan Anda',
     'custom_link' => 'Kustomisasi Tautan',
@@ -20,36 +20,36 @@ return [
     'desc_label' => 'Deskripsi (Opsional)',
     'desc_placeholder' => 'Deskripsi singkat mengenai link',
     'btn_create' => 'Buat Tautan',
-    
+
     'link_detail' => 'Detail Tautan',
     'original_link' => 'Tautan Asli',
     'short_link' => 'Tautan Pendek',
     'config_status' => 'Status Konfigurasi',
-    
+
     'password_lock' => 'Kunci Kata Sandi',
     'password_hint' => 'Aktifkan untuk meminta sandi pengunjung',
     'set_password' => 'Setel Password',
-    
+
     'expiration' => 'Batas Kedaluwarsa',
     'expiration_hint' => 'Aktifkan untuk batas waktu akses',
     'set_time' => 'Setel Waktu',
-    
+
     'protected_link' => 'Tautan Terproteksi',
     'updated' => 'Diperbarui',
-    
+
     'password_label' => 'Kunci Kata Sandi (Opsional)',
     'password_placeholder' => 'Kosongkan jika tidak ingin dikunci',
-    
+
     'expiration_label' => 'Batas Waktu Akses (Opsional)',
-    
+
     'edit_slug_label' => 'Ubah Short URL (Slug)',
     'save_changes' => 'Simpan Perubahan',
     'cancel' => 'Batal',
-    
+
     'copied' => 'Tersalin!',
     'copy' => 'Salin',
     'saved_successfully' => 'Berhasil Disimpan!',
-    
+
     'created_by' => 'Dibuat Oleh',
     'status' => 'Status',
     'active' => 'Aktif',

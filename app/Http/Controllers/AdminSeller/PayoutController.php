@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\AdminSeller;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Services\AdminSeller\PayoutService;
 use App\Models\PlatformSetting;
+use App\Services\AdminSeller\PayoutService;
+use Illuminate\Support\Facades\Auth;
 
 class PayoutController extends Controller
 {
@@ -32,6 +31,7 @@ class PayoutController extends Controller
         if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
             $msg = PlatformSetting::get('freeze_payouts_message')
                 ?: 'Layanan penarikan dana (payout) sedang ditangguhkan sementara untuk audit sistem atau pemeliharaan jaringan perbankan.';
+
             return redirect()->route('admin.payout.index')->with('error', $msg);
         }
 
@@ -45,58 +45,31 @@ class PayoutController extends Controller
     {
         $user = Auth::user();
         $data = $this->payoutService->getWithdrawFormSettings($user);
-        
+
         return view('admin_seller.features.payouts.method', [
-            'payoutDetail' => $data['payoutDetail']
+            'payoutDetail' => $data['payoutDetail'],
         ]);
     }
 
-    public function savePayoutMethod(Request $request)
+    public function savePayoutMethod(\App\Http\Requests\AdminSeller\SavePayoutMethodRequest $request)
     {
         $user = Auth::user();
 
-        $request->validate([
-            'method_type' => 'required|string|in:Bank,DANA,ShopeePay',
-            'account_name' => 'required|string|max:255',
-            'account_number' => 'required|string|max:255',
-            'bank_name' => 'nullable|string|max:255',
-        ]);
-
-        $message = $this->payoutService->savePayoutMethod($user, $request->all());
+        $message = $this->payoutService->savePayoutMethod($user, $request->validated());
 
         return redirect()->route('admin.payout.index')->with('success', $message);
     }
 
-    public function processWithdrawal(Request $request)
+    public function processWithdrawal(\App\Http\Requests\AdminSeller\PayoutWithdrawRequest $request)
     {
         if ((bool) PlatformSetting::get('freeze_payouts', 0)) {
             $msg = PlatformSetting::get('freeze_payouts_message')
                 ?: 'Layanan penarikan dana (payout) sedang ditangguhkan sementara untuk audit sistem atau pemeliharaan jaringan perbankan.';
+
             return redirect()->route('admin.payout.index')->with('error', $msg);
         }
 
         $user = Auth::user();
-        
-        $currentBalance = (float) $this->payoutService->getPayoutOverview($user)['currentBalance'];
-        $minWithdraw = (float) PlatformSetting::get('min_withdraw_amount', 10000);
-
-        $request->validate([
-            'amount_raw' => ['required', 'numeric', 'min:' . $minWithdraw, 'max:' . $currentBalance],
-            'method' => 'required|string|in:Bank,DANA,ShopeePay',
-            'account_detail' => 'required|string|max:255',
-            'account_name' => 'required|string|max:255',
-        ], [
-            'amount_raw.min' => 'Jumlah penarikan minimal Rp ' . number_format($minWithdraw, 0, ',', '.') . '.',
-            'amount_raw.max' => 'Jumlah penarikan melebihi saldo yang tersedia.',
-            'method.required' => 'Metode penarikan wajib diisi.',
-            'method.in' => 'Metode penarikan tidak valid.',
-            'account_detail.required' => 'Detail akun/nomor telepon wajib diisi.',
-            'account_detail.string' => 'Detail akun/nomor telepon harus berupa teks.',
-            'account_detail.max' => 'Detail akun/nomor telepon terlalu panjang.',
-            'account_name.required' => 'Nama akun wajib diisi.',
-            'account_name.string' => 'Nama akun harus berupa teks.',
-            'account_name.max' => 'Nama akun terlalu panjang.',
-        ]);
 
         $result = $this->payoutService->processWithdrawal($user, $request->all());
 
@@ -107,7 +80,7 @@ class PayoutController extends Controller
     {
         $user = Auth::user();
         $history = $this->payoutService->getPayoutHistory($user->id);
-        
+
         return view('admin_seller.features.payouts.history', compact('history'));
     }
 }

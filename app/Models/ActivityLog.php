@@ -27,34 +27,35 @@ class ActivityLog extends Model
 
     public static function maskEmail(?string $email): string
     {
-        if (!$email || !str_contains($email, '@')) {
+        if (! $email || ! str_contains($email, '@')) {
             return '-';
         }
 
         [$local, $domain] = explode('@', $email, 2);
         $visible = substr($local, 0, 1);
 
-        return $visible . str_repeat('*', max(2, strlen($local) - 1)) . '@' . $domain;
+        return $visible.str_repeat('*', max(2, strlen($local) - 1)).'@'.$domain;
     }
 
     public static function maskIp(?string $ip): string
     {
-        if (!$ip) {
+        if (! $ip) {
             return '-';
         }
 
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $parts = explode('.', $ip);
             $parts[3] = '*';
+
             return implode('.', $parts);
         }
 
-        return substr($ip, 0, 4) . ':****';
+        return substr($ip, 0, 4).':****';
     }
 
     public static function maskSensitiveText(?string $text): string
     {
-        if (!$text) {
+        if (! $text) {
             return '-';
         }
 

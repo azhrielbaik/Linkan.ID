@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'theme')) {
+            if (! Schema::hasColumn('users', 'theme')) {
                 $table->string('theme')->nullable()->default('light')->after('role');
             }
-            if (!Schema::hasColumn('users', 'theme_color')) {
+            if (! Schema::hasColumn('users', 'theme_color')) {
                 $table->string('theme_color', 20)->nullable()->default('#ed842c')->after('theme');
             }
         });
@@ -34,7 +34,7 @@ return new class extends Migration
             if (Schema::hasColumn('users', 'theme_color')) {
                 $columns[] = 'theme_color';
             }
-            if (!empty($columns)) {
+            if (! empty($columns)) {
                 $table->dropColumn($columns);
             }
         });

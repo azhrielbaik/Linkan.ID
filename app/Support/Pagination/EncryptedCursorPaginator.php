@@ -32,16 +32,13 @@ class EncryptedCursorPaginator extends CursorPaginator
         }
 
         return $this->path()
-            . (str_contains($this->path(), '?') ? '&' : '?')
-            . Arr::query($parameters)
-            . $this->buildFragment();
+            .(str_contains($this->path(), '?') ? '&' : '?')
+            .Arr::query($parameters)
+            .$this->buildFragment();
     }
 
     /**
      * Encrypt an encoded cursor string into a secure, URL-safe ciphertext token.
-     *
-     * @param  string  $encodedCursor
-     * @return string
      */
     public static function encryptCursor(string $encodedCursor): string
     {
@@ -54,13 +51,10 @@ class EncryptedCursorPaginator extends CursorPaginator
     /**
      * Decrypt a URL cursor token back into an Illuminate\Pagination\Cursor object.
      * Returns null if the token is missing, invalid, or tampered with.
-     *
-     * @param  string|null  $rawToken
-     * @return \Illuminate\Pagination\Cursor|null
      */
     public static function decryptCursor(?string $rawToken): ?Cursor
     {
-        if (empty($rawToken) || !is_string($rawToken)) {
+        if (empty($rawToken) || ! is_string($rawToken)) {
             return null;
         }
 
@@ -89,8 +83,6 @@ class EncryptedCursorPaginator extends CursorPaginator
 
     /**
      * Get the encrypted cursor token for the next page, if available.
-     *
-     * @return string|null
      */
     public function nextCursorEncrypted(): ?string
     {
@@ -101,8 +93,6 @@ class EncryptedCursorPaginator extends CursorPaginator
 
     /**
      * Get the encrypted cursor token for the previous page, if available.
-     *
-     * @return string|null
      */
     public function previousCursorEncrypted(): ?string
     {

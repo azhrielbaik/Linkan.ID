@@ -7,7 +7,6 @@ use App\Models\ActivityLog;
 use App\Models\Transaction;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LogController extends Controller
 {
@@ -30,17 +29,17 @@ class LogController extends Controller
                 'suspend_user', 'activate_user',
                 'approve_product', 'reject_product',
                 'approve_payout', 'reject_payout',
-                'update_platform_settings', 'create_broadcast', 'delete_broadcast'
+                'update_platform_settings', 'create_broadcast', 'delete_broadcast',
             ]);
         } elseif ($category === 'auth') {
             $query->whereIn('action', [
                 'user_register', 'user_login', 'user_logout',
-                'password_reset_otp_sent', 'password_reset_success'
+                'password_reset_otp_sent', 'password_reset_success',
             ]);
         } elseif ($category === 'seller') {
             $query->whereIn('action', [
                 'create_product', 'update_product', 'delete_product',
-                'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
+                'request_payout', 'create_shortlink', 'update_shortlink', 'update_account',
             ]);
         }
 
@@ -48,22 +47,22 @@ class LogController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('action', 'like', "%{$search}%")
-                  ->orWhere('ip_address', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%")
-                         ->orWhere('username', 'like', "%{$search}%");
-                  });
+                    ->orWhere('action', 'like', "%{$search}%")
+                    ->orWhere('ip_address', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('username', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Filter Tanggal
         $startDate = $request->input('start_date') ?: $request->input('date', '');
-        $endDate   = $request->input('end_date', '');
+        $endDate = $request->input('end_date', '');
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -73,20 +72,20 @@ class LogController extends Controller
         $logs = $query->paginate(50)->withQueryString();
 
         // Stats
-        $totalLogsCount   = ActivityLog::count();
+        $totalLogsCount = ActivityLog::count();
         $adminActionCount = ActivityLog::whereIn('action', [
             'suspend_user', 'activate_user',
             'approve_product', 'reject_product',
             'approve_payout', 'reject_payout',
-            'update_platform_settings', 'create_broadcast', 'delete_broadcast'
+            'update_platform_settings', 'create_broadcast', 'delete_broadcast',
         ])->count();
-        $authActionCount  = ActivityLog::whereIn('action', [
+        $authActionCount = ActivityLog::whereIn('action', [
             'user_register', 'user_login', 'user_logout',
-            'password_reset_otp_sent', 'password_reset_success'
+            'password_reset_otp_sent', 'password_reset_success',
         ])->count();
         $sellerActionCount = ActivityLog::whereIn('action', [
             'create_product', 'update_product', 'delete_product',
-            'request_payout', 'create_shortlink', 'update_shortlink', 'update_account'
+            'request_payout', 'create_shortlink', 'update_shortlink', 'update_account',
         ])->count();
 
         // Hitung log yang akan kadaluarsa dalam retensi 30 hari (berusia >= 29 hari)
@@ -121,19 +120,19 @@ class LogController extends Controller
 
         if ($hasExpiring) {
             $targetQuery->where('created_at', '<=', $cutoff);
-            $fileName = 'backup_log_aktivitas_' . $days . '_hari_' . now()->format('Y-m-d_H-i-s') . '.csv';
+            $fileName = 'backup_log_aktivitas_'.$days.'_hari_'.now()->format('Y-m-d_H-i-s').'.csv';
             $logDesc = "Mengunduh cadangan arsip log aktivitas (kategori usia >= {$days} hari)";
         } else {
-            $fileName = 'backup_seluruh_log_aktivitas_' . now()->format('Y-m-d_H-i-s') . '.csv';
-            $logDesc = "Mengunduh cadangan seluruh log aktivitas";
+            $fileName = 'backup_seluruh_log_aktivitas_'.now()->format('Y-m-d_H-i-s').'.csv';
+            $logDesc = 'Mengunduh cadangan seluruh log aktivitas';
         }
 
         $headers = [
-            "Content-type"        => "text/csv; charset=UTF-8",
-            "Content-Disposition" => "attachment; filename={$fileName}",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            'Content-type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$fileName}",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         // Catat aktivitas unduh backup
@@ -146,7 +145,7 @@ class LogController extends Controller
 
         return response()->stream(function () use ($targetQuery) {
             $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF"); // BOM UTF-8 for Excel support
+            fwrite($file, "\xEF\xBB\xBF"); // BOM UTF-8 for Excel support
 
             $columns = ['ID Log', 'Waktu Dibuat', 'Aksi', 'Nama Pengguna', 'Email', 'Role', 'IP Address', 'Deskripsi'];
             fputcsv($file, $columns);
@@ -187,24 +186,24 @@ class LogController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('order_id', 'like', "%{$search}%")
-                  ->orWhere('buyer_name', 'like', "%{$search}%")
-                  ->orWhere('buyer_email', 'like', "%{$search}%")
-                  ->orWhereHas('product', function ($pq) use ($search) {
-                      $pq->where('title', 'like', "%{$search}%")
-                         ->orWhereHas('user', function ($uq) use ($search) {
-                             $uq->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                         });
-                  });
+                    ->orWhere('buyer_name', 'like', "%{$search}%")
+                    ->orWhere('buyer_email', 'like', "%{$search}%")
+                    ->orWhereHas('product', function ($pq) use ($search) {
+                        $pq->where('title', 'like', "%{$search}%")
+                            ->orWhereHas('user', function ($uq) use ($search) {
+                                $uq->where('name', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                            });
+                    });
             });
         }
 
         // Filter Tanggal
         $startDate = $request->input('start_date') ?: $request->input('date', '');
-        $endDate   = $request->input('end_date', '');
+        $endDate = $request->input('end_date', '');
         if ($startDate && $endDate) {
             $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+                ->whereDate('created_at', '<=', $endDate);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
         } elseif ($endDate) {
@@ -248,13 +247,13 @@ class LogController extends Controller
         $logs = ActivityLog::with('user')
             ->where(function ($query) use ($q) {
                 $query->where('description', 'like', "%{$q}%")
-                      ->orWhere('action', 'like', "%{$q}%")
-                      ->orWhere('ip_address', 'like', "%{$q}%")
-                      ->orWhereHas('user', function ($uq) use ($q) {
-                          $uq->where('name', 'like', "%{$q}%")
-                             ->orWhere('email', 'like', "%{$q}%")
-                             ->orWhere('username', 'like', "%{$q}%");
-                      });
+                    ->orWhere('action', 'like', "%{$q}%")
+                    ->orWhere('ip_address', 'like', "%{$q}%")
+                    ->orWhereHas('user', function ($uq) use ($q) {
+                        $uq->where('name', 'like', "%{$q}%")
+                            ->orWhere('email', 'like', "%{$q}%")
+                            ->orWhere('username', 'like', "%{$q}%");
+                    });
             })
             ->latest()
             ->limit(10)
@@ -267,14 +266,14 @@ class LogController extends Controller
             if ($log->user) {
                 if (stripos($log->user->name, $q) !== false) {
                     $suggestions->push([
-                        'label' => $log->user->name . ' (User)',
-                        'value' => $log->user->name
+                        'label' => $log->user->name.' (User)',
+                        'value' => $log->user->name,
                     ]);
                 }
                 if (stripos($log->user->email, $q) !== false) {
                     $suggestions->push([
-                        'label' => $log->user->email . ' (Email)',
-                        'value' => $log->user->email
+                        'label' => $log->user->email.' (Email)',
+                        'value' => $log->user->email,
                     ]);
                 }
             }
@@ -284,23 +283,23 @@ class LogController extends Controller
                 $descExcerpt = mb_strimwidth($log->description, 0, 50, '...');
                 $suggestions->push([
                     'label' => $descExcerpt,
-                    'value' => $log->description
+                    'value' => $log->description,
                 ]);
             }
 
             // Saran dari IP Address
             if ($log->ip_address && stripos($log->ip_address, $q) !== false) {
                 $suggestions->push([
-                    'label' => $log->ip_address . ' (IP Address)',
-                    'value' => $log->ip_address
+                    'label' => $log->ip_address.' (IP Address)',
+                    'value' => $log->ip_address,
                 ]);
             }
 
             // Saran dari Action
             if ($log->action && stripos($log->action, $q) !== false) {
                 $suggestions->push([
-                    'label' => $log->action . ' (Action)',
-                    'value' => $log->action
+                    'label' => $log->action.' (Action)',
+                    'value' => $log->action,
                 ]);
             }
         }
@@ -324,15 +323,15 @@ class LogController extends Controller
         $transactions = Transaction::with(['product.user'])
             ->where(function ($query) use ($q) {
                 $query->where('order_id', 'like', "%{$q}%")
-                      ->orWhere('buyer_name', 'like', "%{$q}%")
-                      ->orWhere('buyer_email', 'like', "%{$q}%")
-                      ->orWhereHas('product', function ($pq) use ($q) {
-                          $pq->where('title', 'like', "%{$q}%")
-                             ->orWhereHas('user', function ($uq) use ($q) {
-                                 $uq->where('name', 'like', "%{$q}%")
+                    ->orWhere('buyer_name', 'like', "%{$q}%")
+                    ->orWhere('buyer_email', 'like', "%{$q}%")
+                    ->orWhereHas('product', function ($pq) use ($q) {
+                        $pq->where('title', 'like', "%{$q}%")
+                            ->orWhereHas('user', function ($uq) use ($q) {
+                                $uq->where('name', 'like', "%{$q}%")
                                     ->orWhere('email', 'like', "%{$q}%");
-                             });
-                      });
+                            });
+                    });
             })
             ->latest()
             ->limit(10)
@@ -344,38 +343,38 @@ class LogController extends Controller
             // Order ID
             if ($tx->order_id && stripos($tx->order_id, $q) !== false) {
                 $suggestions->push([
-                    'label' => $tx->order_id . ' (Order ID)',
-                    'value' => $tx->order_id
+                    'label' => $tx->order_id.' (Order ID)',
+                    'value' => $tx->order_id,
                 ]);
             }
 
             // Buyer Name / Email
             if ($tx->buyer_name && stripos($tx->buyer_name, $q) !== false) {
                 $suggestions->push([
-                    'label' => $tx->buyer_name . ' (Pembeli)',
-                    'value' => $tx->buyer_name
+                    'label' => $tx->buyer_name.' (Pembeli)',
+                    'value' => $tx->buyer_name,
                 ]);
             }
             if ($tx->buyer_email && stripos($tx->buyer_email, $q) !== false) {
                 $suggestions->push([
-                    'label' => $tx->buyer_email . ' (Email Pembeli)',
-                    'value' => $tx->buyer_email
+                    'label' => $tx->buyer_email.' (Email Pembeli)',
+                    'value' => $tx->buyer_email,
                 ]);
             }
 
             // Product Title
             if ($tx->product && $tx->product->title && stripos($tx->product->title, $q) !== false) {
                 $suggestions->push([
-                    'label' => $tx->product->title . ' (Produk)',
-                    'value' => $tx->product->title
+                    'label' => $tx->product->title.' (Produk)',
+                    'value' => $tx->product->title,
                 ]);
             }
 
             // Seller Name
             if ($tx->product && $tx->product->user && stripos($tx->product->user->name, $q) !== false) {
                 $suggestions->push([
-                    'label' => $tx->product->user->name . ' (Seller)',
-                    'value' => $tx->product->user->name
+                    'label' => $tx->product->user->name.' (Seller)',
+                    'value' => $tx->product->user->name,
                 ]);
             }
         }

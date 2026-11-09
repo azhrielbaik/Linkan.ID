@@ -2,11 +2,11 @@
 
 namespace App\View\Composers;
 
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use App\Services\AdminSeller\DashboardService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class SellerLayoutComposer
 {
@@ -24,7 +24,7 @@ class SellerLayoutComposer
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             $view->with([
                 'sellerName' => 'User',
                 'sellerInitials' => 'US',
@@ -36,6 +36,7 @@ class SellerLayoutComposer
                 'sellerDisplayCount' => '0',
                 'sellerHeaderCount' => '00',
             ]);
+
             return;
         }
 

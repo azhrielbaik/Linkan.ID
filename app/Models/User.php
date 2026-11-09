@@ -121,4 +121,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appearance::class);
     }
+
+    public function payoutTransactions(): HasMany
+    {
+        return $this->hasMany(PayoutTransaction::class);
+    }
+
+    public function payoutDetail(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(UserPayoutDetail::class);
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+    public function disputes(): HasMany
+    {
+        return $this->hasMany(Dispute::class, 'seller_id');
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
 }
