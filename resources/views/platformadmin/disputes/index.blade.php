@@ -44,6 +44,16 @@
                 </div>
             @endif
 
+            @if($errors->any())
+                <div class="alert alert-danger" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- 1. Stats Grid (Standard Platform Admin Theme) --}}
             <div class="stats-grid">
                 {{-- Total Sengketa --}}
@@ -233,9 +243,46 @@
                                         @endif
                                     </td>
                                     <td class="col-dsp-action">
-                                        <a href="{{ route('platform-admin.disputes.show', $dsp->id) }}" class="btn-dsp-action" title="Lihat Detail Investigasi">
+                                        <button type="button" class="btn-dsp-action" onclick="openDisputeDetailModal({{ $dsp->id }})" title="Lihat Detail Investigasi">
                                             <i class="fas fa-eye"></i> Detail
-                                        </a>
+                                        </button>
+                                        <script type="application/json" id="dsp-data-{{ $dsp->id }}">
+                                            {!! json_encode([
+                                                'id' => $dsp->id,
+                                                'dispute_code' => $dsp->dispute_code,
+                                                'order_id' => $dsp->order_id,
+                                                'reason' => $dsp->reason,
+                                                'reason_label' => $dsp->reason_label,
+                                                'description' => $dsp->description,
+                                                'evidence_file' => $dsp->evidence_file ? asset('storage/' . $dsp->evidence_file) : null,
+                                                'evidence_file_ext' => $dsp->evidence_file ? strtolower(pathinfo($dsp->evidence_file, PATHINFO_EXTENSION)) : null,
+                                                'amount' => (float) $dsp->amount,
+                                                'amount_formatted' => 'Rp ' . number_format($dsp->amount, 0, ',', '.'),
+                                                'buyer_name' => $dsp->buyer_name,
+                                                'buyer_email' => $dsp->buyer_email,
+                                                'buyer_phone' => $dsp->buyer_phone,
+                                                'refund_bank_name' => strtoupper($dsp->refund_bank_name ?? ''),
+                                                'refund_account_number' => $dsp->refund_account_number,
+                                                'refund_account_name' => $dsp->refund_account_name,
+                                                'status' => $dsp->status,
+                                                'status_label' => $dsp->status_label,
+                                                'status_badge_class' => $dsp->status_badge_class,
+                                                'admin_notes' => $dsp->admin_notes,
+                                                'refund_reference' => $dsp->refund_reference,
+                                                'created_at_formatted' => $dsp->created_at->format('d M Y, H:i'),
+                                                'resolved_at_formatted' => $dsp->resolved_at ? $dsp->resolved_at->format('d M Y, H:i') : null,
+                                                'product_title' => $dsp->product->title ?? 'Produk Digital',
+                                                'seller_name' => $dsp->seller->name ?? 'Seller Linkan',
+                                                'seller_email' => $dsp->seller->email ?? '-',
+                                                'seller_username' => $dsp->seller->username ?? '-',
+                                                'transaction_payment_method' => strtoupper($dsp->transaction->payment_method ?? 'QRIS'),
+                                                'transaction_created_at' => $dsp->transaction ? $dsp->transaction->created_at->format('d M Y, H:i') : '-',
+                                                'transaction_status' => $dsp->transaction ? (is_object($dsp->transaction->status) ? $dsp->transaction->status->value : $dsp->transaction->status) : '-',
+                                                'review_url' => route('platform-admin.disputes.review', $dsp->id),
+                                                'refund_url' => route('platform-admin.disputes.refund', $dsp->id),
+                                                'reject_url' => route('platform-admin.disputes.reject', $dsp->id),
+                                            ]) !!}
+                                        </script>
                                     </td>
                                 </tr>
                             @empty
@@ -263,7 +310,125 @@
         </div>
     </div>
 
+    {{-- Modal Detail Investigasi Sengketa (Pop up Layar) --}}
+    <div id="disputeDetailModal" class="dsp-detail-modal" onclick="if(event.target === this) closeDisputeDetailModal()">
+        <div class="dsp-detail-modal-card">
+            <div class="dsp-detail-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h2 id="dspModalCode" style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">Kasus Sengketa</h2>
+                    <div id="dspModalBadge"></div>
+                </div>
+                <button type="button" class="dsp-modal-close-btn" onclick="closeDisputeDetailModal()" aria-label="Tutup Modal" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="dspModalBodyContent" class="dsp-detail-modal-body">
+                <!-- Konten dinamis dimuat via disputes.js -->
+            </div>
+            <div class="dsp-detail-modal-footer">
+                <button type="button" class="btn-dsp-action" onclick="closeDisputeDetailModal()">
+                    <i class="fas fa-xmark"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Konfirmasi Setujui Refund --}}
+    <div id="modalApproveRefund" class="dsp-modal-confirm" onclick="if(event.target === this) closeRefundModal()">
+        <div class="dsp-modal-box">
+            <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-rotate-left" style="color: #059669;"></i> Setujui & Terbitkan Refund
+            </h3>
+            <p id="modalRefundSummary" style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+                Anda akan menerbitkan pengembalian dana pembeli.
+            </p>
+
+            <form id="formApproveRefund" action="" method="POST">
+                @csrf
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                        Nomor Referensi Transfer / Bukti Pembayaran <span style="color: #dc2626;">*</span>
+                    </label>
+                    <input type="text" name="refund_reference" required placeholder="Contoh: TF-BCA-982312 atau No Resi/Mutasi"
+                           style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;">
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                        Catatan Internal Admin (Opsional)
+                    </label>
+                    <textarea name="admin_notes" rows="2" placeholder="Catatan hasil investigasi produk..."
+                              style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                        Kata Sandi Admin Anda <span style="color: #dc2626;">*</span>
+                    </label>
+                    <input type="password" name="admin_password" required placeholder="Konfirmasi kata sandi admin..."
+                           style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeRefundModal()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                        Batal
+                    </button>
+                    <button type="submit" style="padding: 8px 18px; border-radius: 8px; border: none; background: #059669; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer;">
+                        <i class="fas fa-check"></i> Konfirmasi Refund
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Konfirmasi Tolak Sengketa --}}
+    <div id="modalRejectDispute" class="dsp-modal-confirm" onclick="if(event.target === this) closeRejectModal()">
+        <div class="dsp-modal-box">
+            <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-times-circle" style="color: #dc2626;"></i> Tolak Pengajuan Sengketa
+            </h3>
+            <p id="modalRejectSummary" style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+                Menolak sengketa akan melepaskan penahanan saldo seller dan menutup kasus ini.
+            </p>
+
+            <form id="formRejectDispute" action="" method="POST">
+                @csrf
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                        Alasan Penolakan Sengketa <span style="color: #dc2626;">*</span>
+                    </label>
+                    <textarea name="admin_notes" rows="3" required placeholder="Jelaskan alasan penolakan (misal file digital terbukti valid & aktif)..."
+                              style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                        Kata Sandi Admin Anda <span style="color: #dc2626;">*</span>
+                    </label>
+                    <input type="password" name="admin_password" required placeholder="Konfirmasi kata sandi admin..."
+                           style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeRejectModal()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                        Batal
+                    </button>
+                    <button type="submit" style="padding: 8px 18px; border-radius: 8px; border: none; background: #dc2626; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer;">
+                        <i class="fas fa-times"></i> Tolak Sengketa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.PlatformDisputesConfig = {
+            baseUrl: '{{ route('platform-admin.disputes.index') }}',
+            csrfToken: '{{ csrf_token() }}'
+        };
+    </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}"></script>
+    <script src="{{ asset('js/platform/disputes.js') }}?v={{ file_exists(public_path('js/platform/disputes.js')) ? filemtime(public_path('js/platform/disputes.js')) : time() }}"></script>
 </body>
 </html>

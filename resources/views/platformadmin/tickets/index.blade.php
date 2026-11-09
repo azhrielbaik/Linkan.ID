@@ -27,6 +27,31 @@
         </div>
 
         <div class="content-wrapper">
+            {{-- Alert Notifikasi Session --}}
+            @if(session('success'))
+                <div class="alert alert-success" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600;">
+                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 16px;"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600;">
+                    <i class="fas fa-exclamation-circle" style="color: #ef4444; font-size: 16px;"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Header Section -->
             <div class="platform-tickets-header">
                 <div>
@@ -180,7 +205,7 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ route('platform-admin.tickets.show', $t->id) }}" style="font-weight: 700; color: #0f172a; text-decoration: none; display: block; margin-bottom: 2px;">
+                                <a href="javascript:void(0)" onclick="openTicketModal({{ $t->id }})" style="font-weight: 700; color: #0f172a; text-decoration: none; display: block; margin-bottom: 2px;">
                                     {{ $t->subject }}
                                 </a>
                                 <div style="font-size: 12px; color: #64748b;">
@@ -199,9 +224,46 @@
                                 </span>
                             </td>
                             <td style="text-align: center;">
-                                <a href="{{ route('platform-admin.tickets.show', $t->id) }}" class="btn-open-ticket">
+                                <button type="button" class="btn-open-ticket" onclick="openTicketModal({{ $t->id }})" title="{{ __('platform.respond_ticket') }}">
                                     <i class="fas fa-reply"></i> {{ __('platform.respond_ticket') }}
-                                </a>
+                                </button>
+                                <script type="application/json" id="ticket-data-{{ $t->id }}">
+                                    {!! json_encode([
+                                        'id' => $t->id,
+                                        'ticket_code' => $t->ticket_code,
+                                        'subject' => $t->subject,
+                                        'category' => $t->category,
+                                        'category_label' => $t->category_label,
+                                        'status' => $t->status,
+                                        'status_label' => $t->status_label,
+                                        'status_badge_class' => $t->status_badge_class,
+                                        'priority' => $t->priority,
+                                        'priority_badge_class' => $t->priority_badge_class,
+                                        'message' => $t->message,
+                                        'created_at_formatted' => $t->created_at->format('d M Y, H:i') . ' WIB',
+                                        'last_replied_formatted' => $t->last_replied_at ? $t->last_replied_at->format('d M Y, H:i') . ' WIB' : '-',
+                                        'total_replies_count' => $t->replies->count(),
+                                        'user' => [
+                                            'id' => $t->user->id ?? null,
+                                            'name' => $t->user->name ?? __('platform.deleted_user'),
+                                            'email' => $t->user->email ?? '-',
+                                            'initials' => strtoupper(substr($t->user->name ?? 'U', 0, 2)),
+                                        ],
+                                        'replies' => $t->replies->map(function ($r) {
+                                            return [
+                                                'id' => $r->id,
+                                                'is_admin_reply' => (bool) $r->is_admin_reply,
+                                                'sender_name' => $r->user->name ?? ($r->is_admin_reply ? 'Admin Platform' : 'Seller'),
+                                                'sender_initials' => strtoupper(substr($r->user->name ?? ($r->is_admin_reply ? 'A' : 'S'), 0, 2)),
+                                                'created_at_formatted' => $r->created_at->format('d M Y, H:i'),
+                                                'message' => $r->message,
+                                                'attachment_url' => $r->attachment ? asset('storage/' . $r->attachment) : null,
+                                            ];
+                                        }),
+                                        'reply_url' => route('platform-admin.tickets.reply', $t->id),
+                                        'status_url' => route('platform-admin.tickets.status', $t->id),
+                                    ]) !!}
+                                </script>
                             </td>
                         </tr>
                         @empty
@@ -226,7 +288,58 @@
         </div>
     </div>
 
+    {{-- Modal Pop-up Respon Tiket Bantuan --}}
+    <div id="ticketDetailModal" class="p-ticket-modal" onclick="if(event.target === this) closeTicketModal()">
+        <div class="p-ticket-modal-card">
+            <div class="p-ticket-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <h2 id="ticketModalCode" style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">Tiket Bantuan</h2>
+                    <div id="ticketModalBadges" style="display: flex; align-items: center; gap: 8px;"></div>
+                </div>
+                <button type="button" class="p-ticket-modal-close" onclick="closeTicketModal()" aria-label="Tutup" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="ticketModalBodyContent" class="p-ticket-modal-body">
+                <!-- Konten dinamis dimuat via tickets.js -->
+            </div>
+            <div class="p-ticket-modal-footer">
+                <button type="button" class="btn-ticket-back" onclick="closeTicketModal()" style="cursor: pointer;">
+                    <i class="fas fa-xmark"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Preview Lampiran Gambar (Pop-up) --}}
+    <div id="imageAttachmentModal" class="modal attachment-modal" onclick="if(event.target === this) closeAttachmentModal()">
+        <div class="attachment-modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-image" style="color: #ED842C;"></i> <span id="attachmentModalTitle">Pratinjau Lampiran Gambar</span></h3>
+                <button type="button" class="modal-close" onclick="closeAttachmentModal()">&times;</button>
+            </div>
+            <div class="attachment-modal-body">
+                <div class="attachment-image-wrap">
+                    <img id="attachmentModalImg" src="" alt="Pratinjau Lampiran">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="attachmentModalDownload" href="" target="_blank" class="btn-attachment-open">
+                    <i class="fas fa-external-link-alt"></i> Buka Ukuran Asli
+                </a>
+                <button type="button" class="btn-modal-cancel" onclick="closeAttachmentModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.PlatformTicketsConfig = {
+            baseUrl: '{{ route('platform-admin.tickets.index') }}',
+            csrfToken: '{{ csrf_token() }}'
+        };
+    </script>
     @vite(['resources/js/app.js'])
     <script src="{{ asset('js/platform/notifications.js') }}"></script>
+    <script src="{{ asset('js/platform/tickets.js') }}?v={{ file_exists(public_path('js/platform/tickets.js')) ? filemtime(public_path('js/platform/tickets.js')) : time() }}"></script>
 </body>
 </html>

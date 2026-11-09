@@ -24,7 +24,7 @@ class SupportTicketManagementController extends Controller
         $category = $request->query('category');
         $search = $request->query('search');
 
-        $query = SupportTicket::with(['user', 'replies']);
+        $query = SupportTicket::with(['user', 'replies.user']);
 
         if ($status && in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
             $query->where('status', $status);
@@ -90,9 +90,50 @@ class SupportTicketManagementController extends Controller
     /**
      * Menampilkan detail tiket dan thread percakapan.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $ticket = SupportTicket::with(['user', 'replies.user'])->findOrFail($id);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'ticket' => [
+                    'id' => $ticket->id,
+                    'ticket_code' => $ticket->ticket_code,
+                    'subject' => $ticket->subject,
+                    'category' => $ticket->category,
+                    'category_label' => $ticket->category_label,
+                    'status' => $ticket->status,
+                    'status_label' => $ticket->status_label,
+                    'status_badge_class' => $ticket->status_badge_class,
+                    'priority' => $ticket->priority,
+                    'priority_badge_class' => $ticket->priority_badge_class,
+                    'message' => $ticket->message,
+                    'created_at_formatted' => $ticket->created_at->format('d M Y, H:i') . ' WIB',
+                    'last_replied_formatted' => $ticket->last_replied_at ? $ticket->last_replied_at->format('d M Y, H:i') . ' WIB' : '-',
+                    'total_replies_count' => $ticket->replies->count(),
+                    'user' => [
+                        'id' => $ticket->user->id ?? null,
+                        'name' => $ticket->user->name ?? __('platform.deleted_user'),
+                        'email' => $ticket->user->email ?? '-',
+                        'initials' => strtoupper(substr($ticket->user->name ?? 'U', 0, 2)),
+                    ],
+                    'replies' => $ticket->replies->map(function ($r) {
+                        return [
+                            'id' => $r->id,
+                            'is_admin_reply' => (bool) $r->is_admin_reply,
+                            'sender_name' => $r->user->name ?? ($r->is_admin_reply ? 'Admin Platform' : 'Seller'),
+                            'sender_initials' => strtoupper(substr($r->user->name ?? ($r->is_admin_reply ? 'A' : 'S'), 0, 2)),
+                            'created_at_formatted' => $r->created_at->format('d M Y, H:i'),
+                            'message' => $r->message,
+                            'attachment_url' => $r->attachment ? asset('storage/' . $r->attachment) : null,
+                        ];
+                    }),
+                    'reply_url' => route('platform-admin.tickets.reply', $ticket->id),
+                    'status_url' => route('platform-admin.tickets.status', $ticket->id),
+                ]
+            ]);
+        }
 
         return view('platformadmin.tickets.show', compact('ticket'));
     }

@@ -1099,3 +1099,101 @@ select.p-filter-select:not(.custom-dropdown-native-hidden) {
         padding: 12px;
     }
 }
+
+/* =========================================================
+   TICKET RESPONSE POP-UP MODAL (PLATFORM ADMIN)
+   ========================================================= */
+.p-ticket-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 9990;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.p-ticket-modal.show {
+    display: flex;
+}
+
+.p-ticket-modal-card {
+    background: #ffffff;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 1040px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    animation: modalScale 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.p-ticket-modal-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.p-ticket-modal-close {
+    background: #f1f5f9;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.p-ticket-modal-close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.p-ticket-modal-body {
+    padding: 22px 24px;
+    overflow-y: auto;
+    flex: 1;
+    background: #f8fafc;
+}
+
+.p-ticket-modal-footer {
+    padding: 12px 24px;
+    border-top: 1px solid #f1f5f9;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.p-ticket-skeleton-bar {
+    height: 20px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: ticketSkeleton 1.4s infinite;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+@keyframes ticketSkeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

@@ -75,9 +75,51 @@ class DisputeManagementController extends Controller
     /**
      * Tampilkan detail kasus sengketa untuk investigasi admin.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $dispute = Dispute::with(['transaction', 'product', 'seller', 'resolver'])->findOrFail($id);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'dispute' => [
+                    'id' => $dispute->id,
+                    'dispute_code' => $dispute->dispute_code,
+                    'order_id' => $dispute->order_id,
+                    'reason' => $dispute->reason,
+                    'reason_label' => $dispute->reason_label,
+                    'description' => $dispute->description,
+                    'evidence_file' => $dispute->evidence_file ? asset('storage/' . $dispute->evidence_file) : null,
+                    'evidence_file_ext' => $dispute->evidence_file ? strtolower(pathinfo($dispute->evidence_file, PATHINFO_EXTENSION)) : null,
+                    'amount' => (float) $dispute->amount,
+                    'amount_formatted' => 'Rp ' . number_format($dispute->amount, 0, ',', '.'),
+                    'buyer_name' => $dispute->buyer_name,
+                    'buyer_email' => $dispute->buyer_email,
+                    'buyer_phone' => $dispute->buyer_phone,
+                    'refund_bank_name' => strtoupper($dispute->refund_bank_name ?? ''),
+                    'refund_account_number' => $dispute->refund_account_number,
+                    'refund_account_name' => $dispute->refund_account_name,
+                    'status' => $dispute->status,
+                    'status_label' => $dispute->status_label,
+                    'status_badge_class' => $dispute->status_badge_class,
+                    'admin_notes' => $dispute->admin_notes,
+                    'refund_reference' => $dispute->refund_reference,
+                    'created_at_formatted' => $dispute->created_at->format('d M Y, H:i'),
+                    'resolved_at_formatted' => $dispute->resolved_at ? $dispute->resolved_at->format('d M Y, H:i') : null,
+                    'product_title' => $dispute->product->title ?? 'Produk Digital',
+                    'seller_name' => $dispute->seller->name ?? 'Seller Linkan',
+                    'seller_email' => $dispute->seller->email ?? '-',
+                    'seller_username' => $dispute->seller->username ?? '-',
+                    'transaction_payment_method' => strtoupper($dispute->transaction->payment_method ?? 'QRIS'),
+                    'transaction_created_at' => $dispute->transaction ? $dispute->transaction->created_at->format('d M Y, H:i') : '-',
+                    'transaction_status' => $dispute->transaction ? (is_object($dispute->transaction->status) ? $dispute->transaction->status->value : $dispute->transaction->status) : '-',
+                    'review_url' => route('platform-admin.disputes.review', $dispute->id),
+                    'refund_url' => route('platform-admin.disputes.refund', $dispute->id),
+                    'reject_url' => route('platform-admin.disputes.reject', $dispute->id),
+                ]
+            ]);
+        }
+
         return view('platformadmin.disputes.show', compact('dispute'));
     }
 
