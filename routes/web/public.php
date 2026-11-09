@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 // Welcome & Static pages
 Route::get('/', fn () => view('public.pages.welcome'))->name('welcome');
-Route::view('/pricing', 'pricing')->name('pricing');
+Route::get('/pricing', fn () => redirect()->to('/'.session('locale', config('app.locale', 'id')).'#pricing'))->name('pricing');
 Route::view('/faq', 'public.pages.faq')->name('FAQ');
 Route::view('/about', 'public.pages.about')->name('about');
 

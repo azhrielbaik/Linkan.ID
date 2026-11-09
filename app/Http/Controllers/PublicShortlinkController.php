@@ -22,8 +22,15 @@ class PublicShortlinkController extends Controller
 
         if (! $shortlink) {
             $appearance = Appearance::where('alias', $slug)->first();
+            if (! $appearance) {
+                $user = \App\Models\User::where('username', $slug)->first();
+                if ($user) {
+                    $appearance = Appearance::where('user_id', $user->id)->latest()->first();
+                }
+            }
+
             if ($appearance) {
-                return app(PublicPageController::class)->show($slug);
+                return app(PublicPageController::class)->show($appearance->alias);
             }
             abort(404, 'Tautan tidak ditemukan.');
         }

@@ -14,8 +14,22 @@ class PublicPageController extends Controller
 
     public function show($username)
     {
-        // Parameter $username is now an alias for the Appearance (eager load user to eliminate N+1)
-        $appearance = \App\Models\Appearance::with('user')->where('alias', $username)->firstOrFail();
+        // Parameter $username can be an appearance alias or user username (eager load user to eliminate N+1)
+        $appearance = \App\Models\Appearance::with('user')->where('alias', $username)->first();
+        if (! $appearance) {
+            $matchedUser = User::where('username', $username)->first();
+            if ($matchedUser) {
+                $appearance = \App\Models\Appearance::with('user')
+                    ->where('user_id', $matchedUser->id)
+                    ->latest()
+                    ->first();
+            }
+        }
+
+        if (! $appearance) {
+            abort(404, 'Profil atau tautan tidak ditemukan.');
+        }
+
         $user = $appearance->user;
 
         if ($user->isSuspended()) {

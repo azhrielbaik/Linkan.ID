@@ -4,6 +4,20 @@ return [
     'meta_title' => 'Linkan - Powering Creators Economy',
     'meta_desc' => 'Create your microsite, shorten links, and sell digital products all in one platform. Join the vibrant creators economy with Linkan.',
 
+    // SEO Meta Strings
+    'seo_title_welcome' => 'Linkan - Powering Creators Economy',
+    'seo_desc_welcome' => 'Create your microsite, shorten links, and sell digital products in one platform. Join the vibrant creator economy with Linkan for free today.',
+    'seo_title_faq' => 'FAQ - Frequently Asked Questions | Linkan.id',
+    'seo_desc_faq' => 'Find answers about Linkan.id features, payment methods, digital products, balance withdrawals, and creator account security in one place.',
+    'seo_title_about' => 'About Us - Creator Economy Platform | Linkan.id',
+    'seo_desc_about' => 'Learn about Linkan.id vision, mission, and technology in empowering Indonesian creators and online sellers to monetize their digital content.',
+    'seo_title_contact' => 'Contact Us - Support & Helpdesk | Linkan.id',
+    'seo_desc_contact' => 'Have questions or need assistance? Contact the Linkan.id team regarding accounts, digital products, payments, and platform feature inquiries.',
+    'seo_product_title_pattern' => 'Buy :title - Digital Product | Linkan.id',
+    'seo_product_desc_fallback' => 'Get :title by :seller instantly on Linkan.id. Secure and verified payment via QRIS, Virtual Accounts, and official E-Wallets.',
+    'seo_microsite_title_pattern' => ':name (@:username) - Official Profile | Linkan.id',
+    'seo_microsite_desc_fallback' => 'Explore all official links, digital products, and latest offers from :name on Linkan.id. Connect directly with your favorite creator.',
+
     // Hero
     'hero_title_1' => 'Powering Creators',
     'hero_title_2' => 'Economy',

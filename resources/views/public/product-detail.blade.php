@@ -3,45 +3,63 @@
 <head>
     <meta charset="UTF-8">
     @php
-        $pageTitle = $product->title . ' - Detail';
-        $pageDesc = strip_tags($product->description ?? 'Beli ' . $product->title . ' di Linkan.id');
+        $cleanTitle = trim(preg_replace('/\s+/', ' ', strip_tags($product->title)));
+        $pageTitle = __('public.seo_product_title_pattern', ['title' => $cleanTitle]);
+        if (mb_strlen($pageTitle) > 60) {
+            $suffix = ' | Linkan.id';
+            $available = 60 - mb_strlen($suffix);
+            $pageTitle = mb_substr($pageTitle, 0, $available) . $suffix;
+        }
+
+        $rawDesc = trim(preg_replace('/\s+/', ' ', strip_tags($product->description ?? '')));
+        $sellerName = $user ? strip_tags($user->name) : 'Kreator Linkan';
+        $fallbackDesc = __('public.seo_product_desc_fallback', [
+            'title' => $cleanTitle,
+            'seller' => $sellerName,
+        ]);
+        $pageDesc = $rawDesc ?: $fallbackDesc;
+
         $pageImage = resolveProductImageUrl($product->image);
-        $pageUrl = url()->current();
+        if (!Str::startsWith($pageImage, ['http://', 'https://'])) {
+            $pageImage = url($pageImage);
+        }
+
+        $canonicalUrl = url('/' . app()->getLocale() . '/product/' . $product->id);
+        $locales = [
+            'id' => url('/id/product/' . $product->id),
+            'en' => url('/en/product/' . $product->id),
+            'x-default' => url('/id/product/' . $product->id),
+        ];
+
+        $productJsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $cleanTitle,
+            'description' => mb_substr($pageDesc, 0, 300),
+            'image' => $pageImage,
+            'offers' => [
+                '@type' => 'Offer',
+                'priceCurrency' => 'IDR',
+                'price' => number_format((float) ($product->price ?? 0), 2, '.', ''),
+                'availability' => 'https://schema.org/InStock',
+                'url' => $canonicalUrl,
+                'seller' => [
+                    '@type' => 'Person',
+                    'name' => $sellerName,
+                ],
+            ],
+        ];
     @endphp
-    <title>{{ $pageTitle }}</title>
-    <meta name="description" content="{{ Str::limit($pageDesc, 150) }}">
-    <link rel="canonical" href="{{ $pageUrl }}">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="product">
-    <meta property="og:url" content="{{ $pageUrl }}">
-    <meta property="og:title" content="{{ $pageTitle }}">
-    <meta property="og:description" content="{{ Str::limit($pageDesc, 150) }}">
-    <meta property="og:image" content="{{ $pageImage }}">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ $pageUrl }}">
-    <meta name="twitter:title" content="{{ $pageTitle }}">
-    <meta name="twitter:description" content="{{ Str::limit($pageDesc, 150) }}">
-    <meta name="twitter:image" content="{{ $pageImage }}">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "{{ $product->title }}",
-      "description": "{{ strip_tags($product->description) }}",
-      "image": "{{ $pageImage }}",
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "IDR",
-        "price": "{{ $product->price }}",
-        "availability": "https://schema.org/InStock",
-        "url": "{{ $pageUrl }}"
-      }
-    }
-    </script>
+    <x-seo.meta
+        :title="$pageTitle"
+        :description="$pageDesc"
+        :canonical="$canonicalUrl"
+        :locales="$locales"
+        ogType="product"
+        :ogImage="$pageImage"
+        :jsonLd="$productJsonLd"
+    />
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

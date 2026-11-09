@@ -5,60 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#5A5BF1">
     <meta name="format-detection" content="telephone=no">
-    <title>{{ __('public.meta_title') }}</title>
-    <meta name="description" content="{{ __('public.meta_desc') }}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/') }}">
-
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:site_name" content="Linkan.ID">
-    <meta property="og:title" content="{{ __('public.meta_title') }}">
-    <meta property="og:description" content="{{ __('public.meta_desc') }}">
-    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@LinkanID">
-    <meta name="twitter:title" content="{{ __('public.meta_title') }}">
-    <meta name="twitter:description" content="{{ __('public.meta_desc') }}">
-    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
-
-    <!-- Schema.org WebSite (untuk Sitelink Search Box di Google) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Linkan.ID",
-      "url": "{{ url('/') }}",
-      "description": "{{ __('public.meta_desc') }}",
-      "inLanguage": "{{ app()->getLocale() == 'id' ? 'id-ID' : 'en-US' }}",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "{{ url('/') }}/{username}"
-        },
-        "query-input": "required name=username"
-      }
-    }
-    </script>
-
-    <!-- Schema.org Organization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Linkan.ID",
-      "url": "{{ url('/') }}",
-      "logo": "{{ asset('images/Logo.png') }}",
-      "sameAs": []
-    }
-    </script>
+@php
+    $welcomeJsonLd = [
+        [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => 'Linkan.ID',
+            'url' => url('/' . app()->getLocale()),
+            'description' => __('public.seo_desc_welcome'),
+            'inLanguage' => app()->getLocale() === 'en' ? 'en-US' : 'id-ID',
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => url('/' . app()->getLocale() . '/linkan.id/{username}'),
+                ],
+                'query-input' => 'required name=username',
+            ],
+        ],
+        [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'Linkan.ID',
+            'url' => url('/' . app()->getLocale()),
+            'logo' => asset('images/Logo.png'),
+        ],
+    ];
+@endphp
+    <x-seo.meta
+        :title="__('public.seo_title_welcome')"
+        :description="__('public.seo_desc_welcome')"
+        :canonical="url('/' . app()->getLocale())"
+        :locales="['id' => url('/id'), 'en' => url('/en'), 'x-default' => url('/id')]"
+        :jsonLd="$welcomeJsonLd"
+    />
 
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 

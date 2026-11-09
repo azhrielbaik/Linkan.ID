@@ -4,6 +4,20 @@ return [
     'meta_title' => 'Linkan - Memberdayakan Ekonomi Kreator',
     'meta_desc' => 'Buat situs mikro Anda, pendekkan tautan, dan jual produk digital dalam satu platform. Bergabunglah dengan ekonomi kreator yang dinamis bersama Linkan.',
 
+    // SEO Meta Strings
+    'seo_title_welcome' => 'Linkan - Memberdayakan Ekonomi Kreator',
+    'seo_desc_welcome' => 'Buat situs mikro Anda, pendekkan tautan, dan jual produk digital dalam satu platform. Bergabunglah dengan ekonomi kreator yang dinamis bersama Linkan.',
+    'seo_title_faq' => 'FAQ - Pertanyaan Umum | Linkan.id',
+    'seo_desc_faq' => 'Temukan jawaban lengkap seputar fitur Linkan.id, cara pembayaran, produk digital, payout saldo, hingga keamanan akun kreator Anda di sini.',
+    'seo_title_about' => 'Tentang Kami - Platform Kreator | Linkan.id',
+    'seo_desc_about' => 'Pelajari visi, misi, dan teknologi Linkan.id dalam memberdayakan para kreator dan pebisnis online Indonesia untuk memonetisasi karya mereka.',
+    'seo_title_contact' => 'Hubungi Kami - Dukungan & Bantuan | Linkan.id',
+    'seo_desc_contact' => 'Punya pertanyaan atau butuh bantuan? Hubungi tim Linkan.id terkait akun, produk digital, pembayaran, hingga integrasi fitur platform kami hari ini.',
+    'seo_product_title_pattern' => 'Beli :title - Produk Digital | Linkan.id',
+    'seo_product_desc_fallback' => 'Dapatkan :title oleh :seller secara instan di Linkan.id. Pembayaran aman terverifikasi via QRIS, Virtual Account, dan E-Wallet resmi.',
+    'seo_microsite_title_pattern' => ':name (@:username) - Profil Resmi | Linkan.id',
+    'seo_microsite_desc_fallback' => 'Temukan semua tautan resmi, produk digital, dan penawaran terbaru dari :name di Linkan.id. Terhubung langsung dengan kreator favorit Anda.',
+
     // Hero
     'hero_title_1' => 'Memberdayakan',
     'hero_title_2' => 'Ekonomi Kreator',

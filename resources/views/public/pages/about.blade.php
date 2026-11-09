@@ -5,34 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @php
-        $aboutTitle = app()->getLocale() == 'id'
-            ? 'Tentang Kami - Linkan.id | Platform Ekonomi Kreator Indonesia'
-            : 'About Us - Linkan.id | Creator Economy Platform';
-        $aboutDesc = app()->getLocale() == 'id'
-            ? 'Linkan.id hadir untuk memberdayakan kreator dan pebisnis online Indonesia. Kenali visi, misi, dan fitur unggulan platform bio-link & toko digital kami.'
-            : 'Linkan.id empowers creators and online businesses. Discover our vision, mission, and key features of our bio-link & digital store platform.';
-        $aboutUrl = url('/about');
+        $aboutJsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'AboutPage',
+            'name' => __('public.seo_title_about'),
+            'description' => __('public.seo_desc_about'),
+            'url' => url('/' . app()->getLocale() . '/about'),
+            'mainEntity' => [
+                '@type' => 'Organization',
+                'name' => 'Linkan.ID',
+                'url' => url('/' . app()->getLocale()),
+                'logo' => asset('images/Logo.png'),
+            ],
+        ];
     @endphp
 
-    <title>{{ $aboutTitle }}</title>
-    <meta name="description" content="{{ $aboutDesc }}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ $aboutUrl }}">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ $aboutUrl }}">
-    <meta property="og:site_name" content="Linkan.ID">
-    <meta property="og:title" content="{{ $aboutTitle }}">
-    <meta property="og:description" content="{{ $aboutDesc }}">
-    <meta property="og:image" content="{{ asset('images/og-banner.png') }}">
-    <meta property="og:locale" content="{{ app()->getLocale() == 'id' ? 'id_ID' : 'en_US' }}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $aboutTitle }}">
-    <meta name="twitter:description" content="{{ $aboutDesc }}">
-    <meta name="twitter:image" content="{{ asset('images/og-banner.png') }}">
+    <x-seo.meta
+        :title="__('public.seo_title_about')"
+        :description="__('public.seo_desc_about')"
+        :canonical="url('/' . app()->getLocale() . '/about')"
+        :locales="['id' => url('/id/about'), 'en' => url('/en/about'), 'x-default' => url('/id/about')]"
+        :jsonLd="$aboutJsonLd"
+    />
 
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +39,7 @@
     <div class="navbar-wrapper">
         <nav class="navbar-pill" aria-label="Main Navigation">
             <a href="{{ url('/') }}" class="nav-logo">
-                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" width="125" height="35">
             </a>
             <div class="nav-links">
                 <div class="lang-toggle-pill" aria-label="Language selector">
@@ -109,21 +103,21 @@
         <div class="features-grid">
             <!-- Feature 1 -->
             <div class="feature-item">
-                <img src="{{ asset('images/icon/Vector.png') }}" alt="Digital Product Icon" class="feature-icon">
+                <img src="{{ asset('images/icon/Vector.png') }}" alt="Digital Product Icon" class="feature-icon" width="48" height="48" loading="lazy">
                 <h3>{{ __('public.about_feat_1_title') }}</h3>
                 <p>{{ __('public.about_feat_1_desc') }}</p>
             </div>
 
             <!-- Feature 2 -->
             <div class="feature-item">
-                <img src="{{ asset('images/icon/game-icons_graduate-cap.png') }}" alt="Online Course Icon" class="feature-icon">
+                <img src="{{ asset('images/icon/game-icons_graduate-cap.png') }}" alt="Online Course Icon" class="feature-icon" width="48" height="48" loading="lazy">
                 <h3>{{ __('public.about_feat_2_title') }}</h3>
                 <p>{{ __('public.about_feat_2_desc') }}</p>
             </div>
 
             <!-- Feature 3 -->
             <div class="feature-item">
-                <img src="{{ asset('images/icon/mdi_donation.png') }}" alt="Donations Icon" class="feature-icon">
+                <img src="{{ asset('images/icon/mdi_donation.png') }}" alt="Donations Icon" class="feature-icon" width="48" height="48" loading="lazy">
                 <h3>{{ __('public.about_feat_3_title') }}</h3>
                 <p>{{ __('public.about_feat_3_desc') }}</p>
             </div>
@@ -134,7 +128,7 @@
     <div class="footer-wrapper">
         <div class="footer-pill">
             <a href="{{ url('/') }}" class="footer-logo">
-                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo">
+                <img src="{{ asset('images/Logo.svg') }}" alt="Linkan Logo" width="125" height="35" loading="lazy">
             </a>
             <div class="footer-links">
                 <a href="{{ route('about') }}" class="footer-link scramble-link" data-value="{{ __('layout.about_us') }}">{{ __('layout.about_us') }}</a>

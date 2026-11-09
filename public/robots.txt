@@ -26,6 +26,11 @@ Disallow: /midtrans/
 Disallow: /transaction/
 Disallow: /cart/
 Disallow: /p/
+Disallow: /p
+Disallow: /bantuan/
+Disallow: /bantuan
+Disallow: /review/
+Disallow: /review
 
 # Block internal API endpoints
 Disallow: /track-click

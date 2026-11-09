@@ -3,50 +3,60 @@
 <head>
     <meta charset="UTF-8">
     @php
-        $pageTitle = strip_tags($appearance->name ?? $user->name) . ' | Linkan.id';
-        $pageDesc = strip_tags($appearance->bio ?? 'Temukan berbagai tautan dan produk menarik dari ' . ($user->name ?? 'kreator') . ' di Linkan.id.');
-        $pageImage = isset($appearance->profile_image) && $appearance->profile_image ? asset('storage/' . $appearance->profile_image) : asset('images/default-avatar.png');
-        $pageUrl = url()->current();
+        $cleanName = trim(preg_replace('/\s+/', ' ', strip_tags($appearance->name ?: ($user->name ?? 'Kreator'))));
+        $username = $user->username ?: ($appearance->alias ?? 'kreator');
+        $pageTitle = __('public.seo_microsite_title_pattern', [
+            'name' => $cleanName,
+            'username' => $username,
+        ]);
+        if (mb_strlen($pageTitle) > 60) {
+            $suffix = ' | Linkan.id';
+            $available = 60 - mb_strlen($suffix);
+            $pageTitle = mb_substr($pageTitle, 0, $available) . $suffix;
+        }
+
+        $rawBio = trim(preg_replace('/\s+/', ' ', strip_tags($appearance->bio ?? '')));
+        $fallbackBio = __('public.seo_microsite_desc_fallback', ['name' => $cleanName]);
+        $pageDesc = $rawBio ?: $fallbackBio;
+
+        $pageImage = isset($appearance->profile_image) && $appearance->profile_image
+            ? asset('storage/' . $appearance->profile_image)
+            : asset('images/default-avatar.png');
+        if (!Str::startsWith($pageImage, ['http://', 'https://'])) {
+            $pageImage = url($pageImage);
+        }
+
+        $aliasSlug = $appearance->alias ?: $username;
+        $canonicalUrl = url('/' . app()->getLocale() . '/linkan.id/' . $aliasSlug);
+        $locales = [
+            'id' => url('/id/linkan.id/' . $aliasSlug),
+            'en' => url('/en/linkan.id/' . $aliasSlug),
+            'x-default' => url('/id/linkan.id/' . $aliasSlug),
+        ];
+
+        $profileJsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'ProfilePage',
+            'mainEntity' => [
+                '@type' => 'Person',
+                'name' => $cleanName,
+                'alternateName' => '@' . $username,
+                'description' => mb_substr($pageDesc, 0, 300),
+                'image' => $pageImage,
+                'url' => $canonicalUrl,
+            ],
+        ];
     @endphp
-    <title>{{ $pageTitle }}</title>
-    <meta name="description" content="{{ Str::limit($pageDesc, 150) }}">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="{{ $pageUrl }}">
-    
-    @if(isset($appearance->banner) && $appearance->banner)
-        <link rel="preload" as="image" href="{{ asset('storage/' . $appearance->banner) }}">
-    @endif
-    @if(isset($appearance->profile_image) && $appearance->profile_image)
-        <link rel="preload" as="image" href="{{ asset('storage/' . $appearance->profile_image) }}">
-    @endif
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="profile">
-    <meta property="og:url" content="{{ $pageUrl }}">
-    <meta property="og:title" content="{{ $pageTitle }}">
-    <meta property="og:description" content="{{ Str::limit($pageDesc, 150) }}">
-    <meta property="og:image" content="{{ $pageImage }}">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ $pageUrl }}">
-    <meta name="twitter:title" content="{{ $pageTitle }}">
-    <meta name="twitter:description" content="{{ Str::limit($pageDesc, 150) }}">
-    <meta name="twitter:image" content="{{ $pageImage }}">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ProfilePage",
-      "mainEntity": {
-        "@type": "Person",
-        "name": "{{ strip_tags($appearance->name ?? $user->name) }}",
-        "description": "{{ strip_tags($appearance->bio ?? '') }}",
-        "image": "{{ $pageImage }}",
-        "url": "{{ $pageUrl }}"
-      }
-    }
-    </script>
+    <x-seo.meta
+        :title="$pageTitle"
+        :description="$pageDesc"
+        :canonical="$canonicalUrl"
+        :locales="$locales"
+        ogType="profile"
+        :ogImage="$pageImage"
+        :jsonLd="$profileJsonLd"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>

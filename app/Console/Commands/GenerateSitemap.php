@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Appearance;
 use App\Models\DigitalProduct;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Spatie\Sitemap\Sitemap;
@@ -30,31 +30,49 @@ class GenerateSitemap extends Command
      */
     public function handle()
     {
-        $this->info('Generating sitemap...');
+        $this->info('Generating clean 200-only sitemap with hreflang alternates...');
 
         $baseUrl = $this->option('domain') ?: config('app.url', 'https://linkan.id');
         $baseUrl = rtrim($baseUrl, '/');
 
         $sitemap = Sitemap::create();
+        $locales = ['id', 'en'];
 
-        // 1. Halaman Utama & Lokalisasi
-        $sitemap->add(Url::create("{$baseUrl}/")->setPriority(1.0)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-        $sitemap->add(Url::create("{$baseUrl}/id")->setPriority(1.0)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-        $sitemap->add(Url::create("{$baseUrl}/en")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
+        // 1. Halaman Utama (Welcome) ber-prefix locale
+        foreach ($locales as $locale) {
+            $url = Url::create("{$baseUrl}/{$locale}")
+                ->setPriority(1.0)
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                ->addAlternate("{$baseUrl}/id", 'id')
+                ->addAlternate("{$baseUrl}/en", 'en')
+                ->addAlternate("{$baseUrl}/id", 'x-default');
 
-        // 2. Halaman Statis Publik (ID & EN)
-        $staticPages = ['pricing', 'faq', 'about', 'contact'];
-        foreach ($staticPages as $page) {
-            $priority = in_array($page, ['pricing', 'faq']) ? 0.8 : 0.7;
-            $freq = in_array($page, ['pricing', 'faq']) ? Url::CHANGE_FREQUENCY_WEEKLY : Url::CHANGE_FREQUENCY_MONTHLY;
-
-            $sitemap->add(Url::create("{$baseUrl}/{$page}")->setPriority($priority)->setChangeFrequency($freq));
-            $sitemap->add(Url::create("{$baseUrl}/id/{$page}")->setPriority($priority)->setChangeFrequency($freq));
-            $sitemap->add(Url::create("{$baseUrl}/en/{$page}")->setPriority($priority)->setChangeFrequency($freq));
+            $sitemap->add($url);
         }
 
-        // 3. Microsite Aktif (Appearances)
-        $appearances = \App\Models\Appearance::where('is_active', true)
+        // 2. Halaman Statis Publik (FAQ, About, Contact)
+        // Catatan: 'pricing' dihilangkan karena me-redirect 302 ke #pricing
+        $staticPages = [
+            'faq' => ['priority' => 0.8, 'freq' => Url::CHANGE_FREQUENCY_WEEKLY],
+            'about' => ['priority' => 0.7, 'freq' => Url::CHANGE_FREQUENCY_MONTHLY],
+            'contact' => ['priority' => 0.7, 'freq' => Url::CHANGE_FREQUENCY_MONTHLY],
+        ];
+
+        foreach ($staticPages as $page => $meta) {
+            foreach ($locales as $locale) {
+                $url = Url::create("{$baseUrl}/{$locale}/{$page}")
+                    ->setPriority($meta['priority'])
+                    ->setChangeFrequency($meta['freq'])
+                    ->addAlternate("{$baseUrl}/id/{$page}", 'id')
+                    ->addAlternate("{$baseUrl}/en/{$page}", 'en')
+                    ->addAlternate("{$baseUrl}/id/{$page}", 'x-default');
+
+                $sitemap->add($url);
+            }
+        }
+
+        // 3. Microsite Aktif Penjual (Appearances)
+        $appearances = Appearance::where('is_active', true)
             ->whereNotNull('alias')
             ->where('alias', '!=', '')
             ->with(['user'])
@@ -63,24 +81,32 @@ class GenerateSitemap extends Command
         $indexedAppearances = 0;
         foreach ($appearances as $appearance) {
             $user = $appearance->user;
-            // Lewati jika user/seller pemilik sedang ditangguhkan
             if (! $user || $user->isSuspended()) {
                 continue;
             }
 
-            $sitemap->add(
-                Url::create("{$baseUrl}/{$appearance->alias}")
+            $alias = $appearance->alias;
+            $lastmod = $appearance->updated_at ?? Carbon::now();
+
+            foreach ($locales as $locale) {
+                $url = Url::create("{$baseUrl}/{$locale}/linkan.id/{$alias}")
                     ->setPriority(0.9)
                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
-                    ->setLastModificationDate($appearance->updated_at ?? Carbon::now())
-            );
+                    ->setLastModificationDate($lastmod)
+                    ->addAlternate("{$baseUrl}/id/linkan.id/{$alias}", 'id')
+                    ->addAlternate("{$baseUrl}/en/linkan.id/{$alias}", 'en')
+                    ->addAlternate("{$baseUrl}/id/linkan.id/{$alias}", 'x-default');
+
+                $sitemap->add($url);
+            }
             $indexedAppearances++;
         }
-        $this->info("Indexed {$indexedAppearances} active microsite appearances.");
+        $this->info("Indexed {$indexedAppearances} active microsite appearances across ".count($locales).' locales.');
 
-        // 4. Produk Digital Aktif
+        // 4. Produk Digital Aktif & Terverifikasi
         $products = DigitalProduct::where('is_active', true)
             ->whereNull('takedown_at')
+            ->where('verification_status', '!=', 'rejected')
             ->with('user')
             ->get();
 
@@ -91,19 +117,29 @@ class GenerateSitemap extends Command
                 continue;
             }
 
-            $sitemap->add(
-                Url::create("{$baseUrl}/product/{$product->id}")
-                    ->setPriority(0.9)
+            $productId = $product->id;
+            $lastmod = $product->updated_at ?? Carbon::now();
+
+            foreach ($locales as $locale) {
+                $url = Url::create("{$baseUrl}/{$locale}/product/{$productId}")
+                    ->setPriority(0.8)
                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
-                    ->setLastModificationDate($product->updated_at ?? Carbon::now())
-            );
+                    ->setLastModificationDate($lastmod)
+                    ->addAlternate("{$baseUrl}/id/product/{$productId}", 'id')
+                    ->addAlternate("{$baseUrl}/en/product/{$productId}", 'en')
+                    ->addAlternate("{$baseUrl}/id/product/{$productId}", 'x-default');
+
+                $sitemap->add($url);
+            }
             $indexedProducts++;
         }
-        $this->info("Indexed {$indexedProducts} active digital products.");
+        $this->info("Indexed {$indexedProducts} active digital products across ".count($locales).' locales.');
 
         $sitemapPath = public_path('sitemap.xml');
         $sitemap->writeToFile($sitemapPath);
 
         $this->info("Sitemap generated successfully at: {$sitemapPath}");
+
+        return Command::SUCCESS;
     }
 }
